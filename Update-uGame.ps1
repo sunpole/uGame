@@ -1,4 +1,4 @@
-﻿$Host.UI.RawUI.WindowTitle = "uGame Updater"
+$Host.UI.RawUI.WindowTitle = "uGame Updater"
 
 Write-Host "=========================="
 Write-Host "      uGame Updater"
@@ -6,31 +6,31 @@ Write-Host "=========================="
 Write-Host ""
 
 if (git status --porcelain) {
-    Write-Host "[СТ] сть локальные изменения."
+    Write-Host "[STOP] Local changes found."
     git status --short
-    Read-Host "ажмите Enter"
+    Read-Host "Press Enter"
     exit 1
 }
 
-Write-Host "роверяю GitHub..."
+Write-Host "Checking GitHub..."
 git fetch origin main
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[Ш] е удалось проверить GitHub."
-    Read-Host "ажмите Enter"
+    Write-Host "[ERROR] GitHub check failed."
+    Read-Host "Press Enter"
     exit 1
 }
 
 Write-Host ""
-Write-Host "олучаю обновления..."
+Write-Host "Updating..."
 git pull --ff-only origin main
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[Ш] бновление остановлено."
-    Read-Host "ажмите Enter"
+    Write-Host "[ERROR] Update stopped."
+    Read-Host "Press Enter"
     exit 1
 }
 
 Write-Host ""
-Write-Host "[OK] uGame обновлён."
-Read-Host "ажмите Enter"
+Write-Host "[OK] uGame is up to date."
+Read-Host "Press Enter"
