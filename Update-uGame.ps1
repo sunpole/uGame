@@ -47,7 +47,7 @@ function Sync-Project {
     $before = Git @('rev-parse','HEAD')
     Write-Host 'Checking GitHub...'
     # Fixed URL/ref; no pull configuration, tags, submodules or executable manifests.
-    [void](Git @('-c','protocol.allow=never','-c','protocol.https.allow=always','-c','http.followRedirects=false','fetch','--no-tags','--no-recurse-submodules',$script:Remote,'refs/heads/main'))
+    [void](Git @('-c','protocol.allow=never','-c','protocol.https.allow=always','-c','http.followRedirects=false','fetch','--no-tags','--no-recurse-submodules',$script:Remote,'refs/heads/main:refs/remotes/origin/main'))
     $target = Git @('rev-parse','--verify','FETCH_HEAD^{commit}')
     [void](Git @('merge-base','--is-ancestor',$before,$target))
     if ($before -eq $target) { Write-Log 'Already up to date.'; return }

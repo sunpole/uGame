@@ -47,7 +47,8 @@ function Git([string[]]$Arguments) {
     if ($Arguments -contains 'fetch') {
         Check ($Arguments -contains 'protocol.allow=never') 'fetch protocol restriction'
         Check ($Arguments -contains 'http.followRedirects=false') 'fetch redirects disabled'
-        return GitReal @('fetch','--no-tags','--no-recurse-submodules',$upstream,'refs/heads/main')
+        Check ($Arguments -contains 'refs/heads/main:refs/remotes/origin/main') 'fixed remote tracking ref'
+        return GitReal @('fetch','--no-tags','--no-recurse-submodules',$upstream,'refs/heads/main:refs/remotes/origin/main')
     }
     return GitReal $Arguments
 }
@@ -75,6 +76,7 @@ $hook=Join-Path $script:Root '.git/hooks/post-merge'
 $after=SetupGit $upstream @('rev-parse','HEAD')
 Sync-Project
 Check ((Git @('rev-parse','HEAD')) -eq $after) 'real fast-forward reaches target'
+Check ((Git @('rev-parse','origin/main')) -eq $after) 'remote tracking matches updated HEAD'
 Check (-not (Test-Path (Join-Path $script:Root 'hook-ran.txt'))) 'post-merge hook not executed'
 Check ((Git @('for-each-ref','--format=%(objectname)','refs/ugame/backups/')) -eq $before) 'pre-update commit retained'
 $script:StopMenu=$false

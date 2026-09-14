@@ -1,7 +1,7 @@
 # Updater verification — 2026-09-14
 
 Baseline: 5656bcf75e39dc94ed74ba758faa095510148e0e.
-Reviewed updater Git blob: de60c40e798b9f3268ef3e16f3ef06e8019d2093.
+Reviewed updater Git blob: 7393b7e16cda9ec8729ba59505d6087833ddc08f.
 Method: Codex engineering code-verification, read-only inspection of final
 production source plus existing tests in isolated disposable repositories.
 
@@ -27,6 +27,12 @@ network fetch destination is replaced by a local fixture, and report UI is stubb
 - git diff --check passes.
 - Actual fixed-URL HTTPS fetch against GitHub in a separate clean clone completed
   successfully and reported already up to date (production Sync-Project function).
+- A published update was fetched and fast-forwarded in that clean clone and the
+  downloaded CMD menu ran successfully from a different working directory.
+- Follow-up review found stale origin/main status after URL-based fetch. The
+  final refspec also updates the fixed origin/main tracking reference. The full
+  suite passed again, including a tracking-ref assertion, and an actual HTTPS
+  fetch corrected the live clone's status to main...origin/main with no false ahead.
 
 ## Security review
 
