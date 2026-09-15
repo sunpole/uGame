@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "stage": "prototype",
   "updated": "2026-09-15",
-  "summary": "ClassSystem presets connected to VisionSystem"
+  "summary": "DEV focus fix and live arrow-key indicator"
 }
