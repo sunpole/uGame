@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.5</title>
+    <title>uGame v0.0.6</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
         <strong class="brand">uGame</strong>
-        <span class="version">v0.0.5</span>
+        <span class="version" id="app-version">v0.0.6</span>
       </header>
 
       <main class="game-shell">
@@ -18,7 +18,24 @@
       </main>
 
       <footer class="bottombar">
-        <span>Движение: WASD / стрелки</span>
+        <span class="controls-help">Движение: WASD / стрелки</span>
+
+        <form id="dev-console" class="dev-console" autocomplete="off">
+          <label for="dev-code-input">DEV</label>
+          <input
+            id="dev-code-input"
+            name="dev-code"
+            type="text"
+            inputmode="numeric"
+            maxlength="4"
+            pattern="[0-9]{4}"
+            placeholder="0000"
+            aria-label="DEV код из четырёх цифр"
+          />
+          <button type="submit">OK</button>
+          <span id="dev-code-status" class="dev-code-status" aria-live="polite"></span>
+        </form>
+
         <span id="zone-status">Zone 1 · Найди выход справа</span>
       </footer>
     </div>
