@@ -1,8 +1,17 @@
 # uGame versions
 
-Current version: **0.0.6**
+Current version: **0.0.7**
 
 `version.json` is the machine-readable project version. `package.json` mirrors the same version for tooling. This file is the human-readable change history.
+
+## 0.0.7 — VisionSystem + active Vision DEV codes
+
+- Moved visibility logic into the separate `VisionSystem` module.
+- Connected DEV console commands to game-system handlers instead of putting gameplay logic in the console.
+- Activated Vision modes: circle, cone/flashlight, full visibility and no visibility.
+- Added DEV controls for visibility radius and darkness strength.
+- Cone mode follows the player's last movement direction.
+- Updated `docs/DEV-CODES.md` with the active Vision command set.
 
 ## 0.0.6 — Dev console infrastructure
 
@@ -11,7 +20,7 @@ Current version: **0.0.6**
 - Added `docs/DEV-CODES.md` as the DEV code reference.
 - Added active code `9999` to open the DEV code reference.
 - Reserved numbered ranges for future gameplay systems.
-- Vision commands are documented as reserved, but are not connected to gameplay yet.
+- Vision commands were documented as reserved, but were not connected to gameplay yet.
 
 ## 0.0.5 — Visibility fix
 
