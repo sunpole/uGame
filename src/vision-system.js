@@ -38,6 +38,7 @@ export class VisionSystem {
     this.maskId = `vision-mask-${Math.random().toString(36).slice(2)}`;
     this.mask.setAttribute('id', this.maskId);
     this.mask.setAttribute('maskUnits', 'userSpaceOnUse');
+    this.mask.style.maskType = 'luminance';
 
     this.maskBase = svgElement('rect');
     this.maskBase.setAttribute('fill', 'white');
