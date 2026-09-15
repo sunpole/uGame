@@ -1,8 +1,26 @@
+import { initDevConsole } from './dev-console.js';
+
 const WIDTH = 960;
 const HEIGHT = 540;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
 const VISIBILITY_RADIUS = 165;
+
+async function loadVersion() {
+  try {
+    const response = await fetch('./version.json', { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!data?.version) return;
+
+    const label = `v${data.version}`;
+    const element = document.querySelector('#app-version');
+    if (element) element.textContent = label;
+    document.title = `uGame ${label}`;
+  } catch {
+    // Keep the HTML fallback version if version.json cannot be read.
+  }
+}
 
 class ZoneScene extends Phaser.Scene {
   constructor() {
@@ -165,6 +183,9 @@ class ZoneScene extends Phaser.Scene {
     return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
   }
 }
+
+loadVersion();
+initDevConsole();
 
 new Phaser.Game({
   type: Phaser.AUTO,
