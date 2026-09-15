@@ -1,6 +1,7 @@
 import { initDevConsole } from './dev-console.js';
 import { VisionSystem } from './vision-system.js';
 import { ZoneSystem } from './zone-system.js';
+import { ClassSystem } from './class-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -9,6 +10,7 @@ const SPEED = 220;
 const VISIBILITY_RADIUS = 165;
 
 let visionSystem = null;
+let classSystem = null;
 
 async function loadVersion() {
   try {
@@ -24,6 +26,15 @@ async function loadVersion() {
   } catch {
     // Keep the HTML fallback version if version.json cannot be read.
   }
+}
+
+function executeDevCode(code) {
+  for (const system of [visionSystem, classSystem]) {
+    const result = system?.executeDevCode?.(code);
+    if (result?.handled) return result;
+  }
+
+  return { handled: false };
 }
 
 class ZoneScene extends Phaser.Scene {
@@ -58,6 +69,8 @@ class ZoneScene extends Phaser.Scene {
       player: this.player,
       radius: VISIBILITY_RADIUS
     });
+
+    classSystem = new ClassSystem({ visionSystem });
 
     this.scale.on('resize', () => visionSystem?.update());
     window.addEventListener('resize', () => visionSystem?.update());
@@ -145,9 +158,7 @@ class ZoneScene extends Phaser.Scene {
 }
 
 loadVersion();
-initDevConsole({
-  execute: (code) => visionSystem?.executeDevCode(code) || { handled: false }
-});
+initDevConsole({ execute: executeDevCode });
 
 new Phaser.Game({
   type: Phaser.AUTO,
