@@ -2,6 +2,7 @@ const WIDTH = 960;
 const HEIGHT = 540;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
+const VISIBILITY_RADIUS = 150;
 
 class ZoneScene extends Phaser.Scene {
   constructor() {
@@ -44,6 +45,19 @@ class ZoneScene extends Phaser.Scene {
 
     this.player = this.add.rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7);
 
+    this.visibilityShape = this.make.graphics({ add: false });
+    this.visibilityShape.fillStyle(0xffffff, 1);
+    this.visibilityShape.fillCircle(0, 0, VISIBILITY_RADIUS);
+    this.visibilityShape.setPosition(this.player.x, this.player.y);
+
+    this.darkness = this.add
+      .rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 0x000000, 0.92)
+      .setDepth(100);
+
+    this.visibilityMask = this.visibilityShape.createGeometryMask();
+    this.visibilityMask.setInvertAlpha(true);
+    this.darkness.setMask(this.visibilityMask);
+
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -79,6 +93,7 @@ class ZoneScene extends Phaser.Scene {
     const distance = SPEED * (delta / 1000);
     this.tryMove(dx * distance, 0);
     this.tryMove(0, dy * distance);
+    this.visibilityShape.setPosition(this.player.x, this.player.y);
 
     if (!this.exitReached && this.overlaps(this.playerBounds(), this.objectBounds(this.exit))) {
       this.exitReached = true;
