@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.24**
+Current version: **0.0.25**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.25 | Vision overlay and Phaser canvas forced to exactly the same playfield bounds |
 | 0.0.24 | LAN/Wi-Fi dev-server access for phones and laptops |
 | 0.0.23 | Quest/HUD clarity and small temporary-character polish |
 | 0.0.22 | Vision overlay locked to exact 960×540 playfield |
@@ -30,6 +31,9 @@ Current version: **0.0.24**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.25
+The previous playfield fix was not strict enough: Phaser could still render its canvas at a different CSS size than the DOM Vision layer. The canvas and Vision SVG are now both forced to fill exactly the same `#game` rectangle. The Vision SVG also declares `width="100%"` and `height="100%"`, while its mask continues to use the same 960×540 world coordinates as the player.
 
 ## 0.0.24
 The development server now listens on the local network and prints private IPv4 URLs for same-network testing. See `docs/LAN-TESTING.md`.
