@@ -16,15 +16,19 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.1
+## Game prototype v0.0.2
 
-The first playable prototype is now included. It has one top-down zone, a square
-player, WASD/arrow movement, collision walls and one exit marker. There is no
-combat, darkness, flashlight, resources, idle system, inventory or backend yet.
+The playable prototype has one top-down zone, a square player, WASD/arrow movement,
+collision walls and one exit marker. The page is a fixed one-screen layout with a
+header, game area and footer. The footer always shows the movement controls and
+current zone status, while the exit is highlighted more clearly inside the game.
+
+There is no combat, darkness, flashlight, resources, idle system, inventory or
+backend yet.
 
 Option 4 runs the prototype through the local Node dev server. No npm package
-installation is required for v0.0.1. Phaser is loaded by the browser from its CDN,
-so the first prototype needs an internet connection while running.
+installation is required for v0.0.2. Phaser is loaded by the browser from its CDN,
+so the prototype needs an internet connection while running.
 
 ## First update
 
