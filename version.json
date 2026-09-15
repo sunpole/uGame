@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.10",
-  "stage": "prototype",
+  "version": "0.0.20",
+  "stage": "foundation-prototype",
   "updated": "2026-09-15",
-  "summary": "DEV focus fix and live arrow-key indicator"
+  "summary": "Foundation series: interactables, controller, character, audio, events, zone rules, resources, inventory, quests and mobile controls"
 }
