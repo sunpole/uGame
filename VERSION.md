@@ -1,8 +1,17 @@
 # uGame versions
 
-Current version: **0.0.7**
+Current version: **0.0.8**
 
 `version.json` is the machine-readable project version. `package.json` mirrors the same version for tooling. This file is the human-readable change history.
+
+## 0.0.8 — ZoneSystem + real zone transitions
+
+- Added the separate `ZoneSystem` module.
+- Added two different test zones with their own wall layouts and spawn points.
+- Reaching an exit now moves the player into the next zone instead of only changing status text.
+- Zone 1 exits to the right; Zone 2 exits to the left.
+- Footer status updates to the active zone and exit direction.
+- The same player object and `VisionSystem` continue working across zone changes, so Vision DEV settings are preserved.
 
 ## 0.0.7 — VisionSystem + active Vision DEV codes
 
