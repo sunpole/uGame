@@ -16,19 +16,23 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.2
+## Game prototype v0.0.6
 
 The playable prototype has one top-down zone, a square player, WASD/arrow movement,
-collision walls and one exit marker. The page is a fixed one-screen layout with a
-header, game area and footer. The footer always shows the movement controls and
-current zone status, while the exit is highlighted more clearly inside the game.
+collision walls, one exit marker and a circular visibility area with full darkness
+outside the visible radius. The page remains a fixed one-screen layout with a header,
+game area and footer.
 
-There is no combat, darkness, flashlight, resources, idle system, inventory or
-backend yet.
+The footer now contains a compact four-digit DEV console. Code `9999` opens the
+DEV code reference in `docs/DEV-CODES.md`. Number ranges are reserved for future
+systems, including `1xxx` for Vision, but those gameplay commands are not active yet.
+
+`version.json` is the machine-readable project version. `package.json` mirrors the
+same version for tooling. `VERSION.md` is the human-readable version history.
 
 Option 4 runs the prototype through the local Node dev server. No npm package
-installation is required for v0.0.2. Phaser is loaded by the browser from its CDN,
-so the prototype needs an internet connection while running.
+installation is required. Phaser is loaded by the browser from its CDN, so the
+prototype needs an internet connection while running.
 
 ## First update
 
@@ -54,6 +58,10 @@ changing update and must be explicitly restarted. The next launch trusts the
 checked-out updater and repository maintainers. This is not a sandbox for a
 compromised repository or local Git/Node installation. Option 4 explicitly runs
 local project code; no dependency installation or automatic npm pre/post scripts.
+
+The in-game DEV console accepts only four decimal digits. It does not execute shell
+commands or updater commands. At v0.0.6 only `9999` has an action: opening the
+published DEV code reference in the browser.
 
 An exclusive lock prevents simultaneous updater instances. Do not edit files or
 use another Git client during sync; those programs do not honor this lock.
