@@ -16,16 +16,17 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.6
+## Game prototype v0.0.7
 
 The playable prototype has one top-down zone, a square player, WASD/arrow movement,
-collision walls, one exit marker and a circular visibility area with full darkness
-outside the visible radius. The page remains a fixed one-screen layout with a header,
-game area and footer.
+collision walls, one exit marker and a modular `VisionSystem`. The page remains a
+fixed one-screen layout with a header, game area and footer.
 
-The footer now contains a compact four-digit DEV console. Code `9999` opens the
-DEV code reference in `docs/DEV-CODES.md`. Number ranges are reserved for future
-systems, including `1xxx` for Vision, but those gameplay commands are not active yet.
+The footer contains a compact four-digit DEV console. `1xxx` Vision codes are now
+active: circle, cone/flashlight, full visibility, no visibility, radius changes and
+darkness strength. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+The console only routes commands; visibility behavior lives in `src/vision-system.js`
+so classes, items, weather and effects can reuse the same system later.
 
 `version.json` is the machine-readable project version. `package.json` mirrors the
 same version for tooling. `VERSION.md` is the human-readable version history.
@@ -60,8 +61,8 @@ compromised repository or local Git/Node installation. Option 4 explicitly runs
 local project code; no dependency installation or automatic npm pre/post scripts.
 
 The in-game DEV console accepts only four decimal digits. It does not execute shell
-commands or updater commands. At v0.0.6 only `9999` has an action: opening the
-published DEV code reference in the browser.
+commands or updater commands. Active game commands are explicitly implemented by
+the relevant game system and documented in `docs/DEV-CODES.md`.
 
 An exclusive lock prevents simultaneous updater instances. Do not edit files or
 use another Git client during sync; those programs do not honor this lock.
