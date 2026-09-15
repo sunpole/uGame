@@ -16,15 +16,16 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.7
+## Game prototype v0.0.8
 
-The playable prototype has one top-down zone, a square player, WASD/arrow movement,
-collision walls, one exit marker and a modular `VisionSystem`. The page remains a
-fixed one-screen layout with a header, game area and footer.
+The playable prototype now has two top-down zones, a square player, WASD/arrow
+movement, collision walls, real zone transitions and a modular `VisionSystem`.
+`ZoneSystem` owns zone layouts, exits and spawn points. Reaching an exit moves the
+same player object into the next zone, so Vision settings remain active across zones.
 
-The footer contains a compact four-digit DEV console. `1xxx` Vision codes are now
-active: circle, cone/flashlight, full visibility, no visibility, radius changes and
-darkness strength. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+The footer contains a compact four-digit DEV console. `1xxx` Vision codes are active:
+circle, cone/flashlight, full visibility, no visibility, radius changes and darkness
+strength. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
 The console only routes commands; visibility behavior lives in `src/vision-system.js`
 so classes, items, weather and effects can reuse the same system later.
 
