@@ -16,18 +16,27 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.8
+## Game prototype v0.0.9
 
-The playable prototype now has two top-down zones, a square player, WASD/arrow
-movement, collision walls, real zone transitions and a modular `VisionSystem`.
-`ZoneSystem` owns zone layouts, exits and spawn points. Reaching an exit moves the
-same player object into the next zone, so Vision settings remain active across zones.
+The playable prototype has two top-down zones, a square player, WASD/arrow movement,
+collision walls, real zone transitions, a modular `VisionSystem`, `ZoneSystem` and
+`ClassSystem`.
 
-The footer contains a compact four-digit DEV console. `1xxx` Vision codes are active:
-circle, cone/flashlight, full visibility, no visibility, radius changes and darkness
-strength. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
-The console only routes commands; visibility behavior lives in `src/vision-system.js`
-so classes, items, weather and effects can reuse the same system later.
+The footer contains a compact four-digit DEV console. `1xxx` Vision codes control
+visibility directly. `7xxx` Class codes now select test classes that apply Vision
+profiles through `VisionSystem` instead of duplicating the visibility mechanics.
+This is the first working example of one gameplay module affecting another module.
+Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+
+Test classes:
+
+- `7001` — Странник: circle, radius 165, darkness 100%.
+- `7002` — Разведчик: circle, radius 235, darkness 90%.
+- `7003` — Следопыт: cone, radius 220, darkness 100%.
+- `7099` — show the current class.
+
+Direct `1xxx` Vision commands can temporarily override the active class profile for
+testing. Selecting a class again reapplies the class's complete Vision profile.
 
 `version.json` is the machine-readable project version. `package.json` mirrors the
 same version for tooling. `VERSION.md` is the human-readable version history.
