@@ -7,6 +7,7 @@ export class QuestSystem {
     this.active = null;
     this.stepIndex = 0;
     this.completed = new Set();
+    this.seenSignals = new Set();
 
     this.eventSystem?.on('quest:signal', ({ key }) => this.signal(key));
   }
@@ -19,31 +20,46 @@ export class QuestSystem {
     if (auto) this.start(auto.id);
   }
 
-  start(id) {
+  start(id, { resetSignals = false } = {}) {
     const quest = this.quests[id];
     if (!quest) return false;
+    if (resetSignals) this.seenSignals.clear();
     this.active = quest;
     this.stepIndex = 0;
-    this.notify();
     this.eventSystem?.emit('quest:start', { id });
+    this.advanceFromSeenSignals();
+    this.notify();
     return true;
   }
 
   signal(key) {
+    if (!key) return false;
+    this.seenSignals.add(key);
     if (!this.active) return false;
-    const step = this.active.steps?.[this.stepIndex];
-    if (!step || step.key !== key) return false;
+    const before = this.stepIndex;
+    this.advanceFromSeenSignals();
+    return this.stepIndex !== before || !this.active;
+  }
 
-    this.stepIndex += 1;
-    this.eventSystem?.emit('quest:progress', {
-      id: this.active.id,
-      stepIndex: this.stepIndex,
-      key
-    });
+  advanceFromSeenSignals() {
+    while (this.active) {
+      const step = this.active.steps?.[this.stepIndex];
+      if (!step || !this.seenSignals.has(step.key)) break;
 
-    if (this.stepIndex >= this.active.steps.length) this.complete();
-    else this.notify();
-    return true;
+      this.stepIndex += 1;
+      this.eventSystem?.emit('quest:progress', {
+        id: this.active.id,
+        stepIndex: this.stepIndex,
+        key: step.key
+      });
+
+      if (this.stepIndex >= this.active.steps.length) {
+        this.complete();
+        return;
+      }
+    }
+
+    this.notify();
   }
 
   complete() {
@@ -70,7 +86,10 @@ export class QuestSystem {
   executeDevCode(code) {
     if (code === '8001') {
       const first = Object.values(this.quests)[0];
-      if (first) this.start(first.id);
+      if (first) {
+        this.completed.delete(first.id);
+        this.start(first.id, { resetSignals: true });
+      }
       return { handled: true, message: '8001 · Квест перезапущен', state: 'ok' };
     }
     if (code === '8099') {
