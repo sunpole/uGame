@@ -174,9 +174,8 @@ input {
 .game-shell {
   min-width: 0;
   min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   padding: 12px;
   box-sizing: border-box;
   background: #07090b;
@@ -184,18 +183,17 @@ input {
 
 #game {
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 1px;
+  min-height: 1px;
+  overflow: hidden;
+  background: #0b0d10;
 }
 
 #game canvas {
-  position: relative;
+  position: absolute;
   z-index: 1;
+  inset: 0;
   display: block;
   max-width: 100%;
   max-height: 100%;
@@ -204,9 +202,12 @@ input {
 .vision-overlay {
   position: absolute;
   z-index: 2;
+  inset: 0;
   display: block;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .game-hud,
@@ -217,9 +218,10 @@ input {
   pointer-events: none;
   border: 1px solid rgba(139, 148, 158, 0.22);
   border-radius: 6px;
-  background: rgba(5, 6, 8, 0.72);
+  background: rgba(5, 6, 8, 0.78);
   color: #c9d1d9;
   font-size: 11px;
+  line-height: 1.35;
   backdrop-filter: blur(3px);
 }
 
@@ -227,7 +229,9 @@ input {
   top: 10px;
   left: 10px;
   display: flex;
-  gap: 10px;
+  max-width: calc(58% - 20px);
+  flex-wrap: wrap;
+  gap: 5px 10px;
   padding: 6px 8px;
 }
 
@@ -238,7 +242,7 @@ input {
 .quest-status {
   top: 10px;
   right: 10px;
-  max-width: 310px;
+  max-width: calc(42% - 20px);
   padding: 6px 8px;
   color: #d2a8ff;
   text-align: right;
@@ -365,13 +369,12 @@ input {
   }
 
   .game-hud {
-    max-width: 55%;
-    flex-wrap: wrap;
-    gap: 5px 8px;
+    max-width: 56%;
+    gap: 4px 7px;
   }
 
   .quest-status {
-    max-width: 38%;
+    max-width: 40%;
   }
 }
 
@@ -426,14 +429,14 @@ input {
   .game-hud {
     top: 6px;
     left: 6px;
-    max-width: calc(100% - 12px);
-    font-size: 10px;
+    max-width: 56%;
+    font-size: 9px;
   }
 
   .quest-status {
-    top: 46px;
+    top: 6px;
     right: 6px;
-    max-width: 60%;
-    font-size: 10px;
+    max-width: 40%;
+    font-size: 9px;
   }
 }
