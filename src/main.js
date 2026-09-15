@@ -26,6 +26,29 @@ let resourceSystem = null;
 let inventorySystem = null;
 let questSystem = null;
 
+function fitPlayfield() {
+  const shell = document.querySelector('.game-shell');
+  const host = document.querySelector('#game');
+  if (!shell || !host) return;
+
+  const style = getComputedStyle(shell);
+  const horizontalPadding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+  const verticalPadding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+  const availableWidth = Math.max(1, shell.clientWidth - horizontalPadding);
+  const availableHeight = Math.max(1, shell.clientHeight - verticalPadding);
+  const ratio = WIDTH / HEIGHT;
+
+  let width = availableWidth;
+  let height = width / ratio;
+  if (height > availableHeight) {
+    height = availableHeight;
+    width = height * ratio;
+  }
+
+  host.style.width = `${Math.floor(width)}px`;
+  host.style.height = `${Math.floor(height)}px`;
+}
+
 async function loadVersion() {
   try {
     const response = await fetch('./version.json', { cache: 'no-store' });
@@ -182,7 +205,7 @@ class ZoneScene extends Phaser.Scene {
     });
 
     this.bindGameEvents();
-    this.zoneSystem.build(0);
+    this.zoneSystem.build(0, 'left');
 
     this.scale.on('resize', () => visionSystem?.update());
     window.addEventListener('resize', () => visionSystem?.update());
@@ -203,7 +226,7 @@ class ZoneScene extends Phaser.Scene {
         const now = performance.now();
         if (now < this.transitionLockUntil) return;
         this.transitionLockUntil = now + 450;
-        this.zoneSystem.next();
+        this.zoneSystem.travel(item.target);
         visionSystem.update();
         return;
       }
@@ -283,6 +306,8 @@ class ZoneScene extends Phaser.Scene {
   }
 }
 
+fitPlayfield();
+window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
 loadVersion();
 initDevConsole({ execute: executeDevCode });
 
