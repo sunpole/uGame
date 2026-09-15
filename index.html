@@ -3,24 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.10</title>
-    <link rel="stylesheet" href="./src/style.css" />
+    <title>uGame v0.0.20</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.0.20" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
         <strong class="brand">uGame</strong>
-        <span class="version" id="app-version">v0.0.10</span>
+        <span class="version" id="app-version">v0.0.20</span>
       </header>
 
       <main class="game-shell">
-        <div id="game" aria-label="Игровая зона uGame"></div>
+        <div id="game">
+          <div class="game-hud">
+            <span id="player-state">Stamina 100</span>
+            <span id="resource-status">Осколки 0</span>
+            <span id="inventory-status">Инвентарь: пусто</span>
+            <span id="zone-rule-status"></span>
+          </div>
+          <div id="quest-status" class="quest-status">Загрузка квеста…</div>
+          <div id="interact-prompt" class="interact-prompt"></div>
+
+          <section id="dialogue-panel" class="dialogue-panel" hidden>
+            <strong id="dialogue-speaker" class="dialogue-speaker"></strong>
+            <p id="dialogue-text"></p>
+            <button id="dialogue-next" type="button">Дальше</button>
+          </section>
+
+          <div id="touch-controls" class="touch-controls">
+            <div class="touch-dpad">
+              <button type="button" data-control="up">↑</button>
+              <button type="button" data-control="left">←</button>
+              <button type="button" data-control="down">↓</button>
+              <button type="button" data-control="right">→</button>
+            </div>
+            <div class="touch-actions">
+              <button type="button" data-control="dash">Рывок</button>
+              <button type="button" data-control="action">Действие</button>
+            </div>
+          </div>
+        </div>
       </main>
 
       <footer class="bottombar">
         <span class="controls-help">
-          <span>Движение: WASD / стрелки</span>
-          <span class="arrow-indicator" aria-label="Индикатор клавиш-стрелок">
+          <span>WASD / стрелки · E действие · Shift рывок</span>
+          <span class="arrow-indicator">
             <kbd id="arrow-left" class="arrow-key">←</kbd>
             <kbd id="arrow-up" class="arrow-key">↑</kbd>
             <kbd id="arrow-down" class="arrow-key">↓</kbd>
@@ -30,25 +58,16 @@
 
         <form id="dev-console" class="dev-console" autocomplete="off">
           <label for="dev-code-input">DEV</label>
-          <input
-            id="dev-code-input"
-            name="dev-code"
-            type="text"
-            inputmode="numeric"
-            maxlength="4"
-            pattern="[0-9]{4}"
-            placeholder="0000"
-            aria-label="DEV код из четырёх цифр"
-          />
+          <input id="dev-code-input" name="dev-code" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="0000" />
           <button type="submit">OK</button>
-          <span id="dev-code-status" class="dev-code-status" aria-live="polite"></span>
+          <span id="dev-code-status" class="dev-code-status"></span>
         </form>
 
-        <span id="zone-status">Zone 1 · Найди выход справа</span>
+        <span id="zone-status">Zone 1</span>
       </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/main.js?v=0.0.20"></script>
   </body>
 </html>
