@@ -1,12 +1,14 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const HOST = '127.0.0.1';
+const HOST = '0.0.0.0';
 const PORT = 5173;
 const ROOT = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
+const LOCAL_URL = `http://127.0.0.1:${PORT}`;
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -17,8 +19,29 @@ const mime = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp'
+  '.webp': 'image/webp',
+  '.wav': 'audio/wav',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg'
 };
+
+function isPrivateIPv4(address) {
+  if (/^10\./.test(address)) return true;
+  if (/^192\.168\./.test(address)) return true;
+  const match = address.match(/^172\.(\d+)\./);
+  return Boolean(match && Number(match[1]) >= 16 && Number(match[1]) <= 31);
+}
+
+function getLanUrls() {
+  const urls = [];
+  for (const entries of Object.values(os.networkInterfaces())) {
+    for (const entry of entries || []) {
+      if (entry.family !== 'IPv4' || entry.internal || !isPrivateIPv4(entry.address)) continue;
+      urls.push(`http://${entry.address}:${PORT}`);
+    }
+  }
+  return [...new Set(urls)];
+}
 
 function openBrowser(url) {
   let command;
@@ -43,7 +66,7 @@ function openBrowser(url) {
     });
     child.unref();
   } catch {
-    // The URL is printed below if automatic opening is unavailable.
+    // URLs are printed below if automatic opening is unavailable.
   }
 }
 
@@ -56,7 +79,7 @@ const server = http.createServer((req, res) => {
 
   let pathname;
   try {
-    pathname = decodeURIComponent(new URL(req.url, `http://${HOST}`).pathname);
+    pathname = decodeURIComponent(new URL(req.url, LOCAL_URL).pathname);
   } catch {
     res.writeHead(400);
     res.end('Bad Request');
@@ -94,8 +117,18 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  const url = `http://${HOST}:${PORT}`;
-  console.log(`uGame v0.0.1: ${url}`);
+  console.log(`uGame local: ${LOCAL_URL}`);
+
+  const lanUrls = getLanUrls();
+  if (lanUrls.length) {
+    console.log('uGame Wi-Fi / LAN:');
+    for (const url of lanUrls) console.log(`  ${url}`);
+    console.log('Open one of these addresses on another device connected to the same local network.');
+  } else {
+    console.log('No private IPv4 LAN address was detected.');
+  }
+
+  console.log('If Windows Firewall asks, allow Node.js on Private networks only.');
   console.log('Press Ctrl+C to stop.');
-  openBrowser(url);
+  openBrowser(LOCAL_URL);
 });
