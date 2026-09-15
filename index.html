@@ -3,13 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.1</title>
+    <title>uGame v0.0.2</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <main id="app">
-      <div id="game"></div>
-    </main>
+    <div id="app">
+      <header class="topbar">
+        <strong class="brand">uGame</strong>
+        <span class="version">v0.0.2</span>
+      </header>
+
+      <main class="game-shell">
+        <div id="game" aria-label="Игровая зона uGame"></div>
+      </main>
+
+      <footer class="bottombar">
+        <span>Движение: WASD / стрелки</span>
+        <span id="zone-status">Zone 1 · Найди выход справа</span>
+      </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module" src="./src/main.js"></script>
