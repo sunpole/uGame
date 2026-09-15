@@ -164,17 +164,12 @@ body {
   max-height: 100%;
 }
 
-.darkness-overlay {
+.vision-overlay {
   position: absolute;
   z-index: 2;
+  display: block;
   pointer-events: none;
-  background: radial-gradient(
-    circle var(--light-radius, 120px) at var(--light-x, 50%) var(--light-y, 50%),
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0) 74%,
-    rgba(0, 0, 0, 0.55) 88%,
-    rgba(0, 0, 0, 1) 100%
-  );
+  overflow: visible;
 }
 
 @media (max-width: 900px) {
