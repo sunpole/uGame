@@ -16,7 +16,7 @@ function showStatus(element, text, state) {
   element.dataset.state = state;
 }
 
-export function initDevConsole() {
+export function initDevConsole({ execute } = {}) {
   const form = document.querySelector('#dev-console');
   const input = document.querySelector('#dev-code-input');
   const status = document.querySelector('#dev-code-status');
@@ -39,6 +39,13 @@ export function initDevConsole() {
     if (code === '9999') {
       window.open('https://github.com/sunpole/uGame/blob/main/docs/DEV-CODES.md', '_blank');
       showStatus(status, '9999 · справочник открыт', 'ok');
+      input.select();
+      return;
+    }
+
+    const result = execute?.(code);
+    if (result?.handled) {
+      showStatus(status, result.message || `${code} · выполнено`, result.state || 'ok');
       input.select();
       return;
     }
