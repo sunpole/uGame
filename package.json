@@ -1,6 +1,6 @@
 {
   "name": "ugame",
-  "version": "0.0.10",
+  "version": "0.0.20",
   "private": true,
   "type": "module",
   "scripts": {
