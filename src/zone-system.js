@@ -2,8 +2,13 @@ const ZONES = [
   {
     id: 1,
     name: 'Zone 1',
-    spawn: { x: 96, y: 270 },
+    defaultEntry: 'left',
+    entries: {
+      left: { x: 96, y: 270 },
+      right: { x: 864, y: 270 }
+    },
     exitSide: 'right',
+    exitTarget: { zoneId: 2, entry: 'left' },
     rules: {
       speedMultiplier: 1,
       vision: {}
@@ -50,8 +55,13 @@ const ZONES = [
   {
     id: 2,
     name: 'Zone 2',
-    spawn: { x: 864, y: 270 },
+    defaultEntry: 'left',
+    entries: {
+      left: { x: 96, y: 270 },
+      right: { x: 864, y: 270 }
+    },
     exitSide: 'left',
+    exitTarget: { zoneId: 1, entry: 'right' },
     rules: {
       speedMultiplier: 0.86,
       vision: { darkness: 0.9 }
@@ -92,13 +102,18 @@ export class ZoneSystem {
     this.index = 0;
     this.objects = [];
     this.walls = [];
+    this.entrySide = null;
   }
 
   get current() {
     return ZONES[this.index];
   }
 
-  build(index = this.index) {
+  findIndexById(zoneId) {
+    return ZONES.findIndex((zone) => zone.id === zoneId);
+  }
+
+  build(index = this.index, entrySide = null) {
     const previous = this.current;
     if (this.objects.length || this.interactableSystem?.items?.length) {
       this.eventSystem?.emit('zone:leave', { zone: previous });
@@ -127,21 +142,33 @@ export class ZoneSystem {
       this.makeWall(wall.x, wall.y, wall.width, wall.height);
     }
 
-    const portal = this.portalDefinition(zone.exitSide);
+    const portal = this.portalDefinition(zone.exitSide, zone.exitTarget);
     this.interactableSystem?.load([...(zone.interactables || []), portal]);
 
-    this.player.setPosition(zone.spawn.x, zone.spawn.y);
-    this.onStatus?.(`${zone.name} · выход ${zone.exitSide === 'right' ? 'справа' : 'слева'}`);
+    const resolvedEntry = zone.entries?.[entrySide] ? entrySide : zone.defaultEntry;
+    const spawn = zone.entries?.[resolvedEntry] || { x: 96, y: this.height / 2 };
+    this.entrySide = resolvedEntry;
+    this.player.setPosition(spawn.x, spawn.y);
+
+    const entryLabel = resolvedEntry === 'right' ? 'справа' : 'слева';
+    const exitLabel = zone.exitSide === 'right' ? 'справа' : 'слева';
+    this.onStatus?.(`${zone.name} · вход ${entryLabel} · выход ${exitLabel}`);
     this.onZoneChange?.(zone);
-    this.eventSystem?.emit('zone:enter', { zone });
+    this.eventSystem?.emit('zone:enter', { zone, entry: resolvedEntry });
     return zone;
+  }
+
+  travel(target = {}) {
+    const targetIndex = this.findIndexById(target.zoneId);
+    if (targetIndex < 0) return this.current;
+    return this.build(targetIndex, target.entry || null);
   }
 
   next() {
     return this.build(this.index + 1);
   }
 
-  portalDefinition(side) {
+  portalDefinition(side, target) {
     const isRight = side === 'right';
     return {
       id: `portal-zone-${this.current.id}`,
@@ -155,7 +182,7 @@ export class ZoneSystem {
       labelY: this.height / 2,
       label: isRight ? 'ВЫХОД →' : '← ВЫХОД',
       sound: 'portal',
-      target: 'next'
+      target
     };
   }
 
