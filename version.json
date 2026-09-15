@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "stage": "prototype",
   "updated": "2026-09-15",
-  "summary": "Modular ZoneSystem with two playable zones"
+  "summary": "ClassSystem presets connected to VisionSystem"
 }
