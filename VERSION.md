@@ -1,8 +1,15 @@
 # uGame versions
 
-Current version: **0.0.9**
+Current version: **0.0.10**
 
 `version.json` is the machine-readable project version. `package.json` mirrors the same version for tooling. This file is the human-readable change history.
+
+## 0.0.10 — DEV focus fix + arrow indicator
+
+- Fixed keyboard control after entering DEV codes: successful/reserved commands now release focus from the DEV input back to the game.
+- Added a live footer indicator for the physical arrow keys `← ↑ ↓ →`.
+- Each arrow lights while that arrow key is held, making it easy to verify whether the game receives arrow-key input.
+- WASD movement remains unchanged.
 
 ## 0.0.9 — ClassSystem + Vision profiles
 
