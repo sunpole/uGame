@@ -1,5 +1,6 @@
 import { initDevConsole } from './dev-console.js';
 import { VisionSystem } from './vision-system.js';
+import { ZoneSystem } from './zone-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -28,44 +29,26 @@ async function loadVersion() {
 class ZoneScene extends Phaser.Scene {
   constructor() {
     super('zone');
-    this.walls = [];
-    this.exitReached = false;
+    this.transitionLockUntil = 0;
   }
 
   create() {
     this.cameras.main.setBackgroundColor('#0b0d10');
     this.statusElement = document.querySelector('#zone-status');
     this.gameElement = document.querySelector('#game');
-    this.setStatus('Zone 1 · Найди выход справа');
 
-    this.makeWall(WIDTH / 2, 6, WIDTH, 12);
-    this.makeWall(WIDTH / 2, HEIGHT - 6, WIDTH, 12);
-    this.makeWall(6, HEIGHT / 2, 12, HEIGHT);
-    this.makeWall(WIDTH - 6, 105, 12, 210);
-    this.makeWall(WIDTH - 6, 435, 12, 210);
+    this.player = this.add
+      .rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7)
+      .setDepth(10);
 
-    this.makeWall(360, 175, 230, 28);
-    this.makeWall(520, 360, 270, 28);
-    this.makeWall(720, 265, 28, 170);
-
-    this.exitGlow = this.add.rectangle(WIDTH - 28, HEIGHT / 2, 44, 126, 0x56d364, 0.18);
-    this.exit = this.add.rectangle(WIDTH - 22, HEIGHT / 2, 28, 110, 0x2ea043, 1);
-    this.add.text(WIDTH - 82, HEIGHT / 2, 'ВЫХОД →', {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '16px',
-      fontStyle: 'bold',
-      color: '#9ff0ad'
-    }).setOrigin(0.5);
-
-    this.tweens.add({
-      targets: this.exitGlow,
-      alpha: { from: 0.22, to: 0.62 },
-      duration: 900,
-      yoyo: true,
-      repeat: -1
+    this.zoneSystem = new ZoneSystem({
+      scene: this,
+      width: WIDTH,
+      height: HEIGHT,
+      player: this.player,
+      onStatus: (text) => this.setStatus(text)
     });
-
-    this.player = this.add.rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7);
+    this.zoneSystem.build(0);
 
     visionSystem = new VisionSystem({
       host: this.gameElement,
@@ -92,12 +75,7 @@ class ZoneScene extends Phaser.Scene {
     if (this.statusElement) this.statusElement.textContent = text;
   }
 
-  makeWall(x, y, width, height) {
-    this.add.rectangle(x, y, width, height, 0x30363d);
-    this.walls.push({ x, y, width, height });
-  }
-
-  update(_time, delta) {
+  update(time, delta) {
     let dx = 0;
     let dy = 0;
 
@@ -118,12 +96,14 @@ class ZoneScene extends Phaser.Scene {
     this.tryMove(0, dy * distance);
     visionSystem?.update();
 
-    if (!this.exitReached && this.overlaps(this.playerBounds(), this.objectBounds(this.exit))) {
-      this.exitReached = true;
-      this.setStatus('Zone 1 · Выход найден');
-      this.exit.setFillStyle(0x56d364, 1);
-      this.exitGlow.setAlpha(0.75);
-      this.tweens.killTweensOf(this.exitGlow);
+    if (
+      time >= this.transitionLockUntil &&
+      this.zoneSystem.exit &&
+      this.overlaps(this.playerBounds(), this.objectBounds(this.zoneSystem.exit))
+    ) {
+      this.transitionLockUntil = time + 500;
+      this.zoneSystem.next();
+      visionSystem?.update();
     }
   }
 
@@ -135,7 +115,7 @@ class ZoneScene extends Phaser.Scene {
     const bounds = this.playerBounds(nextX, nextY);
 
     if (bounds.left < 0 || bounds.right > WIDTH || bounds.top < 0 || bounds.bottom > HEIGHT) return;
-    if (this.walls.some((wall) => this.overlaps(bounds, this.objectBounds(wall)))) return;
+    if (this.zoneSystem.walls.some((wall) => this.overlaps(bounds, this.objectBounds(wall)))) return;
 
     this.player.setPosition(nextX, nextY);
   }
