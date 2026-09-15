@@ -1,25 +1,103 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
   background: #050608;
   color: #f2f4f7;
   font-family: Arial, sans-serif;
 }
 
 body {
-  min-height: 100vh;
   overflow: hidden;
 }
 
 #app {
   width: 100vw;
   height: 100vh;
+  display: grid;
+  grid-template-rows: 48px minmax(0, 1fr) 42px;
+  background: #050608;
 }
 
-#game,
-#game canvas {
+.topbar,
+.bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 18px;
+  background: #0a0c0f;
+  border-color: #23272f;
+  border-style: solid;
+  border-width: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.topbar {
+  border-bottom-width: 1px;
+}
+
+.bottombar {
+  border-top-width: 1px;
+  color: #aeb7c2;
+  font-size: 13px;
+}
+
+.brand {
+  font-size: 18px;
+  letter-spacing: 0.03em;
+}
+
+.version {
+  color: #7d8793;
+  font-size: 12px;
+}
+
+#zone-status {
+  color: #7ee787;
+  text-align: right;
+}
+
+.game-shell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #07090b;
+}
+
+#game {
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game canvas {
   display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 640px) {
+  #app {
+    grid-template-rows: 42px minmax(0, 1fr) 50px;
+  }
+
+  .topbar,
+  .bottombar {
+    padding: 0 12px;
+  }
+
+  .bottombar {
+    font-size: 11px;
+  }
 }
