@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "stage": "foundation-prototype",
   "updated": "2026-09-15",
-  "summary": "Vision overlay and Phaser canvas locked to the exact playfield bounds"
+  "summary": "Character idle pose straightened with movement-driven forward lean"
 }
