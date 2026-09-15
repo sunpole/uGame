@@ -16,17 +16,19 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.9
+## Game prototype v0.0.10
 
 The playable prototype has two top-down zones, a square player, WASD/arrow movement,
 collision walls, real zone transitions, a modular `VisionSystem`, `ZoneSystem` and
 `ClassSystem`.
 
 The footer contains a compact four-digit DEV console. `1xxx` Vision codes control
-visibility directly. `7xxx` Class codes now select test classes that apply Vision
-profiles through `VisionSystem` instead of duplicating the visibility mechanics.
-This is the first working example of one gameplay module affecting another module.
-Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+visibility directly. `7xxx` Class codes select test classes that apply Vision profiles
+through `VisionSystem`. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+
+After any valid DEV command, focus is released from the DEV input so arrow-key movement
+works immediately again. The footer also shows a live `← ↑ ↓ →` indicator; each key
+lights only while that physical arrow key is being received by the game.
 
 Test classes:
 
