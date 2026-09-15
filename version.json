@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.20",
+  "version": "0.0.24",
   "stage": "foundation-prototype",
   "updated": "2026-09-15",
-  "summary": "Foundation series: interactables, controller, character, audio, events, zone rules, resources, inventory, quests and mobile controls"
+  "summary": "Linked portals, exact playfield vision, quest/HUD polish and LAN testing server"
 }
