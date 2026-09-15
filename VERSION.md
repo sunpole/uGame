@@ -1,8 +1,19 @@
 # uGame versions
 
-Current version: **0.0.8**
+Current version: **0.0.9**
 
 `version.json` is the machine-readable project version. `package.json` mirrors the same version for tooling. This file is the human-readable change history.
+
+## 0.0.9 — ClassSystem + Vision profiles
+
+- Added the separate `ClassSystem` module.
+- Added three test classes selected through `7xxx` DEV codes.
+- Class profiles apply Vision settings through the public `VisionSystem` profile API instead of duplicating visibility logic.
+- `7001` selects Странник: circle, radius 165, darkness 100%.
+- `7002` selects Разведчик: circle, radius 235, darkness 90%.
+- `7003` selects Следопыт: cone, radius 220, darkness 100%.
+- `7099` reports the current class.
+- Direct `1xxx` Vision commands can still override Vision values temporarily; selecting a class again reapplies its complete profile.
 
 ## 0.0.8 — ZoneSystem + real zone transitions
 
