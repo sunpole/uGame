@@ -33,6 +33,10 @@ export class VisionSystem {
     this.svg = svgElement('svg');
     this.svg.setAttribute('class', 'vision-overlay');
     this.svg.setAttribute('aria-hidden', 'true');
+    this.svg.setAttribute('x', '0');
+    this.svg.setAttribute('y', '0');
+    this.svg.setAttribute('width', '100%');
+    this.svg.setAttribute('height', '100%');
     this.svg.setAttribute('viewBox', `0 0 ${this.worldWidth} ${this.worldHeight}`);
     this.svg.setAttribute('preserveAspectRatio', 'none');
 
