@@ -4,10 +4,47 @@ const ZONES = [
     name: 'Zone 1',
     spawn: { x: 96, y: 270 },
     exitSide: 'right',
+    rules: {
+      speedMultiplier: 1,
+      vision: {}
+    },
     walls: [
       { x: 360, y: 175, width: 230, height: 28 },
       { x: 520, y: 360, width: 270, height: 28 },
       { x: 720, y: 265, width: 28, height: 170 }
+    ],
+    interactables: [
+      {
+        id: 'guide',
+        type: 'npc',
+        x: 150,
+        y: 120,
+        label: 'Проводник',
+        prompt: 'Поговорить',
+        dialogueId: 'guide_intro'
+      },
+      {
+        id: 'shard-node',
+        type: 'resource',
+        x: 585,
+        y: 245,
+        label: 'Осколок',
+        prompt: 'Взять осколок',
+        resourceId: 'shard',
+        amount: 1,
+        once: true,
+        sound: 'resource'
+      },
+      {
+        id: 'starter-chest',
+        type: 'chest',
+        x: 830,
+        y: 420,
+        label: 'Старый сундук',
+        prompt: 'Открыть сундук',
+        once: true,
+        sound: 'chest'
+      }
     ]
   },
   {
@@ -15,27 +52,46 @@ const ZONES = [
     name: 'Zone 2',
     spawn: { x: 864, y: 270 },
     exitSide: 'left',
+    rules: {
+      speedMultiplier: 0.86,
+      vision: { darkness: 0.9 }
+    },
     walls: [
       { x: 710, y: 145, width: 260, height: 28 },
       { x: 515, y: 300, width: 28, height: 230 },
       { x: 285, y: 395, width: 300, height: 28 },
       { x: 250, y: 180, width: 180, height: 28 }
+    ],
+    interactables: [
+      {
+        id: 'zone2-shard',
+        type: 'resource',
+        x: 690,
+        y: 410,
+        label: 'Осколок',
+        prompt: 'Взять осколок',
+        resourceId: 'shard',
+        amount: 1,
+        once: true,
+        sound: 'resource'
+      }
     ]
   }
 ];
 
 export class ZoneSystem {
-  constructor({ scene, width, height, player, onStatus }) {
+  constructor({ scene, width, height, player, interactableSystem, eventSystem, onStatus, onZoneChange }) {
     this.scene = scene;
     this.width = width;
     this.height = height;
     this.player = player;
+    this.interactableSystem = interactableSystem;
+    this.eventSystem = eventSystem;
     this.onStatus = onStatus;
+    this.onZoneChange = onZoneChange;
     this.index = 0;
     this.objects = [];
     this.walls = [];
-    this.exit = null;
-    this.exitGlow = null;
   }
 
   get current() {
@@ -43,6 +99,11 @@ export class ZoneSystem {
   }
 
   build(index = this.index) {
+    const previous = this.current;
+    if (this.objects.length || this.interactableSystem?.items?.length) {
+      this.eventSystem?.emit('zone:leave', { zone: previous });
+    }
+
     this.clear();
     this.index = ((index % ZONES.length) + ZONES.length) % ZONES.length;
 
@@ -66,14 +127,36 @@ export class ZoneSystem {
       this.makeWall(wall.x, wall.y, wall.width, wall.height);
     }
 
-    this.makeExit(zone.exitSide);
+    const portal = this.portalDefinition(zone.exitSide);
+    this.interactableSystem?.load([...(zone.interactables || []), portal]);
+
     this.player.setPosition(zone.spawn.x, zone.spawn.y);
-    this.onStatus?.(`${zone.name} · Найди выход ${zone.exitSide === 'right' ? 'справа' : 'слева'}`);
+    this.onStatus?.(`${zone.name} · выход ${zone.exitSide === 'right' ? 'справа' : 'слева'}`);
+    this.onZoneChange?.(zone);
+    this.eventSystem?.emit('zone:enter', { zone });
+    return zone;
   }
 
   next() {
-    this.build(this.index + 1);
-    return this.current;
+    return this.build(this.index + 1);
+  }
+
+  portalDefinition(side) {
+    const isRight = side === 'right';
+    return {
+      id: `portal-zone-${this.current.id}`,
+      type: 'portal',
+      trigger: 'auto',
+      x: isRight ? this.width - 22 : 22,
+      y: this.height / 2,
+      width: 28,
+      height: 110,
+      labelX: isRight ? this.width - 82 : 82,
+      labelY: this.height / 2,
+      label: isRight ? 'ВЫХОД →' : '← ВЫХОД',
+      sound: 'portal',
+      target: 'next'
+    };
   }
 
   makeWall(x, y, width, height) {
@@ -82,39 +165,10 @@ export class ZoneSystem {
     this.walls.push({ x, y, width, height });
   }
 
-  makeExit(side) {
-    const isRight = side === 'right';
-    const x = isRight ? this.width - 22 : 22;
-    const glowX = isRight ? this.width - 28 : 28;
-    const labelX = isRight ? this.width - 82 : 82;
-    const label = isRight ? 'ВЫХОД →' : '← ВЫХОД';
-
-    this.exitGlow = this.scene.add.rectangle(glowX, this.height / 2, 44, 126, 0x56d364, 0.18);
-    this.exit = this.scene.add.rectangle(x, this.height / 2, 28, 110, 0x2ea043, 1);
-    const text = this.scene.add.text(labelX, this.height / 2, label, {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '16px',
-      fontStyle: 'bold',
-      color: '#9ff0ad'
-    }).setOrigin(0.5);
-
-    this.objects.push(this.exitGlow, this.exit, text);
-
-    this.scene.tweens.add({
-      targets: this.exitGlow,
-      alpha: { from: 0.22, to: 0.62 },
-      duration: 900,
-      yoyo: true,
-      repeat: -1
-    });
-  }
-
   clear() {
-    if (this.exitGlow) this.scene.tweens.killTweensOf(this.exitGlow);
     for (const object of this.objects) object.destroy();
     this.objects = [];
     this.walls = [];
-    this.exit = null;
-    this.exitGlow = null;
+    this.interactableSystem?.clear();
   }
 }
