@@ -21,6 +21,7 @@ export class VisionSystem {
     this.mode = 'circle';
     this.darkness = 1;
     this.direction = { x: 1, y: 0 };
+    this.zoneOverride = {};
 
     this.createOverlay();
     this.update();
@@ -74,6 +75,23 @@ export class VisionSystem {
     if (Number.isFinite(radius)) this.radius = clamp(radius, 60, 420);
     if (Number.isFinite(darkness)) this.darkness = clamp(darkness, 0, 1);
     this.update();
+  }
+
+  setZoneOverride(profile = {}) {
+    const next = {};
+    if (['circle', 'cone', 'full', 'none'].includes(profile.mode)) next.mode = profile.mode;
+    if (Number.isFinite(profile.radius)) next.radius = clamp(profile.radius, 60, 420);
+    if (Number.isFinite(profile.darkness)) next.darkness = clamp(profile.darkness, 0, 1);
+    this.zoneOverride = next;
+    this.update();
+  }
+
+  getEffectiveProfile() {
+    return {
+      mode: this.zoneOverride.mode ?? this.mode,
+      radius: this.zoneOverride.radius ?? this.radius,
+      darkness: this.zoneOverride.darkness ?? this.darkness
+    };
   }
 
   setMode(mode) {
@@ -136,6 +154,7 @@ export class VisionSystem {
     const hostRect = this.host.getBoundingClientRect();
     if (!canvasRect.width || !canvasRect.height) return;
 
+    const effective = this.getEffectiveProfile();
     const width = canvasRect.width;
     const height = canvasRect.height;
     const left = canvasRect.left - hostRect.left;
@@ -145,7 +164,7 @@ export class VisionSystem {
     const scale = Math.min(scaleX, scaleY);
     const x = this.player.x * scaleX;
     const y = this.player.y * scaleY;
-    const radius = this.radius * scale;
+    const radius = effective.radius * scale;
 
     Object.assign(this.svg.style, {
       left: `${left}px`,
@@ -165,28 +184,28 @@ export class VisionSystem {
       rect.setAttribute('height', String(height));
     }
 
-    if (this.mode === 'full') {
+    if (effective.mode === 'full') {
       this.svg.style.display = 'none';
       return;
     }
 
     this.svg.style.display = 'block';
 
-    if (this.mode === 'none') {
+    if (effective.mode === 'none') {
       this.darknessRect.removeAttribute('mask');
       this.darknessRect.setAttribute('fill-opacity', '1');
       return;
     }
 
     this.darknessRect.setAttribute('mask', `url(#${this.maskId})`);
-    this.darknessRect.setAttribute('fill-opacity', String(this.darkness));
+    this.darknessRect.setAttribute('fill-opacity', String(effective.darkness));
 
-    const showCircle = this.mode === 'circle';
+    const showCircle = effective.mode === 'circle';
     this.circleHole.setAttribute('cx', String(x));
     this.circleHole.setAttribute('cy', String(y));
     this.circleHole.setAttribute('r', showCircle ? String(radius) : '0');
 
-    if (this.mode === 'cone') {
+    if (effective.mode === 'cone') {
       const angle = Math.atan2(this.direction.y, this.direction.x);
       const halfAngle = Math.PI / 6;
       const distance = radius * 1.75;
