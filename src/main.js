@@ -2,7 +2,7 @@ const WIDTH = 960;
 const HEIGHT = 540;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
-const VISIBILITY_RADIUS = 150;
+const VISIBILITY_RADIUS = 165;
 
 class ZoneScene extends Phaser.Scene {
   constructor() {
@@ -14,6 +14,7 @@ class ZoneScene extends Phaser.Scene {
   create() {
     this.cameras.main.setBackgroundColor('#0b0d10');
     this.statusElement = document.querySelector('#zone-status');
+    this.gameElement = document.querySelector('#game');
     this.setStatus('Zone 1 · Найди выход справа');
 
     this.makeWall(WIDTH / 2, 6, WIDTH, 12);
@@ -45,18 +46,13 @@ class ZoneScene extends Phaser.Scene {
 
     this.player = this.add.rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7);
 
-    this.visibilityShape = this.make.graphics({ add: false });
-    this.visibilityShape.fillStyle(0xffffff, 1);
-    this.visibilityShape.fillCircle(0, 0, VISIBILITY_RADIUS);
-    this.visibilityShape.setPosition(this.player.x, this.player.y);
+    this.darknessElement = document.createElement('div');
+    this.darknessElement.className = 'darkness-overlay';
+    this.darknessElement.setAttribute('aria-hidden', 'true');
+    this.gameElement?.appendChild(this.darknessElement);
+    this.updateDarkness();
 
-    this.darkness = this.add
-      .rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 0x000000, 0.92)
-      .setDepth(100);
-
-    this.visibilityMask = this.visibilityShape.createGeometryMask();
-    this.visibilityMask.setInvertAlpha(true);
-    this.darkness.setMask(this.visibilityMask);
+    this.scale.on('resize', () => this.updateDarkness());
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys = this.input.keyboard.addKeys({
@@ -93,7 +89,7 @@ class ZoneScene extends Phaser.Scene {
     const distance = SPEED * (delta / 1000);
     this.tryMove(dx * distance, 0);
     this.tryMove(0, dy * distance);
-    this.visibilityShape.setPosition(this.player.x, this.player.y);
+    this.updateDarkness();
 
     if (!this.exitReached && this.overlaps(this.playerBounds(), this.objectBounds(this.exit))) {
       this.exitReached = true;
@@ -102,6 +98,31 @@ class ZoneScene extends Phaser.Scene {
       this.exitGlow.setAlpha(0.75);
       this.tweens.killTweensOf(this.exitGlow);
     }
+  }
+
+  updateDarkness() {
+    if (!this.darknessElement || !this.gameElement || !this.player) return;
+
+    const canvas = this.game.canvas;
+    const canvasRect = canvas.getBoundingClientRect();
+    const hostRect = this.gameElement.getBoundingClientRect();
+    if (!canvasRect.width || !canvasRect.height) return;
+
+    const left = canvasRect.left - hostRect.left;
+    const top = canvasRect.top - hostRect.top;
+    const lightX = (this.player.x / WIDTH) * canvasRect.width;
+    const lightY = (this.player.y / HEIGHT) * canvasRect.height;
+    const radius = (VISIBILITY_RADIUS / WIDTH) * canvasRect.width;
+
+    Object.assign(this.darknessElement.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${canvasRect.width}px`,
+      height: `${canvasRect.height}px`,
+      '--light-x': `${lightX}px`,
+      '--light-y': `${lightY}px`,
+      '--light-radius': `${radius}px`
+    });
   }
 
   tryMove(dx, dy) {
