@@ -16,15 +16,13 @@ body {
   width: 100vw;
   height: 100vh;
   display: grid;
-  grid-template-rows: 48px minmax(0, 1fr) 42px;
+  grid-template-rows: 48px minmax(0, 1fr) 46px;
   background: #050608;
 }
 
 .topbar,
 .bottombar {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 0 18px;
   background: #0a0c0f;
@@ -36,10 +34,14 @@ body {
 }
 
 .topbar {
+  display: flex;
+  justify-content: space-between;
   border-bottom-width: 1px;
 }
 
 .bottombar {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto minmax(180px, 1fr);
   border-top-width: 1px;
   color: #aeb7c2;
   font-size: 13px;
@@ -55,9 +57,81 @@ body {
   font-size: 12px;
 }
 
+.controls-help {
+  white-space: nowrap;
+}
+
 #zone-status {
   color: #7ee787;
   text-align: right;
+  white-space: nowrap;
+}
+
+.dev-console {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dev-console label {
+  color: #7d8793;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.dev-console input {
+  width: 54px;
+  height: 24px;
+  box-sizing: border-box;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  outline: none;
+  background: #050608;
+  color: #f2f4f7;
+  font: 12px/1 monospace;
+  text-align: center;
+}
+
+.dev-console input:focus {
+  border-color: #58a6ff;
+}
+
+.dev-console button {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #161b22;
+  color: #c9d1d9;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.dev-console button:hover {
+  background: #21262d;
+}
+
+.dev-code-status {
+  max-width: 230px;
+  overflow: hidden;
+  color: #7d8793;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dev-code-status[data-state='ok'] {
+  color: #7ee787;
+}
+
+.dev-code-status[data-state='error'] {
+  color: #ff7b72;
+}
+
+.dev-code-status[data-state='reserved'] {
+  color: #d2a8ff;
 }
 
 .game-shell {
@@ -103,9 +177,20 @@ body {
   );
 }
 
+@media (max-width: 900px) {
+  .bottombar {
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+  }
+
+  .dev-code-status {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   #app {
-    grid-template-rows: 42px minmax(0, 1fr) 50px;
+    grid-template-rows: 42px minmax(0, 1fr) 52px;
   }
 
   .topbar,
@@ -114,6 +199,15 @@ body {
   }
 
   .bottombar {
+    grid-template-columns: 1fr auto;
     font-size: 11px;
+  }
+
+  .controls-help {
+    display: none;
+  }
+
+  .dev-console {
+    justify-self: start;
   }
 }
