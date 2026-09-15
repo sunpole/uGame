@@ -28,20 +28,31 @@ export class VisionSystem {
   }
 
   createOverlay() {
-    if (!this.host || !this.canvas) return;
+    if (!this.host) return;
 
     this.svg = svgElement('svg');
     this.svg.setAttribute('class', 'vision-overlay');
     this.svg.setAttribute('aria-hidden', 'true');
+    this.svg.setAttribute('viewBox', `0 0 ${this.worldWidth} ${this.worldHeight}`);
+    this.svg.setAttribute('preserveAspectRatio', 'none');
 
     const defs = svgElement('defs');
     this.mask = svgElement('mask');
     this.maskId = `vision-mask-${Math.random().toString(36).slice(2)}`;
     this.mask.setAttribute('id', this.maskId);
     this.mask.setAttribute('maskUnits', 'userSpaceOnUse');
+    this.mask.setAttribute('maskContentUnits', 'userSpaceOnUse');
+    this.mask.setAttribute('x', '0');
+    this.mask.setAttribute('y', '0');
+    this.mask.setAttribute('width', String(this.worldWidth));
+    this.mask.setAttribute('height', String(this.worldHeight));
     this.mask.style.maskType = 'luminance';
 
     this.maskBase = svgElement('rect');
+    this.maskBase.setAttribute('x', '0');
+    this.maskBase.setAttribute('y', '0');
+    this.maskBase.setAttribute('width', String(this.worldWidth));
+    this.maskBase.setAttribute('height', String(this.worldHeight));
     this.maskBase.setAttribute('fill', 'white');
 
     this.circleHole = svgElement('circle');
@@ -57,6 +68,10 @@ export class VisionSystem {
     defs.appendChild(this.mask);
 
     this.darknessRect = svgElement('rect');
+    this.darknessRect.setAttribute('x', '0');
+    this.darknessRect.setAttribute('y', '0');
+    this.darknessRect.setAttribute('width', String(this.worldWidth));
+    this.darknessRect.setAttribute('height', String(this.worldHeight));
     this.darknessRect.setAttribute('fill', 'black');
     this.darknessRect.setAttribute('mask', `url(#${this.maskId})`);
 
@@ -148,41 +163,12 @@ export class VisionSystem {
   }
 
   update() {
-    if (!this.svg || !this.darknessRect || !this.player || !this.host || !this.canvas) return;
-
-    const canvasRect = this.canvas.getBoundingClientRect();
-    const hostRect = this.host.getBoundingClientRect();
-    if (!canvasRect.width || !canvasRect.height) return;
+    if (!this.svg || !this.darknessRect || !this.player || !this.host) return;
 
     const effective = this.getEffectiveProfile();
-    const width = canvasRect.width;
-    const height = canvasRect.height;
-    const left = canvasRect.left - hostRect.left;
-    const top = canvasRect.top - hostRect.top;
-    const scaleX = width / this.worldWidth;
-    const scaleY = height / this.worldHeight;
-    const scale = Math.min(scaleX, scaleY);
-    const x = this.player.x * scaleX;
-    const y = this.player.y * scaleY;
-    const radius = effective.radius * scale;
-
-    Object.assign(this.svg.style, {
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${width}px`,
-      height: `${height}px`
-    });
-
-    this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-    this.mask.setAttribute('width', String(width));
-    this.mask.setAttribute('height', String(height));
-
-    for (const rect of [this.maskBase, this.darknessRect]) {
-      rect.setAttribute('x', '0');
-      rect.setAttribute('y', '0');
-      rect.setAttribute('width', String(width));
-      rect.setAttribute('height', String(height));
-    }
+    const x = this.player.x;
+    const y = this.player.y;
+    const radius = effective.radius;
 
     if (effective.mode === 'full') {
       this.svg.style.display = 'none';
@@ -219,7 +205,7 @@ export class VisionSystem {
       this.coneHole.setAttribute('points', `${x},${y} ${x1},${y1} ${x2},${y2}`);
       this.coneCore.setAttribute('cx', String(x));
       this.coneCore.setAttribute('cy', String(y));
-      this.coneCore.setAttribute('r', String(Math.min(radius * 0.34, 55 * scale)));
+      this.coneCore.setAttribute('r', String(Math.min(radius * 0.34, 55)));
     } else {
       this.coneHole.setAttribute('points', '0,0 0,0 0,0');
       this.coneCore.setAttribute('r', '0');
