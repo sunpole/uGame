@@ -10,13 +10,13 @@ DEV codes are four-digit test commands entered in the footer console. They are f
 | `2xxx` | Player |
 | `3xxx` | Movement |
 | `4xxx` | Combat |
-| `5xxx` | Items |
-| `6xxx` | World |
+| `5xxx` | Items / Inventory |
+| `6xxx` | World / Resources |
 | `7xxx` | Classes |
-| `8xxx` | Events |
+| `8xxx` | Events / Quests |
 | `9xxx` | Dev / Service |
 
-## Active Vision codes
+## Vision
 
 | Code | Action |
 |---|---|
@@ -31,9 +31,32 @@ DEV codes are four-digit test commands entered in the footer console. They are f
 | `1202` | Darkness outside visible area: 90% |
 | `1203` | Darkness outside visible area: 75% |
 
-The cone follows the last movement direction. Radius commands affect circle and cone modes. Darkness commands affect the hidden area while preserving the active visibility shape.
+Zone Vision rules are applied as an override layer. Direct Vision and Class codes still change the underlying player/class profile.
 
-## Active Class codes
+## Movement
+
+| Code | Action |
+|---|---|
+| `3001` | Refill dash stamina |
+| `3099` | Show current movement speed and stamina |
+
+Normal controls: WASD or arrows to move, `E` / Space to interact, Shift to dash.
+
+## Items / Inventory
+
+| Code | Action |
+|---|---|
+| `5001` | Add one `test-item` |
+| `5099` | Show inventory summary |
+
+## World / Resources
+
+| Code | Action |
+|---|---|
+| `6001` | Add one `shard` resource |
+| `6099` | Show shard count |
+
+## Classes
 
 | Code | Class | Test profile |
 |---|---|---|
@@ -42,13 +65,22 @@ The cone follows the last movement direction. Radius commands affect circle and 
 | `7003` | Следопыт | cone, radius 220, darkness 100% |
 | `7099` | Current class | Show the currently selected class |
 
-Selecting a class reapplies that class's Vision profile through `VisionSystem`. Direct `1xxx` Vision commands can then temporarily override individual Vision values for testing. Selecting a class again reapplies its complete profile.
+## Events / Quests
 
-## Dev / Service codes
+| Code | Action |
+|---|---|
+| `8001` | Restart the first quest and clear its recorded test signals |
+| `8099` | Show current quest status |
+
+## Dev / Service
 
 | Code | Action |
 |---|---|
 | `9999` | Open this DEV code reference |
+
+## Reserved
+
+`2xxx` Player and `4xxx` Combat remain reserved for later systems.
 
 ## Rules
 
