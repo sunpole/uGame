@@ -16,29 +16,33 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.10
+## Game prototype v0.0.20
 
-The playable prototype has two top-down zones, a square player, WASD/arrow movement,
-collision walls, real zone transitions, a modular `VisionSystem`, `ZoneSystem` and
-`ClassSystem`.
+uGame now has a modular foundation instead of putting gameplay into `main.js`.
+The current playable prototype includes:
 
-The footer contains a compact four-digit DEV console. `1xxx` Vision codes control
-visibility directly. `7xxx` Class codes select test classes that apply Vision profiles
-through `VisionSystem`. Code `9999` opens the full reference in `docs/DEV-CODES.md`.
+- two top-down zones with walls and real portal transitions;
+- modular Vision, Class, Zone, Player, Interactable, Event and Zone Rules systems;
+- a temporary layered top-down character with movement/facing animation;
+- WASD/arrow movement, Shift dash and stamina;
+- NPC, resource, chest and portal variants built on one Interactable system;
+- temporary procedural sounds routed through one Audio system;
+- resource counters and a small stack-based inventory;
+- JSON-driven dialogue and quest data with one test quest;
+- mobile touch controls for movement, action and dash;
+- the four-digit DEV console and live physical-arrow indicator.
 
-After any valid DEV command, focus is released from the DEV input so arrow-key movement
-works immediately again. The footer also shows a live `← ↑ ↓ →` indicator; each key
-lights only while that physical arrow key is being received by the game.
+The first quest is intentionally small: talk to the Guide, collect a shard and open
+the old chest. Its purpose is to prove that dialogue, interactables, resources,
+inventory and events can cooperate without being hard-coded into one system.
 
-Test classes:
+Zone 2 also demonstrates zone-specific rules: slower movement and a Vision darkness
+override. The selected class profile remains underneath the zone override.
 
-- `7001` — Странник: circle, radius 165, darkness 100%.
-- `7002` — Разведчик: circle, radius 235, darkness 90%.
-- `7003` — Следопыт: cone, radius 220, darkness 100%.
-- `7099` — show the current class.
-
-Direct `1xxx` Vision commands can temporarily override the active class profile for
-testing. Selecting a class again reapplies the class's complete Vision profile.
+`docs/CHARACTER-ASSET-GUIDE.md` describes the first authored character spritesheet/layer
+workflow. `docs/PREBY-DEPLOY.md` describes the intended static deployment to a dedicated
+`pre.by` development hostname. Hosting is prepared/documented but is not deployed by
+this repository itself yet.
 
 `version.json` is the machine-readable project version. `package.json` mirrors the
 same version for tooling. `VERSION.md` is the human-readable version history.
@@ -46,6 +50,15 @@ same version for tooling. `VERSION.md` is the human-readable version history.
 Option 4 runs the prototype through the local Node dev server. No npm package
 installation is required. Phaser is loaded by the browser from its CDN, so the
 prototype needs an internet connection while running.
+
+## DEV console
+
+Code `9999` opens `docs/DEV-CODES.md`. Active groups currently include Vision `1xxx`,
+Movement `3xxx`, Items/Inventory `5xxx`, World/Resources `6xxx`, Classes `7xxx` and
+Events/Quests `8xxx`. `2xxx` Player and `4xxx` Combat remain reserved.
+
+After a DEV command, focus is released from the DEV field so keyboard movement works
+immediately again.
 
 ## First update
 
