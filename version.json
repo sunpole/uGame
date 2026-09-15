@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "stage": "foundation-prototype",
   "updated": "2026-09-15",
-  "summary": "Stronger visual separation between upright idle posture and forward-leaning movement"
+  "summary": "Character head and torso centered at idle; forward lean appears only during movement"
 }
