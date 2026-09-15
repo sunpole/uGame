@@ -69,6 +69,13 @@ export class VisionSystem {
     this.direction = { x: dx / length, y: dy / length };
   }
 
+  applyProfile({ mode = this.mode, radius = this.radius, darkness = this.darkness } = {}) {
+    if (['circle', 'cone', 'full', 'none'].includes(mode)) this.mode = mode;
+    if (Number.isFinite(radius)) this.radius = clamp(radius, 60, 420);
+    if (Number.isFinite(darkness)) this.darkness = clamp(darkness, 0, 1);
+    this.update();
+  }
+
   setMode(mode) {
     if (!['circle', 'cone', 'full', 'none'].includes(mode)) return;
     this.mode = mode;
