@@ -8,6 +8,7 @@ export class QuestSystem {
     this.stepIndex = 0;
     this.completed = new Set();
     this.seenSignals = new Set();
+    this.lastCompletedTitle = '';
 
     this.eventSystem?.on('quest:signal', ({ key }) => this.signal(key));
   }
@@ -26,6 +27,7 @@ export class QuestSystem {
     if (resetSignals) this.seenSignals.clear();
     this.active = quest;
     this.stepIndex = 0;
+    this.lastCompletedTitle = '';
     this.eventSystem?.emit('quest:start', { id });
     this.advanceFromSeenSignals();
     this.notify();
@@ -66,6 +68,7 @@ export class QuestSystem {
     if (!this.active) return;
     const quest = this.active;
     this.completed.add(quest.id);
+    this.lastCompletedTitle = quest.title;
     this.active = null;
     this.stepIndex = 0;
     for (const reward of quest.rewards || []) this.grantReward?.(reward);
@@ -74,13 +77,24 @@ export class QuestSystem {
   }
 
   statusText() {
-    if (!this.active) return this.completed.size ? 'Квест завершён' : 'Нет активного квеста';
-    const step = this.active.steps?.[this.stepIndex];
-    return `${this.active.title}: ${step?.text || '...'}`;
+    if (!this.active) {
+      return this.lastCompletedTitle
+        ? `✓ ${this.lastCompletedTitle} · завершён`
+        : 'Квест · нет активного задания';
+    }
+
+    const steps = this.active.steps || [];
+    const step = steps[this.stepIndex];
+    const progress = `${Math.min(this.stepIndex + 1, steps.length)}/${steps.length}`;
+    return `Квест · ${this.active.title} · ${progress} — ${step?.text || '...'}`;
   }
 
   notify() {
-    this.onChange?.(this.statusText(), this.active);
+    this.onChange?.(this.statusText(), this.active, {
+      stepIndex: this.stepIndex,
+      stepCount: this.active?.steps?.length || 0,
+      completed: new Set(this.completed)
+    });
   }
 
   executeDevCode(code) {
@@ -88,9 +102,9 @@ export class QuestSystem {
       const first = Object.values(this.quests)[0];
       if (first) {
         this.completed.delete(first.id);
-        this.start(first.id, { resetSignals: true });
+        this.start(first.id);
       }
-      return { handled: true, message: '8001 · Квест перезапущен', state: 'ok' };
+      return { handled: true, message: '8001 · Квест восстановлен по уже выполненным действиям', state: 'ok' };
     }
     if (code === '8099') {
       return { handled: true, message: `8099 · ${this.statusText()}`, state: 'ok' };
