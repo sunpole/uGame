@@ -16,6 +16,11 @@ function showStatus(element, text, state) {
   element.dataset.state = state;
 }
 
+function releaseGameFocus(input, form) {
+  input.blur();
+  form.querySelector('button')?.blur();
+}
+
 export function initDevConsole({ execute } = {}) {
   const form = document.querySelector('#dev-console');
   const input = document.querySelector('#dev-code-input');
@@ -39,19 +44,19 @@ export function initDevConsole({ execute } = {}) {
     if (code === '9999') {
       window.open('https://github.com/sunpole/uGame/blob/main/docs/DEV-CODES.md', '_blank');
       showStatus(status, '9999 · справочник открыт', 'ok');
-      input.select();
+      releaseGameFocus(input, form);
       return;
     }
 
     const result = execute?.(code);
     if (result?.handled) {
       showStatus(status, result.message || `${code} · выполнено`, result.state || 'ok');
-      input.select();
+      releaseGameFocus(input, form);
       return;
     }
 
     const group = GROUPS[code[0]] || 'Unknown';
     showStatus(status, `${code} · ${group} · пока не активен`, 'reserved');
-    input.select();
+    releaseGameFocus(input, form);
   });
 }
