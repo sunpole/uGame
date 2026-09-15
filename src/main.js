@@ -47,6 +47,12 @@ class ZoneScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#0b0d10');
     this.statusElement = document.querySelector('#zone-status');
     this.gameElement = document.querySelector('#game');
+    this.arrowIndicators = {
+      left: document.querySelector('#arrow-left'),
+      up: document.querySelector('#arrow-up'),
+      down: document.querySelector('#arrow-down'),
+      right: document.querySelector('#arrow-right')
+    };
 
     this.player = this.add
       .rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7)
@@ -88,7 +94,23 @@ class ZoneScene extends Phaser.Scene {
     if (this.statusElement) this.statusElement.textContent = text;
   }
 
+  updateArrowIndicator() {
+    const states = {
+      left: this.cursors.left.isDown,
+      up: this.cursors.up.isDown,
+      down: this.cursors.down.isDown,
+      right: this.cursors.right.isDown
+    };
+
+    for (const [direction, isDown] of Object.entries(states)) {
+      const element = this.arrowIndicators[direction];
+      if (element) element.dataset.active = isDown ? 'true' : 'false';
+    }
+  }
+
   update(time, delta) {
+    this.updateArrowIndicator();
+
     let dx = 0;
     let dy = 0;
 
