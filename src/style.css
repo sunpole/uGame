@@ -97,9 +97,9 @@ body {
   background: radial-gradient(
     circle var(--light-radius, 120px) at var(--light-x, 50%) var(--light-y, 50%),
     rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.03) 58%,
-    rgba(0, 0, 0, 0.34) 78%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0, 0, 0, 0) 74%,
+    rgba(0, 0, 0, 0.55) 88%,
+    rgba(0, 0, 0, 1) 100%
   );
 }
 
