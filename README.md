@@ -1,7 +1,7 @@
 # uGame
 
 Windows entry point: **Update-uGame.cmd**. Uses its own checkout directory,
-including `D:\ANTON\code\uGame`, regardless of the terminal's current folder.
+including `C:\!CODE_CLUB\new 2026\011_uGame`, regardless of the terminal's current folder.
 Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 
 | Number | Action |
@@ -16,15 +16,21 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-The game is not implemented yet. Option 4 explains missing package.json/dev
-instead of installing or generating anything.
+## Game prototype v0.0.1
+
+The first playable prototype is now included. It has one top-down zone, a square
+player, WASD/arrow movement, collision walls and one exit marker. There is no
+combat, darkness, flashlight, resources, idle system, inventory or backend yet.
+
+Option 4 runs the prototype through the local Node dev server. No npm package
+installation is required for v0.0.1. Phaser is loaded by the browser from its CDN,
+so the first prototype needs an internet connection while running.
 
 ## First update
 
-Run the existing `D:\ANTON\code\uGame\Update-uGame.cmd` **from that directory**
-once, then start it again for the menu. The old launcher depends on the current
-terminal directory; the new launcher fixes that. If local changes block the old
-updater, preserve them and ask for recovery help. Do not force reset or delete work.
+Run `C:\!CODE_CLUB\new 2026\011_uGame\Update-uGame.cmd`, choose **1** to update,
+then restart the launcher and choose **4**. Type `RUN` when the updater asks for
+explicit permission to execute the checked-out local project.
 
 ## Safety contract
 
