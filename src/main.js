@@ -12,24 +12,8 @@ class ZoneScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#0b0d10');
-
-    this.add.text(24, 20, 'uGame v0.0.1', {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '22px',
-      color: '#f2f4f7'
-    });
-
-    this.add.text(24, 50, 'WASD / стрелки — движение', {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '14px',
-      color: '#9aa4b2'
-    });
-
-    this.statusText = this.add.text(24, HEIGHT - 38, 'Найди выход справа', {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '14px',
-      color: '#7ee787'
-    });
+    this.statusElement = document.querySelector('#zone-status');
+    this.setStatus('Zone 1 · Найди выход справа');
 
     this.makeWall(WIDTH / 2, 6, WIDTH, 12);
     this.makeWall(WIDTH / 2, HEIGHT - 6, WIDTH, 12);
@@ -41,12 +25,22 @@ class ZoneScene extends Phaser.Scene {
     this.makeWall(520, 360, 270, 28);
     this.makeWall(720, 265, 28, 170);
 
-    this.exit = this.add.rectangle(WIDTH - 22, HEIGHT / 2, 28, 110, 0x2ea043, 0.85);
-    this.add.text(WIDTH - 74, HEIGHT / 2 - 8, 'EXIT', {
+    this.exitGlow = this.add.rectangle(WIDTH - 28, HEIGHT / 2, 44, 126, 0x56d364, 0.18);
+    this.exit = this.add.rectangle(WIDTH - 22, HEIGHT / 2, 28, 110, 0x2ea043, 1);
+    this.add.text(WIDTH - 82, HEIGHT / 2, 'ВЫХОД →', {
       fontFamily: 'Arial, sans-serif',
-      fontSize: '12px',
-      color: '#d9fbdc'
+      fontSize: '16px',
+      fontStyle: 'bold',
+      color: '#9ff0ad'
     }).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: this.exitGlow,
+      alpha: { from: 0.22, to: 0.62 },
+      duration: 900,
+      yoyo: true,
+      repeat: -1
+    });
 
     this.player = this.add.rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7);
 
@@ -57,6 +51,10 @@ class ZoneScene extends Phaser.Scene {
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D
     });
+  }
+
+  setStatus(text) {
+    if (this.statusElement) this.statusElement.textContent = text;
   }
 
   makeWall(x, y, width, height) {
@@ -84,8 +82,10 @@ class ZoneScene extends Phaser.Scene {
 
     if (!this.exitReached && this.overlaps(this.playerBounds(), this.objectBounds(this.exit))) {
       this.exitReached = true;
-      this.statusText.setText('Выход найден. Следующая зона будет следующим шагом.');
+      this.setStatus('Zone 1 · Выход найден');
       this.exit.setFillStyle(0x56d364, 1);
+      this.exitGlow.setAlpha(0.75);
+      this.tweens.killTweensOf(this.exitGlow);
     }
   }
 
