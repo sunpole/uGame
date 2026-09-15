@@ -53,6 +53,7 @@ class ZoneScene extends Phaser.Scene {
     this.updateDarkness();
 
     this.scale.on('resize', () => this.updateDarkness());
+    window.addEventListener('resize', () => this.updateDarkness());
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys = this.input.keyboard.addKeys({
@@ -110,19 +111,22 @@ class ZoneScene extends Phaser.Scene {
 
     const left = canvasRect.left - hostRect.left;
     const top = canvasRect.top - hostRect.top;
-    const lightX = (this.player.x / WIDTH) * canvasRect.width;
-    const lightY = (this.player.y / HEIGHT) * canvasRect.height;
-    const radius = (VISIBILITY_RADIUS / WIDTH) * canvasRect.width;
+    const scaleX = canvasRect.width / WIDTH;
+    const scaleY = canvasRect.height / HEIGHT;
+    const lightX = this.player.x * scaleX;
+    const lightY = this.player.y * scaleY;
+    const radius = VISIBILITY_RADIUS * Math.min(scaleX, scaleY);
 
     Object.assign(this.darknessElement.style, {
       left: `${left}px`,
       top: `${top}px`,
       width: `${canvasRect.width}px`,
-      height: `${canvasRect.height}px`,
-      '--light-x': `${lightX}px`,
-      '--light-y': `${lightY}px`,
-      '--light-radius': `${radius}px`
+      height: `${canvasRect.height}px`
     });
+
+    this.darknessElement.style.setProperty('--light-x', `${lightX}px`);
+    this.darknessElement.style.setProperty('--light-y', `${lightY}px`);
+    this.darknessElement.style.setProperty('--light-radius', `${radius}px`);
   }
 
   tryMove(dx, dy) {
