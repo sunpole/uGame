@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.26**
+Current version: **0.0.27**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.27 | Stronger visual contrast between upright idle and forward-leaning movement |
 | 0.0.26 | Upright idle pose with movement-driven forward lean |
 | 0.0.25 | Vision overlay and Phaser canvas forced to exactly the same playfield bounds |
 | 0.0.24 | LAN/Wi-Fi dev-server access for phones and laptops |
@@ -32,6 +33,9 @@ Current version: **0.0.26**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.27
+The previous posture difference was too subtle at normal gameplay scale. Idle is now much more compact in top-down projection: the head, face, arms and torso overlap more closely around the character centre. Walking moves the upper body forward by roughly 5–9 pixels while the legs trail behind, and dashing increases that projection further. The shadow stretches slightly during movement to help the posture change read immediately without changing the established character style.
 
 ## 0.0.26
 The temporary top-down character now has two clearer posture states. While idle, the body is more upright and compact, with the head and face pulled back toward the body so the character feels as if they are standing tall. While walking, the upper body, head and face smoothly shift forward; dashing increases that lean a little more. The transition is interpolated instead of snapping, while the existing arm/leg walk cycle and facing direction are preserved.
