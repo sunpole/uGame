@@ -1,0 +1,28 @@
+{
+  "q001": {
+    "id": "q001",
+    "title": "Первый осколок",
+    "autoStart": true,
+    "steps": [
+      {
+        "key": "dialogue:guide_intro",
+        "text": "Поговорить с Проводником"
+      },
+      {
+        "key": "resource:shard",
+        "text": "Получить голубой осколок"
+      },
+      {
+        "key": "chest:starter",
+        "text": "Открыть старый сундук"
+      }
+    ],
+    "rewards": [
+      {
+        "type": "item",
+        "id": "token",
+        "amount": 1
+      }
+    ]
+  }
+}
