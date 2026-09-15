@@ -33,6 +33,17 @@ DEV codes are four-digit test commands entered in the footer console. They are f
 
 The cone follows the last movement direction. Radius commands affect circle and cone modes. Darkness commands affect the hidden area while preserving the active visibility shape.
 
+## Active Class codes
+
+| Code | Class | Test profile |
+|---|---|---|
+| `7001` | Странник | circle, radius 165, darkness 100% |
+| `7002` | Разведчик | circle, radius 235, darkness 90% |
+| `7003` | Следопыт | cone, radius 220, darkness 100% |
+| `7099` | Current class | Show the currently selected class |
+
+Selecting a class reapplies that class's Vision profile through `VisionSystem`. Direct `1xxx` Vision commands can then temporarily override individual Vision values for testing. Selecting a class again reapplies its complete profile.
+
 ## Dev / Service codes
 
 | Code | Action |
