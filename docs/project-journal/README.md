@@ -1,86 +1,88 @@
-# uGame Project Journal
+# uGame — Project Journal
 
-Purpose: preserve the evolution of uGame's design without turning development into bureaucracy.
+Цель: сохранять развитие концепции uGame, не превращая разработку в бюрократию.
 
-The journal records important ideas, hypotheses, decisions, rejected directions, unresolved questions, test requirements and the reasons behind changes. It is intentionally separate from gameplay code and from technical implementation docs.
+Журнал хранит важные идеи, гипотезы, решения, отклонённые направления, нерешённые вопросы, требования к тестам и причины изменений. Он специально отделён от игрового кода и обычной технической документации.
 
-## What belongs here
+## Что сюда попадает
 
-Create or update a record when an idea is likely to matter later because it changes or constrains one of these areas:
+Создавать или обновлять запись, если идея с высокой вероятностью будет важна позже и влияет на:
 
-- core gameplay loop;
-- economy or progression;
-- time / attention systems;
-- world structure;
-- combat or interaction model;
-- rewards / loot;
-- multiplayer / seasons / rating;
-- major UI philosophy;
-- monetization boundaries;
-- project philosophy;
-- architectural decisions that materially affect mechanics.
+- основной игровой цикл;
+- экономику или прогрессию;
+- системы времени / «Внимания»;
+- устройство мира;
+- бой или взаимодействия;
+- награды / лут;
+- multiplayer / сезоны / рейтинги;
+- важную UI-философию;
+- границы монетизации;
+- философию проекта;
+- архитектурные решения, заметно влияющие на механику.
 
-Do not create a record for repeated thoughts, tiny tuning numbers, temporary wording, or every chat message.
+Не создавать запись для повторов, мелких числовых настроек, временных формулировок или каждого сообщения чата.
 
-## Record shape
+## Формат записи
 
-Each substantial record should contain:
+Каждая значимая запись по возможности содержит:
 
 - id;
-- title;
-- date;
-- type;
-- status;
-- optional flags;
-- tags;
-- source / context summary;
-- idea;
-- why it matters;
-- benefits;
-- risks / contradictions;
-- alternatives;
-- current direction;
-- open questions / what to test later;
-- relations to other records;
-- change history.
+- название;
+- дату;
+- тип;
+- статус;
+- дополнительные flags;
+- теги;
+- краткий контекст происхождения;
+- исходную идею;
+- зачем она нужна;
+- плюсы;
+- риски / противоречия;
+- альтернативы;
+- текущее направление;
+- что проверить позже;
+- связи с другими записями;
+- историю изменений.
 
-Numbers used during brainstorming are examples unless explicitly accepted.
+Числа из мозгового штурма считаются примерами, пока они явно не приняты.
 
-## Status meanings
+## Статусы
 
-- `idea` — worth preserving, not yet evaluated enough to be a working direction.
-- `hypothesis` — plausible working direction, still reversible.
-- `question` — unresolved question worth tracking.
-- `discussing` — current active design discussion.
-- `accepted` — explicit project decision.
-- `deferred` — intentionally postponed because another area has priority.
-- `rejected` — considered and intentionally not used.
-- `superseded` — replaced by a newer decision or concept.
-- `needs-test` — should be validated through gameplay or user testing.
-- `needs-prototype` — should be validated through implementation.
-- `needs-calculation` — requires balance / numerical modelling.
-- `return-later` — useful, but intentionally parked for a future stage.
+- `idea` — идея, которую стоит сохранить, но она ещё не стала рабочим направлением.
+- `hypothesis` — правдоподобная рабочая гипотеза, которую можно изменить.
+- `question` — важный нерешённый вопрос.
+- `discussing` — активно обсуждается сейчас.
+- `accepted` — явно принятое решение.
+- `deferred` — намеренно отложено, потому что сейчас важнее другое.
+- `rejected` — рассмотрено и сознательно не используется.
+- `superseded` — заменено более новым решением или концепцией.
+- `needs-test` — требуется игровое или пользовательское тестирование.
+- `needs-prototype` — требуется прототип.
+- `needs-calculation` — нужны расчёты / балансировка.
+- `return-later` — вернуться к теме позже.
 
-Records may use one primary status and optional flags.
+У записи один основной статус и при необходимости дополнительные flags.
 
-## Record types
+## Типы записей
 
-`type` answers what kind of design knowledge the record represents; `status` answers where it currently stands.
+`type` отвечает на вопрос «что это за знание?», а `status` — «в каком состоянии оно сейчас?».
 
-Current types are deliberately small and may grow only when needed:
+Начальный набор типов специально небольшой:
 
-- `system` — connected game/economy system;
-- `philosophy` — project principle or player-experience constraint;
-- `game-direction` — high-level structure or genre direction;
-- `mechanic` — concrete gameplay/world mechanic;
-- `metric` — measurement, rating or analytics concept;
-- `design-area` — broad unresolved area containing several candidate mechanics.
+- `system` — связанная система механик/экономики;
+- `philosophy` — принцип проекта или ограничение пользовательского опыта;
+- `game-direction` — высокоуровневое направление игры;
+- `mechanic` — конкретная механика мира или геймплея;
+- `metric` — метрика, рейтинг или аналитический показатель;
+- `design-area` — большая нерешённая область с несколькими вариантами.
 
-## Relations
+Новые типы добавлять только по реальной необходимости.
 
-Use stable record ids such as `UGD-0001`.
+## Связи
 
-Relations in record metadata and `index.json` may use:
+Использовать стабильные идентификаторы, например `UGD-0001`.
+
+Допустимые отношения в записях и `index.json`:
 
 - `related`;
 - `depends_on`;
@@ -88,28 +90,28 @@ Relations in record metadata and `index.json` may use:
 - `supersedes`;
 - `superseded_by`.
 
-Never delete an old concept merely because the direction changed. Preserve the old reasoning and connect the replacement.
+Не удалять старую концепцию только потому, что направление изменилось. Сохранять прежнюю логику и связывать её с заменой.
 
-## Tags
+## Теги
 
-Tags are lowercase kebab-case. Add them gradually, only when a real record needs them. Avoid prebuilding a giant taxonomy.
+Теги пишутся в lowercase kebab-case. Они добавляются постепенно, только когда появляются реальные записи. Не строить заранее огромную таксономию.
 
-## Current truth vs history
+## Актуальное состояние и история
 
-`CURRENT.md` is the fast answer to "what do we currently believe / accept?" It must stay short.
+`CURRENT.md` — быстрый ответ на вопрос «что мы сейчас считаем принятым или рабочим направлением?». Он должен оставаться коротким.
 
-`records/` stores the deeper history and alternatives.
+`records/` — подробная история, альтернативы и причины решений.
 
-`index.json` stores machine-readable metadata so a later static GitHub Pages interface can search and filter records without a server.
+`index.json` — машиночитаемые метаданные для будущего статического интерфейса GitHub Pages.
 
-## Future GitHub Pages viewer
+## Будущий интерфейс GitHub Pages
 
-The intended viewer is static HTML/CSS/JavaScript. It should read `index.json`, fetch Markdown records when opened, and support:
+Планируется простой статический HTML/CSS/JavaScript-интерфейс. Он должен читать `index.json`, открывать Markdown-записи и поддерживать:
 
-- full-text search;
-- filters by type, status, flag, tag and date;
-- combinations such as `economy + accepted` or `combat + idea`;
-- links between superseded and replacement records;
-- quick display of the current direction.
+- полнотекстовый поиск;
+- фильтры по типу, статусу, flag, тегу и дате;
+- комбинации вроде `economy + accepted` или `combat + idea`;
+- переходы между заменёнными и заменяющими решениями;
+- быстрое отображение текущего направления.
 
-No CMS or database is required for the first version.
+Для первой версии не нужна CMS, сервер или отдельная база данных.
