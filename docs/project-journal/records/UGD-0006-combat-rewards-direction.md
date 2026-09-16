@@ -1,81 +1,81 @@
 # UGD-0006 — Направления боя и системы наград
 
-- Date: 2026-09-16
-- Status: deferred
+- Дата: 2026-09-16
+- Статус: deferred
 - Flags: return-later, needs-prototype, needs-calculation
-- Tags: combat, rewards, loot, gameplay, progression
+- Теги: combat, rewards, loot, gameplay, progression
 
-## Source / context
+## Контекст
 
-Combat is intentionally not being designed as a full real-time platformer combat system yet. Rewards are expected to be broad and data-driven, but their economy is still undefined.
+Боевую систему сознательно пока не фиксируем как полноценный real-time бой внутри platformer-части. Награды в будущем предполагаются разнообразными и управляемыми данными, но сама экономика ещё не определена.
 
-## Combat ideas under consideration
+## Рассматриваемые варианты боя
 
-- simple timing/indicator mini-game;
-- automatic combat;
-- turn-based combat;
-- special event interactions such as chase, escape, hiding, traps or concentration challenges;
-- real-time combat remains possible later but is currently considered substantially more complex.
+- простая мини-игра на тайминг/индикатор;
+- полностью автоматический бой;
+- пошаговая система;
+- специальные события: погоня, побег, скрытность, ловушки, активности на концентрацию;
+- real-time бой остаётся возможным позже, но сейчас считается заметно более сложным направлением.
 
-## Current combat direction
+## Текущее направление по бою
 
-Do not force a final combat system into the current movement/world prototype. Prefer simple experiments first. Combat remains a separate future design problem.
+Не навязывать текущему прототипу движения и мира финальную боевую систему. Сначала проверять простые варианты. Бой остаётся отдельной будущей задачей дизайна.
 
-## Reward-system idea
+## Идея системы наград
 
-A future reward system may use containers/chests/cases or lore-appropriate equivalents generated from data tables.
+Будущая система может использовать сундуки, контейнеры, кейсы или их лорные аналоги, содержимое которых формируется по таблицам данных.
 
-Possible generated contents include:
+Возможные типы содержимого:
 
-- currencies;
-- equipment;
-- materials;
-- valuables;
-- trade/sale items;
-- special resources;
-- other content-specific rewards.
+- валюты;
+- экипировка;
+- материалы;
+- ценности;
+- предметы для торговли/продажи;
+- специальные ресурсы;
+- другие награды, зависящие от типа активности.
 
-Different reward tables may eventually exist for events, seasons, achievements, chests, mode-specific outcomes and other contexts.
+Для разных источников могут существовать отдельные таблицы: события, сезоны, достижения, сундуки, режимы и другие контексты.
 
-## Why it matters
+## Зачем это нужно
 
-Combat complexity and reward economy can dominate the whole game if fixed too early. Both systems should remain modular enough to evolve after the core movement, interaction and world loop is proven.
+Сложность боя и экономика наград легко могут начать определять всю игру слишком рано. Обе системы должны оставаться модульными, пока не доказан базовый цикл движения, взаимодействий и исследования мира.
 
-## Benefits
+## Плюсы
 
-- Keeps the early prototype focused.
-- Allows later comparison of multiple combat models.
-- Data-driven loot tables are compatible with rotating activities and many reward sources.
-- Reward generation can later integrate Impulse/Attention without hard-coding those relationships now.
+- Не перегружает ранний прототип.
+- Позволяет позже сравнить несколько моделей боя.
+- Табличный лут хорошо сочетается с меняющимися активностями и большим количеством источников наград.
+- Позже можно связать награды с Импульсом/«Вниманием», не зашивая эту зависимость сейчас.
 
-## Risks / contradictions
+## Риски и противоречия
 
-- Random rewards can become excessive or feel casino-like if not carefully framed and balanced.
-- Too many reward types can create currency clutter.
-- Automatic combat may weaken the active layer.
-- Timing mini-games may become repetitive.
-- Rewarding daily login would conflict with the no-FOMO/rest philosophy if implemented as mandatory collection.
+- Случайные награды могут стать чрезмерными или восприниматься как азартная механика, если их не контролировать.
+- Слишком много типов наград создаст валютный и предметный мусор.
+- Автоматический бой может ослабить активную часть игры.
+- Мини-игра на тайминг может быстро стать повторяющейся.
+- Награды за обязательный ежедневный вход будут противоречить философии отдыха и отсутствия FOMO.
 
-## Alternatives
+## Альтернативы
 
-Combat alternatives remain open and may coexist in different activity types.
+Разные активности потенциально могут использовать разные модели боя.
 
-Reward alternatives include deterministic progression rewards, choice-based rewards, crafting materials, milestone unlocks and reduced reliance on random containers.
+Для наград также рассматриваются детерминированные награды за прогресс, выбор из нескольких вариантов, ремесленные материалы, milestone-разблокировки и меньшая зависимость от случайных контейнеров.
 
-## What to test later
+## Что проверить позже
 
-- Minimum viable combat interaction.
-- Whether different activities can use different encounter mechanics.
-- Data schema for reward tables.
-- Randomness vs deterministic guarantees.
-- Relationship between rewards, Impulse, Attention and session length.
-- Whether login-based rewards should be replaced by automatic rested-state benefits.
+- Минимально достаточную механику боя.
+- Могут ли разные активности иметь разные encounter-механики.
+- Схему данных для таблиц наград.
+- Баланс случайности и гарантированных результатов.
+- Связь наград с Импульсом, «Вниманием» и длительностью сессии.
+- Нужно ли заменить login-награды автоматическими rested-бонусами.
 
-## Relations
+## Связи
 
 - related: UGD-0001, UGD-0003, UGD-0004, UGD-0005
 
-## Change history
+## История изменений
 
 ### 2026-09-16
-Created as a deferred design record. No combat model or loot economy is accepted yet.
+Создано как отложенная область дизайна. Ни конкретная модель боя, ни экономика лута пока не приняты.
