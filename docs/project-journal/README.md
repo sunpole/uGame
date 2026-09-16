@@ -29,6 +29,7 @@ Each substantial record should contain:
 - id;
 - title;
 - date;
+- type;
 - status;
 - optional flags;
 - tags;
@@ -62,6 +63,19 @@ Numbers used during brainstorming are examples unless explicitly accepted.
 
 Records may use one primary status and optional flags.
 
+## Record types
+
+`type` answers what kind of design knowledge the record represents; `status` answers where it currently stands.
+
+Current types are deliberately small and may grow only when needed:
+
+- `system` — connected game/economy system;
+- `philosophy` — project principle or player-experience constraint;
+- `game-direction` — high-level structure or genre direction;
+- `mechanic` — concrete gameplay/world mechanic;
+- `metric` — measurement, rating or analytics concept;
+- `design-area` — broad unresolved area containing several candidate mechanics.
+
 ## Relations
 
 Use stable record ids such as `UGD-0001`.
@@ -93,7 +107,7 @@ Tags are lowercase kebab-case. Add them gradually, only when a real record needs
 The intended viewer is static HTML/CSS/JavaScript. It should read `index.json`, fetch Markdown records when opened, and support:
 
 - full-text search;
-- filters by status, flag, tag and date;
+- filters by type, status, flag, tag and date;
 - combinations such as `economy + accepted` or `combat + idea`;
 - links between superseded and replacement records;
 - quick display of the current direction.
