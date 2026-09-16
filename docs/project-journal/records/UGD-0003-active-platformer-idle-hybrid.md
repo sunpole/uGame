@@ -1,65 +1,65 @@
 # UGD-0003 — Гибрид активной платформенной части и idle-экономики
 
-- Date: 2026-09-16
-- Status: hypothesis
+- Дата: 2026-09-16
+- Статус: hypothesis
 - Flags: needs-prototype, return-later
-- Tags: gameplay, platformer, idle, progression, world
+- Теги: gameplay, platformer, idle, progression, world
 
-## Source / context
+## Контекст
 
-The current conceptual picture combines two large layers: active movement/exploration in the world and an idle/economic automation layer.
+Текущая концепция объединяет два больших слоя: активное движение/исследование мира и idle/экономическую автоматизацию.
 
-## Idea
+## Идея
 
-uGame may be built around two connected modes:
+uGame может строиться вокруг двух связанных режимов:
 
-1. **Active layer** — movement, platformer-like traversal, exploration, NPC interaction, portals, events and direct world interaction.
-2. **Idle/economic layer** — automation, production, management, long-running processes and economic development.
+1. **Активная часть** — движение, platformer-перемещение, исследование, NPC, порталы, события и прямое взаимодействие с миром.
+2. **Idle/экономическая часть** — автоматизация, производство, управление, длительные процессы и экономическое развитие.
 
-A future talent/ability system may develop both layers rather than treating them as separate games.
+Будущее дерево талантов/способностей потенциально должно развивать обе части, а не превращать их в две несвязанные игры.
 
-## Why it matters
+## Зачем это нужно
 
-The active layer provides presence, discovery and direct play. The idle layer allows progression and planning without requiring constant manual grind.
+Активная часть даёт ощущение присутствия, исследования и непосредственной игры. Idle-часть позволяет планировать и развиваться без обязательного постоянного ручного гринда.
 
-## Benefits
+## Плюсы
 
-- Supports the short-session philosophy while still allowing long-term progression.
-- Gives different player types meaningful ways to engage.
-- Creates room for automation without making automation equivalent to real human attention.
-- Lets active discoveries feed economic systems and economic preparation feed active expeditions.
+- Хорошо сочетается с философией коротких сессий и долгосрочной прогрессии.
+- Даёт разным игрокам несколько способов взаимодействовать с проектом.
+- Позволяет использовать автоматизацию, не приравнивая её к реальному человеческому «Вниманию».
+- Активные открытия могут питать экономику, а экономическая подготовка — активные походы.
 
-## Risks / contradictions
+## Риски и противоречия
 
-- The two layers may feel disconnected if resources and goals do not cross between them.
-- Idle optimization could make active exploration feel unnecessary.
-- Active play could dominate rewards and make the idle layer cosmetic.
-- Complexity can grow quickly if both layers receive separate progression trees and currencies.
+- Два слоя могут ощущаться несвязанными, если между ними нет общих целей и ресурсов.
+- Idle-оптимизация может сделать активное исследование ненужным.
+- Активная игра, наоборот, может сделать idle-часть декоративной.
+- Сложность быстро вырастет, если обе части получат независимые деревья, валюты и прогрессию.
 
-## Alternatives
+## Альтернативы
 
-- Mostly active RPG with small offline timers.
-- Mostly idle/economic game with a light exploration shell.
-- Fully separated modes with limited crossover.
+- Почти полностью активная RPG с небольшими offline-таймерами.
+- Почти полностью idle/экономическая игра с лёгкой оболочкой исследования.
+- Два режима с минимальной связью между ними.
 
-None is rejected yet.
+Ни один вариант пока не отклонён окончательно.
 
-## Current direction
+## Текущее направление
 
-Treat the hybrid as a promising structural hypothesis, not a final genre decision. Early prototypes should remain simple and prove one connection at a time between active interactions and persistent economic state.
+Считать гибрид перспективной структурной гипотезой, а не окончательным жанром. Ранние прототипы должны оставаться простыми и проверять по одной связи между активными действиями и постоянным экономическим состоянием.
 
-## What to test later
+## Что проверить позже
 
-- What resources move from active play into idle systems.
-- What idle preparation changes active sessions.
-- How talents affect both layers without doubling complexity.
-- Whether platformer movement remains the correct active format.
+- Какие ресурсы переходят из активной игры в idle-системы.
+- Как idle-подготовка влияет на активные сессии.
+- Как таланты развивают оба слоя без удвоения сложности.
+- Остаётся ли platformer правильной формой активной части.
 
-## Relations
+## Связи
 
 - related: UGD-0001, UGD-0002, UGD-0004, UGD-0006
 
-## Change history
+## История изменений
 
 ### 2026-09-16
-Created from the current high-level game picture. Genre/lore remain intentionally unresolved.
+Создано из текущего общего представления об игре. Жанр и лор сознательно пока не зафиксированы.
