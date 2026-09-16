@@ -11,7 +11,7 @@
       "flags": ["needs-calculation", "needs-test"],
       "tags": ["economy", "attention", "impulse", "progression", "philosophy"],
       "path": "records/UGD-0001-attention-impulse.md",
-      "related": ["UGD-0002", "UGD-0005", "UGD-0006"],
+      "related": ["UGD-0002", "UGD-0005", "UGD-0006", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -24,7 +24,7 @@
       "flags": ["needs-test", "return-later"],
       "tags": ["sunday", "philosophy", "idle", "impulse", "progression"],
       "path": "records/UGD-0002-sunday-rest-cycle.md",
-      "related": ["UGD-0001", "UGD-0003"],
+      "related": ["UGD-0001", "UGD-0003", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -37,7 +37,7 @@
       "flags": ["needs-prototype", "return-later"],
       "tags": ["gameplay", "platformer", "idle", "progression", "world"],
       "path": "records/UGD-0003-active-platformer-idle-hybrid.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006"],
+      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -50,7 +50,7 @@
       "flags": ["needs-prototype", "return-later"],
       "tags": ["world", "locations", "portals", "procedural-generation", "npc", "quests", "gameplay"],
       "path": "records/UGD-0004-world-portals-activities.md",
-      "related": ["UGD-0003", "UGD-0006"],
+      "related": ["UGD-0003", "UGD-0006", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -63,7 +63,7 @@
       "flags": ["needs-calculation", "needs-test", "return-later"],
       "tags": ["attention", "impulse", "rating", "seasons", "progression", "philosophy"],
       "path": "records/UGD-0005-time-kpd-lifetime-metrics.md",
-      "related": ["UGD-0001", "UGD-0006"],
+      "related": ["UGD-0001", "UGD-0006", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -76,7 +76,20 @@
       "flags": ["return-later", "needs-prototype", "needs-calculation"],
       "tags": ["combat", "rewards", "loot", "gameplay", "progression"],
       "path": "records/UGD-0006-combat-rewards-direction.md",
-      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0005"],
+      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0007"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0007",
+      "title": "Минимальный архитектурный фундамент раннего uGame",
+      "date": "2026-09-16",
+      "type": "architecture",
+      "status": "hypothesis",
+      "flags": ["needs-prototype", "needs-test"],
+      "tags": ["technical", "architecture", "persistence", "time", "world", "idle", "seasons", "progression"],
+      "path": "records/UGD-0007-early-architecture-foundation.md",
+      "related": ["UGD-0001", "UGD-0002", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0006"],
       "supersedes": [],
       "superseded_by": []
     }
