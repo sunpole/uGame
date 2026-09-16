@@ -1,73 +1,73 @@
 # UGD-0004 — Мир, локации, порталы и меняющиеся активности
 
-- Date: 2026-09-16
-- Status: hypothesis
+- Дата: 2026-09-16
+- Статус: hypothesis
 - Flags: needs-prototype, return-later
-- Tags: world, locations, portals, procedural-generation, npc, quests, gameplay
+- Теги: world, locations, portals, procedural-generation, npc, quests, gameplay
 
-## Source / context
+## Контекст
 
-The project discussion describes a world with stable geography plus changing routes, portals and activity points. Inspirations mentioned during brainstorming include systems where maps or destinations persist but connections rotate over time.
+В обсуждении описан мир с постоянной географией, но меняющимися маршрутами, порталами и точками активности. В качестве референсов во время мозгового штурма упоминались системы, где сами карты или назначения существуют постоянно, а связи между ними периодически меняются.
 
-## Idea
+## Идея
 
-The world may combine:
+Мир может сочетать:
 
-- a starting location;
-- persistent locations such as towns/safe hubs where saving and services are available;
-- temporary or instanced locations where saving may be restricted;
-- known potential spawn points for activities;
-- only a subset of those points active at any given time;
-- randomly selected activity/object types at active points;
-- portals whose destinations or route graph may change over time;
-- activities launched directly from NPCs in towns as an alternative to finding them in the open world.
+- стартовую локацию;
+- постоянные локации, например города/безопасные хабы с сохранением и сервисами;
+- временные или инстанс-локации, где сохранение может быть ограничено;
+- заранее известные потенциальные точки появления активностей;
+- одновременно активна только часть этих точек;
+- в активной точке случайно выбирается объект/тип активности из допустимого списка;
+- порталы, направление или граф связей которых меняется со временем;
+- активности, запускаемые напрямую через NPC в городе как альтернатива поиску в открытом мире.
 
-Potential activities include dungeons, special portals, chests, events, solo/group content, chase/escape/hide/labyrinth/trap sequences and other interaction-focused encounters.
+Возможные активности: подземелья, специальные порталы, сундуки, события, одиночный/групповой контент, погони, побеги, скрытность, лабиринты, ловушки и другие взаимодействия.
 
-## Why it matters
+## Зачем это нужно
 
-The goal is to make exploration partly predictable and partly variable: players can learn the world, but routes and opportunities still change.
+Цель — совместить изучаемый и понятный мир с вариативностью: игрок постепенно запоминает географию, но маршруты и возможности всё равно меняются.
 
-## Benefits
+## Плюсы
 
-- Reuses authored locations while changing traversal and opportunity patterns.
-- Creates discovery without requiring fully procedural geography.
-- Supports both quick targeted sessions and longer exploration.
-- Allows later control over rarity and availability through data tables.
+- Позволяет переиспользовать созданные вручную локации, меняя пути и доступные активности.
+- Даёт ощущение исследования без необходимости полностью процедурной географии.
+- Поддерживает и короткие целевые сессии, и более длинное исследование.
+- Позже редкость и доступность можно контролировать данными/таблицами.
 
-## Risks / contradictions
+## Риски и противоречия
 
-- Too much randomness can make planning frustrating.
-- Too little randomness can make the world feel solved.
-- Rotating routes can create FOMO if important content disappears too quickly.
-- Saving restrictions in temporary areas need clear rules to avoid punishing disconnects.
-- Group/solo activity generation may complicate matchmaking later.
+- Слишком сильная случайность может мешать планированию.
+- Слишком слабая случайность быстро сделает мир полностью предсказуемым.
+- Быстро исчезающие маршруты/активности могут создавать FOMO.
+- Ограничения сохранения во временных локациях должны учитывать случайные отключения.
+- Генерация групповых и одиночных активностей позже усложнит matchmaking.
 
-## Alternatives
+## Альтернативы
 
-- Fully static world and routes.
-- Fully procedural maps.
-- Static world with only activity spawns rotating.
-- Static activity points but portal destinations rotating.
-- Town NPCs launching most instanced content directly.
+- Полностью статический мир и маршруты.
+- Полностью процедурные карты.
+- Статический мир, где меняются только активности.
+- Постоянные точки порталов, но меняющиеся назначения.
+- Большинство инстанс-активностей запускаются через NPC в городе.
 
-## Current direction
+## Текущее направление
 
-Prefer a hybrid: stable geography and authored locations, with data-driven dynamic connections and activity contents layered on top. Exact probabilities, timers and content types remain open.
+Предпочтителен гибрид: постоянная география и авторские локации плюс управляемые данными динамические связи и содержимое точек активности. Конкретные вероятности, таймеры и типы контента пока открыты.
 
-## What to test later
+## Что проверить позже
 
-- Number of potential vs simultaneously active points.
-- Rotation frequency.
-- Whether portal destinations rotate independently from portal spawn points.
-- How much route information the player can know in advance.
-- Persistence/saving rules for temporary locations.
+- Сколько потенциальных и одновременно активных точек должно быть.
+- Частоту ротации.
+- Меняются ли назначения порталов независимо от самих точек появления.
+- Какой объём информации о маршрутах игрок видит заранее.
+- Правила сохранения и восстановления во временных локациях.
 
-## Relations
+## Связи
 
 - related: UGD-0003, UGD-0006
 
-## Change history
+## История изменений
 
 ### 2026-09-16
-Created from planning notes about permanent cities, temporary locations, rotating routes and data-driven activity spawn points.
+Создано из обсуждения постоянных городов, временных локаций, меняющихся маршрутов и управляемых данными точек появления активностей.
