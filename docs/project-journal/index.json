@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "updated": "2026-09-16",
+  "records": [
+    {
+      "id": "UGD-0001",
+      "title": "Внимание ⚠ и Импульс",
+      "date": "2026-09-16",
+      "type": "system",
+      "status": "discussing",
+      "flags": ["needs-calculation", "needs-test"],
+      "tags": ["economy", "attention", "impulse", "progression", "philosophy"],
+      "path": "records/UGD-0001-attention-impulse.md",
+      "related": ["UGD-0002", "UGD-0005", "UGD-0006"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0002",
+      "title": "Воскресенье как день отдыха и восстановления",
+      "date": "2026-09-16",
+      "type": "philosophy",
+      "status": "discussing",
+      "flags": ["needs-test", "return-later"],
+      "tags": ["sunday", "philosophy", "idle", "impulse", "progression"],
+      "path": "records/UGD-0002-sunday-rest-cycle.md",
+      "related": ["UGD-0001", "UGD-0003"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0003",
+      "title": "Гибрид активной платформенной части и idle-экономики",
+      "date": "2026-09-16",
+      "type": "game-direction",
+      "status": "hypothesis",
+      "flags": ["needs-prototype", "return-later"],
+      "tags": ["gameplay", "platformer", "idle", "progression", "world"],
+      "path": "records/UGD-0003-active-platformer-idle-hybrid.md",
+      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0004",
+      "title": "Мир, локации, порталы и меняющиеся активности",
+      "date": "2026-09-16",
+      "type": "mechanic",
+      "status": "hypothesis",
+      "flags": ["needs-prototype", "return-later"],
+      "tags": ["world", "locations", "portals", "procedural-generation", "npc", "quests", "gameplay"],
+      "path": "records/UGD-0004-world-portals-activities.md",
+      "related": ["UGD-0003", "UGD-0006"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0005",
+      "title": "Время, КПД и сквозные/сезонные метрики",
+      "date": "2026-09-16",
+      "type": "metric",
+      "status": "discussing",
+      "flags": ["needs-calculation", "needs-test", "return-later"],
+      "tags": ["attention", "rating", "seasons", "progression", "philosophy"],
+      "path": "records/UGD-0005-time-kpd-lifetime-metrics.md",
+      "related": ["UGD-0001", "UGD-0006"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0006",
+      "title": "Направления боя и системы наград",
+      "date": "2026-09-16",
+      "type": "design-area",
+      "status": "deferred",
+      "flags": ["return-later", "needs-prototype", "needs-calculation"],
+      "tags": ["combat", "rewards", "loot", "gameplay", "progression"],
+      "path": "records/UGD-0006-combat-rewards-direction.md",
+      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0005"],
+      "supersedes": [],
+      "superseded_by": []
+    }
+  ]
+}
