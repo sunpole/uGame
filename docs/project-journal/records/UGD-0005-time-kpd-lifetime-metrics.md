@@ -1,71 +1,71 @@
 # UGD-0005 — Время, КПД и сквозные/сезонные метрики
 
-- Date: 2026-09-16
-- Status: discussing
+- Дата: 2026-09-16
+- Статус: discussing
 - Flags: needs-calculation, needs-test, return-later
-- Tags: attention, rating, seasons, progression, philosophy
+- Теги: attention, rating, seasons, progression, philosophy
 
-## Source / context
+## Контекст
 
-A later planning note introduced a distinction between time invested and how effectively that time was used. Two players may spend the same active time but make very different progress.
+В обсуждении появилась важная разница между количеством вложенного времени и тем, насколько эффективно это время было использовано. Два игрока могут провести одинаковое активное время, но получить очень разный прогресс.
 
-## Idea
+## Идея
 
-Track at least two different concepts:
+Разделить как минимум два понятия:
 
-1. **Time invested** — a lifetime or long-term measure related to real active presence, potentially connected to «Внимание».
-2. **Efficiency / КПД** — a ratio or score describing how much meaningful progression was achieved per unit of active time.
+1. **Вложенное время** — сквозной или долгосрочный показатель реального активного присутствия, потенциально связанный с «Вниманием».
+2. **Эффективность / КПД** — коэффициент или показатель того, сколько значимого прогресса получено на единицу активного времени.
 
-A separate lifetime metric may survive seasons/wipes even if seasonal progression resets.
+Отдельная сквозная метрика аккаунта может сохраняться между сезонами/вайпами, даже если сезонная прогрессия обнуляется.
 
-The final names, formulas and whether «Внимание» itself is the lifetime metric remain unresolved.
+Финальные названия, формулы и вопрос о том, должно ли само «Внимание» быть такой сквозной метрикой, пока не решены.
 
-## Why it matters
+## Зачем это нужно
 
-Time and skill/effectiveness are not the same. A system that only rewards hours can encourage grind; a system that only rewards efficiency can discourage slower or less skilled players.
+Количество времени и навык/эффективность — разные вещи. Система, награждающая только часы, стимулирует гринд; система, награждающая только КПД, может демотивировать более медленных или менее опытных игроков.
 
-## Benefits
+## Плюсы
 
-- Makes it possible to recognize both dedication and efficient play.
-- Can support optional ladders, seasonal comparisons and personal improvement tracking.
-- A permanent account metric can preserve long-term history even when seasonal systems reset.
+- Позволяет отдельно признавать вклад времени и эффективность игры.
+- Может поддерживать необязательные ладдеры, сезонные сравнения и личную статистику прогресса.
+- Постоянная метрика аккаунта сохраняет историю игрока даже при сезонных сбросах.
 
-## Risks / contradictions
+## Риски и противоречия
 
-- Public efficiency rankings may discourage players who progress slowly.
-- Rewarding high КПД directly could make the game stressful and optimization-heavy.
-- Progress is not yet defined, so any formula would be premature.
-- Different play styles may produce incomparable forms of progress.
-- A lifetime score may become misleading if game systems change between seasons.
+- Публичный рейтинг КПД может демотивировать игроков с более медленным прогрессом.
+- Прямые награды за высокий КПД могут сделать игру напряжённой и чрезмерно оптимизационной.
+- Само понятие «прогресс» ещё не определено, поэтому формула пока преждевременна.
+- Разные стили игры могут давать несопоставимые виды прогресса.
+- Сквозной показатель может потерять сопоставимость, если игра сильно меняется между сезонами.
 
-## Alternatives
+## Альтернативы
 
-- Keep lifetime active time visible but do not rank it.
-- Keep КПД private as a personal analytics stat.
-- Rank seasonal outcomes but preserve only account history across seasons.
-- Create a separate permanent legacy/account resource instead of using «Внимание» itself.
-- Use multiple category-specific efficiency metrics instead of one global score.
+- Показывать суммарное активное время, но не строить по нему рейтинг.
+- Оставить КПД приватной личной аналитикой.
+- Рейтинг делать сезонным, а между сезонами сохранять только историю аккаунта.
+- Ввести отдельный постоянный legacy/account-ресурс вместо использования самого «Внимания».
+- Использовать несколько тематических метрик эффективности вместо одного глобального КПД.
 
-## Current direction
+## Текущее направление
 
-Preserve the conceptual distinction between **how much real time was invested** and **what was achieved with that time**. Do not yet decide which of these belongs in a competitive leaderboard.
+Сохранить принципиальную разницу между **сколько реального времени вложено** и **что достигнуто за это время**. Пока не решать, какой из этих показателей должен участвовать в соревновательном рейтинге.
 
-At least one long-term account-level measure that does not reset with seasons is considered desirable, but is not yet accepted as a specific resource.
+Идея хотя бы одного долгосрочного показателя аккаунта, который не сбрасывается сезонами, выглядит полезной, но конкретный ресурс ещё не принят.
 
-## What to test / calculate later
+## Что проверить и рассчитать позже
 
-- Definition of meaningful progression.
-- Whether KPI/KPD should affect rewards or only statistics/rating.
-- Fairness across different player skill levels and play styles.
-- Seasonal reset model.
-- Which metrics remain permanent across wipes/seasons.
-- Whether «Внимание» is spendable, historical, or represented by separate current/lifetime counters.
+- Определение значимого прогресса.
+- Должен ли КПД влиять на награды или только на статистику/рейтинг.
+- Справедливость для разных уровней навыка и стилей игры.
+- Модель сезонных сбросов.
+- Какие показатели сохраняются навсегда.
+- Является ли «Внимание» расходуемой валютой, исторической метрикой или должно иметь отдельные текущий и lifetime-счётчики.
 
-## Relations
+## Связи
 
 - related: UGD-0001, UGD-0006
 
-## Change history
+## История изменений
 
 ### 2026-09-16
-Created from the discussion of equal play time producing unequal progress, lifetime account history and future seasonal/wipe systems.
+Создано из обсуждения одинакового игрового времени при разном прогрессе, сквозной истории аккаунта и будущих сезонов/вайпов.
