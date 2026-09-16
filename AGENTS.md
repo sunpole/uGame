@@ -1,70 +1,70 @@
-# uGame agent guide
+# uGame — инструкция для агентов
 
-This file is the map for project knowledge. It is not the full project history.
+Этот файл — карта проектных знаний. Здесь не должна храниться вся история проекта целиком.
 
-## Before changing a game mechanic
+## Перед изменением игровой механики
 
-1. Read `README.md` for the current implemented prototype.
-2. Read `docs/project-journal/README.md` for documentation rules.
-3. Search `docs/project-journal/index.json` and `docs/project-journal/records/` by mechanic name, tag and status.
-4. Distinguish implemented code, accepted decisions, working hypotheses and brainstorms.
-5. If an older idea was replaced, keep it in history and link it through `supersedes` / `superseded_by` instead of deleting it.
+1. Прочитать `README.md`, чтобы понять состояние реально реализованного прототипа.
+2. Прочитать `docs/project-journal/README.md` — правила ведения проектного журнала.
+3. Искать связанные материалы в `docs/project-journal/index.json` и `docs/project-journal/records/` по названию механики, тегу и статусу.
+4. Обязательно различать: реализованный код, принятые решения, рабочие гипотезы и обычный мозговой штурм.
+5. Если старая идея заменена новой, не удалять историю: связывать записи через `supersedes` / `superseded_by`.
 
-## Project journal
+## Проектный журнал
 
-Location: `docs/project-journal/`
+Расположение: `docs/project-journal/`
 
-- `README.md` — rules, statuses, tags and record format.
-- `CURRENT.md` — concise map of what is currently accepted or treated as the active working direction.
-- `index.json` — machine-readable metadata for future GitHub Pages search/filter UI.
-- `records/` — substantial idea / decision records. Do not create one file for every chat message.
+- `README.md` — правила, статусы, типы, теги и формат записей.
+- `CURRENT.md` — короткая карта того, что сейчас принято или считается активным рабочим направлением.
+- `index.json` — машиночитаемые метаданные для будущего поиска и фильтров GitHub Pages.
+- `records/` — содержательные записи об идеях, гипотезах и решениях. Не создавать отдельный файл для каждого сообщения чата.
 
-## Statuses
+## Статусы
 
-Use only the smallest useful set and extend it when needed:
+Использовать минимально необходимый набор и расширять только по реальной необходимости:
 
-- `idea` — raw idea worth preserving.
-- `hypothesis` — plausible working direction, not accepted.
-- `question` — unresolved design question.
-- `discussing` — actively being explored.
-- `accepted` — explicitly accepted decision.
-- `deferred` — intentionally postponed.
-- `rejected` — considered and intentionally not used.
-- `superseded` — replaced by a newer record or decision.
-- `needs-test` — needs gameplay/user testing.
-- `needs-prototype` — needs implementation experiment.
-- `needs-calculation` — needs balance/math work.
-- `return-later` — intentionally parked for a later project phase.
+- `idea` — идея, которую стоит сохранить.
+- `hypothesis` — рабочая гипотеза, не принятое решение.
+- `question` — важный нерешённый вопрос.
+- `discussing` — сейчас активно обсуждается.
+- `accepted` — явно принятое решение.
+- `deferred` — намеренно отложено.
+- `rejected` — рассмотрено и сознательно отклонено.
+- `superseded` — заменено более новым решением или концепцией.
+- `needs-test` — требует игрового или пользовательского тестирования.
+- `needs-prototype` — требует прототипа.
+- `needs-calculation` — требует расчётов/балансировки.
+- `return-later` — вернуться на более позднем этапе.
 
-A record may have one primary status plus optional flags when useful.
+У записи один основной статус; дополнительные состояния при необходимости хранятся как flags.
 
-## Tags
+## Теги
 
-Tags are lowercase kebab-case and grow only when needed. Examples currently relevant to uGame include `gameplay`, `platformer`, `idle`, `economy`, `attention`, `impulse`, `progression`, `rewards`, `loot`, `combat`, `world`, `locations`, `portals`, `procedural-generation`, `npc`, `quests`, `seasons`, `rating`, `multiplayer`, `ui`, `technical`, `lore`, `philosophy`, `sunday`, and `monetization`.
+Теги — в lowercase kebab-case и добавляются только по мере необходимости. Уже актуальны, например: `gameplay`, `platformer`, `idle`, `economy`, `attention`, `impulse`, `progression`, `rewards`, `loot`, `combat`, `world`, `locations`, `portals`, `procedural-generation`, `npc`, `quests`, `seasons`, `rating`, `multiplayer`, `ui`, `technical`, `lore`, `philosophy`, `sunday`, `monetization`.
 
-Do not create tags merely because they might be useful someday.
+Не создавать заранее огромную систему тегов.
 
-## Updating documentation
+## Когда обновлять документацию
 
-Update the journal when a discussion produces a meaningful new hypothesis, explicit decision, rejection, contradiction, change of direction, or important design rationale.
+Обновлять журнал, если обсуждение дало значимую новую гипотезу, явное решение, отказ от направления, противоречие, изменение курса или важную причину выбора.
 
-Do not interrupt brainstorming to document every intermediate thought. Summarize only durable information that will help future development answer questions such as:
+Не прерывать мозговой штурм ради фиксации каждой промежуточной мысли. Сохранять только информацию, которая позже поможет ответить:
 
-- Why is this mechanic designed this way?
-- Did we already discuss a similar idea?
-- What alternatives were rejected or deferred?
-- What is currently accepted about this mechanic?
+- Почему механика устроена именно так?
+- Обсуждали ли мы это раньше?
+- Какие варианты были отклонены или отложены?
+- Что сейчас считается принятым по этой теме?
 
-When a decision changes:
+Если решение изменилось:
 
-1. keep the old record;
-2. mark it `superseded` when appropriate;
-3. create or update the newer record;
-4. add the reason for the change;
-5. update `CURRENT.md` and `index.json`.
+1. сохранить старую запись;
+2. при необходимости пометить её `superseded`;
+3. создать или обновить новую запись;
+4. записать причину изменения;
+5. обновить `CURRENT.md` и `index.json`.
 
-## Authority rule
+## Правило принятия решений
 
-Brainstorming is never automatically an accepted decision. A decision is `accepted` only when the project owner explicitly accepts it or clearly asks to proceed with it as the project direction.
+Мозговой штурм никогда автоматически не становится принятым решением. Статус `accepted` используется только тогда, когда владелец проекта явно принял решение или однозначно попросил двигаться дальше именно с ним.
 
-Implementation does not automatically prove a permanent design decision either: prototypes may exist to test a hypothesis.
+Наличие реализации в коде тоже не делает механику окончательным решением: код может быть только прототипом для проверки гипотезы.
