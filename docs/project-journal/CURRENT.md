@@ -1,38 +1,38 @@
-# uGame — current design directions
+# uGame — текущее состояние концепции
 
-Updated: 2026-09-16
+Обновлено: 2026-09-16
 
-This file is intentionally short. It points to the current state of important design topics; details and history live in `records/`.
+Этот файл специально короткий. Он показывает текущее состояние важных тем; подробности и история находятся в `records/`.
 
-## Explicitly accepted so far
+## Явно принято на данный момент
 
-- The project journal system itself is part of the repository documentation workflow.
-- Brainstorming is not an accepted decision unless explicitly confirmed.
-- The working resource/currency name **«Внимание» ⚠** is associated with real active human play time; the name is temporary.
-- «Внимание» is account-bound / non-transferable.
+- Система Project Journal является частью документационного процесса uGame.
+- Мозговой штурм не считается принятым решением, пока решение явно не подтверждено.
+- Рабочее название ресурса/валюты **«Внимание» ⚠** связано с реальным активным временем человека в игре; название временное.
+- «Внимание» привязано к аккаунту и не передаётся другим игрокам.
 
-## Active working hypotheses
+## Активные рабочие гипотезы
 
-- uGame should respect player time and avoid designing progression around mandatory multi-hour daily grind.
-- Short meaningful sessions should usually be more efficient than very long repetitive sessions.
-- **«Импульс»** is a working concept for a recoverable account resource/state that regulates effective use of active play and possibly the generation/use of «Внимание».
-- Rest duration, previous session duration and a special weekly rest cycle may affect Impulse recovery and capacity.
-- Sunday is being explored as a rest/recovery-oriented day. Important unresolved tension: it should remain safe to skip entirely, while an optional idle/preparation layer may still exist.
-- The broader game direction currently combines an active platformer/RPG exploration layer with an idle/economic automation layer.
-- Static locations may coexist with dynamic routes, portals and rotating activity points.
-- Combat is deliberately not fixed yet; simpler systems are preferred for early prototypes.
-- Rewards/loot are expected to become table-driven and probabilistic, but the economy is not yet designed.
-- A future efficiency/KPD metric may compare progression achieved against active time, but fairness risks are unresolved.
+- uGame должна уважать время игрока и не строить прогрессию вокруг обязательного многочасового ежедневного гринда.
+- Короткие осмысленные сессии обычно должны быть эффективнее очень долгого повторяющегося фарма.
+- **«Импульс»** — рабочая концепция восстанавливаемого ресурса/состояния аккаунта, которое регулирует эффективность активной игры и, возможно, получение/использование «Внимания».
+- На восстановление и ёмкость Импульса могут влиять длительность отдыха, длительность предыдущей сессии и специальный недельный цикл отдыха.
+- Воскресенье рассматривается как день отдыха/восстановления. Есть важное нерешённое противоречие: игру должно быть безопасно полностью пропустить, но при этом может существовать необязательный idle-режим подготовки.
+- Более широкое направление игры сейчас сочетает активное platformer/RPG-исследование и idle/экономическую автоматизацию.
+- Постоянные локации могут сочетаться с динамическими маршрутами, порталами и меняющимися точками активности.
+- Боевая система сознательно пока не зафиксирована; для ранних прототипов предпочтительны простые варианты.
+- Награды/лут предполагаются управляемыми таблицами и вероятностями, но экономика ещё не определена.
+- Будущая метрика КПД может сравнивать достигнутый прогресс с активным временем, но риски для справедливости пока не решены.
 
-## Priority now
+## Текущий приоритет
 
-Current implementation work remains much earlier than these economy/meta systems. The journal preserves these directions so future mechanics do not accidentally contradict them.
+Реализация проекта сейчас находится значительно раньше этих экономических и мета-систем. Журнал сохраняет направления, чтобы будущие механики случайно им не противоречили.
 
-## Relevant records
+## Связанные записи
 
-- `UGD-0001` — Attention, Impulse and short-session economy.
-- `UGD-0002` — Sunday as rest/recovery design.
-- `UGD-0003` — active platformer + idle economy hybrid.
-- `UGD-0004` — world, locations, portals and rotating activities.
-- `UGD-0005` — time history, KPD and seasonal/lifetime metrics.
-- `UGD-0006` — combat and reward-system directions.
+- `UGD-0001` — «Внимание», «Импульс» и экономика коротких сессий.
+- `UGD-0002` — воскресенье как день отдыха и восстановления.
+- `UGD-0003` — гибрид активной платформенной части и idle-экономики.
+- `UGD-0004` — мир, локации, порталы и меняющиеся активности.
+- `UGD-0005` — история времени, КПД и сезонные/сквозные метрики.
+- `UGD-0006` — направления боя и системы наград.
