@@ -1,78 +1,78 @@
 # UGD-0002 — Воскресенье как день отдыха и восстановления
 
-- Date: 2026-09-16
-- Status: discussing
+- Дата: 2026-09-16
+- Статус: discussing
 - Flags: needs-test, return-later
-- Tags: sunday, philosophy, idle, impulse, progression
+- Теги: sunday, philosophy, idle, impulse, progression
 
-## Source / context
+## Контекст
 
-The project owner wants uGame to support a weekly rhythm where a player loses nothing important by not opening the game on Sunday. Later discussion added a second idea: Sunday may optionally become a quieter idle/preparation day instead of merely a day with reduced active play.
+В проекте рассматривается недельный ритм, при котором игрок не теряет ничего важного, если вообще не открывает uGame в воскресенье. Позднее появилась дополнительная идея: воскресенье может быть не просто днём с меньшей активностью, а отдельным спокойным idle-днём подготовки и восстановления.
 
-## Idea
+## Идея
 
-Sunday should represent rest, recovery and preparation rather than a mandatory farming day.
+Воскресенье должно обозначать отдых, восстановление и подготовку, а не обязательный день фарма.
 
-Possible forms currently under discussion:
+Сейчас обсуждаются такие формы:
 
-- no important weekly deadlines or must-do activities on Sunday;
-- no penalty for skipping the game entirely;
-- reduced or closed active zones;
-- city/idle management may remain available;
-- long recovery/production processes may be started before or during the rest period;
-- a full Sunday rest may create a special Impulse reserve or increase temporary capacity for the following week;
-- the world may visually become calmer/lighter and use different music/atmosphere.
+- в воскресенье нет важных недельных дедлайнов и обязательных активностей;
+- полное отсутствие входа в игру не наказывается;
+- активные зоны могут быть сокращены или закрыты;
+- город и idle-управление могут оставаться доступными;
+- можно запускать длительные процессы восстановления/производства;
+- полноценный воскресный отдых может создавать специальный резерв Импульса или временно увеличивать его максимум на следующую неделю;
+- мир может становиться визуально спокойнее/светлее, с другой музыкой и атмосферой.
 
-## Why it matters
+## Зачем это нужно
 
-The goal is not simply to reduce rewards on one day. The design should communicate that rest is valuable and that the game does not demand continuous digital presence.
+Цель не в том, чтобы просто урезать награды в один день. Игра должна показывать, что отдых имеет ценность и что uGame не требует постоянного цифрового присутствия.
 
-## Benefits
+## Плюсы
 
-- Reinforces the core "respect player time" philosophy.
-- Creates a weekly rhythm with a distinctive identity.
-- Gives idle systems and long processes a natural place in the schedule.
-- Can prepare resources/Impulse for the next week without requiring grind.
+- Усиливает базовую философию уважения времени игрока.
+- Создаёт узнаваемый недельный ритм.
+- Даёт естественное место idle-системам и длинным процессам.
+- Позволяет готовить ресурсы/Импульс к следующей неделе без гринда.
 
-## Risks / contradictions
+## Риски и противоречия
 
-- A hard Sunday lockout could punish players whose only free day is Sunday.
-- If Sunday offers uniquely powerful rewards, it becomes mandatory and defeats the purpose.
-- If a player must log in to start recovery, the system still creates FOMO.
-- A literal Sunday may create timezone/calendar complications for a global game.
-- There is an unresolved tension between "best experience is not opening the game" and "Sunday has special idle interactions".
+- Жёсткая воскресная блокировка может наказать игроков, у которых свободен только этот день.
+- Если воскресенье даёт уникально сильную выгоду, оно само становится обязательным.
+- Если для восстановления нужно обязательно зайти в игру, сохраняется FOMO.
+- Фиксированное календарное воскресенье создаёт вопросы часовых поясов и глобального релиза.
+- Есть нерешённое противоречие между идеями «лучший вариант — вообще не открывать игру» и «в воскресенье есть специальные idle-действия».
 
-## Alternatives
+## Альтернативы
 
-- Sunday is completely normal but has no deadlines.
-- Sunday is optional idle-only mode.
-- Player chooses a personal weekly rest day.
-- Sunday is the default symbolic rest day, but the system is technically configurable.
-- Recovery is automatic and Sunday UI is purely atmospheric if the player chooses to enter.
+- Воскресенье остаётся обычным днём, но без дедлайнов.
+- Воскресенье — необязательный idle-only режим.
+- Игрок выбирает собственный день недельного отдыха.
+- Воскресенье является символическим значением по умолчанию, но технически день настраивается.
+- Восстановление происходит автоматически, а воскресный интерфейс и атмосфера существуют только для тех, кто всё-таки зашёл.
 
-## Current direction
+## Текущее направление
 
-Preserve the strongest rule first: **the player should not lose meaningful progress by skipping Sunday entirely.**
+Главное правило сейчас: **игрок не должен терять значимый прогресс, если полностью пропустил воскресенье.**
 
-Optional Sunday interactions may exist, but they should not become required for competitive or economic efficiency.
+Необязательные воскресные действия допустимы, но они не должны становиться обязательными для экономической или соревновательной эффективности.
 
-The idea of Sunday creating a larger Impulse reserve is promising but not accepted numerically.
+Идея большого воскресного резерва Импульса выглядит перспективно, но конкретные числа не приняты.
 
-## What to test later
+## Что проверить позже
 
-- Whether active zones should close, merely become less rewarding, or remain open.
-- Whether Sunday idle actions provide convenience only or actual economic value.
-- Whether weekly rest must be automatic to avoid FOMO.
-- Timezone and reset rules.
-- Whether the rest day is fixed or user-selectable.
+- Нужно ли закрывать активные зоны, просто снижать их значимость или оставить открытыми.
+- Дают ли воскресные idle-действия только удобство или реальную экономическую выгоду.
+- Должно ли недельное восстановление быть полностью автоматическим, чтобы не создавать FOMO.
+- Правила часовых поясов и сброса недели.
+- Фиксированный или выбираемый день отдыха.
 
-## Relations
+## Связи
 
 - related: UGD-0001, UGD-0003
 
-## Change history
+## История изменений
 
 ### 2026-09-16
-Initial concept: no need to play Sunday and no weekly loss from skipping it.
+Первоначальная идея: в воскресенье нет необходимости играть и нет потери недельного прогресса из-за пропуска.
 
-Later the same day: expanded into a possible quiet idle/recovery day with long processes, calmer presentation and Impulse restoration. The earlier no-loss principle remains the stronger constraint.
+Позднее в тот же день идея расширена до возможного спокойного idle-дня: длинные процессы, более тихая атмосфера и восстановление Импульса. Более ранний принцип «ничего не терять при полном пропуске воскресенья» остаётся главным ограничением.
