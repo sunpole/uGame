@@ -41,7 +41,9 @@ export class InteractableSystem {
       ...definition
     };
 
-    item.display = this.createDisplay(item);
+    if (!(item.once && item.used)) item.display = this.createDisplay(item);
+    else item.display = null;
+
     this.items.push(item);
     return item;
   }
@@ -99,7 +101,7 @@ export class InteractableSystem {
 
     for (const item of this.items) {
       if (item.used && item.once) continue;
-      if (item.trigger !== 'auto') continue;
+      if (item.trigger !== 'auto' || !item.display) continue;
 
       const inside = overlaps(playerBounds, boundsOf(item.display));
       if (inside && this.lastAutoId !== item.id) {
@@ -126,6 +128,7 @@ export class InteractableSystem {
     if (item.once) item.used = true;
     this.audioSystem?.play(item.sound || 'interact');
     this.eventSystem?.emit('interactable:activate', { item });
+    if (item.once) this.eventSystem?.emit('interactable:used', { id: item.id, item });
   }
 
   clear() {
