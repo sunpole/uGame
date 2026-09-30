@@ -1,145 +1,58 @@
-const ZONES = [
-  {
-    id: 1,
-    name: 'Zone 1',
-    defaultEntry: 'left',
-    entries: {
-      left: { x: 96, y: 270 },
-      right: { x: 864, y: 270 }
-    },
-    exitSide: 'right',
-    exitTarget: { zoneId: 2, entry: 'left' },
-    rules: {
-      speedMultiplier: 1,
-      vision: {}
-    },
-    walls: [
-      { x: 360, y: 175, width: 230, height: 28 },
-      { x: 520, y: 360, width: 270, height: 28 },
-      { x: 720, y: 265, width: 28, height: 170 }
-    ],
-    interactables: [
-      {
-        id: 'guide',
-        type: 'npc',
-        x: 150,
-        y: 120,
-        label: 'Проводник',
-        prompt: 'Поговорить',
-        dialogueId: 'guide_intro'
-      },
-      {
-        id: 'shard-node',
-        type: 'resource',
-        x: 585,
-        y: 245,
-        label: 'Осколок',
-        prompt: 'Взять осколок',
-        resourceId: 'shard',
-        amount: 1,
-        once: true,
-        sound: 'resource'
-      },
-      {
-        id: 'starter-chest',
-        type: 'chest',
-        x: 830,
-        y: 420,
-        label: 'Старый сундук',
-        prompt: 'Открыть сундук',
-        once: true,
-        sound: 'chest'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Zone 2',
-    defaultEntry: 'left',
-    entries: {
-      left: { x: 96, y: 270 },
-      right: { x: 864, y: 270 }
-    },
-    exitSide: 'left',
-    exitTarget: { zoneId: 1, entry: 'right' },
-    rules: {
-      speedMultiplier: 0.86,
-      vision: { darkness: 0.9 }
-    },
-    walls: [
-      { x: 710, y: 145, width: 260, height: 28 },
-      { x: 515, y: 300, width: 28, height: 230 },
-      { x: 285, y: 395, width: 300, height: 28 },
-      { x: 250, y: 180, width: 180, height: 28 }
-    ],
-    interactables: [
-      {
-        id: 'zone2-shard',
-        type: 'resource',
-        x: 690,
-        y: 410,
-        label: 'Осколок',
-        prompt: 'Взять осколок',
-        resourceId: 'shard',
-        amount: 1,
-        once: true,
-        sound: 'resource'
-      }
-    ]
-  }
-];
-
 export class ZoneSystem {
-  constructor({ scene, width, height, player, interactableSystem, eventSystem, onStatus, onZoneChange, isInteractableUsed }) {
+  constructor({
+    scene,
+    width,
+    height,
+    player,
+    worldGraph,
+    interactableSystem,
+    eventSystem,
+    onStatus,
+    onZoneChange,
+    isInteractableUsed
+  }) {
     this.scene = scene;
     this.width = width;
     this.height = height;
     this.player = player;
+    this.worldGraph = worldGraph;
     this.interactableSystem = interactableSystem;
     this.eventSystem = eventSystem;
     this.onStatus = onStatus;
     this.onZoneChange = onZoneChange;
     this.isInteractableUsed = isInteractableUsed;
-    this.index = 0;
+    this.currentId = null;
     this.objects = [];
     this.walls = [];
-    this.entrySide = null;
+    this.entryId = null;
   }
 
   get current() {
-    return ZONES[this.index];
+    return this.currentId ? this.worldGraph?.getZone(this.currentId) : null;
   }
 
-  findIndexById(zoneId) {
-    return ZONES.findIndex((zone) => zone.id === zoneId);
-  }
-
-  build(index = this.index, entrySide = null) {
+  build(zoneValue = this.currentId || this.worldGraph?.start?.zoneId, entryId = null) {
     const previous = this.current;
     if (this.objects.length || this.interactableSystem?.items?.length) {
       this.eventSystem?.emit('zone:leave', { zone: previous });
     }
 
-    this.clear();
-    this.index = ((index % ZONES.length) + ZONES.length) % ZONES.length;
+    const zone = this.worldGraph?.getZone(zoneValue) || this.worldGraph?.getZone(this.worldGraph?.start?.zoneId);
+    if (!zone) throw new Error(`Unknown zone: ${String(zoneValue)}`);
 
-    const zone = this.current;
+    this.clear();
+    this.currentId = zone.id;
     this.walls = [];
 
-    this.makeWall(this.width / 2, 6, this.width, 12);
-    this.makeWall(this.width / 2, this.height - 6, this.width, 12);
+    const transitions = this.worldGraph.getTransitionsFrom(zone.id);
+    const openSides = new Set(transitions.map((transition) => transition.from?.side).filter(Boolean));
 
-    if (zone.exitSide === 'right') {
-      this.makeWall(6, this.height / 2, 12, this.height);
-      this.makeWall(this.width - 6, 105, 12, 210);
-      this.makeWall(this.width - 6, 435, 12, 210);
-    } else {
-      this.makeWall(this.width - 6, this.height / 2, 12, this.height);
-      this.makeWall(6, 105, 12, 210);
-      this.makeWall(6, 435, 12, 210);
-    }
+    this.makeBoundary('top', openSides.has('top'));
+    this.makeBoundary('bottom', openSides.has('bottom'));
+    this.makeBoundary('left', openSides.has('left'));
+    this.makeBoundary('right', openSides.has('right'));
 
-    for (const wall of zone.walls) {
+    for (const wall of zone.walls || []) {
       this.makeWall(wall.x, wall.y, wall.width, wall.height);
     }
 
@@ -147,48 +60,126 @@ export class ZoneSystem {
       ...definition,
       used: Boolean(definition.once && this.isInteractableUsed?.(definition.id))
     }));
-    const portal = this.portalDefinition(zone.exitSide, zone.exitTarget);
-    this.interactableSystem?.load([...interactables, portal]);
+    const portals = transitions.map((transition) => this.portalDefinition(transition));
+    this.interactableSystem?.load([...interactables, ...portals]);
 
-    const resolvedEntry = zone.entries?.[entrySide] ? entrySide : zone.defaultEntry;
-    const spawn = zone.entries?.[resolvedEntry] || { x: 96, y: this.height / 2 };
-    this.entrySide = resolvedEntry;
+    const resolvedEntry = this.worldGraph.resolveEntryId(zone.id, entryId);
+    const spawn = this.worldGraph.getEntry(zone.id, resolvedEntry) || { x: 96, y: this.height / 2 };
+    this.entryId = resolvedEntry;
     this.player.setPosition(spawn.x, spawn.y);
 
-    const entryLabel = resolvedEntry === 'right' ? 'справа' : 'слева';
-    const exitLabel = zone.exitSide === 'right' ? 'справа' : 'слева';
-    this.onStatus?.(`${zone.name} · вход ${entryLabel} · выход ${exitLabel}`);
+    const entryLabel = this.sideLabel(resolvedEntry);
+    const exits = [...new Set(transitions.map((transition) => this.sideLabel(transition.from?.side)))];
+    const exitLabel = exits.length ? exits.join(', ') : 'нет';
+    this.onStatus?.(`${zone.name} · ${zone.id} · вход ${entryLabel} · выход ${exitLabel}`);
     this.onZoneChange?.(zone);
     this.eventSystem?.emit('zone:enter', { zone, entry: resolvedEntry });
     return zone;
   }
 
   travel(target = {}) {
-    const targetIndex = this.findIndexById(target.zoneId);
-    if (targetIndex < 0) return this.current;
-    return this.build(targetIndex, target.entry || null);
+    const transition = target.transitionId
+      ? this.worldGraph?.getTransition(target.transitionId)
+      : null;
+
+    if (transition) {
+      return this.build(transition.to.zoneId, transition.to.entryId || null);
+    }
+
+    const zoneId = this.worldGraph?.resolveZoneId(target.zoneId);
+    if (!zoneId) return this.current;
+    return this.build(zoneId, target.entryId || target.entry || null);
   }
 
   next() {
-    return this.build(this.index + 1);
+    const ids = [...(this.worldGraph?.zones?.keys?.() || [])];
+    if (!ids.length) return this.current;
+    const currentIndex = Math.max(0, ids.indexOf(this.currentId));
+    return this.build(ids[(currentIndex + 1) % ids.length]);
   }
 
-  portalDefinition(side, target) {
+  portalDefinition(transition) {
+    const side = transition.from?.side || 'right';
+    const horizontal = side === 'left' || side === 'right';
     const isRight = side === 'right';
+    const isBottom = side === 'bottom';
+
+    let x = this.width / 2;
+    let y = this.height / 2;
+    let width = 110;
+    let height = 28;
+    let labelX = x;
+    let labelY = y;
+    let label = 'ВЫХОД';
+
+    if (horizontal) {
+      x = isRight ? this.width - 22 : 22;
+      y = this.height / 2;
+      width = 28;
+      height = 110;
+      labelX = isRight ? this.width - 82 : 82;
+      labelY = y;
+      label = isRight ? 'ВЫХОД →' : '← ВЫХОД';
+    } else {
+      x = this.width / 2;
+      y = isBottom ? this.height - 22 : 22;
+      width = 110;
+      height = 28;
+      labelX = x;
+      labelY = isBottom ? this.height - 58 : 58;
+      label = isBottom ? 'ВЫХОД ↓' : '↑ ВЫХОД';
+    }
+
     return {
-      id: `portal-zone-${this.current.id}`,
+      id: transition.id,
       type: 'portal',
-      trigger: 'auto',
-      x: isRight ? this.width - 22 : 22,
-      y: this.height / 2,
-      width: 28,
-      height: 110,
-      labelX: isRight ? this.width - 82 : 82,
-      labelY: this.height / 2,
-      label: isRight ? 'ВЫХОД →' : '← ВЫХОД',
-      sound: 'portal',
-      target
+      trigger: transition.trigger || 'auto',
+      x,
+      y,
+      width,
+      height,
+      labelX,
+      labelY,
+      label,
+      sound: transition.sound || 'portal',
+      target: { transitionId: transition.id }
     };
+  }
+
+  makeBoundary(side, open = false) {
+    const thickness = 12;
+    const opening = 120;
+
+    if (side === 'left' || side === 'right') {
+      const x = side === 'left' ? thickness / 2 : this.width - thickness / 2;
+      if (!open) {
+        this.makeWall(x, this.height / 2, thickness, this.height);
+        return;
+      }
+
+      const segmentHeight = (this.height - opening) / 2;
+      this.makeWall(x, segmentHeight / 2, thickness, segmentHeight);
+      this.makeWall(x, this.height - segmentHeight / 2, thickness, segmentHeight);
+      return;
+    }
+
+    const y = side === 'top' ? thickness / 2 : this.height - thickness / 2;
+    if (!open) {
+      this.makeWall(this.width / 2, y, this.width, thickness);
+      return;
+    }
+
+    const segmentWidth = (this.width - opening) / 2;
+    this.makeWall(segmentWidth / 2, y, segmentWidth, thickness);
+    this.makeWall(this.width - segmentWidth / 2, y, segmentWidth, thickness);
+  }
+
+  sideLabel(side) {
+    if (side === 'right') return 'справа';
+    if (side === 'left') return 'слева';
+    if (side === 'top') return 'сверху';
+    if (side === 'bottom') return 'снизу';
+    return side || 'по умолчанию';
   }
 
   makeWall(x, y, width, height) {
