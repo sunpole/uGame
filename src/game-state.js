@@ -34,7 +34,7 @@ export function createDefaultGameState() {
       classId: 'wanderer'
     },
     world: {
-      zoneId: 1,
+      zoneId: 'zone-001',
       entry: 'left',
       usedInteractables: []
     },
