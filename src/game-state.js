@@ -78,7 +78,7 @@ export class GameState {
   }
 
   snapshot() {
-    return structuredClone
+    return typeof structuredClone === 'function'
       ? structuredClone(this.state)
       : JSON.parse(JSON.stringify(this.state));
   }
