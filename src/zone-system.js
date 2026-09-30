@@ -90,7 +90,7 @@ const ZONES = [
 ];
 
 export class ZoneSystem {
-  constructor({ scene, width, height, player, interactableSystem, eventSystem, onStatus, onZoneChange }) {
+  constructor({ scene, width, height, player, interactableSystem, eventSystem, onStatus, onZoneChange, isInteractableUsed }) {
     this.scene = scene;
     this.width = width;
     this.height = height;
@@ -99,6 +99,7 @@ export class ZoneSystem {
     this.eventSystem = eventSystem;
     this.onStatus = onStatus;
     this.onZoneChange = onZoneChange;
+    this.isInteractableUsed = isInteractableUsed;
     this.index = 0;
     this.objects = [];
     this.walls = [];
@@ -142,8 +143,12 @@ export class ZoneSystem {
       this.makeWall(wall.x, wall.y, wall.width, wall.height);
     }
 
+    const interactables = (zone.interactables || []).map((definition) => ({
+      ...definition,
+      used: Boolean(definition.once && this.isInteractableUsed?.(definition.id))
+    }));
     const portal = this.portalDefinition(zone.exitSide, zone.exitTarget);
-    this.interactableSystem?.load([...(zone.interactables || []), portal]);
+    this.interactableSystem?.load([...interactables, portal]);
 
     const resolvedEntry = zone.entries?.[entrySide] ? entrySide : zone.defaultEntry;
     const spawn = zone.entries?.[resolvedEntry] || { x: 96, y: this.height / 2 };
