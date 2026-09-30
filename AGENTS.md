@@ -6,9 +6,18 @@
 
 1. Прочитать `README.md`, чтобы понять состояние реально реализованного прототипа.
 2. Прочитать `docs/project-journal/README.md` — правила ведения проектного журнала.
-3. Искать связанные материалы в `docs/project-journal/index.json` и `docs/project-journal/records/` по названию механики, тегу и статусу.
-4. Обязательно различать: реализованный код, принятые решения, рабочие гипотезы и обычный мозговой штурм.
-5. Если старая идея заменена новой, не удалять историю: связывать записи через `supersedes` / `superseded_by`.
+3. Прочитать `docs/project-journal/CURRENT.md` — что сейчас принято и что остаётся рабочей гипотезой.
+4. Искать связанные материалы в `docs/project-journal/index.json` и `docs/project-journal/records/` по названию механики, тегу и статусу.
+5. Обязательно различать: реализованный код, принятые решения, рабочие гипотезы и обычный мозговой штурм.
+6. Если старая идея заменена новой, не удалять историю: связывать записи через `supersedes` / `superseded_by` или явно фиксировать уточнение в более новой записи.
+
+## Источники истины и приоритет
+
+- Реально реализованное поведение определяется текущим кодом и `README.md`/`VERSION.md`.
+- Текущие принятые проектные решения определяются `docs/project-journal/CURRENT.md` и записями со статусом `accepted`.
+- `hypothesis`, `discussing`, `idea`, `deferred` и flags не должны трактоваться как автоматически принятые решения.
+- Старые записи не удаляются только потому, что направление изменилось: они сохраняют историю рассуждений.
+- GitHub Pages по адресу `https://sunpole.github.io/uGame/journal/` — только представление Project Journal. Это не отдельный источник истины и не место для ручного дублирования решений.
 
 ## Проектный журнал
 
@@ -16,8 +25,10 @@
 
 - `README.md` — правила, статусы, типы, теги и формат записей.
 - `CURRENT.md` — короткая карта того, что сейчас принято или считается активным рабочим направлением.
-- `index.json` — машиночитаемые метаданные для будущего поиска и фильтров GitHub Pages.
+- `index.json` — машиночитаемые метаданные для поиска, фильтров и GitHub Pages.
 - `records/` — содержательные записи об идеях, гипотезах и решениях. Не создавать отдельный файл для каждого сообщения чата.
+
+При добавлении новой записи нужно синхронно обновить `index.json` и, если изменилось текущее направление, `CURRENT.md`. Статический интерфейс Pages должен начать показывать запись автоматически без ручного копирования её содержания в HTML.
 
 ## Статусы
 
@@ -40,7 +51,7 @@
 
 ## Теги
 
-Теги — в lowercase kebab-case и добавляются только по мере необходимости. Уже актуальны, например: `gameplay`, `platformer`, `idle`, `economy`, `attention`, `impulse`, `progression`, `rewards`, `loot`, `combat`, `world`, `locations`, `portals`, `procedural-generation`, `npc`, `quests`, `seasons`, `rating`, `multiplayer`, `ui`, `technical`, `lore`, `philosophy`, `sunday`, `monetization`.
+Теги — в lowercase kebab-case и добавляются только по мере необходимости. Уже актуальны, например: `gameplay`, `platformer`, `top-down`, `idle`, `economy`, `attention`, `impulse`, `progression`, `rewards`, `loot`, `combat`, `world`, `locations`, `portals`, `procedural-generation`, `npc`, `quests`, `persistence`, `architecture`, `seasons`, `rating`, `multiplayer`, `ui`, `technical`, `lore`, `philosophy`, `sunday`, `monetization`.
 
 Не создавать заранее огромную систему тегов.
 
