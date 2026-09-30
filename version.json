@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "stage": "foundation-prototype",
-  "updated": "2026-09-15",
-  "summary": "Character head and torso centered at idle; forward lean appears only during movement"
+  "updated": "2026-09-30",
+  "summary": "Persistent Game State and local SaveSystem with schema v1"
 }
