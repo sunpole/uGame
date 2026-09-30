@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-09-16",
+  "updated": "2026-09-30",
   "records": [
     {
       "id": "UGD-0001",
@@ -37,7 +37,7 @@
       "flags": ["needs-prototype", "return-later"],
       "tags": ["gameplay", "platformer", "idle", "progression", "world"],
       "path": "records/UGD-0003-active-platformer-idle-hybrid.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006", "UGD-0007"],
+      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006", "UGD-0007", "UGD-0008"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -50,7 +50,7 @@
       "flags": ["needs-prototype", "return-later"],
       "tags": ["world", "locations", "portals", "procedural-generation", "npc", "quests", "gameplay"],
       "path": "records/UGD-0004-world-portals-activities.md",
-      "related": ["UGD-0003", "UGD-0006", "UGD-0007"],
+      "related": ["UGD-0003", "UGD-0006", "UGD-0007", "UGD-0008"],
       "supersedes": [],
       "superseded_by": []
     },
@@ -89,7 +89,20 @@
       "flags": ["needs-prototype", "needs-test"],
       "tags": ["technical", "architecture", "persistence", "time", "world", "idle", "seasons", "progression"],
       "path": "records/UGD-0007-early-architecture-foundation.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0006"],
+      "related": ["UGD-0001", "UGD-0002", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0006", "UGD-0008"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0008",
+      "title": "Базовые правила игрового слоя v1",
+      "date": "2026-09-30",
+      "type": "game-direction",
+      "status": "accepted",
+      "flags": ["needs-prototype"],
+      "tags": ["gameplay", "movement", "top-down", "world", "locations", "portals", "npc", "quests", "persistence", "idle", "architecture"],
+      "path": "records/UGD-0008-core-gameplay-v1-decisions.md",
+      "related": ["UGD-0003", "UGD-0004", "UGD-0007"],
       "supersedes": [],
       "superseded_by": []
     }
