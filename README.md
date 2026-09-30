@@ -16,20 +16,38 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 0 | Exit |
 
-## Game prototype v0.0.20
+## Project Journal
 
-uGame now has a modular foundation instead of putting gameplay into `main.js`.
+Project decisions, hypotheses and design history are stored under
+`docs/project-journal/`.
+
+- `docs/project-journal/CURRENT.md` — short map of the currently accepted direction and active hypotheses.
+- `docs/project-journal/index.json` — machine-readable metadata for all UGD records.
+- `docs/project-journal/records/` — detailed history, alternatives and reasons behind decisions.
+- `AGENTS.md` — rules for agents working with project knowledge.
+
+GitHub Pages exposes a read-only view at:
+
+`https://sunpole.github.io/uGame/journal/`
+
+The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
+
+## Game prototype v0.0.28
+
+uGame has a modular top-down foundation instead of putting gameplay into `main.js`.
 The current playable prototype includes:
 
-- two top-down zones with walls and real portal transitions;
+- two top-down zones with walls and explicit linked portal transitions;
 - modular Vision, Class, Zone, Player, Interactable, Event and Zone Rules systems;
-- a temporary layered top-down character with movement/facing animation;
+- a temporary layered top-down character with distinct centered idle and forward-leaning movement poses;
 - WASD/arrow movement, Shift dash and stamina;
 - NPC, resource, chest and portal variants built on one Interactable system;
 - temporary procedural sounds routed through one Audio system;
 - resource counters and a small stack-based inventory;
 - JSON-driven dialogue and quest data with one test quest;
 - mobile touch controls for movement, action and dash;
+- Vision overlay locked to the same playfield bounds as Phaser;
+- local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
 - the four-digit DEV console and live physical-arrow indicator.
 
 The first quest is intentionally small: talk to the Guide, collect a shard and open
@@ -38,6 +56,9 @@ inventory and events can cooperate without being hard-coded into one system.
 
 Zone 2 also demonstrates zone-specific rules: slower movement and a Vision darkness
 override. The selected class profile remains underneath the zone override.
+
+Combat/enemies are intentionally deferred. The current design direction is documented
+in Project Journal rather than being implemented prematurely.
 
 `docs/CHARACTER-ASSET-GUIDE.md` describes the first authored character spritesheet/layer
 workflow. `docs/PREBY-DEPLOY.md` describes the intended static deployment to a dedicated
@@ -50,6 +71,9 @@ same version for tooling. `VERSION.md` is the human-readable version history.
 Option 4 runs the prototype through the local Node dev server. No npm package
 installation is required. Phaser is loaded by the browser from its CDN, so the
 prototype needs an internet connection while running.
+
+The dev server also prints private IPv4 URLs such as `http://192.168.x.x:5173` for
+same-network testing. If Windows Firewall asks, allow Node.js on Private networks only.
 
 ## DEV console
 
