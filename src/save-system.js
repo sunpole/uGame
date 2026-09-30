@@ -2,18 +2,28 @@ import { GAME_STATE_SCHEMA_VERSION } from './game-state.js';
 
 const DEFAULT_KEY = `ugame.save.v${GAME_STATE_SCHEMA_VERSION}`;
 
+function browserStorage() {
+  try {
+    return globalThis.localStorage || null;
+  } catch {
+    return null;
+  }
+}
+
 export class SaveSystem {
-  constructor({ storage = globalThis.localStorage, key = DEFAULT_KEY, getState } = {}) {
-    this.storage = storage;
+  constructor({ storage, key = DEFAULT_KEY, getState } = {}) {
+    this.storage = storage === undefined ? browserStorage() : storage;
     this.key = key;
     this.getState = getState;
     this.blocked = false;
+    this.paused = false;
     this.lastSavedAt = null;
     this.lastError = '';
   }
 
   load() {
     this.lastError = '';
+    this.paused = false;
     if (!this.storage) return null;
 
     try {
@@ -37,7 +47,7 @@ export class SaveSystem {
   }
 
   save(state) {
-    if (!this.storage || this.blocked || !state) return false;
+    if (!this.storage || this.blocked || this.paused || !state) return false;
 
     try {
       const savedAt = new Date().toISOString();
@@ -61,6 +71,7 @@ export class SaveSystem {
     try {
       this.storage.removeItem(this.key);
       this.blocked = false;
+      this.paused = true;
       this.lastSavedAt = null;
       this.lastError = '';
       return true;
@@ -71,7 +82,9 @@ export class SaveSystem {
   }
 
   statusText() {
+    if (!this.storage) return 'Save недоступен в этом браузере';
     if (this.blocked) return `Save заблокирован: ${this.lastError || 'неподдерживаемая схема'}`;
+    if (this.paused) return 'Save очищен и приостановлен до перезапуска';
     if (this.lastError) return `Save ошибка: ${this.lastError}`;
     if (!this.lastSavedAt) return 'Save: ещё нет сохранения';
     return `Save: ${this.lastSavedAt}`;
@@ -79,6 +92,7 @@ export class SaveSystem {
 
   executeDevCode(code) {
     if (code === '9001') {
+      this.paused = false;
       const state = this.getState?.();
       const ok = this.save(state);
       return {
@@ -92,13 +106,17 @@ export class SaveSystem {
       const ok = this.clear();
       return {
         handled: true,
-        message: ok ? '9002 · Save очищен; перезапусти игру для нового состояния' : `9002 · ${this.statusText()}`,
+        message: ok ? '9002 · Save очищен; перезапусти игру' : `9002 · ${this.statusText()}`,
         state: ok ? 'ok' : 'error'
       };
     }
 
     if (code === '9099') {
-      return { handled: true, message: `9099 · ${this.statusText()}`, state: this.lastError ? 'error' : 'ok' };
+      return {
+        handled: true,
+        message: `9099 · ${this.statusText()}`,
+        state: this.lastError || this.blocked ? 'error' : 'ok'
+      };
     }
 
     return { handled: false };
