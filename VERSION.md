@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.28**
+Current version: **0.0.29**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.29 | Persistent Game State schema v1 + local SaveSystem |
 | 0.0.28 | Head and torso centered at idle; forward lean only during movement |
 | 0.0.27 | Stronger visual contrast between upright idle and forward-leaning movement |
 | 0.0.26 | Upright idle pose with movement-driven forward lean |
@@ -34,6 +35,9 @@ Current version: **0.0.28**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.29
+Added the first accepted persistence foundation: a versioned serializable Game State (`schemaVersion: 1`) and a browser-local SaveSystem adapter. The prototype now restores selected class, current zone/entry context, resource counters, inventory stacks, quest progress/completion/seen signals and used one-time interactables. Autosave is triggered by significant state changes rather than movement. Unsupported save schemas are not silently overwritten. DEV codes `9001`, `9002` and `9099` provide save-now, clear-for-reload and status checks. Exact player position and other transient scene details remain runtime-only by design. See `docs/SAVE-SYSTEM.md`.
 
 ## 0.0.28
 Idle now has no forward body projection: the head overlaps the torso around the same center footprint, with only a small face marker showing facing direction. Walking alone moves the torso and head forward, while the legs trail slightly behind. Dash increases the same movement projection. The existing smooth transition, walk cycle and facing rotation are preserved.
