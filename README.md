@@ -32,13 +32,14 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.29
+## Game prototype v0.0.30
 
 uGame has a modular top-down foundation instead of putting gameplay into `main.js`.
 The current playable prototype includes:
 
-- two top-down zones with walls and explicit linked portal transitions;
-- modular Vision, Class, Zone, Player, Interactable, Event and Zone Rules systems;
+- two top-down zones loaded from `data/world.json` through WorldGraph;
+- stable string zone ids and stable transition ids, with migration from the old numeric save ids;
+- modular Vision, Class, WorldGraph, Zone, Player, Interactable, Event and Zone Rules systems;
 - a temporary layered top-down character with distinct centered idle and forward-leaning movement poses;
 - WASD/arrow movement, Shift dash and stamina;
 - NPC, resource, chest and portal variants built on one Interactable system;
@@ -46,7 +47,7 @@ The current playable prototype includes:
 - resource counters and a small stack-based inventory;
 - JSON-driven dialogue and quest data with one test quest;
 - versioned Persistent Game State schema v1 plus browser-local SaveSystem;
-- restoration of class, zone context, resources, inventory, quest state and used one-time interactables;
+- restoration of class, stable zone/entry context, resources, inventory, quest state and used one-time interactables;
 - mobile touch controls for movement, action and dash;
 - Vision overlay locked to the same playfield bounds as Phaser;
 - local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
@@ -58,6 +59,12 @@ inventory and events can cooperate without being hard-coded into one system.
 
 Zone 2 also demonstrates zone-specific rules: slower movement and a Vision darkness
 override. The selected class profile remains underneath the zone override.
+
+World identity and connections now live in `data/world.json`. `src/world-graph.js`
+resolves stable ids and transitions; `ZoneSystem` renders the selected zone rather than
+owning the authoritative zone list. Existing v0.0.29 saves containing numeric zone ids
+`1`/`2` are resolved through legacy aliases and rewritten with canonical ids after the
+next zone entry/save. See `docs/WORLD-GRAPH.md`.
 
 Persistent state intentionally stores significant consequences rather than every
 runtime detail. Exact player coordinates, animation phase and temporary UI state are
