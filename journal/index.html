@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>uGame · Project Journal</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">uGame documentation</p>
+        <h1>Project Journal</h1>
+        <p class="subtitle">Текущее направление, решения, гипотезы и история проекта.</p>
+      </div>
+      <nav class="header-links" aria-label="Ссылки проекта">
+        <a href="../">Игра</a>
+        <a href="https://github.com/sunpole/uGame">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="panel current-panel" aria-labelledby="current-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Источник: docs/project-journal/CURRENT.md</p>
+            <h2 id="current-title">Текущее состояние</h2>
+          </div>
+          <a class="source-link" href="../docs/project-journal/CURRENT.md">Открыть Markdown</a>
+        </div>
+        <div id="current-content" class="markdown loading">Загрузка CURRENT.md…</div>
+      </section>
+
+      <section class="panel" aria-labelledby="records-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Источник: docs/project-journal/index.json</p>
+            <h2 id="records-title">Записи UGD</h2>
+          </div>
+          <a class="source-link" href="../docs/project-journal/index.json">Открыть index.json</a>
+        </div>
+
+        <div class="filters" aria-label="Фильтры журнала">
+          <label class="search-field">
+            <span>Поиск</span>
+            <input id="search" type="search" placeholder="Название, текст, тег…" autocomplete="off" />
+          </label>
+          <label>
+            <span>Status</span>
+            <select id="status-filter"><option value="">Все</option></select>
+          </label>
+          <label>
+            <span>Type</span>
+            <select id="type-filter"><option value="">Все</option></select>
+          </label>
+          <label>
+            <span>Tag</span>
+            <select id="tag-filter"><option value="">Все</option></select>
+          </label>
+          <label>
+            <span>Flag</span>
+            <select id="flag-filter"><option value="">Все</option></select>
+          </label>
+          <button id="clear-filters" class="secondary-button" type="button">Сбросить</button>
+        </div>
+
+        <div class="results-line">
+          <span id="result-count">Загрузка записей…</span>
+          <span id="index-updated"></span>
+        </div>
+        <div id="record-list" class="record-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <dialog id="record-dialog" class="record-dialog">
+      <div class="dialog-shell">
+        <div class="dialog-toolbar">
+          <div id="dialog-meta" class="dialog-meta"></div>
+          <button id="close-dialog" class="secondary-button" type="button">Закрыть</button>
+        </div>
+        <article id="dialog-content" class="markdown"></article>
+      </div>
+    </dialog>
+
+    <footer>
+      GitHub Pages — только представление. Источник истины: <code>docs/project-journal/</code>.
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
