@@ -1,5 +1,6 @@
 import { initDevConsole } from './dev-console.js';
 import { VisionSystem } from './vision-system.js';
+import { WorldGraph } from './world-graph.js';
 import { ZoneSystem } from './zone-system.js';
 import { ClassSystem } from './class-system.js';
 import { EventSystem } from './event-system.js';
@@ -92,6 +93,7 @@ class ZoneScene extends Phaser.Scene {
     super('zone');
     this.transitionLockUntil = 0;
     this.wasDashing = false;
+    this.worldReady = false;
   }
 
   create() {
@@ -114,6 +116,7 @@ class ZoneScene extends Phaser.Scene {
 
     this.eventSystem = new EventSystem();
     this.audioSystem = new AudioSystem();
+    this.worldGraph = new WorldGraph();
 
     this.player = this.add
       .rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7)
@@ -211,6 +214,7 @@ class ZoneScene extends Phaser.Scene {
       width: WIDTH,
       height: HEIGHT,
       player: this.player,
+      worldGraph: this.worldGraph,
       interactableSystem: this.interactableSystem,
       eventSystem: this.eventSystem,
       onStatus: (text) => this.setStatus(text),
@@ -222,8 +226,7 @@ class ZoneScene extends Phaser.Scene {
     this.bindPersistenceEvents();
 
     if (!classSystem.apply(restoredState.player.classId)) classSystem.apply('wanderer');
-    const savedZoneIndex = this.zoneSystem.findIndexById(restoredState.world.zoneId);
-    this.zoneSystem.build(savedZoneIndex >= 0 ? savedZoneIndex : 0, restoredState.world.entry);
+    this.initializeWorld(restoredState);
 
     this.scale.on('resize', () => visionSystem?.update());
     window.addEventListener('resize', () => visionSystem?.update());
@@ -234,6 +237,27 @@ class ZoneScene extends Phaser.Scene {
     questSystem.load('./data/quests.json', { restoreState: restoredState.quests }).catch(() => {
       if (this.questStatusElement) this.questStatusElement.textContent = 'Квесты не загрузились';
     });
+  }
+
+  async initializeWorld(restoredState) {
+    try {
+      await this.worldGraph.load();
+      const zoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId)
+        || this.worldGraph.start.zoneId;
+      const entryId = this.worldGraph.resolveEntryId(zoneId, restoredState.world.entry)
+        || this.worldGraph.start.entryId;
+
+      this.zoneSystem.build(zoneId, entryId);
+      this.worldReady = true;
+      visionSystem?.update();
+    } catch (error) {
+      this.worldReady = false;
+      playerController?.setEnabled(false);
+      this.setStatus('WorldGraph не загрузился');
+      if (this.questStatusElement) {
+        this.questStatusElement.textContent = `Ошибка мира: ${error instanceof Error ? error.message : String(error)}`;
+      }
+    }
   }
 
   bindPersistenceEvents() {
@@ -318,6 +342,8 @@ class ZoneScene extends Phaser.Scene {
   }
 
   update(_time, delta) {
+    if (!this.worldReady) return;
+
     const state = playerController.update(delta);
 
     if (state.moving) {
