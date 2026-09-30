@@ -14,6 +14,16 @@ export class ResourceSystem {
     return next;
   }
 
+  restore(snapshot = {}) {
+    this.values.clear();
+    for (const [id, raw] of Object.entries(snapshot || {})) {
+      const value = Number(raw);
+      if (!id || !Number.isFinite(value) || value < 0) continue;
+      this.values.set(id, value);
+    }
+    this.onChange?.(null, null, this.snapshot());
+  }
+
   get(id) {
     return this.values.get(id) || 0;
   }
