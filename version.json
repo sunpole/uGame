@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "stage": "foundation-prototype",
   "updated": "2026-09-30",
-  "summary": "Persistent Game State and local SaveSystem with schema v1"
+  "summary": "WorldGraph with stable zone and transition ids plus v0.0.29 save migration"
 }
