@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "start": {
+    "zoneId": "zone-001",
+    "entryId": "left"
+  },
+  "zones": [
+    {
+      "id": "zone-001",
+      "legacyIds": [1, "1"],
+      "name": "Zone 1",
+      "defaultEntry": "left",
+      "entries": {
+        "left": { "x": 96, "y": 270 },
+        "right": { "x": 864, "y": 270 }
+      },
+      "rules": {
+        "speedMultiplier": 1,
+        "vision": {}
+      },
+      "walls": [
+        { "x": 360, "y": 175, "width": 230, "height": 28 },
+        { "x": 520, "y": 360, "width": 270, "height": 28 },
+        { "x": 720, "y": 265, "width": 28, "height": 170 }
+      ],
+      "interactables": [
+        {
+          "id": "guide",
+          "type": "npc",
+          "x": 150,
+          "y": 120,
+          "label": "Проводник",
+          "prompt": "Поговорить",
+          "dialogueId": "guide_intro"
+        },
+        {
+          "id": "shard-node",
+          "type": "resource",
+          "x": 585,
+          "y": 245,
+          "label": "Осколок",
+          "prompt": "Взять осколок",
+          "resourceId": "shard",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        },
+        {
+          "id": "starter-chest",
+          "type": "chest",
+          "x": 830,
+          "y": 420,
+          "label": "Старый сундук",
+          "prompt": "Открыть сундук",
+          "once": true,
+          "sound": "chest"
+        }
+      ]
+    },
+    {
+      "id": "zone-002",
+      "legacyIds": [2, "2"],
+      "name": "Zone 2",
+      "defaultEntry": "left",
+      "entries": {
+        "left": { "x": 96, "y": 270 },
+        "right": { "x": 864, "y": 270 }
+      },
+      "rules": {
+        "speedMultiplier": 0.86,
+        "vision": { "darkness": 0.9 }
+      },
+      "walls": [
+        { "x": 710, "y": 145, "width": 260, "height": 28 },
+        { "x": 515, "y": 300, "width": 28, "height": 230 },
+        { "x": 285, "y": 395, "width": 300, "height": 28 },
+        { "x": 250, "y": 180, "width": 180, "height": 28 }
+      ],
+      "interactables": [
+        {
+          "id": "zone2-shard",
+          "type": "resource",
+          "x": 690,
+          "y": 410,
+          "label": "Осколок",
+          "prompt": "Взять осколок",
+          "resourceId": "shard",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "id": "transition-zone-001-right-to-zone-002-left",
+      "from": { "zoneId": "zone-001", "side": "right" },
+      "to": { "zoneId": "zone-002", "entryId": "left" },
+      "trigger": "auto",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-002-left-to-zone-001-right",
+      "from": { "zoneId": "zone-002", "side": "left" },
+      "to": { "zoneId": "zone-001", "entryId": "right" },
+      "trigger": "auto",
+      "sound": "portal"
+    }
+  ]
+}
