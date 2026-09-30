@@ -12,6 +12,8 @@ import { ResourceSystem } from './resource-system.js';
 import { InventorySystem } from './inventory-system.js';
 import { DialogueSystem } from './dialogue-system.js';
 import { QuestSystem } from './quest-system.js';
+import { GameState } from './game-state.js';
+import { SaveSystem } from './save-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -25,6 +27,7 @@ let playerController = null;
 let resourceSystem = null;
 let inventorySystem = null;
 let questSystem = null;
+let saveSystem = null;
 
 function fitPlayfield() {
   const shell = document.querySelector('.game-shell');
@@ -72,7 +75,8 @@ function executeDevCode(code) {
     playerController,
     inventorySystem,
     resourceSystem,
-    questSystem
+    questSystem,
+    saveSystem
   ];
 
   for (const system of systems) {
@@ -101,6 +105,13 @@ class ZoneScene extends Phaser.Scene {
     this.questStatusElement = document.querySelector('#quest-status');
     this.interactPromptElement = document.querySelector('#interact-prompt');
 
+    this.saveSystem = new SaveSystem({
+      getState: () => this.gameState?.snapshot()
+    });
+    this.gameState = new GameState(this.saveSystem.load());
+    saveSystem = this.saveSystem;
+    const restoredState = this.gameState.snapshot();
+
     this.eventSystem = new EventSystem();
     this.audioSystem = new AudioSystem();
 
@@ -117,7 +128,7 @@ class ZoneScene extends Phaser.Scene {
       radius: VISIBILITY_RADIUS
     });
 
-    classSystem = new ClassSystem({ visionSystem });
+    classSystem = new ClassSystem({ visionSystem, eventSystem: this.eventSystem });
 
     playerController = new PlayerController({
       scene: this,
@@ -144,6 +155,7 @@ class ZoneScene extends Phaser.Scene {
         }
       }
     });
+    resourceSystem.restore(restoredState.resources);
 
     inventorySystem = new InventorySystem({
       eventSystem: this.eventSystem,
@@ -153,6 +165,7 @@ class ZoneScene extends Phaser.Scene {
         }
       }
     });
+    inventorySystem.restore(restoredState.inventory);
 
     questSystem = new QuestSystem({
       eventSystem: this.eventSystem,
@@ -201,11 +214,16 @@ class ZoneScene extends Phaser.Scene {
       interactableSystem: this.interactableSystem,
       eventSystem: this.eventSystem,
       onStatus: (text) => this.setStatus(text),
-      onZoneChange: (zone) => this.zoneRulesSystem.apply(zone.rules)
+      onZoneChange: (zone) => this.zoneRulesSystem.apply(zone.rules),
+      isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
     });
 
     this.bindGameEvents();
-    this.zoneSystem.build(0, 'left');
+    this.bindPersistenceEvents();
+
+    if (!classSystem.apply(restoredState.player.classId)) classSystem.apply('wanderer');
+    const savedZoneIndex = this.zoneSystem.findIndexById(restoredState.world.zoneId);
+    this.zoneSystem.build(savedZoneIndex >= 0 ? savedZoneIndex : 0, restoredState.world.entry);
 
     this.scale.on('resize', () => visionSystem?.update());
     window.addEventListener('resize', () => visionSystem?.update());
@@ -213,9 +231,45 @@ class ZoneScene extends Phaser.Scene {
     this.dialogueSystem.load().catch(() => {
       if (this.questStatusElement) this.questStatusElement.textContent = 'Диалоги не загрузились';
     });
-    questSystem.load().catch(() => {
+    questSystem.load('./data/quests.json', { restoreState: restoredState.quests }).catch(() => {
       if (this.questStatusElement) this.questStatusElement.textContent = 'Квесты не загрузились';
     });
+  }
+
+  bindPersistenceEvents() {
+    this.eventSystem.on('class:changed', ({ id }) => {
+      this.gameState.setClassId(id);
+      this.persistGameState();
+    });
+
+    this.eventSystem.on('zone:enter', ({ zone, entry }) => {
+      this.gameState.setZone(zone?.id, entry);
+      this.persistGameState();
+    });
+
+    this.eventSystem.on('resource:changed', () => {
+      this.gameState.setResources(resourceSystem.snapshot());
+      this.persistGameState();
+    });
+
+    this.eventSystem.on('inventory:changed', () => {
+      this.gameState.setInventory(inventorySystem.snapshot());
+      this.persistGameState();
+    });
+
+    this.eventSystem.on('quest:state', ({ state }) => {
+      this.gameState.setQuestState(state);
+      this.persistGameState();
+    });
+
+    this.eventSystem.on('interactable:used', ({ id }) => {
+      this.gameState.markInteractableUsed(id);
+      this.persistGameState();
+    });
+  }
+
+  persistGameState() {
+    this.saveSystem.save(this.gameState.snapshot());
   }
 
   bindGameEvents() {
