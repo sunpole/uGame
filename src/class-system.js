@@ -20,8 +20,9 @@ const CLASSES = {
 };
 
 export class ClassSystem {
-  constructor({ visionSystem } = {}) {
+  constructor({ visionSystem, eventSystem } = {}) {
     this.visionSystem = visionSystem;
+    this.eventSystem = eventSystem;
     this.current = CLASSES.wanderer;
     this.apply(this.current.id);
   }
@@ -32,6 +33,7 @@ export class ClassSystem {
 
     this.current = next;
     this.visionSystem?.applyProfile(next.vision);
+    this.eventSystem?.emit('class:changed', { id: next.id, classData: next });
     return true;
   }
 
