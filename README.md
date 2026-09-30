@@ -32,7 +32,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.28
+## Game prototype v0.0.29
 
 uGame has a modular top-down foundation instead of putting gameplay into `main.js`.
 The current playable prototype includes:
@@ -45,6 +45,8 @@ The current playable prototype includes:
 - temporary procedural sounds routed through one Audio system;
 - resource counters and a small stack-based inventory;
 - JSON-driven dialogue and quest data with one test quest;
+- versioned Persistent Game State schema v1 plus browser-local SaveSystem;
+- restoration of class, zone context, resources, inventory, quest state and used one-time interactables;
 - mobile touch controls for movement, action and dash;
 - Vision overlay locked to the same playfield bounds as Phaser;
 - local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
@@ -56,6 +58,12 @@ inventory and events can cooperate without being hard-coded into one system.
 
 Zone 2 also demonstrates zone-specific rules: slower movement and a Vision darkness
 override. The selected class profile remains underneath the zone override.
+
+Persistent state intentionally stores significant consequences rather than every
+runtime detail. Exact player coordinates, animation phase and temporary UI state are
+not saved. See `docs/SAVE-SYSTEM.md` for schema, limitations and the acceptance test.
+Browser saves are origin-local, so localhost, a LAN address and GitHub Pages each have
+their own separate save.
 
 Combat/enemies are intentionally deferred. The current design direction is documented
 in Project Journal rather than being implemented prematurely.
@@ -78,8 +86,11 @@ same-network testing. If Windows Firewall asks, allow Node.js on Private network
 ## DEV console
 
 Code `9999` opens `docs/DEV-CODES.md`. Active groups currently include Vision `1xxx`,
-Movement `3xxx`, Items/Inventory `5xxx`, World/Resources `6xxx`, Classes `7xxx` and
-Events/Quests `8xxx`. `2xxx` Player and `4xxx` Combat remain reserved.
+Movement `3xxx`, Items/Inventory `5xxx`, World/Resources `6xxx`, Classes `7xxx`,
+Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat remain reserved.
+
+Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
+until reload, `9099` show save status.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
 immediately again.
