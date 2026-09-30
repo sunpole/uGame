@@ -69,14 +69,19 @@ Normal controls: WASD or arrows to move, `E` / Space to interact, Shift to dash.
 
 | Code | Action |
 |---|---|
-| `8001` | Restart the first quest and clear its recorded test signals |
+| `8001` | Restart the first quest and reuse already recorded test signals |
 | `8099` | Show current quest status |
 
 ## Dev / Service
 
 | Code | Action |
 |---|---|
+| `9001` | Save the current persistent game state immediately |
+| `9002` | Delete the local save and pause autosave until page reload |
+| `9099` | Show local save status / last save time |
 | `9999` | Open this DEV code reference |
+
+`9002` is intentionally non-destructive to the running scene: it removes the browser save, then pauses autosave until the page is reloaded. Reload immediately if the goal is to start from a clean state.
 
 ## Reserved
 
