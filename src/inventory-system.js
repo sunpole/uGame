@@ -24,6 +24,16 @@ export class InventorySystem {
     return true;
   }
 
+  restore(snapshot = {}) {
+    this.items.clear();
+    for (const [id, raw] of Object.entries(snapshot || {})) {
+      const value = Number(raw);
+      if (!id || !Number.isFinite(value) || value < 0) continue;
+      this.items.set(id, value);
+    }
+    this.onChange?.(null, null, this.snapshot());
+  }
+
   has(id, amount = 1) {
     return (this.items.get(id) || 0) >= amount;
   }
