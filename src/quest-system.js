@@ -13,10 +13,16 @@ export class QuestSystem {
     this.eventSystem?.on('quest:signal', ({ key }) => this.signal(key));
   }
 
-  async load(url = './data/quests.json') {
+  async load(url = './data/quests.json', { restoreState = null } = {}) {
     const response = await fetch(url, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Quest load failed: ${response.status}`);
     this.quests = await response.json();
+
+    if (restoreState) {
+      this.restore(restoreState);
+      return;
+    }
+
     const auto = Object.values(this.quests).find((quest) => quest.autoStart);
     if (auto) this.start(auto.id);
   }
@@ -30,16 +36,21 @@ export class QuestSystem {
     this.lastCompletedTitle = '';
     this.eventSystem?.emit('quest:start', { id });
     this.advanceFromSeenSignals();
-    this.notify();
+    this.publishState();
     return true;
   }
 
   signal(key) {
     if (!key) return false;
     this.seenSignals.add(key);
-    if (!this.active) return false;
+    if (!this.active) {
+      this.publishState();
+      return false;
+    }
+
     const before = this.stepIndex;
     this.advanceFromSeenSignals();
+    this.publishState();
     return this.stepIndex !== before || !this.active;
   }
 
@@ -76,6 +87,34 @@ export class QuestSystem {
     this.notify();
   }
 
+  snapshot() {
+    return {
+      activeId: this.active?.id || null,
+      stepIndex: this.stepIndex,
+      completed: [...this.completed],
+      seenSignals: [...this.seenSignals],
+      lastCompletedTitle: this.lastCompletedTitle
+    };
+  }
+
+  restore(snapshot = {}) {
+    this.completed = new Set(Array.isArray(snapshot.completed) ? snapshot.completed : []);
+    this.seenSignals = new Set(Array.isArray(snapshot.seenSignals) ? snapshot.seenSignals : []);
+    this.lastCompletedTitle = typeof snapshot.lastCompletedTitle === 'string' ? snapshot.lastCompletedTitle : '';
+
+    const active = snapshot.activeId ? this.quests[snapshot.activeId] : null;
+    this.active = active || null;
+    if (this.active) {
+      const maxIndex = Math.max(0, (this.active.steps?.length || 1) - 1);
+      this.stepIndex = Math.min(Math.max(0, Number(snapshot.stepIndex) || 0), maxIndex);
+    } else {
+      this.stepIndex = 0;
+    }
+
+    this.notify();
+    return true;
+  }
+
   statusText() {
     if (!this.active) {
       return this.lastCompletedTitle
@@ -95,6 +134,11 @@ export class QuestSystem {
       stepCount: this.active?.steps?.length || 0,
       completed: new Set(this.completed)
     });
+  }
+
+  publishState() {
+    this.notify();
+    this.eventSystem?.emit('quest:state', { state: this.snapshot() });
   }
 
   executeDevCode(code) {
