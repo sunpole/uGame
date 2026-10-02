@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.30",
-  "stage": "foundation-prototype",
-  "updated": "2026-09-30",
-  "summary": "WorldGraph with stable zone and transition ids plus v0.0.29 save migration"
+  "version": "0.0.31",
+  "stage": "first-playable",
+  "updated": "2026-10-02",
+  "summary": "First Playable content slice with four zones, three fragments, a guide and a final core objective"
 }
