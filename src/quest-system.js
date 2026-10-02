@@ -20,11 +20,18 @@ export class QuestSystem {
 
     if (restoreState) {
       this.restore(restoreState);
+      if (!this.active) this.startFirstPendingAuto();
       return;
     }
 
-    const auto = Object.values(this.quests).find((quest) => quest.autoStart);
-    if (auto) this.start(auto.id);
+    this.startFirstPendingAuto();
+  }
+
+  startFirstPendingAuto() {
+    const auto = Object.values(this.quests).find((quest) => quest.autoStart && !this.completed.has(quest.id));
+    if (auto) return this.start(auto.id);
+    this.notify();
+    return false;
   }
 
   start(id, { resetSignals = false } = {}) {
@@ -148,7 +155,7 @@ export class QuestSystem {
         this.completed.delete(first.id);
         this.start(first.id);
       }
-      return { handled: true, message: '8001 · Квест восстановлен по уже выполненным действиям', state: 'ok' };
+      return { handled: true, message: '8001 · Первый квест перезапущен', state: 'ok' };
     }
     if (code === '8099') {
       return { handled: true, message: `8099 · ${this.statusText()}`, state: 'ok' };
