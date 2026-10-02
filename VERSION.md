@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.30**
+Current version: **0.0.31**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.31 | First Playable content slice: four-zone loop, guide, three fragments and final core objective |
 | 0.0.30 | WorldGraph with stable zone/transition ids and legacy save migration |
 | 0.0.29 | Persistent Game State schema v1 + local SaveSystem |
 | 0.0.28 | Head and torso centered at idle; forward lean only during movement |
@@ -36,6 +37,9 @@ Current version: **0.0.30**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.31
+The project switches from infrastructure-first work to the first content-first playable slice. `data/world.json` now contains four connected zones — Перекрёсток, Галерея, Тёмный сад and Сердце руин — arranged as a small loop with labeled exits and two possible routes toward the final area. A new quest, `q002` «Три фрагмента», asks the player to speak with the Guide, find three uniquely tracked fragments and activate the first core. Quest signals remain order-tolerant through the existing seen-signal behavior, so exploration does not have to follow one strict route. The Dark Garden contains an optional one-time cache. Chest definitions can now provide their own item id and optional quest signal, and the HUD shows First Playable fragment progress. Old q001 saves do not block the new auto-start quest: when restored quest content no longer has an active quest, the first pending auto-start quest begins. No combat, enemy or large new framework was added.
 
 ## 0.0.30
 World identity and connectivity moved out of `ZoneSystem` into a data-driven WorldGraph. `data/world.json` now defines stable string zone ids (`zone-001`, `zone-002`), explicit stable transition ids, entries, current zone geometry/rules and interactable definitions. Portals travel through a transition id instead of embedding duplicated destination links. WorldGraph accepts legacy numeric zone ids `1`/`2`, so a v0.0.29 save can restore normally and is rewritten with the canonical stable id on the next `zone:enter` autosave. The Game State schema stays at version 1 because string zone ids were already valid. Existing interactable ids remain unchanged in this release to preserve one-time-object save compatibility. See `docs/WORLD-GRAPH.md`.
