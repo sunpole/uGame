@@ -1,26 +1,34 @@
 {
-  "q001": {
-    "id": "q001",
-    "title": "Первый осколок",
+  "q002": {
+    "id": "q002",
+    "title": "Три фрагмента",
     "autoStart": true,
     "steps": [
       {
-        "key": "dialogue:guide_intro",
+        "key": "dialogue:guide_first_playable",
         "text": "Поговорить с Проводником"
       },
       {
-        "key": "resource:shard",
-        "text": "Получить голубой осколок"
+        "key": "resource:fragment-blue",
+        "text": "Найти синий фрагмент"
       },
       {
-        "key": "chest:starter",
-        "text": "Открыть старый сундук"
+        "key": "resource:fragment-amber",
+        "text": "Найти янтарный фрагмент"
+      },
+      {
+        "key": "resource:fragment-violet",
+        "text": "Найти фиолетовый фрагмент"
+      },
+      {
+        "key": "core:first",
+        "text": "Активировать погасшее ядро"
       }
     ],
     "rewards": [
       {
         "type": "item",
-        "id": "token",
+        "id": "first-mark",
         "amount": 1
       }
     ]
