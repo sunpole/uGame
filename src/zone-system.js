@@ -110,7 +110,7 @@ export class ZoneSystem {
     let height = 28;
     let labelX = x;
     let labelY = y;
-    let label = 'ВЫХОД';
+    let defaultLabel = 'ВЫХОД';
 
     if (horizontal) {
       x = isRight ? this.width - 22 : 22;
@@ -119,7 +119,7 @@ export class ZoneSystem {
       height = 110;
       labelX = isRight ? this.width - 82 : 82;
       labelY = y;
-      label = isRight ? 'ВЫХОД →' : '← ВЫХОД';
+      defaultLabel = isRight ? 'ВЫХОД →' : '← ВЫХОД';
     } else {
       x = this.width / 2;
       y = isBottom ? this.height - 22 : 22;
@@ -127,7 +127,7 @@ export class ZoneSystem {
       height = 28;
       labelX = x;
       labelY = isBottom ? this.height - 58 : 58;
-      label = isBottom ? 'ВЫХОД ↓' : '↑ ВЫХОД';
+      defaultLabel = isBottom ? 'ВЫХОД ↓' : '↑ ВЫХОД';
     }
 
     return {
@@ -140,7 +140,7 @@ export class ZoneSystem {
       height,
       labelX,
       labelY,
-      label,
+      label: transition.label || defaultLabel,
       sound: transition.sound || 'portal',
       target: { transitionId: transition.id }
     };
