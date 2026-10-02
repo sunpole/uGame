@@ -32,20 +32,25 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.30
+## Game prototype v0.0.31 — First Playable
 
-uGame has a modular top-down foundation instead of putting gameplay into `main.js`.
-The current playable prototype includes:
+uGame now has its first small content-first playable slice built on the existing foundation.
+The current prototype includes:
 
-- two top-down zones loaded from `data/world.json` through WorldGraph;
+- four connected top-down zones loaded from `data/world.json` through WorldGraph;
+- a small loop with two routes toward the final area and labeled exits;
 - stable string zone ids and stable transition ids, with migration from the old numeric save ids;
+- the Guide NPC and the quest «Три фрагмента»;
+- three one-time fragments placed in different zones;
+- a final objective in «Сердце руин» and an optional cache in «Тёмный сад»;
+- order-tolerant quest signals, so exploration does not have to follow one strict route;
 - modular Vision, Class, WorldGraph, Zone, Player, Interactable, Event and Zone Rules systems;
 - a temporary layered top-down character with distinct centered idle and forward-leaning movement poses;
 - WASD/arrow movement, Shift dash and stamina;
 - NPC, resource, chest and portal variants built on one Interactable system;
 - temporary procedural sounds routed through one Audio system;
 - resource counters and a small stack-based inventory;
-- JSON-driven dialogue and quest data with one test quest;
+- JSON-driven dialogue and quest data;
 - versioned Persistent Game State schema v1 plus browser-local SaveSystem;
 - restoration of class, stable zone/entry context, resources, inventory, quest state and used one-time interactables;
 - mobile touch controls for movement, action and dash;
@@ -53,14 +58,12 @@ The current playable prototype includes:
 - local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
 - the four-digit DEV console and live physical-arrow indicator.
 
-The first quest is intentionally small: talk to the Guide, collect a shard and open
-the old chest. Its purpose is to prove that dialogue, interactables, resources,
-inventory and events can cooperate without being hard-coded into one system.
+The First Playable goal is intentionally simple: speak with the Guide, explore the connected
+zones, find the blue, amber and violet fragments, then activate the extinguished core.
+A forgotten cache in the Dark Garden is optional. The purpose is to make the existing
+systems form a short playable loop before more general frameworks are added.
 
-Zone 2 also demonstrates zone-specific rules: slower movement and a Vision darkness
-override. The selected class profile remains underneath the zone override.
-
-World identity and connections now live in `data/world.json`. `src/world-graph.js`
+World identity and connections live in `data/world.json`. `src/world-graph.js`
 resolves stable ids and transitions; `ZoneSystem` renders the selected zone rather than
 owning the authoritative zone list. Existing v0.0.29 saves containing numeric zone ids
 `1`/`2` are resolved through legacy aliases and rewritten with canonical ids after the
@@ -72,8 +75,8 @@ not saved. See `docs/SAVE-SYSTEM.md` for schema, limitations and the acceptance 
 Browser saves are origin-local, so localhost, a LAN address and GitHub Pages each have
 their own separate save.
 
-Combat/enemies are intentionally deferred. The current design direction is documented
-in Project Journal rather than being implemented prematurely.
+Combat/enemies are intentionally deferred. New architecture should now be added mainly
+when a concrete playable feature requires it, rather than being completed in advance.
 
 `docs/CHARACTER-ASSET-GUIDE.md` describes the first authored character spritesheet/layer
 workflow. `docs/PREBY-DEPLOY.md` describes the intended static deployment to a dedicated
@@ -97,7 +100,7 @@ Movement `3xxx`, Items/Inventory `5xxx`, World/Resources `6xxx`, Classes `7xxx`,
 Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat remain reserved.
 
 Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
-until reload, `9099` show save status.
+until reload, `9099` show save status. `8001` restarts the current first quest for testing.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
 immediately again.
