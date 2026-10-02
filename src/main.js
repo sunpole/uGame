@@ -21,6 +21,7 @@ const HEIGHT = 540;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
 const VISIBILITY_RADIUS = 165;
+const FIRST_PLAYABLE_FRAGMENTS = ['fragment-blue', 'fragment-amber', 'fragment-violet'];
 
 let visionSystem = null;
 let classSystem = null;
@@ -154,7 +155,8 @@ class ZoneScene extends Phaser.Scene {
       eventSystem: this.eventSystem,
       onChange: (_id, _value, snapshot) => {
         if (this.resourceStatusElement) {
-          this.resourceStatusElement.textContent = `Осколки ${snapshot.shard || 0}`;
+          const fragments = FIRST_PLAYABLE_FRAGMENTS.reduce((total, id) => total + (snapshot[id] || 0), 0);
+          this.resourceStatusElement.textContent = `Фрагменты ${fragments}/3`;
         }
       }
     });
@@ -315,8 +317,8 @@ class ZoneScene extends Phaser.Scene {
       }
 
       if (item.type === 'chest') {
-        inventorySystem.add('starter-cache', 1);
-        this.eventSystem.emit('quest:signal', { key: 'chest:starter' });
+        inventorySystem.add(item.itemId || 'starter-cache', item.amount || 1);
+        if (item.questSignal) this.eventSystem.emit('quest:signal', { key: item.questSignal });
         return;
       }
 
