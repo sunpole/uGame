@@ -8,86 +8,154 @@
     {
       "id": "zone-001",
       "legacyIds": [1, "1"],
-      "name": "Zone 1",
+      "name": "Перекрёсток",
       "defaultEntry": "left",
       "entries": {
         "left": { "x": 96, "y": 270 },
-        "right": { "x": 864, "y": 270 }
+        "right": { "x": 864, "y": 270 },
+        "bottom": { "x": 480, "y": 444 }
       },
       "rules": {
         "speedMultiplier": 1,
         "vision": {}
       },
       "walls": [
-        { "x": 360, "y": 175, "width": 230, "height": 28 },
-        { "x": 520, "y": 360, "width": 270, "height": 28 },
-        { "x": 720, "y": 265, "width": 28, "height": 170 }
+        { "x": 360, "y": 185, "width": 180, "height": 26 },
+        { "x": 610, "y": 355, "width": 210, "height": 26 },
+        { "x": 705, "y": 205, "width": 26, "height": 120 }
       ],
       "interactables": [
         {
-          "id": "guide",
+          "id": "guide-first-playable",
           "type": "npc",
-          "x": 150,
-          "y": 120,
+          "x": 155,
+          "y": 125,
           "label": "Проводник",
           "prompt": "Поговорить",
-          "dialogueId": "guide_intro"
-        },
-        {
-          "id": "shard-node",
-          "type": "resource",
-          "x": 585,
-          "y": 245,
-          "label": "Осколок",
-          "prompt": "Взять осколок",
-          "resourceId": "shard",
-          "amount": 1,
-          "once": true,
-          "sound": "resource"
-        },
-        {
-          "id": "starter-chest",
-          "type": "chest",
-          "x": 830,
-          "y": 420,
-          "label": "Старый сундук",
-          "prompt": "Открыть сундук",
-          "once": true,
-          "sound": "chest"
+          "dialogueId": "guide_first_playable"
         }
       ]
     },
     {
       "id": "zone-002",
       "legacyIds": [2, "2"],
-      "name": "Zone 2",
+      "name": "Галерея",
       "defaultEntry": "left",
       "entries": {
         "left": { "x": 96, "y": 270 },
-        "right": { "x": 864, "y": 270 }
+        "bottom": { "x": 480, "y": 444 }
       },
       "rules": {
-        "speedMultiplier": 0.86,
-        "vision": { "darkness": 0.9 }
+        "speedMultiplier": 0.95,
+        "vision": { "darkness": 0.86 }
       },
       "walls": [
-        { "x": 710, "y": 145, "width": 260, "height": 28 },
-        { "x": 515, "y": 300, "width": 28, "height": 230 },
-        { "x": 285, "y": 395, "width": 300, "height": 28 },
-        { "x": 250, "y": 180, "width": 180, "height": 28 }
+        { "x": 300, "y": 160, "width": 260, "height": 26 },
+        { "x": 585, "y": 300, "width": 26, "height": 220 },
+        { "x": 760, "y": 390, "width": 220, "height": 26 }
       ],
       "interactables": [
         {
-          "id": "zone2-shard",
+          "id": "fragment-blue-node",
           "type": "resource",
-          "x": 690,
-          "y": 410,
-          "label": "Осколок",
-          "prompt": "Взять осколок",
-          "resourceId": "shard",
+          "x": 755,
+          "y": 155,
+          "label": "Синий фрагмент",
+          "prompt": "Взять синий фрагмент",
+          "resourceId": "fragment-blue",
           "amount": 1,
           "once": true,
           "sound": "resource"
+        }
+      ]
+    },
+    {
+      "id": "zone-003",
+      "name": "Тёмный сад",
+      "defaultEntry": "top",
+      "entries": {
+        "top": { "x": 480, "y": 96 },
+        "right": { "x": 864, "y": 270 }
+      },
+      "rules": {
+        "speedMultiplier": 0.9,
+        "vision": { "darkness": 0.96 }
+      },
+      "walls": [
+        { "x": 255, "y": 225, "width": 250, "height": 26 },
+        { "x": 520, "y": 365, "width": 300, "height": 26 },
+        { "x": 690, "y": 190, "width": 26, "height": 180 }
+      ],
+      "interactables": [
+        {
+          "id": "fragment-amber-node",
+          "type": "resource",
+          "x": 220,
+          "y": 390,
+          "label": "Янтарный фрагмент",
+          "prompt": "Взять янтарный фрагмент",
+          "resourceId": "fragment-amber",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        },
+        {
+          "id": "garden-secret-cache",
+          "type": "chest",
+          "x": 790,
+          "y": 415,
+          "label": "Забытый тайник",
+          "prompt": "Открыть тайник",
+          "itemId": "lost-token",
+          "amount": 1,
+          "once": true,
+          "sound": "chest"
+        }
+      ]
+    },
+    {
+      "id": "zone-004",
+      "name": "Сердце руин",
+      "defaultEntry": "top",
+      "entries": {
+        "top": { "x": 480, "y": 96 },
+        "left": { "x": 96, "y": 270 }
+      },
+      "rules": {
+        "speedMultiplier": 1,
+        "vision": { "darkness": 1 }
+      },
+      "walls": [
+        { "x": 300, "y": 165, "width": 220, "height": 26 },
+        { "x": 660, "y": 165, "width": 220, "height": 26 },
+        { "x": 275, "y": 380, "width": 210, "height": 26 },
+        { "x": 685, "y": 380, "width": 210, "height": 26 }
+      ],
+      "interactables": [
+        {
+          "id": "fragment-violet-node",
+          "type": "resource",
+          "x": 760,
+          "y": 255,
+          "label": "Фиолетовый фрагмент",
+          "prompt": "Взять фиолетовый фрагмент",
+          "resourceId": "fragment-violet",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        },
+        {
+          "id": "first-core",
+          "type": "chest",
+          "x": 480,
+          "y": 315,
+          "label": "Погасшее ядро",
+          "prompt": "Активировать ядро",
+          "itemId": "core-spark",
+          "amount": 1,
+          "questSignal": "core:first",
+          "once": true,
+          "sound": "quest"
         }
       ]
     }
@@ -98,6 +166,7 @@
       "from": { "zoneId": "zone-001", "side": "right" },
       "to": { "zoneId": "zone-002", "entryId": "left" },
       "trigger": "auto",
+      "label": "ГАЛЕРЕЯ →",
       "sound": "portal"
     },
     {
@@ -105,6 +174,55 @@
       "from": { "zoneId": "zone-002", "side": "left" },
       "to": { "zoneId": "zone-001", "entryId": "right" },
       "trigger": "auto",
+      "label": "← ПЕРЕКРЁСТОК",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-001-bottom-to-zone-003-top",
+      "from": { "zoneId": "zone-001", "side": "bottom" },
+      "to": { "zoneId": "zone-003", "entryId": "top" },
+      "trigger": "auto",
+      "label": "САД ↓",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-003-top-to-zone-001-bottom",
+      "from": { "zoneId": "zone-003", "side": "top" },
+      "to": { "zoneId": "zone-001", "entryId": "bottom" },
+      "trigger": "auto",
+      "label": "↑ ПЕРЕКРЁСТОК",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-002-bottom-to-zone-004-top",
+      "from": { "zoneId": "zone-002", "side": "bottom" },
+      "to": { "zoneId": "zone-004", "entryId": "top" },
+      "trigger": "auto",
+      "label": "ЯДРО ↓",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-004-top-to-zone-002-bottom",
+      "from": { "zoneId": "zone-004", "side": "top" },
+      "to": { "zoneId": "zone-002", "entryId": "bottom" },
+      "trigger": "auto",
+      "label": "↑ ГАЛЕРЕЯ",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-003-right-to-zone-004-left",
+      "from": { "zoneId": "zone-003", "side": "right" },
+      "to": { "zoneId": "zone-004", "entryId": "left" },
+      "trigger": "auto",
+      "label": "ЯДРО →",
+      "sound": "portal"
+    },
+    {
+      "id": "transition-zone-004-left-to-zone-003-right",
+      "from": { "zoneId": "zone-004", "side": "left" },
+      "to": { "zoneId": "zone-003", "entryId": "right" },
+      "trigger": "auto",
+      "label": "← САД",
       "sound": "portal"
     }
   ]
