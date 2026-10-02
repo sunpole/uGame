@@ -153,9 +153,9 @@ export class QuestSystem {
       const first = Object.values(this.quests)[0];
       if (first) {
         this.completed.delete(first.id);
-        this.start(first.id);
+        this.start(first.id, { resetSignals: true });
       }
-      return { handled: true, message: '8001 · Первый квест перезапущен', state: 'ok' };
+      return { handled: true, message: '8001 · Первый квест перезапущен с нуля', state: 'ok' };
     }
     if (code === '8099') {
       return { handled: true, message: `8099 · ${this.statusText()}`, state: 'ok' };
