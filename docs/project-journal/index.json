@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-05",
+  "updated": "2026-10-06",
   "records": [
     {
       "id": "UGD-0001",
@@ -128,7 +128,33 @@
       "flags": ["needs-prototype", "needs-test"],
       "tags": ["gameplay", "idle", "architecture", "world", "npc", "progression", "technical"],
       "path": "records/UGD-0010-event-modules-contextual-idle.md",
-      "related": ["UGD-0003", "UGD-0004", "UGD-0007", "UGD-0008", "UGD-0009"],
+      "related": ["UGD-0003", "UGD-0004", "UGD-0007", "UGD-0008", "UGD-0009", "UGD-0011", "UGD-0012"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0011",
+      "title": "Ресурсный резонанс и многослойные зависимости развития",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "discussing",
+      "flags": ["needs-prototype", "needs-test", "needs-calculation"],
+      "tags": ["idle", "resources", "progression", "skills", "character-build", "world", "randomness", "gameplay"],
+      "path": "records/UGD-0011-resource-resonance-multilayer-progression.md",
+      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0009", "UGD-0010", "UGD-0012"],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0012",
+      "title": "КПД времени, закрепление и ослабление активного бонуса",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "discussing",
+      "flags": ["needs-prototype", "needs-test", "needs-calculation"],
+      "tags": ["time", "efficiency", "idle", "progression", "anti-grind", "retention", "gameplay", "resources"],
+      "path": "records/UGD-0012-time-efficiency-stability-decay.md",
+      "related": ["UGD-0001", "UGD-0002", "UGD-0005", "UGD-0010", "UGD-0011"],
       "supersedes": [],
       "superseded_by": []
     }
