@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.46**
+Current version: **0.0.47**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.47 | Project Hub interface settings with text selection disabled by default |
 | 0.0.46 | Mouse / AnyDesk controls use the same contextual Action path |
 | 0.0.45 | Unified contextual Action Router for primary/back/arrow navigation |
 | 0.0.44 | Live character/resource header with material wealth and storage summary |
@@ -52,6 +53,9 @@ Current version: **0.0.46**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.47
+Added persistent Interface Settings in Project Hub. Text selection is disabled by default across the application to prevent accidental drag-selection during gameplay/remote control, while input, textarea, select and contenteditable fields remain selectable. The setting can be switched on/off instantly without reload and persists in localStorage.
 
 ## 0.0.46
 Remote-desktop controls now use the same contextual action path as keyboard input. Visible Action buttons can advance/complete dialogues, select/close InteractionPanel content or interact with the world depending on context. Direction buttons remain hold controls and now light up when driven virtually as well as from physical arrow keys. This preserves mouse/AnyDesk as a first-class QA input adapter rather than a decorative duplicate.
