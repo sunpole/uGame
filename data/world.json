@@ -7,22 +7,49 @@
   "zones": [
     {
       "id": "zone-001",
-      "legacyIds": [1, "1"],
+      "legacyIds": [
+        1,
+        "1"
+      ],
       "name": "Перекрёсток",
       "defaultEntry": "left",
       "entries": {
-        "left": { "x": 96, "y": 270 },
-        "right": { "x": 864, "y": 270 },
-        "bottom": { "x": 480, "y": 444 }
+        "left": {
+          "x": 96,
+          "y": 270
+        },
+        "right": {
+          "x": 864,
+          "y": 270
+        },
+        "bottom": {
+          "x": 480,
+          "y": 444
+        }
       },
       "rules": {
         "speedMultiplier": 1,
         "vision": {}
       },
       "walls": [
-        { "x": 360, "y": 185, "width": 180, "height": 26 },
-        { "x": 610, "y": 355, "width": 210, "height": 26 },
-        { "x": 705, "y": 205, "width": 26, "height": 120 }
+        {
+          "x": 360,
+          "y": 185,
+          "width": 180,
+          "height": 26
+        },
+        {
+          "x": 610,
+          "y": 355,
+          "width": 210,
+          "height": 26
+        },
+        {
+          "x": 705,
+          "y": 205,
+          "width": 26,
+          "height": 120
+        }
       ],
       "interactables": [
         {
@@ -34,25 +61,78 @@
           "prompt": "Поговорить",
           "dialogueId": "guide_first_playable"
         }
+      ],
+      "eventSpots": [
+        {
+          "id": "spot-1",
+          "x": 240,
+          "y": 110
+        },
+        {
+          "id": "spot-2",
+          "x": 235,
+          "y": 390
+        },
+        {
+          "id": "spot-3",
+          "x": 500,
+          "y": 285
+        },
+        {
+          "id": "spot-4",
+          "x": 810,
+          "y": 120
+        },
+        {
+          "id": "spot-5",
+          "x": 820,
+          "y": 420
+        }
       ]
     },
     {
       "id": "zone-002",
-      "legacyIds": [2, "2"],
+      "legacyIds": [
+        2,
+        "2"
+      ],
       "name": "Галерея",
       "defaultEntry": "left",
       "entries": {
-        "left": { "x": 96, "y": 270 },
-        "bottom": { "x": 480, "y": 444 }
+        "left": {
+          "x": 96,
+          "y": 270
+        },
+        "bottom": {
+          "x": 480,
+          "y": 444
+        }
       },
       "rules": {
         "speedMultiplier": 0.95,
-        "vision": { "darkness": 0.86 }
+        "vision": {
+          "darkness": 0.86
+        }
       },
       "walls": [
-        { "x": 300, "y": 160, "width": 260, "height": 26 },
-        { "x": 585, "y": 300, "width": 26, "height": 220 },
-        { "x": 760, "y": 390, "width": 220, "height": 26 }
+        {
+          "x": 300,
+          "y": 160,
+          "width": 260,
+          "height": 26
+        },
+        {
+          "x": 585,
+          "y": 300,
+          "width": 26,
+          "height": 220
+        },
+        {
+          "x": 760,
+          "y": 390,
+          "width": 220,
+          "height": 26
+        }
       ],
       "interactables": [
         {
@@ -67,6 +147,33 @@
           "once": true,
           "sound": "resource"
         }
+      ],
+      "eventSpots": [
+        {
+          "id": "spot-1",
+          "x": 180,
+          "y": 120
+        },
+        {
+          "id": "spot-2",
+          "x": 180,
+          "y": 410
+        },
+        {
+          "id": "spot-3",
+          "x": 455,
+          "y": 270
+        },
+        {
+          "id": "spot-4",
+          "x": 770,
+          "y": 115
+        },
+        {
+          "id": "spot-5",
+          "x": 825,
+          "y": 320
+        }
       ]
     },
     {
@@ -74,17 +181,40 @@
       "name": "Тёмный сад",
       "defaultEntry": "top",
       "entries": {
-        "top": { "x": 480, "y": 96 },
-        "right": { "x": 864, "y": 270 }
+        "top": {
+          "x": 480,
+          "y": 96
+        },
+        "right": {
+          "x": 864,
+          "y": 270
+        }
       },
       "rules": {
         "speedMultiplier": 0.9,
-        "vision": { "darkness": 0.96 }
+        "vision": {
+          "darkness": 0.96
+        }
       },
       "walls": [
-        { "x": 255, "y": 225, "width": 250, "height": 26 },
-        { "x": 520, "y": 365, "width": 300, "height": 26 },
-        { "x": 690, "y": 190, "width": 26, "height": 180 }
+        {
+          "x": 255,
+          "y": 225,
+          "width": 250,
+          "height": 26
+        },
+        {
+          "x": 520,
+          "y": 365,
+          "width": 300,
+          "height": 26
+        },
+        {
+          "x": 690,
+          "y": 190,
+          "width": 26,
+          "height": 180
+        }
       ],
       "interactables": [
         {
@@ -111,6 +241,33 @@
           "once": true,
           "sound": "chest"
         }
+      ],
+      "eventSpots": [
+        {
+          "id": "spot-1",
+          "x": 135,
+          "y": 135
+        },
+        {
+          "id": "spot-2",
+          "x": 155,
+          "y": 425
+        },
+        {
+          "id": "spot-3",
+          "x": 470,
+          "y": 120
+        },
+        {
+          "id": "spot-4",
+          "x": 815,
+          "y": 140
+        },
+        {
+          "id": "spot-5",
+          "x": 825,
+          "y": 330
+        }
       ]
     },
     {
@@ -118,18 +275,46 @@
       "name": "Сердце руин",
       "defaultEntry": "top",
       "entries": {
-        "top": { "x": 480, "y": 96 },
-        "left": { "x": 96, "y": 270 }
+        "top": {
+          "x": 480,
+          "y": 96
+        },
+        "left": {
+          "x": 96,
+          "y": 270
+        }
       },
       "rules": {
         "speedMultiplier": 1,
-        "vision": { "darkness": 1 }
+        "vision": {
+          "darkness": 1
+        }
       },
       "walls": [
-        { "x": 300, "y": 165, "width": 220, "height": 26 },
-        { "x": 660, "y": 165, "width": 220, "height": 26 },
-        { "x": 275, "y": 380, "width": 210, "height": 26 },
-        { "x": 685, "y": 380, "width": 210, "height": 26 }
+        {
+          "x": 300,
+          "y": 165,
+          "width": 220,
+          "height": 26
+        },
+        {
+          "x": 660,
+          "y": 165,
+          "width": 220,
+          "height": 26
+        },
+        {
+          "x": 275,
+          "y": 380,
+          "width": 210,
+          "height": 26
+        },
+        {
+          "x": 685,
+          "y": 380,
+          "width": 210,
+          "height": 26
+        }
       ],
       "interactables": [
         {
@@ -157,70 +342,145 @@
           "once": true,
           "sound": "quest"
         }
+      ],
+      "eventSpots": [
+        {
+          "id": "spot-1",
+          "x": 165,
+          "y": 135
+        },
+        {
+          "id": "spot-2",
+          "x": 165,
+          "y": 425
+        },
+        {
+          "id": "spot-3",
+          "x": 480,
+          "y": 230
+        },
+        {
+          "id": "spot-4",
+          "x": 790,
+          "y": 120
+        },
+        {
+          "id": "spot-5",
+          "x": 800,
+          "y": 430
+        }
       ]
     }
   ],
   "transitions": [
     {
       "id": "transition-zone-001-right-to-zone-002-left",
-      "from": { "zoneId": "zone-001", "side": "right" },
-      "to": { "zoneId": "zone-002", "entryId": "left" },
+      "from": {
+        "zoneId": "zone-001",
+        "side": "right"
+      },
+      "to": {
+        "zoneId": "zone-002",
+        "entryId": "left"
+      },
       "trigger": "auto",
       "label": "ГАЛЕРЕЯ →",
       "sound": "portal"
     },
     {
       "id": "transition-zone-002-left-to-zone-001-right",
-      "from": { "zoneId": "zone-002", "side": "left" },
-      "to": { "zoneId": "zone-001", "entryId": "right" },
+      "from": {
+        "zoneId": "zone-002",
+        "side": "left"
+      },
+      "to": {
+        "zoneId": "zone-001",
+        "entryId": "right"
+      },
       "trigger": "auto",
       "label": "← ПЕРЕКРЁСТОК",
       "sound": "portal"
     },
     {
       "id": "transition-zone-001-bottom-to-zone-003-top",
-      "from": { "zoneId": "zone-001", "side": "bottom" },
-      "to": { "zoneId": "zone-003", "entryId": "top" },
+      "from": {
+        "zoneId": "zone-001",
+        "side": "bottom"
+      },
+      "to": {
+        "zoneId": "zone-003",
+        "entryId": "top"
+      },
       "trigger": "auto",
       "label": "САД ↓",
       "sound": "portal"
     },
     {
       "id": "transition-zone-003-top-to-zone-001-bottom",
-      "from": { "zoneId": "zone-003", "side": "top" },
-      "to": { "zoneId": "zone-001", "entryId": "bottom" },
+      "from": {
+        "zoneId": "zone-003",
+        "side": "top"
+      },
+      "to": {
+        "zoneId": "zone-001",
+        "entryId": "bottom"
+      },
       "trigger": "auto",
       "label": "↑ ПЕРЕКРЁСТОК",
       "sound": "portal"
     },
     {
       "id": "transition-zone-002-bottom-to-zone-004-top",
-      "from": { "zoneId": "zone-002", "side": "bottom" },
-      "to": { "zoneId": "zone-004", "entryId": "top" },
+      "from": {
+        "zoneId": "zone-002",
+        "side": "bottom"
+      },
+      "to": {
+        "zoneId": "zone-004",
+        "entryId": "top"
+      },
       "trigger": "auto",
       "label": "ЯДРО ↓",
       "sound": "portal"
     },
     {
       "id": "transition-zone-004-top-to-zone-002-bottom",
-      "from": { "zoneId": "zone-004", "side": "top" },
-      "to": { "zoneId": "zone-002", "entryId": "bottom" },
+      "from": {
+        "zoneId": "zone-004",
+        "side": "top"
+      },
+      "to": {
+        "zoneId": "zone-002",
+        "entryId": "bottom"
+      },
       "trigger": "auto",
       "label": "↑ ГАЛЕРЕЯ",
       "sound": "portal"
     },
     {
       "id": "transition-zone-003-right-to-zone-004-left",
-      "from": { "zoneId": "zone-003", "side": "right" },
-      "to": { "zoneId": "zone-004", "entryId": "left" },
+      "from": {
+        "zoneId": "zone-003",
+        "side": "right"
+      },
+      "to": {
+        "zoneId": "zone-004",
+        "entryId": "left"
+      },
       "trigger": "auto",
       "label": "ЯДРО →",
       "sound": "portal"
     },
     {
       "id": "transition-zone-004-left-to-zone-003-right",
-      "from": { "zoneId": "zone-004", "side": "left" },
-      "to": { "zoneId": "zone-003", "entryId": "right" },
+      "from": {
+        "zoneId": "zone-004",
+        "side": "left"
+      },
+      "to": {
+        "zoneId": "zone-003",
+        "entryId": "right"
+      },
       "trigger": "auto",
       "label": "← САД",
       "sound": "portal"
