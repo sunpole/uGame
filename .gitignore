@@ -2,3 +2,4 @@ node_modules/
 dist/
 uGame_report_*.txt
 updater.log
+simulation-reports/
