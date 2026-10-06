@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "containers": [
+    {
+      "id": "backpack",
+      "name": "Рюкзак",
+      "kind": "grid",
+      "access": "global",
+      "slotCount": 12,
+      "maxWeightKg": 30,
+      "allowedTags": [],
+      "description": "Переносной инвентарь персонажа. Один stack занимает одну ячейку."
+    },
+    {
+      "id": "resourcePouch",
+      "name": "Ресурсный пояс",
+      "kind": "grid",
+      "access": "global",
+      "slotCount": 1,
+      "maxWeightKg": 15,
+      "allowedTags": [
+        "resource"
+      ],
+      "allowedItemIds": [
+        "stone"
+      ],
+      "description": "Стартовый прототип: одна ячейка и только Камень. Будущие навыки расширят типы, ячейки, вес и stack limit."
+    },
+    {
+      "id": "equipment",
+      "name": "Экипировка",
+      "kind": "equipment",
+      "access": "global",
+      "slotKeys": [
+        "helmet",
+        "chest",
+        "pants",
+        "boots",
+        "gloves",
+        "ring1",
+        "ring2",
+        "amulet",
+        "cloak",
+        "belt"
+      ],
+      "maxWeightKg": null,
+      "allowedTags": [
+        "equipment"
+      ],
+      "description": "Специализированные слоты экипировки персонажа."
+    },
+    {
+      "id": "bank",
+      "name": "Банк",
+      "kind": "grid",
+      "access": "local",
+      "slotCount": 60,
+      "maxWeightKg": null,
+      "allowedTags": [],
+      "description": "Большое городское хранилище. В прототипе ограничено ячейками, но не весом."
+    }
+  ]
+}
