@@ -665,6 +665,14 @@ def svg_horizontal_bars(
     return "".join(parts)
 
 
+def format_hours(value: float | None) -> str:
+    return "—" if value is None else f"{float(value):.2f} h"
+
+
+def format_delta_pct(value: float | None) -> str:
+    return "—" if value is None else f"{float(value):+.2f}%"
+
+
 def write_csv(path: Path, header: list[str], rows: list[list[Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -797,8 +805,8 @@ def make_report_files(
         "<tr>"
         f"<td>{html.escape(resource)}</td>"
         f"<td>{data['uptimePct']:.2f}%</td>"
-        f"<td>{'—' if data['medianHours'] is None else f'{data['medianHours']:.2f} h'}</td>"
-        f"<td>{'—' if data['p95Hours'] is None else f'{data['p95Hours']:.2f} h'}</td>"
+        f"<td>{format_hours(data['medianHours'])}</td>"
+        f"<td>{format_hours(data['p95Hours'])}</td>"
         f"<td>{data['samples']}</td>"
         "</tr>"
         for resource, data in summary["masters"]["t4Wait"].items()
@@ -895,7 +903,7 @@ def compare_runs(baseline_dir: Path, candidate_dir: Path, output_dir: Path) -> P
     table_rows = "".join(
         "<tr>"
         f"<td>{html.escape(metric)}</td><td>{before:.6f}</td><td>{after:.6f}</td>"
-        f"<td>{delta:+.6f}</td><td>{'—' if delta_pct is None else f'{delta_pct:+.2f}%'}</td>"
+        f"<td>{delta:+.6f}</td><td>{format_delta_pct(delta_pct)}</td>"
         "</tr>"
         for metric, before, after, delta, delta_pct in rows
     )
