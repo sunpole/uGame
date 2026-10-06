@@ -261,7 +261,8 @@
         "UGD-0007",
         "UGD-0008",
         "UGD-0010",
-        "UGD-0013"
+        "UGD-0013",
+        "UGD-0014"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -294,7 +295,8 @@
         "UGD-0009",
         "UGD-0011",
         "UGD-0012",
-        "UGD-0013"
+        "UGD-0013",
+        "UGD-0014"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -328,7 +330,8 @@
         "UGD-0009",
         "UGD-0010",
         "UGD-0012",
-        "UGD-0013"
+        "UGD-0013",
+        "UGD-0014"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -392,7 +395,40 @@
         "UGD-0009",
         "UGD-0010",
         "UGD-0011",
-        "UGD-0012"
+        "UGD-0012",
+        "UGD-0014"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0014",
+      "title": "Контейнеры: рюкзак, банк, экипировка и ресурсный пояс",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "inventory",
+        "containers",
+        "bank",
+        "equipment",
+        "resources",
+        "weight",
+        "stacking",
+        "progression",
+        "ui",
+        "persistence"
+      ],
+      "path": "records/UGD-0014-container-inventory-bank-equipment-pouch.md",
+      "related": [
+        "UGD-0009",
+        "UGD-0010",
+        "UGD-0011",
+        "UGD-0013"
       ],
       "supersedes": [],
       "superseded_by": []
