@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.31**
+Current version: **0.0.32**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.32 | Dynamic Event Spots, timed zone quality, reusable reward-choice UI and persistent generated offers |
 | 0.0.31 | First Playable content slice: four-zone loop, guide, three fragments and final core objective |
 | 0.0.30 | WorldGraph with stable zone/transition ids and legacy save migration |
 | 0.0.29 | Persistent Game State schema v1 + local SaveSystem |
@@ -37,6 +38,9 @@ Current version: **0.0.31**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.32
+Each current zone now contains five possible Dynamic Event Spots. Zone quality Q1–Q4 is rolled from the prototype 80% / 15% / 3.5% / 1.5% rarity profile and controls 1 / 2 / 3 / 5 active event slots. Quality rerolls independently per zone on quality-dependent real-time windows (Q1 roughly 150–180 minutes down to Q4 roughly 60–90 minutes), while each dynamic event has its own 30-minute lifetime and visible countdown. Resource, chest and placeholder event-portal encounters are generated from data-driven rules. A reusable InteractionPanel supports reward-choice and message interactions; resource events show 2–3 generated options, while chest events separately roll how many closed chests appear and how many may be selected. Chest contents are generated in advance but hidden until selection. Resource definitions and relative values moved to `data/resources.json`, reward/event rules to `data/reward-rules.json`. Dynamic event state and pending reward offers are saved in Game State so zone changes/F5 do not become free rerolls. DEV codes `8201`, `8202`, `8299` speed up QA. Event portals are intentionally placeholders and do not yet travel to event zones.
 
 ## 0.0.31
 The project switches from infrastructure-first work to the first content-first playable slice. `data/world.json` now contains four connected zones — Перекрёсток, Галерея, Тёмный сад and Сердце руин — arranged as a small loop with labeled exits and two possible routes toward the final area. A new quest, `q002` «Три фрагмента», asks the player to speak with the Guide, find three uniquely tracked fragments and activate the first core. Quest signals remain order-tolerant through the existing seen-signal behavior, so exploration does not have to follow one strict route. The Dark Garden contains an optional one-time cache. Chest definitions can now provide their own item id and optional quest signal, and the HUD shows First Playable fragment progress. Old q001 saves do not block the new auto-start quest: when restored quest content no longer has an active quest, the first pending auto-start quest begins. No combat, enemy or large new framework was added.
