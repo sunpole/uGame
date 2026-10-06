@@ -14,6 +14,7 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 6 | Open project folder |
 | 7 | Restore pre-update files after typing ROLLBACK |
 | 8 | Return from rollback to main |
+| 9 | Simulation Lab: TRACE / TEST / DEEP / MATRIX |
 | 0 | Exit |
 
 ## Project Journal
@@ -32,7 +33,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.36 — Project Hub + Dynamic Events + Modular Containers
+## Game prototype v0.0.37 — Project Hub + Simulation Lab + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -80,7 +81,11 @@ On top of that static loop, v0.0.32 tests whether changing Event Spots make revi
 more interesting. v0.0.35 adds the first inventory/storage gameplay layer: physical rewards now
 need portable container capacity, while Attention remains intangible/account storage. v0.0.36 adds
 the Project Hub so project documentation, Journal records and project/tool links can be reached
-without leaving or reloading the current game session. Event Portal
+without leaving or reloading the current game session. v0.0.37 adds the first working Simulation
+Lab developer tool: it can model synthetic worlds at 8/30/50/100 zones, enforce candidate master
+caps, produce analysis reports and run either from GitHub Actions or locally through updater option
+9 when Python is already available. These simulation probability tables are candidates only and do
+not alter the current gameplay rules. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
@@ -106,6 +111,8 @@ this repository itself yet.
 
 `version.json` is the machine-readable project version. `package.json` mirrors the
 same version for tooling. `VERSION.md` is the human-readable version history.
+
+`docs/SIMULATION-LAB.md` describes the headless balancing tool, report formats and web/local launch paths. The preferred no-install runner is GitHub Actions; generated local reports live under ignored `simulation-reports/`.
 
 Option 4 runs the prototype through the local Node dev server. No npm package
 installation is required. Phaser is loaded by the browser from its CDN, so the
@@ -154,6 +161,7 @@ changing update and must be explicitly restarted. The next launch trusts the
 checked-out updater and repository maintainers. This is not a sandbox for a
 compromised repository or local Git/Node installation. Option 4 explicitly runs
 local project code; no dependency installation or automatic npm pre/post scripts.
+Simulation option 9 also requires explicit `SIMULATE`, never installs Python/pip packages automatically, and runs only the checked-out `tools/simulation/ugame_sim.py`. If Python is unavailable it prints the GitHub Actions no-install route instead.
 
 The in-game DEV console accepts only four decimal digits. It does not execute shell
 commands or updater commands. Active game commands are explicitly implemented by
@@ -195,7 +203,7 @@ Session counter and operational log are local `.git` metadata, never committed.
 Implementation: Update-uGame.ps1; launcher: Update-uGame.cmd. Run
 `powershell.exe -NoProfile -File tests\Test-Updater.ps1` for isolated Git checks.
 Direct commands: `powershell.exe -NoProfile -File .\Update-uGame.ps1 -Command status`
-(also sync, report, run, github, rollback, resume).
+(also sync, report, run, github, rollback, resume, simulate).
 
 Reference: sunpole/uMontage release/v1.0.0 commit
 7b785744a374745c8fce390cf21381debfc85454, tools/uMontage-Control.ps1,
