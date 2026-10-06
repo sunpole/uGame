@@ -33,7 +33,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.40 — Project Hub + Simulation archive + gameplay prototype
+## Game prototype v0.0.48 — Persistent Game Chrome + Project Hub + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -80,6 +80,12 @@ The current prototype includes:
 - a published Simulation Results archive under `reports/simulation/`, with #20 as the current v0.2 baseline and #6/#7 retained as historical benchmarks;
 - an Attention cadence guardrail: ~1/week normal, ~1/day hardcore, >10/week anomaly/log review;
 - a provisional `docs/NEXT-IMPLEMENTATION-PLAN.md` that must be reconciled with the user's next patch package before new gameplay work starts.
+- persistent desktop Game Chrome with a non-overlappable Header / Workspace / Footer shell;
+- version/build/environment, session time, location/time-in-zone, Game Clock and real local clock/timezone always visible;
+- live character class/Stamina/resources/material wealth/storage summary in the header;
+- unified contextual E/Space/Enter action routing plus mouse/AnyDesk parity;
+- text selection disabled by default with a Project Hub setting to re-enable it;
+- shared project chrome on Journal / Active–Idle / Simulation Results HTML pages.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
@@ -91,7 +97,10 @@ without leaving or reloading the current game session. v0.0.37 adds the first wo
 Lab developer tool: it can model synthetic worlds at 8/30/50/100 zones, enforce candidate master
 caps, produce analysis reports and run either from GitHub Actions or locally through updater option
 9 when Python is already available. These simulation probability tables are candidates only and do
-not alter the current gameplay rules. Event Portal
+not alter the current gameplay rules. v0.0.41–v0.0.48 then rebuild the permanent application chrome:
+Header/Footer remain outside every Workspace overlay, current build/session/location/clocks are always
+visible, the old duplicate HUD is migrated only after replacement data exists, and keyboard/mouse
+actions share one contextual route. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
