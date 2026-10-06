@@ -7,6 +7,10 @@ on:
       - "tools/simulation/**"
       - "data/simulation/**"
       - "tests/simulation/**"
+      - "src/project-hub-system.js"
+      - "src/main.js"
+      - "data/project-hub.json"
+      - "index.html"
   workflow_dispatch:
     inputs:
       mode:
@@ -57,6 +61,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Check Project Hub JavaScript
+        run: |
+          node --check src/project-hub-system.js
+          node --check src/main.js
+
+      - name: Validate Project Hub JSON
+        run: python -c "import json, pathlib; json.loads(pathlib.Path('data/project-hub.json').read_text(encoding='utf-8')); print('Project Hub JSON OK')"
 
       - name: Compile simulator
         run: python -m py_compile tools/simulation/ugame_sim.py
