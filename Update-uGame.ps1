@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('menu','status','sync','report','run','github','rollback','resume')][string]$Command = 'menu')
+param([ValidateSet('menu','status','sync','report','run','github','rollback','resume','simulate')][string]$Command = 'menu')
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:Root = [IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
@@ -119,6 +119,86 @@ function Run-Project {
     try { & $npm --ignore-scripts run dev; if ($LASTEXITCODE -ne 0) { throw 'Project launch failed. Dependencies may not be installed.' } }
     finally { Pop-Location }
 }
+function Get-SimulationPython {
+    $py = Get-Command py.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($py) { return @{ Exe = $py.Source; Prefix = @('-3') } }
+    $python = Get-Command python.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($python) { return @{ Exe = $python.Source; Prefix = @() } }
+    return $null
+}
+function Run-Simulation {
+    Assert-Clean
+    $sim = Join-Path $script:Root 'tools\simulation\ugame_sim.py'
+    if (-not (Test-Path -LiteralPath $sim -PathType Leaf)) { throw 'Simulation Lab is not present in this checkout.' }
+    $python = Get-SimulationPython
+    if (-not $python) {
+        Write-Host 'Python 3 was not found. Nothing will be installed automatically.'
+        Write-Host 'Use the no-install web runner:'
+        Write-Host 'https://github.com/sunpole/uGame/actions/workflows/simulation-lab.yml'
+        return
+    }
+
+    Write-Host ('Python: ' + $python.Exe)
+    Write-Host '=== Simulation Lab ==='
+    Write-Host '1. TRACE 20 cycles'
+    Write-Host '2. TEST 100,000 cycles'
+    Write-Host '3. DEEP 1,000,000 cycles'
+    Write-Host '4. MATRIX 100,000 cycles for worlds 8/30/50/100'
+    Write-Host '0. Cancel'
+    $mode = Read-Host 'Number'
+    if ($mode -eq '0') { return }
+
+    $seedText = Read-Host 'Seed [42]'
+    if ([string]::IsNullOrWhiteSpace($seedText)) { $seed = 42 }
+    elseif (-not [int]::TryParse($seedText,[ref]$seed)) { throw 'Seed must be an integer.' }
+
+    $arguments = @()
+    switch ($mode) {
+        '1' {
+            $worldText = Read-Host 'World size 8/30/50/100 [8]'
+            if ([string]::IsNullOrWhiteSpace($worldText)) { $worldText = '8' }
+            if ($worldText -notin @('8','30','50','100')) { throw 'Choose world size 8, 30, 50 or 100.' }
+            $arguments = @($sim,'trace','--cycles','20','--world-size',$worldText,'--seed',[string]$seed)
+        }
+        '2' {
+            $worldText = Read-Host 'World size 8/30/50/100 [8]'
+            if ([string]::IsNullOrWhiteSpace($worldText)) { $worldText = '8' }
+            if ($worldText -notin @('8','30','50','100')) { throw 'Choose world size 8, 30, 50 or 100.' }
+            $arguments = @($sim,'run','--mode','TEST','--cycles','100000','--world-size',$worldText,'--seed',[string]$seed)
+        }
+        '3' {
+            $worldText = Read-Host 'World size 8/30/50/100 [8]'
+            if ([string]::IsNullOrWhiteSpace($worldText)) { $worldText = '8' }
+            if ($worldText -notin @('8','30','50','100')) { throw 'Choose world size 8, 30, 50 or 100.' }
+            $arguments = @($sim,'run','--mode','DEEP','--cycles','1000000','--world-size',$worldText,'--seed',[string]$seed)
+        }
+        '4' {
+            $arguments = @($sim,'matrix','--cycles','100000','--world-sizes','8,30,50,100','--seed',[string]$seed)
+        }
+        default { throw 'Choose a number from 0 to 4.' }
+    }
+
+    Write-Host ('Command: ' + $python.Exe + ' ' + (($python.Prefix + $arguments) -join ' '))
+    Write-Host 'The simulation is headless. Generated reports go only to ignored simulation-reports/.'
+    if ((Read-Host 'Type SIMULATE to run') -cne 'SIMULATE') { return }
+
+    Push-Location -LiteralPath $script:Root
+    try {
+        & $python.Exe @($python.Prefix) @arguments
+        if ($LASTEXITCODE -ne 0) { throw "Simulation failed with exit code $LASTEXITCODE." }
+    } finally { Pop-Location }
+
+    $latest = Get-ChildItem -LiteralPath (Join-Path $script:Root 'simulation-reports') -Recurse -File -Include 'report.html','matrix.html','comparison.html' -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+    if ($latest) {
+        Write-Log ('Simulation completed: ' + $latest.FullName)
+        Start-Process -FilePath $latest.FullName | Out-Null
+    } else {
+        Write-Log 'Simulation completed. No HTML report was found.'
+    }
+}
+
 function Invoke-Action([string]$Action) {
     switch ($Action) {
         'sync' { Sync-Project }
@@ -128,6 +208,7 @@ function Invoke-Action([string]$Action) {
         'github' { Start-Process 'https://github.com/sunpole/uGame' | Out-Null }
         'rollback' { Rollback-Project }
         'resume' { Resume-Project }
+        'simulate' { Run-Simulation }
     }
 }
 function Main {
@@ -152,7 +233,7 @@ function Main {
         if ($Command -ne 'menu') { Invoke-Action $Command; return }
         while (-not $script:StopMenu) {
             Write-Host "=== uGame ==="
-            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n0. Exit".Replace('\n',[Environment]::NewLine)
+            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n0. Exit".Replace('\n',[Environment]::NewLine)
             $choice = Read-Host 'Number'
             try {
                 switch ($choice) {
@@ -165,7 +246,8 @@ function Main {
                     '6' { Start-Process -FilePath (Join-Path $env:WINDIR 'explorer.exe') -ArgumentList ('"' + $script:Root + '"') | Out-Null }
                     '7' { Invoke-Action rollback }
                     '8' { Invoke-Action resume }
-                    default { Write-Host 'Choose a number from 0 to 8.' }
+                    '9' { Invoke-Action simulate }
+                    default { Write-Host 'Choose a number from 0 to 9.' }
                 }
             } catch { Write-Log ('STOP: ' + $_.Exception.Message) }
         }
