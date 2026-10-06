@@ -12,6 +12,9 @@ import { ZoneRulesSystem } from './zone-rules-system.js';
 import { ResourceSystem } from './resource-system.js';
 import { InventorySystem } from './inventory-system.js';
 import { DialogueSystem } from './dialogue-system.js';
+import { InteractionPanelSystem } from './interaction-panel-system.js';
+import { RewardGenerator } from './reward-generator.js';
+import { EventSpotSystem } from './event-spot-system.js';
 import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
 import { SaveSystem } from './save-system.js';
@@ -29,6 +32,7 @@ let playerController = null;
 let resourceSystem = null;
 let inventorySystem = null;
 let questSystem = null;
+let eventSpotSystem = null;
 let saveSystem = null;
 
 function fitPlayfield() {
@@ -78,6 +82,7 @@ function executeDevCode(code) {
     inventorySystem,
     resourceSystem,
     questSystem,
+    eventSpotSystem,
     saveSystem
   ];
 
@@ -156,7 +161,13 @@ class ZoneScene extends Phaser.Scene {
       onChange: (_id, _value, snapshot) => {
         if (this.resourceStatusElement) {
           const fragments = FIRST_PLAYABLE_FRAGMENTS.reduce((total, id) => total + (snapshot[id] || 0), 0);
-          this.resourceStatusElement.textContent = `Фрагменты ${fragments}/3`;
+          const core = [
+            `Камень ${snapshot.stone || 0}`,
+            `Дерево ${snapshot.wood || 0}`,
+            `Вода ${snapshot.water || 0}`,
+            `Внимание ${snapshot.attention || 0}`
+          ].join(' · ');
+          this.resourceStatusElement.textContent = `${core} · Фрагменты ${fragments}/3`;
         }
       }
     });
@@ -193,6 +204,17 @@ class ZoneScene extends Phaser.Scene {
       onOpenChange: (open) => playerController.setEnabled(!open)
     });
 
+    this.interactionPanel = new InteractionPanelSystem({
+      panel: document.querySelector('#interaction-panel'),
+      titleElement: document.querySelector('#interaction-title'),
+      textElement: document.querySelector('#interaction-text'),
+      optionsElement: document.querySelector('#interaction-options'),
+      metaElement: document.querySelector('#interaction-meta'),
+      closeButton: document.querySelector('#interaction-close'),
+      onOpenChange: (open) => playerController.setEnabled(!open)
+    });
+    this.rewardGenerator = new RewardGenerator();
+
     this.interactableSystem = new InteractableSystem({
       scene: this,
       player: this.player,
@@ -224,6 +246,22 @@ class ZoneScene extends Phaser.Scene {
       isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
     });
 
+    eventSpotSystem = new EventSpotSystem({
+      worldGraph: this.worldGraph,
+      zoneSystem: this.zoneSystem,
+      interactableSystem: this.interactableSystem,
+      eventSystem: this.eventSystem,
+      rewardGenerator: this.rewardGenerator,
+      interactionPanel: this.interactionPanel,
+      grantResource: (id, amount) => resourceSystem.add(id, amount),
+      onStateChange: (snapshot) => {
+        this.gameState.setDynamicEvents(snapshot);
+        this.persistGameState();
+      },
+      onZoneStatus: (text) => this.setStatus(text)
+    });
+    this.eventSpotSystem = eventSpotSystem;
+
     this.bindGameEvents();
     this.bindPersistenceEvents();
 
@@ -243,7 +281,12 @@ class ZoneScene extends Phaser.Scene {
 
   async initializeWorld(restoredState) {
     try {
-      await this.worldGraph.load();
+      await Promise.all([
+        this.worldGraph.load(),
+        this.rewardGenerator.load()
+      ]);
+      this.eventSpotSystem.initialize(restoredState.dynamicEvents);
+
       const zoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId)
         || this.worldGraph.start.zoneId;
       const entryId = this.worldGraph.resolveEntryId(zoneId, restoredState.world.entry)
@@ -302,6 +345,11 @@ class ZoneScene extends Phaser.Scene {
     this.eventSystem.on('interactable:activate', ({ item }) => {
       if (!item) return;
 
+      if (item.dynamicEventId) {
+        this.eventSpotSystem.activate(item).catch(() => {});
+        return;
+      }
+
       if (item.type === 'portal') {
         const now = performance.now();
         if (now < this.transitionLockUntil) return;
@@ -353,6 +401,7 @@ class ZoneScene extends Phaser.Scene {
     }
 
     this.characterView.update(state, delta);
+    this.eventSpotSystem?.update(Date.now());
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update();
   }
