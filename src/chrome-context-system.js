@@ -76,6 +76,7 @@ export class ChromeContextSystem {
     this.storage = safeSessionStorage();
     this.sessionStartedAt = this.restoreSessionStart();
     this.currentZone = null;
+    this.zoneRuntimeStatus = '';
     this.zoneEnteredAt = this.restoreZoneState()?.enteredAt || Date.now();
     this.timer = null;
     this.version = '';
@@ -165,6 +166,11 @@ export class ChromeContextSystem {
     this.renderLocation(Date.now());
   }
 
+  setZoneRuntimeStatus(text = '') {
+    this.zoneRuntimeStatus = String(text || '').trim();
+    this.renderLocation(Date.now());
+  }
+
   start() {
     this.stop();
     this.tick();
@@ -208,6 +214,7 @@ export class ChromeContextSystem {
     }
     if (this.locationSecondaryElement) {
       const details = zone ? zoneDetails(zone) : ['T—', 'Биом —'];
+      if (this.zoneRuntimeStatus && !details.includes(this.zoneRuntimeStatus)) details.push(this.zoneRuntimeStatus);
       this.locationSecondaryElement.textContent = `${details.join(' · ')} · в зоне ${durationLabel(now - this.zoneEnteredAt)}`;
     }
   }
