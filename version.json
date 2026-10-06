@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.34",
-  "stage": "dynamic-events",
+  "version": "0.0.35",
+  "stage": "containers",
   "updated": "2026-10-06",
-  "summary": "Blind restricted reward choices with optional post-choice reveal of missed rewards"
+  "summary": "ContainerSystem with backpack, city bank, equipment slots, resource pouch, weight and stack rules"
 }
