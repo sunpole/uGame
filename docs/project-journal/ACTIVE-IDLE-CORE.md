@@ -299,6 +299,7 @@ Dynamic Event / Interactable
 - `UGD-0014` — ContainerSystem, рюкзак, Банк, экипировка, ресурсный пояс и progression hooks хранения.
 - `UGD-0015` — ресурсные NPC, отношения, rarity, случайный каскад модулей и будущий Lore layer.
 - `UGD-0016` — Location Tier, biome, distance pressure, reward stacking и world caps master NPC.
+- `UGD-0017` — Simulation Lab: headless probability/balance simulation и сравнение отчётов.
 - `UGD-0001`, `UGD-0002`, `UGD-0005` — более ранние идеи о Внимании, Импульсе, отдыхе и КПД.
 - `UGD-0009` — content-first: не строить всю архитектуру до проверки игрового цикла.
 
@@ -408,3 +409,28 @@ Master multiplier применяется после обычных additive bonu
 Подробнее: `UGD-0016` и `docs/project-journal/audits/2026-10-06-location-tier-npc-world-audit.md`.
 
 Для текущего prototype редкие master и Tier-state зон должны координироваться локальным serializable `WorldSpawnState`. Он учитывает world caps, ограничение одного T2+ на resourceDirection в одной зоне и rotation history; позднее тот же data model переносится на backend.
+
+## 22. Simulation Lab
+
+`UGD-0017` закрепляет отдельный headless-инструмент для расчёта probability tables и world caps до переноса новых значений в gameplay.
+
+```text
+shared JSON rules
+   ↓
+headless simulation
+TRACE / 100k / 1M
+   ↓
+aggregated metrics
+   ↓
+JSON / CSV / HTML / SVG
+   ↓
+A/B comparison
+   ↓
+только после проверки → gameplay balance
+```
+
+Simulation Lab не использует Phaser/Canvas и не строит графики внутри горячего цикла. Визуальные отчёты генерируются после расчёта. Основные проверки: distance→Location Tier, Location Tier→NPC/Event Tier, world caps, rotation fairness, wait time T3/T4, reward/XP multipliers и масштабирование мира 8/30/50/100+ зон.
+
+Предпочтительный no-install launcher — manual GitHub Actions с downloadable artifact. Локальный fallback позже подключается к updater отдельным пунктом и запускает только repository-owned Python без автоматической установки зависимостей.
+
+Техническое описание: `docs/SIMULATION-LAB.md`.
