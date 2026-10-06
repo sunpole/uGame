@@ -155,10 +155,10 @@ export class PlayerController {
 
   updateArrowIndicators(keyboardAllowed) {
     const states = {
-      left: keyboardAllowed && this.cursors.left.isDown,
-      up: keyboardAllowed && this.cursors.up.isDown,
-      down: keyboardAllowed && this.cursors.down.isDown,
-      right: keyboardAllowed && this.cursors.right.isDown
+      left: (keyboardAllowed && this.cursors.left.isDown) || (this.enabled && this.virtual.left),
+      up: (keyboardAllowed && this.cursors.up.isDown) || (this.enabled && this.virtual.up),
+      down: (keyboardAllowed && this.cursors.down.isDown) || (this.enabled && this.virtual.down),
+      right: (keyboardAllowed && this.cursors.right.isDown) || (this.enabled && this.virtual.right)
     };
 
     for (const [direction, isDown] of Object.entries(states)) {
