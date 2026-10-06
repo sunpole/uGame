@@ -13,6 +13,12 @@
           "type": "close"
         },
         {
+          "id": "interface-settings",
+          "label": "Настройки интерфейса",
+          "description": "Выделение текста и другие локальные UI-настройки.",
+          "type": "settings"
+        },
+        {
           "id": "pages",
           "label": "GitHub Pages",
           "description": "Публичная браузерная версия uGame.",
