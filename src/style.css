@@ -1474,7 +1474,7 @@ input {
 
 .game-chrome-footer {
   display: grid;
-  grid-template-columns: minmax(180px, auto) minmax(105px, auto) minmax(260px, 1.2fr) minmax(230px, 1fr) minmax(280px, auto);
+  grid-template-columns: auto minmax(130px, auto) minmax(105px, auto) minmax(260px, 1.2fr) minmax(230px, 1fr) minmax(280px, auto);
   gap: 0;
   align-items: stretch;
   border-top: 1px solid #23272f;
@@ -1497,8 +1497,9 @@ input {
   border-right: 0;
 }
 
-.build-block strong {
+.version-block strong {
   color: #f0c66a;
+  font: 11px/1 monospace;
 }
 
 #footer-build,
@@ -1570,7 +1571,7 @@ input {
   }
 
   .game-chrome-footer {
-    grid-template-columns: auto auto minmax(200px, 1fr) minmax(190px, auto) minmax(220px, auto);
+    grid-template-columns: auto auto auto minmax(200px, 1fr) minmax(190px, auto) minmax(220px, auto);
   }
 
   .real-clock-block {
