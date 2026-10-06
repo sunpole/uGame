@@ -315,11 +315,13 @@ export class EventSpotSystem {
         if (!Array.isArray(offer.selectedIndices)) offer.selectedIndices = [];
         if (offer.selectedIndices.includes(index)) return false;
 
+        const reward = option.reward || {};
+        const granted = this.grantResource?.(reward.resourceId, Number(reward.amount) || 1);
+        if (granted === false) return false;
+
         offer.selectedIndices.push(index);
         this.publish();
 
-        const reward = option.reward || {};
-        this.grantResource?.(reward.resourceId, Number(reward.amount) || 1);
         this.eventSystem?.emit('dynamic-event:reward', {
           eventId: event.id,
           kind: event.kind,
