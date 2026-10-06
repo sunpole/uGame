@@ -87,6 +87,13 @@
           "target": "./docs/SIMULATION-LAB.md"
         },
         {
+          "id": "simulation-run",
+          "label": "Запустить Simulation Lab",
+          "description": "TRACE / TEST 100k / DEEP 1M / MATRIX через GitHub Actions без локальной установки Python.",
+          "type": "external",
+          "target": "https://github.com/sunpole/uGame/actions/workflows/simulation-lab.yml"
+        },
+        {
           "id": "dev-codes",
           "label": "DEV-коды",
           "description": "Текущие коды для ручного QA прототипа.",
