@@ -20,6 +20,7 @@ import { EventSpotSystem } from './event-spot-system.js';
 import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
 import { SaveSystem } from './save-system.js';
+import { ProjectHubSystem } from './project-hub-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -36,6 +37,18 @@ let containerSystem = null;
 let questSystem = null;
 let eventSpotSystem = null;
 let saveSystem = null;
+let projectHubSystem = null;
+
+
+function syncPlayerInputState() {
+  if (!playerController) return;
+  const overlayIds = ['dialogue-panel', 'interaction-panel', 'inventory-panel', 'project-hub'];
+  const anyOverlayOpen = overlayIds.some((id) => {
+    const element = document.getElementById(id);
+    return element && !element.hidden;
+  });
+  playerController.setEnabled(!anyOverlayOpen);
+}
 
 function fitPlayfield() {
   const shell = document.querySelector('.game-shell');
@@ -205,7 +218,7 @@ class ZoneScene extends Phaser.Scene {
       speakerElement: document.querySelector('#dialogue-speaker'),
       textElement: document.querySelector('#dialogue-text'),
       nextButton: document.querySelector('#dialogue-next'),
-      onOpenChange: (open) => playerController.setEnabled(!open)
+      onOpenChange: () => syncPlayerInputState()
     });
 
     this.interactionPanel = new InteractionPanelSystem({
@@ -215,7 +228,7 @@ class ZoneScene extends Phaser.Scene {
       optionsElement: document.querySelector('#interaction-options'),
       metaElement: document.querySelector('#interaction-meta'),
       closeButton: document.querySelector('#interaction-close'),
-      onOpenChange: (open) => playerController.setEnabled(!open)
+      onOpenChange: () => syncPlayerInputState()
     });
 
     this.inventoryPanel = new InventoryPanelSystem({
@@ -233,7 +246,7 @@ class ZoneScene extends Phaser.Scene {
         document.querySelector('#inventory-open'),
         document.querySelector('#inventory-open-touch')
       ],
-      onOpenChange: (open) => playerController.setEnabled(!open)
+      onOpenChange: () => syncPlayerInputState()
     });
 
     this.rewardGenerator = new RewardGenerator();
@@ -525,4 +538,21 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
+});
+
+projectHubSystem = new ProjectHubSystem({
+  openButton: document.querySelector('#project-hub-open'),
+  overlay: document.querySelector('#project-hub'),
+  titleElement: document.querySelector('#project-hub-title'),
+  breadcrumbElement: document.querySelector('#project-hub-breadcrumb'),
+  navElement: document.querySelector('#project-hub-nav'),
+  contentElement: document.querySelector('#project-hub-content'),
+  backButton: document.querySelector('#project-hub-back'),
+  closeButton: document.querySelector('#project-hub-close'),
+  onOpenChange: () => syncPlayerInputState()
+});
+
+projectHubSystem.load().catch((error) => {
+  const content = document.querySelector('#project-hub-content');
+  if (content) content.textContent = `Project Hub не загрузился: ${error instanceof Error ? error.message : String(error)}`;
 });
