@@ -28,6 +28,7 @@
 - Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, имеет TRACE / TEST 100k / DEEP 1M / MATRIX, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. В `v0.0.37` реализованы manual GitHub Actions no-install runner и local updater option 9; candidate tables пока не являются live gameplay balance.
 - Принято `UGD-0018`: игра получает единый Project Hub в topbar. Внутренние документы/Project Journal читаются в том же browser tab через overlay/navigation stack; внешние GitHub repository/Actions ссылки открываются отдельно. Hub должен одинаково работать на GitHub Pages и localhost через relative paths и станет входом для будущих Simulation Lab/World Analyzer инструментов.
 - Принято `UGD-0019`: Player Effort измеряется отдельно от внутренней экономики — клики/действия на поиск master и добычу, interaction cadence time и Attention-equivalent через текущий `resources.json`. `1 Attention-equivalent = 5000 Stone-value` используется только для аналитики, не как игровой обмен.
+- Принято `UGD-0020`: Attention cadence guardrail — около 1/неделю normal, около 1/день hardcore, >10/неделю anomaly/log review. Текущий `Attention ×1` из Dynamic Resource Event — QA placeholder, не финальная экономика.
 
 ## Активные рабочие гипотезы
 
@@ -71,6 +72,10 @@
 
 ## Текущий приоритет
 
+- Большие ручные simulation runs остановлены после #20; automatic smoke остаётся только технической проверкой.
+- Опубликован Simulation Results archive (#6/#7/#20), доступный из Project Hub и GitHub Pages.
+- Следующий gameplay-патч не начинать до анализа пользовательского пакета правок и совмещения его с `docs/NEXT-IMPLEMENTATION-PLAN.md`.
+
 - MATRIX #20 (v0.2, 100k × 8/30/50/100, seed 42) успешно завершён и зафиксирован отдельным audit. Caps/rotation работают в принятой random-модели; следующий блокирующий вопрос — экономический target реального времени на 1 Attention.
 
 **Сейчас приоритет — QA двух только что реализованных инструментальных слоёв, затем анализ Simulation Lab и только после этого возвращение к остальному gameplay.**
@@ -99,4 +104,5 @@
 - `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
 - `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; prototype реализован в `v0.0.37`, требуется анализ TEST/DEEP результатов.
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
-- `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, требует расчётов на TEST/MATRIX/DEEP.
+- `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, baseline #20 зафиксирован.
+- `UGD-0020` — Attention cadence guardrail + пауза больших simulation runs; принято.
