@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.39**
+Current version: **0.0.40**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.40 | Simulation results archive + Attention cadence guardrail + next implementation plan |
 | 0.0.39 | Simulation Lab v0.2: per-master rotation coverage + Player Effort/click analytics |
 | 0.0.38 | Local /journal/ fix + beginner Simulation Lab quickstart in Project Hub |
 | 0.0.37 | Headless Simulation Lab: deterministic world calculations, reports, Actions runner and local launcher |
@@ -45,6 +46,13 @@ Current version: **0.0.39**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.40
+Published a permanent GitHub Pages archive for the key Simulation Lab runs: #6 TEST, #7 historical MATRIX and #20 current Simulation Lab v0.2 baseline. Project Hub now links directly to the archive and to the new post-simulation implementation plan.
+
+Accepted the first Attention cadence guardrail: about one Attention per week is a healthy normal target, about one per day is hardcore activity, and more than ten per week is an anomaly/review threshold that should trigger source/log inspection rather than automatic punishment. The current Dynamic Resource Event reward `Attention ×1` is explicitly documented as a prototype QA placeholder, not final economy.
+
+Large manual TEST/MATRIX/DEEP runs are paused after #20. Automatic smoke checks remain for tooling health only. The next gameplay patch should wait for the user's pending patch package, then merge it with `docs/NEXT-IMPLEMENTATION-PLAN.md`.
 
 ## 0.0.39
 Simulation Lab v0.2 corrects the high-tier master model after MATRIX analysis. T2/T3/T4 counts are maximum simultaneous caps, never target counts; if no random candidate exists, that master Tier is absent. A new per-master rotation allocator keeps independent coverage history for each resourceDirection + Tier and prefers unvisited eligible zones until the current coverage round is exhausted.
