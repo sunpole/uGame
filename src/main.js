@@ -312,7 +312,8 @@ class ZoneScene extends Phaser.Scene {
 
       await containerSystem.load({
         snapshot: restoredState.containers,
-        legacyInventory: restoredState.inventory
+        legacyInventory: restoredState.inventory,
+        legacyResources: restoredState.resources
       });
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
