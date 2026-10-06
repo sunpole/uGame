@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.34**
+Current version: **0.0.35**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.35 | Modular ContainerSystem: Backpack, Bank, Equipment, Resource Pouch, weight and stacks |
 | 0.0.34 | Blind restricted reward choices + optional reveal of missed rewards after selection |
 | 0.0.33 | Remote-friendly controls: Enter interaction key + always-visible mouse buttons |
 | 0.0.32 | Dynamic Event Spots, timed zone quality, reusable reward-choice UI and persistent generated offers |
@@ -40,6 +41,9 @@ Current version: **0.0.34**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.35
+Runtime inventory is moved from the old flat InventorySystem into a modular ContainerSystem. Backpack, Resource Pouch, Equipment and Bank are now configurations of one storage engine with slots, per-item stack limits, weight limits, transfer rules and persistent state. The starter Backpack has 12 slots / 30 kg. Resource Pouch has one slot / 15 kg and currently accepts only Stone, proving the future skill-driven specialization model without implementing the Skill tree yet. Equipment has named helmet/chest/pants/boots/gloves/ring1/ring2/amulet/cloak/belt slots. A prototype Bank interactable on Перекрёсток opens a 60-slot weight-unlimited local Bank; the Bank tab is not available from the ordinary global inventory button. Resources now carry test weights and stack limits: Stone 1 kg, Wood 0.5 kg, Water 0.1 kg, Attention weightless/account-bound. Physical dynamic rewards must fit portable storage or the reward choice remains pending. Old flat inventory and physical resource placement migrate into new containers; migration overflow goes to Bank to avoid data loss. DEV 5011 adds test helmet/belt for equipment QA. See docs/CONTAINER-SYSTEM.md and UGD-0014.
 
 ## 0.0.34
 Reward-choice presentation now follows one general rule. If the player can take every generated option, rewards are shown immediately because there is no meaningful choice to protect. If the player may take only part of the generated set, all options are hidden before selection so the interaction behaves as a lottery instead of a value-comparison menu. After the allowed choices are taken, unchosen rewards can be revealed as informational feedback; this behavior is controlled by `choicePresentation.revealUnchosenAfterComplete` in `data/reward-rules.json` and is enabled by default. The same rule applies to resource and chest reward offers.
