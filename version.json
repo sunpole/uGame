@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.40",
-  "stage": "simulation-archive-attention-guardrail",
+  "version": "0.0.41",
+  "stage": "persistent-game-chrome-shell",
   "updated": "2026-10-07",
-  "summary": "Publish Simulation benchmark archive, Attention cadence guardrail and next implementation plan"
+  "summary": "Persistent Header Workspace Footer shell with overlay containment"
 }
