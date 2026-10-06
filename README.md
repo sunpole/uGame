@@ -32,12 +32,19 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.31 — First Playable
+## Game prototype v0.0.32 — Dynamic Event Spots
 
-uGame now has its first small content-first playable slice built on the existing foundation.
+uGame keeps the First Playable slice and now adds a first changing-world layer on top of it.
 The current prototype includes:
 
 - four connected top-down zones loaded from `data/world.json` through WorldGraph;
+- five possible Dynamic Event Spots in every current zone;
+- zone quality Q1–Q4 with 1 / 2 / 3 / 5 active dynamic-event slots;
+- independent real-time zone-quality timers and 30-minute event timers;
+- random Resource, Chest and placeholder Event Portal encounters;
+- a reusable InteractionPanel for reward choice and informational event windows;
+- data-driven resource catalog and reward/event generation rules;
+- persistent pending reward offers so reload/zone travel cannot freely reroll them;
 - a small loop with two routes toward the final area and labeled exits;
 - stable string zone ids and stable transition ids, with migration from the old numeric save ids;
 - the Guide NPC and the quest «Три фрагмента»;
@@ -58,10 +65,10 @@ The current prototype includes:
 - local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
 - the four-digit DEV console and live physical-arrow indicator.
 
-The First Playable goal is intentionally simple: speak with the Guide, explore the connected
+The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
-A forgotten cache in the Dark Garden is optional. The purpose is to make the existing
-systems form a short playable loop before more general frameworks are added.
+On top of that static loop, v0.0.32 tests whether changing Event Spots make revisiting zones
+more interesting. Event Portal encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
 resolves stable ids and transitions; `ZoneSystem` renders the selected zone rather than
@@ -101,6 +108,8 @@ Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat re
 
 Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
 until reload, `9099` show save status. `8001` restarts the current first quest for testing.
+Dynamic Event QA: `8201` recreates current-zone events, `8202` rerolls current-zone quality,
+and `8299` shows Dynamic Event status.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
 immediately again.
