@@ -2,13 +2,25 @@ import http from 'node:http';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const HOST = '0.0.0.0';
 const PORT = 5173;
 const ROOT = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
 const LOCAL_URL = `http://127.0.0.1:${PORT}`;
+const LOCAL_GIT_SHA = (() => {
+  try {
+    const result = spawnSync('git', ['-C', ROOT, 'rev-parse', 'HEAD'], {
+      encoding: 'utf8',
+      windowsHide: true,
+      timeout: 3000
+    });
+    return result.status === 0 ? String(result.stdout || '').trim() : '';
+  } catch {
+    return '';
+  }
+})();
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -83,6 +95,20 @@ const server = http.createServer((req, res) => {
   } catch {
     res.writeHead(400);
     res.end('Bad Request');
+    return;
+  }
+
+  if (pathname === '/__ugame/meta.json') {
+    const payload = JSON.stringify({
+      environment: 'LOCAL',
+      commit: LOCAL_GIT_SHA || null
+    });
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store'
+    });
+    if (req.method === 'HEAD') res.end();
+    else res.end(payload);
     return;
   }
 
