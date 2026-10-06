@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "defaultSection": "project",
+  "sections": [
+    {
+      "id": "game",
+      "label": "Игра",
+      "items": [
+        {
+          "id": "return-game",
+          "label": "Вернуться в игру",
+          "description": "Закрыть Project Hub и продолжить текущую сессию.",
+          "type": "close"
+        },
+        {
+          "id": "pages",
+          "label": "GitHub Pages",
+          "description": "Публичная браузерная версия uGame.",
+          "type": "external",
+          "target": "https://sunpole.github.io/uGame/"
+        }
+      ]
+    },
+    {
+      "id": "project",
+      "label": "Проект",
+      "items": [
+        {
+          "id": "current",
+          "label": "Текущее состояние",
+          "description": "Что сейчас принято, что обсуждается и что реализовано.",
+          "type": "document",
+          "target": "./docs/project-journal/CURRENT.md"
+        },
+        {
+          "id": "version",
+          "label": "Версии",
+          "description": "История патчей и текущая версия проекта.",
+          "type": "document",
+          "target": "./VERSION.md"
+        },
+        {
+          "id": "readme",
+          "label": "README",
+          "description": "Техническое состояние текущего прототипа.",
+          "type": "document",
+          "target": "./README.md"
+        },
+        {
+          "id": "active-idle",
+          "label": "Active / Idle Core",
+          "description": "Связанная карта механик ресурсов, времени, NPC и мира.",
+          "type": "document",
+          "target": "./docs/project-journal/ACTIVE-IDLE-CORE.md"
+        }
+      ]
+    },
+    {
+      "id": "journal",
+      "label": "Журнал",
+      "items": [
+        {
+          "id": "journal-index",
+          "label": "Project Journal",
+          "description": "Все UGD-записи, решения, гипотезы и история проекта.",
+          "type": "journal",
+          "target": "./docs/project-journal/index.json"
+        },
+        {
+          "id": "journal-page",
+          "label": "Полная страница журнала",
+          "description": "Отдельное read-only представление Project Journal.",
+          "type": "external",
+          "target": "./journal/"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "label": "Инструменты",
+      "items": [
+        {
+          "id": "simulation-doc",
+          "label": "Simulation Lab",
+          "description": "Техническое описание headless-симулятора и отчётов.",
+          "type": "document",
+          "target": "./docs/SIMULATION-LAB.md"
+        },
+        {
+          "id": "dev-codes",
+          "label": "DEV-коды",
+          "description": "Текущие коды для ручного QA прототипа.",
+          "type": "document",
+          "target": "./docs/DEV-CODES.md"
+        }
+      ]
+    },
+    {
+      "id": "external",
+      "label": "GitHub",
+      "items": [
+        {
+          "id": "github-repo",
+          "label": "Repository",
+          "description": "Исходный код и история коммитов.",
+          "type": "external",
+          "target": "https://github.com/sunpole/uGame"
+        },
+        {
+          "id": "github-actions",
+          "label": "Actions",
+          "description": "Сборки Pages и будущие Simulation Lab runs.",
+          "type": "external",
+          "target": "https://github.com/sunpole/uGame/actions"
+        }
+      ]
+    }
+  ]
+}
