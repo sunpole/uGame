@@ -24,6 +24,7 @@ export class PlayerController {
 
     this.virtual = { left: false, right: false, up: false, down: false, dash: false };
     this.virtualActionQueued = false;
+    this.virtualDashUntil = 0;
 
     this.cursors = scene.input.keyboard.createCursorKeys();
     this.keys = scene.input.keyboard.addKeys({
@@ -33,6 +34,7 @@ export class PlayerController {
       right: Phaser.Input.Keyboard.KeyCodes.D,
       interact: Phaser.Input.Keyboard.KeyCodes.E,
       interactAlt: Phaser.Input.Keyboard.KeyCodes.SPACE,
+      interactEnter: Phaser.Input.Keyboard.KeyCodes.ENTER,
       dash: Phaser.Input.Keyboard.KeyCodes.SHIFT
     });
   }
@@ -55,15 +57,21 @@ export class PlayerController {
 
     for (const button of buttons) {
       const control = button.dataset.control;
+      const mode = button.dataset.controlMode || 'hold';
       const release = (event) => {
         event.preventDefault();
-        if (directional.has(control) || control === 'dash') this.virtual[control] = false;
+        if (directional.has(control)) this.virtual[control] = false;
+        if (control === 'dash' && mode !== 'pulse') this.virtual.dash = false;
       };
 
       button.addEventListener('pointerdown', (event) => {
         event.preventDefault();
         button.setPointerCapture?.(event.pointerId);
-        if (directional.has(control) || control === 'dash') this.virtual[control] = true;
+        if (directional.has(control)) this.virtual[control] = true;
+        if (control === 'dash') {
+          if (mode === 'pulse') this.virtualDashUntil = performance.now() + 900;
+          else this.virtual.dash = true;
+        }
         if (control === 'action') this.virtualActionQueued = true;
       });
       button.addEventListener('pointerup', release);
@@ -98,7 +106,8 @@ export class PlayerController {
       this.direction = { x: dx / length, y: dy / length };
     }
 
-    const dashRequested = (keyboardAllowed && this.keys.dash.isDown) || (virtualAllowed && this.virtual.dash);
+    const dashRequested = (keyboardAllowed && this.keys.dash.isDown)
+      || (virtualAllowed && (this.virtual.dash || performance.now() < this.virtualDashUntil));
     const dashing = moving && dashRequested && this.stamina > 1;
     if (dashing) this.stamina = Math.max(0, this.stamina - this.dashDrainPerSecond * seconds);
     else this.stamina = Math.min(this.staminaMax, this.stamina + this.staminaRegenPerSecond * seconds);
@@ -112,7 +121,8 @@ export class PlayerController {
 
     const keyboardInteract = keyboardAllowed && (
       Phaser.Input.Keyboard.JustDown(this.keys.interact) ||
-      Phaser.Input.Keyboard.JustDown(this.keys.interactAlt)
+      Phaser.Input.Keyboard.JustDown(this.keys.interactAlt) ||
+      Phaser.Input.Keyboard.JustDown(this.keys.interactEnter)
     );
     const interactPressed = keyboardInteract || this.virtualActionQueued;
     this.virtualActionQueued = false;
