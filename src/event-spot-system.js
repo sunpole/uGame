@@ -381,31 +381,31 @@ export class EventSpotSystem {
     const zone = this.currentZoneId ? this.worldGraph?.getZone(this.currentZoneId) : null;
     if (!zone) return { handled: false };
 
-    if (code === '7001') {
+    if (code === '8201') {
       const state = this.getCurrentZoneState();
-      if (!state) return { handled: true, message: '7001 · Нет состояния зоны', state: 'error' };
+      if (!state) return { handled: true, message: '8201 · Нет состояния зоны', state: 'error' };
       this.fillEventSlots(zone, state, Date.now(), true);
       this.renderCurrentZone();
       this.publish();
       this.updateZoneStatus(Date.now());
-      return { handled: true, message: '7001 · Доп. события зоны пересозданы', state: 'ok' };
+      return { handled: true, message: '8201 · Доп. события зоны пересозданы', state: 'ok' };
     }
 
-    if (code === '7002') {
+    if (code === '8202') {
       const state = this.rerollQuality(zone, Date.now(), true);
       this.updateZoneStatus(Date.now());
       return {
         handled: true,
-        message: `7002 · Качество зоны: ${state.qualityLevel}/4 · ${state.qualityLabel}`,
+        message: `8202 · Качество зоны: ${state.qualityLevel}/4 · ${state.qualityLabel}`,
         state: 'ok'
       };
     }
 
-    if (code === '7099') {
+    if (code === '8299') {
       const state = this.getCurrentZoneState();
       return {
         handled: true,
-        message: `7099 · Q${state?.qualityLevel || '?'} · событий ${(state?.events || []).filter((event) => !event.consumed).length}`,
+        message: `8299 · Q${state?.qualityLevel || '?'} · событий ${(state?.events || []).filter((event) => !event.consumed).length}`,
         state: 'ok'
       };
     }
