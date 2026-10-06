@@ -46,8 +46,9 @@ Normal controls: WASD or arrows to move, `E` / Space / Enter to interact, Shift 
 
 | Code | Action |
 |---|---|
-| `5001` | Add one `test-item` |
-| `5099` | Show inventory summary |
+| `5001` | Add one stackable `test-item` through ContainerSystem |
+| `5011` | Add DEV training helmet + belt to Backpack |
+| `5099` | Show Backpack / Resource Pouch slot and weight summary |
 
 ## World / Resources
 
