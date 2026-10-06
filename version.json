@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.46",
-  "stage": "remote-input-parity",
+  "version": "0.0.47",
+  "stage": "interface-settings",
   "updated": "2026-10-07",
-  "summary": "Mouse/AnyDesk Action parity and virtual direction feedback"
+  "summary": "Persistent text-selection setting in Project Hub, disabled by default"
 }
