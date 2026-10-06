@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.43",
-  "stage": "informational-game-clock",
+  "version": "0.0.44",
+  "stage": "character-resource-header",
   "updated": "2026-10-07",
-  "summary": "Persistent informational Game Clock with 5s game-minute and four day phases"
+  "summary": "Live character class/stamina/resources/material wealth/storage header"
 }
