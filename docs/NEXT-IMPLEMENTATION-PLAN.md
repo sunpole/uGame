@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: рабочий план, должен быть объединён с пользовательским пакетом патчей перед началом следующего большого gameplay-патча.
+Статус: рабочий план после завершённой UI/Game Chrome серии v0.0.41–v0.0.48; следующий gameplay-пакет начинается только после ручного QA v0.0.48 и нового подтверждения пользователя.
 
 ## Цель
 
@@ -18,7 +18,7 @@
 ```text
 пакет пользователя
 ↓
-сопоставить с CURRENT / UGD-0015..0020
+сопоставить с CURRENT / UGD-0015..0021
 ↓
 найти конфликты / дубли / зависимости
 ↓
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.40:
+Состояние после v0.0.48:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -39,6 +39,7 @@
 - публичный архив ключевых Simulation runs;
 - Attention cadence guardrail;
 - текущий gameplay v0.0.35–0.0.39 foundation;
+- Persistent Game Chrome v0.0.41–v0.0.48: Header/Workspace/Footer, build/session/location/real/game clocks, live character/resources header, Action Router, AnyDesk controls, text-selection settings, shared Journal/Simulation chrome;
 - combat по-прежнему отложен.
 
 Никакой новой большой механики на этом этапе не добавлять.
