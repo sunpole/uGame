@@ -1,7 +1,7 @@
 # uGame — Audit: Resource NPC / Relationship / Progression
 
 Дата: 2026-10-06
-Статус: OPEN — требует решений перед переводом UGD-0015 в accepted
+Статус: CLOSED — вопросы UGD-0015 закрыты; spawn/balance перенесён в отдельный Location Tier audit
 
 ## Цель аудита
 
@@ -229,6 +229,6 @@ CharacterDirectionProgression (player state)
 
 ## Решение аудита
 
-UGD-0015 **не переводить в accepted и не реализовывать**, пока не закрыты как минимум Q1–Q4 и Q7–Q8.
+UGD-0015 может быть переведён в `accepted`: исходные Q1–Q10 получили явные решения пользователя. Оставшиеся вопросы относятся уже не к ownership/progression NPC, а к Location Tier, biome, distance pressure и world spawn caps.
 
-Остальные вопросы можно частично оставить data-driven/future-compatible, но они должны иметь явный default перед кодом.
+Продолжение: `docs/project-journal/audits/2026-10-06-location-tier-npc-world-audit.md`.
