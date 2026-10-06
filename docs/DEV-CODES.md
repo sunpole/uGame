@@ -40,7 +40,7 @@ Zone Vision rules are applied as an override layer. Direct Vision and Class code
 | `3001` | Refill dash stamina |
 | `3099` | Show current movement speed and stamina |
 
-Normal controls: WASD or arrows to move, `E` / Space to interact, Shift to dash.
+Normal controls: WASD or arrows to move, `E` / Space / Enter to interact, Shift to dash. The footer also duplicates directions, Action and Dash as mouse-clickable controls for remote testing.
 
 ## Items / Inventory
 
