@@ -60,6 +60,14 @@
           "label": "Проводник",
           "prompt": "Поговорить",
           "dialogueId": "guide_first_playable"
+        },
+        {
+          "id": "city-bank-prototype",
+          "type": "bank",
+          "x": 620,
+          "y": 115,
+          "label": "Банк",
+          "prompt": "Открыть банк"
         }
       ],
       "eventSpots": [
