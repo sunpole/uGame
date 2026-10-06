@@ -377,7 +377,7 @@ Consistency audit: `docs/project-journal/audits/2026-10-06-resource-npc-progress
 
 ## 21. Location Tier, biome и distance pressure
 
-`UGD-0016` добавляет пространственный слой поверх Dynamic Event Spots.
+`UGD-0016` закрепляет пространственный слой поверх Dynamic Event Spots.
 
 ```text
 мирный город
@@ -406,3 +406,5 @@ Master multiplier применяется после обычных additive bonu
 Текущий v0.0.32 имеет 5 Event Spots и старую схему `1/2/3/5`; это QA-прототип, а не целевой баланс. Для новой модели max=6 потребуется расширение spawn capacity.
 
 Подробнее: `UGD-0016` и `docs/project-journal/audits/2026-10-06-location-tier-npc-world-audit.md`.
+
+Для текущего prototype редкие master и Tier-state зон должны координироваться локальным serializable `WorldSpawnState`. Он учитывает world caps, ограничение одного T2+ на resourceDirection в одной зоне и rotation history; позднее тот же data model переносится на backend.
