@@ -1,0 +1,17 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>uGame Simulation #7</title><link rel="stylesheet" href="./style.css"></head><body><main>
+<header class="hero"><div><div class="small">Historical benchmark</div><h1>#7 · MATRIX v0.1</h1><p>Первое сравнение мира 8 / 30 / 50 / 100 зон до исправления rotation model.</p></div><div class="actions"><a class="button" href="./">← Архив</a><a class="button" href="https://github.com/sunpole/uGame/actions/runs/37525568356">Actions ↗</a></div></header>
+<section><h2>World-size matrix</h2><table><thead><tr><th>Zones</th><th>Location T4</th><th>Master T4</th><th>T4 lost</th><th>Mean reward</th></tr></thead><tbody>
+<tr><td>8</td><td>1.04%</td><td>2.10%</td><td>11.3%</td><td>×1.112</td></tr>
+<tr><td>30</td><td>2.83%</td><td>1.97%</td><td>40.4%</td><td>×1.153</td></tr>
+<tr><td>50</td><td>3.80%</td><td>1.56%</td><td>58.4%</td><td>×1.158</td></tr>
+<tr><td>100</td><td>5.79%</td><td>0.87%</td><td>81.1%</td><td>×1.179</td></tr>
+</tbody></table></section>
+<section><h2>T4 pressure by world size</h2>
+<div class="bar-row"><span>8 zones</span><div class="bar yellow"><i style="width:11.3%"></i></div><b>11.3%</b></div>
+<div class="bar-row"><span>30 zones</span><div class="bar yellow"><i style="width:40.4%"></i></div><b>40.4%</b></div>
+<div class="bar-row"><span>50 zones</span><div class="bar yellow"><i style="width:58.4%"></i></div><b>58.4%</b></div>
+<div class="bar-row"><span>100 zones</span><div class="bar yellow"><i style="width:81.1%"></i></div><b>81.1%</b></div>
+</section>
+<section><h2>Главный вывод</h2><div class="callout warn">При росте мира fixed caps всё сильнее отсекают high-tier candidate. Этот run привёл к уточнению: caps — не targetCount, а rotation должен считаться отдельно по каждому master identity.</div><p class="small">После этого был создан Simulation Lab v0.2; актуальная база — #20.</p></section>
+<footer>Run #7 · seed 42 · 100,000 cycles × 8/30/50/100 worlds</footer>
+</main></body></html>
