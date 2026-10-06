@@ -61,6 +61,7 @@
 - `v0.0.35` добавляет ContainerSystem: рюкзак 12 слотов/30 кг, ресурсный пояс 1 слот/15 кг (пока только Камень), именованные слоты экипировки, городской Банк 60 слотов без лимита веса, stack/weight правила и сохранение/миграцию.
 - `v0.0.36` добавляет Project Hub: единый overlay из игры, встроенное чтение README/VERSION/Journal/docs, Back/Close/Escape, поиск UGD и внешние ссылки GitHub/Actions/Pages.
 - `v0.0.37` добавляет Simulation Lab dev-tooling: deterministic Python engine, candidate tables, TRACE/TEST/DEEP/MATRIX, JSON/CSV/HTML/SVG отчёты, A/B compare, GitHub Actions no-install runner и updater option 9. Candidate probabilities пока не являются live gameplay balance.
+- `v0.0.38` исправляет локальный путь `/journal/` в dev-server и добавляет beginner quickstart для Simulation Lab в Project Hub: сначала понятная инструкция, затем отдельная ссылка на GitHub Actions runner.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
