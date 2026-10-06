@@ -1,7 +1,10 @@
+const DEFAULT_MIN_SCALE = 0.82;
+
 export class UIWindowManager {
-  constructor({ host, margin = 12 } = {}) {
+  constructor({ host, margin = 12, minScale = DEFAULT_MIN_SCALE } = {}) {
     this.host = host || null;
     this.margin = Math.max(0, Number(margin) || 0);
+    this.minScale = Math.min(1, Math.max(0.65, Number(minScale) || DEFAULT_MIN_SCALE));
     this.registry = new Map();
     this.resizeObserver = null;
 
@@ -18,6 +21,7 @@ export class UIWindowManager {
     if (!panel) return () => {};
     panel.classList.add('ui-game-window');
     panel.dataset.uiWindowLevel = level;
+    panel.dataset.scrollFallback = 'false';
     this.registry.set(panel, { level, close });
     return () => this.registry.delete(panel);
   }
@@ -39,12 +43,31 @@ export class UIWindowManager {
 
   fit(panel) {
     if (!this.host || !panel || panel.hasAttribute('hidden')) return;
+
+    panel.style.setProperty('--ui-window-scale', '1');
+    panel.style.maxWidth = '';
+    panel.style.maxHeight = '';
+    panel.style.overflow = '';
+    panel.dataset.scrollFallback = 'false';
+
+    const style = getComputedStyle(panel);
+    const bottomInset = style.bottom === 'auto' ? 0 : Math.max(0, parseFloat(style.bottom) || 0);
     const availableWidth = Math.max(1, this.host.clientWidth - this.margin * 2);
-    const availableHeight = Math.max(1, this.host.clientHeight - this.margin * 2);
-    panel.style.maxWidth = `${availableWidth}px`;
-    panel.style.maxHeight = `${availableHeight}px`;
-    panel.style.overflow = 'auto';
-    panel.dataset.scrollFallback = 'true';
+    const availableHeight = Math.max(1, this.host.clientHeight - this.margin - Math.max(this.margin, bottomInset));
+
+    const naturalWidth = Math.max(1, panel.scrollWidth, panel.offsetWidth);
+    const naturalHeight = Math.max(1, panel.scrollHeight, panel.offsetHeight);
+    const requiredScale = Math.min(1, availableWidth / naturalWidth, availableHeight / naturalHeight);
+    const scale = Math.max(this.minScale, Number.isFinite(requiredScale) ? requiredScale : 1);
+
+    panel.style.setProperty('--ui-window-scale', scale.toFixed(3));
+
+    if (requiredScale < this.minScale) {
+      panel.dataset.scrollFallback = 'true';
+      panel.style.maxWidth = `${Math.floor(availableWidth / this.minScale)}px`;
+      panel.style.maxHeight = `${Math.floor(availableHeight / this.minScale)}px`;
+      panel.style.overflow = 'auto';
+    }
   }
 
   fitAll() {
@@ -57,3 +80,5 @@ export class UIWindowManager {
     this.registry.clear();
   }
 }
+
+export { DEFAULT_MIN_SCALE };

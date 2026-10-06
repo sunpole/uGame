@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.49",
-  "stage": "workspace-window-bounds",
+  "version": "0.0.50",
+  "stage": "scale-first-window-sizing",
   "updated": "2026-10-07",
-  "summary": "Workspace-bounded runtime windows with shared window manager"
+  "summary": "Scale-first adaptive runtime windows with readable scroll fallback"
 }

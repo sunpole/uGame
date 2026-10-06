@@ -1711,3 +1711,48 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   max-width: 100%;
   max-height: 100%;
 }
+
+
+/* v0.0.50 — scale-first adaptive runtime windows */
+.ui-game-window {
+  --ui-window-scale: 1;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.dialogue-panel,
+.interaction-panel {
+  width: min(640px, calc(100% - 24px));
+  transform: translateX(-50%) scale(var(--ui-window-scale));
+  transform-origin: center bottom;
+}
+
+.inventory-panel {
+  width: min(780px, calc(100% - 24px));
+  transform: translate(-50%, -50%) scale(var(--ui-window-scale));
+  transform-origin: center center;
+}
+
+.ui-game-window:not([data-scroll-fallback='true']) {
+  max-height: none;
+  overflow: hidden;
+}
+
+.ui-game-window[data-scroll-fallback='true'] {
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+@media (pointer: coarse), (max-width: 720px) {
+  .dialogue-panel,
+  .interaction-panel {
+    width: calc(100% - 20px);
+    transform: translateX(-50%) scale(var(--ui-window-scale));
+  }
+
+  .inventory-panel {
+    top: 50%;
+    width: calc(100% - 20px);
+    transform: translate(-50%, -50%) scale(var(--ui-window-scale));
+  }
+}

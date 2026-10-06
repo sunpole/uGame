@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.49**
+Current version: **0.0.50**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.50 | Scale-first Window Sizing: единый адаптивный масштаб, scroll только как fallback |
 | 0.0.49 | Workspace Window Bounds: игровые окна жёстко ограничены игровым Workspace |
 | 0.0.48 | Complete HUD migration + cross-page persistent project chrome |
 | 0.0.47 | Project Hub interface settings with text selection disabled by default |
@@ -55,6 +56,9 @@ Current version: **0.0.49**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.50
+Window Manager сначала уменьшает runtime-окно до минимально читаемого масштаба 82%. Только если даже при 82% содержимое не помещается, включается внутренний scroll. Dialogue и Interaction используют единый стандартный preferred width 640px; Inventory — широкий 780px. Это убирает случайно увеличенный вид Chest/Resource окон без превращения текста в микроскопический.
 
 ## 0.0.49
 Все runtime-окна получили общий Window Manager и единый контракт containment. Dialogue, Interaction/Chest/Resource и Inventory измеряются относительно реального `#game` внутри Workspace и не могут выйти за его границы. Project Hub по-прежнему живёт только внутри OverlayRoot, поэтому Header/Footer остаются физически отдельными областями.
