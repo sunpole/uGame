@@ -21,6 +21,7 @@ import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
+import { ChromeContextSystem } from './chrome-context-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -38,6 +39,7 @@ let questSystem = null;
 let eventSpotSystem = null;
 let saveSystem = null;
 let projectHubSystem = null;
+let chromeContextSystem = null;
 
 
 function syncPlayerInputState() {
@@ -279,7 +281,10 @@ class ZoneScene extends Phaser.Scene {
       interactableSystem: this.interactableSystem,
       eventSystem: this.eventSystem,
       onStatus: (text) => this.setStatus(text),
-      onZoneChange: (zone) => this.zoneRulesSystem.apply(zone.rules),
+      onZoneChange: (zone) => {
+        this.zoneRulesSystem.apply(zone.rules);
+        chromeContextSystem?.setZone(zone);
+      },
       isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
     });
 
@@ -522,6 +527,20 @@ class ZoneScene extends Phaser.Scene {
     return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
   }
 }
+
+chromeContextSystem = new ChromeContextSystem({
+  versionElement: document.querySelector('#footer-version'),
+  buildElement: document.querySelector('#footer-build'),
+  environmentElement: document.querySelector('#footer-environment'),
+  sessionElement: document.querySelector('#session-time'),
+  locationPrimaryElement: document.querySelector('#location-primary'),
+  locationSecondaryElement: document.querySelector('#location-secondary'),
+  realDateElement: document.querySelector('#real-date'),
+  realClockElement: document.querySelector('#real-clock'),
+  realTimezoneElement: document.querySelector('#real-timezone')
+});
+chromeContextSystem.loadBuildContext();
+chromeContextSystem.start();
 
 fitPlayfield();
 window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
