@@ -372,7 +372,7 @@ export class EventSpotSystem {
   }
 
   publish() {
-    if (!this.initialized && !this.state?.zones) return;
+    if (!this.initialized) return;
     this.onStateChange?.(this.snapshot());
     this.eventSystem?.emit('dynamic-events:state', { state: this.snapshot() });
   }
