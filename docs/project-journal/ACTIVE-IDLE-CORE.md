@@ -237,7 +237,7 @@ Active Resonance делает текущую специализацию живо
 
 ## 15. Что уже реально реализовано
 
-На текущем `v0.0.35` уже существуют технические кирпичи:
+На текущем `v0.0.37` уже существуют технические кирпичи:
 
 - top-down движение и зоны;
 - WorldGraph и переходы;
@@ -431,6 +431,8 @@ A/B comparison
 
 Simulation Lab не использует Phaser/Canvas и не строит графики внутри горячего цикла. Визуальные отчёты генерируются после расчёта. Основные проверки: distance→Location Tier, Location Tier→NPC/Event Tier, world caps, rotation fairness, wait time T3/T4, reward/XP multipliers и масштабирование мира 8/30/50/100+ зон.
 
-Предпочтительный no-install launcher — manual GitHub Actions с downloadable artifact. Локальный fallback позже подключается к updater отдельным пунктом и запускает только repository-owned Python без автоматической установки зависимостей.
+Предпочтительный no-install launcher — manual GitHub Actions с downloadable artifact. В `v0.0.37` также реализован updater option 9: он запускает только repository-owned Python после явного `SIMULATE`, ничего не устанавливает автоматически и при отсутствии Python направляет на GitHub Actions.
 
 Техническое описание: `docs/SIMULATION-LAB.md`.
+
+Первый automatic smoke run Simulation Lab успешно прошёл compile/config/unit/TRACE проверки и создал artifact. Полные TEST/DEEP/MATRIX результаты ещё нужно анализировать до принятия probability tables как gameplay balance.
