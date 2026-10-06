@@ -99,7 +99,7 @@ html.ugc-page body {
 .ugc-page-footer {
   bottom: 0;
   height: 36px;
-  grid-template-columns: auto auto minmax(220px, 1fr) minmax(230px, auto) minmax(300px, auto);
+  grid-template-columns: auto auto auto minmax(220px, 1fr) minmax(230px, auto) minmax(300px, auto);
   align-items: stretch;
   border-top: 1px solid #23272f;
 }
@@ -122,7 +122,7 @@ html.ugc-page body {
   font: 10px/1 monospace;
 }
 
-.ugc-footer-block:first-child strong {
+.ugc-version strong {
   color: #f0c66a;
 }
 
@@ -136,6 +136,6 @@ html.ugc-page body {
   }
 
   .ugc-page-footer {
-    grid-template-columns: auto auto minmax(180px, 1fr) minmax(190px, auto) minmax(240px, auto);
+    grid-template-columns: auto auto auto minmax(180px, 1fr) minmax(190px, auto) minmax(240px, auto);
   }
 }
