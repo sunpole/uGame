@@ -12,13 +12,6 @@ export class DialogueSystem {
     this.loaded = false;
 
     this.nextButton?.addEventListener('click', () => this.advance());
-    window.addEventListener('keydown', (event) => {
-      if (!this.isOpen()) return;
-      if (!['KeyE', 'Space', 'Enter'].includes(event.code)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      this.advance();
-    }, true);
   }
 
   async load(url = './data/dialogues.json') {
