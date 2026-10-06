@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.35",
-  "stage": "containers",
+  "version": "0.0.36",
+  "stage": "project-hub",
   "updated": "2026-10-06",
-  "summary": "ContainerSystem with backpack, city bank, equipment slots, resource pouch, weight and stack rules"
+  "summary": "In-game Project Hub with documentation, Project Journal and project navigation"
 }
