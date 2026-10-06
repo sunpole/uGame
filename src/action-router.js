@@ -20,11 +20,30 @@ export class ActionRouter {
     this.getProjectHub = getProjectHub;
     this.onWorldPrimary = onWorldPrimary;
     this.boundKeydown = (event) => this.handleKeydown(event);
+    this.pointerBindings = [];
     window.addEventListener('keydown', this.boundKeydown, true);
+  }
+
+  bindPointerControls(root = document) {
+    for (const button of root.querySelectorAll?.('[data-control="action"]') || []) {
+      if (button.dataset.actionRouterBound === 'true') continue;
+      const handler = (event) => {
+        event.preventDefault();
+        this.primary();
+      };
+      button.dataset.actionRouterBound = 'true';
+      button.addEventListener('click', handler);
+      this.pointerBindings.push({ button, handler });
+    }
   }
 
   destroy() {
     window.removeEventListener('keydown', this.boundKeydown, true);
+    for (const { button, handler } of this.pointerBindings) {
+      button.removeEventListener('click', handler);
+      delete button.dataset.actionRouterBound;
+    }
+    this.pointerBindings = [];
   }
 
   handleKeydown(event) {
