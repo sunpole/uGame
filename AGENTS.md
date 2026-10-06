@@ -142,3 +142,19 @@
 - Attention cadence guardrail: ~1/week normal, ~1/day hardcore, >10/week anomaly/log review.
 - Текущий Dynamic Event `Attention ×1` — prototype placeholder и не должен закрепляться как финальная экономика.
 - Перед следующим gameplay-патчем сначала разобрать пользовательский пакет правок и совместить его с `docs/NEXT-IMPLEMENTATION-PLAN.md`.
+
+
+## Persistent Game Chrome
+
+Для UI действует UGD-0021.
+
+- Header и Footer — persistent chrome, структурно вне Workspace OverlayRoot. Ни один modal/Hub/Inventory/Dialog не должен их перекрывать.
+- Один тип постоянной информации — отдельный переносимый status-block/div.
+- Game Clock: 1 game minute = 5 real seconds; старт календаря 01.01.2026 00:00; Night/Morning/Day/Evening по 6 game hours.
+- Game Clock пока informational only. Нельзя переводить на него существующие gameplay timers без отдельного решения.
+- По умолчанию gameplay timers остаются REAL TIME.
+- Старый HUD-показатель удаляется/скрывается только после появления и проверки replacement.
+- E / Space / Enter = contextual Primary Action; Escape = Back/Cancel; открытые interaction UI не должны пропускать world action.
+- Mouse/AnyDesk controls должны вызывать тот же action path, что keyboard.
+- Text selection default OFF; input/textarea/select/contenteditable selectable always; toggle доступен в Project Hub.
+- Standalone Journal/Simulation HTML pages должны подключать shared project chrome для самодостаточных скриншотов.
