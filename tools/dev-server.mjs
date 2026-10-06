@@ -95,24 +95,47 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  const serveFile = (filePath) => {
+    fs.stat(filePath, (fileError, fileStat) => {
+      if (fileError || !fileStat.isFile()) {
+        res.writeHead(404);
+        res.end('Not Found');
+        return;
+      }
+
+      res.writeHead(200, {
+        'Content-Type': mime[path.extname(filePath).toLowerCase()] ?? 'application/octet-stream',
+        'Cache-Control': 'no-store'
+      });
+
+      if (req.method === 'HEAD') {
+        res.end();
+        return;
+      }
+
+      fs.createReadStream(filePath).pipe(res);
+    });
+  };
+
   fs.stat(candidate, (statError, stat) => {
-    if (statError || !stat.isFile()) {
+    if (statError) {
       res.writeHead(404);
       res.end('Not Found');
       return;
     }
 
-    res.writeHead(200, {
-      'Content-Type': mime[path.extname(candidate).toLowerCase()] ?? 'application/octet-stream',
-      'Cache-Control': 'no-store'
-    });
+    if (stat.isDirectory()) {
+      if (!pathname.endsWith('/')) {
+        res.writeHead(301, { Location: pathname + '/' });
+        res.end();
+        return;
+      }
 
-    if (req.method === 'HEAD') {
-      res.end();
+      serveFile(path.join(candidate, 'index.html'));
       return;
     }
 
-    fs.createReadStream(candidate).pipe(res);
+    serveFile(candidate);
   });
 });
 
