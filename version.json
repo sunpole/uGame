@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.41",
-  "stage": "persistent-game-chrome-shell",
+  "version": "0.0.42",
+  "stage": "build-session-location-context",
   "updated": "2026-10-07",
-  "summary": "Persistent Header Workspace Footer shell with overlay containment"
+  "summary": "Build/environment, session, location duration and real local clock context"
 }
