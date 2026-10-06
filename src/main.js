@@ -269,6 +269,7 @@ class ZoneScene extends Phaser.Scene {
       getProjectHub: () => projectHubSystem,
       onWorldPrimary: () => playerController?.queueAction()
     });
+    actionRouter.bindPointerControls(document);
 
     this.rewardGenerator = new RewardGenerator();
 
