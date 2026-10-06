@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "stage": "dynamic-events",
   "updated": "2026-10-06",
-  "summary": "Dynamic Event Spots, reusable interaction reward UI, timed zone quality and persistent reward choices"
+  "summary": "Remote-friendly controls: Enter interaction key and always-visible mouse control bar"
 }
