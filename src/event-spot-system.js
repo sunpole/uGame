@@ -290,6 +290,7 @@ export class EventSpotSystem {
     }
 
     const offer = event.offer;
+    if (this.rewardGenerator.normalizeOfferPresentation(offer)) this.publish();
     const selectedCount = Array.isArray(offer.selectedIndices) ? offer.selectedIndices.length : 0;
     if (selectedCount >= Number(offer.maxChoices || 1)) {
       this.consumeEvent(event);
