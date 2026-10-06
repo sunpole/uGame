@@ -131,6 +131,22 @@ export class RewardGenerator {
     };
   }
 
+  normalizeOfferPresentation(offer) {
+    if (!offer?.options?.length) return false;
+
+    const count = offer.options.length;
+    const maxChoices = Math.min(count, Math.max(1, Number(offer.maxChoices) || 1));
+    const presentation = this.choicePresentation(count, maxChoices);
+    const changed = offer.maxChoices !== maxChoices
+      || offer.hidden !== presentation.hidden
+      || offer.revealUnchosenAfterComplete !== presentation.revealUnchosenAfterComplete;
+
+    offer.maxChoices = maxChoices;
+    offer.hidden = presentation.hidden;
+    offer.revealUnchosenAfterComplete = presentation.revealUnchosenAfterComplete;
+    return changed;
+  }
+
   generateResourceOffer() {
     const range = this.rules?.resourceEvent?.offerCount || [2, 3];
     const count = randomInt(range[0], range[1]);
