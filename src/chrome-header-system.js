@@ -10,7 +10,8 @@ export class ChromeHeaderSystem {
     staminaBarElement,
     resourcesElement,
     wealthElement,
-    storageElement
+    storageElement,
+    fragmentElement
   } = {}) {
     this.nameElement = nameElement;
     this.classElement = classElement;
@@ -23,6 +24,7 @@ export class ChromeHeaderSystem {
     this.resourcesElement = resourcesElement;
     this.wealthElement = wealthElement;
     this.storageElement = storageElement;
+    this.fragmentElement = fragmentElement;
     this.resources = [];
     this.resourceMap = new Map();
   }
@@ -102,6 +104,11 @@ export class ChromeHeaderSystem {
       wealth += amount * baseValue;
     }
     if (this.wealthElement) this.wealthElement.textContent = `Материалы Σ ${Math.round(wealth).toLocaleString('ru-RU')} 🪨`;
+
+    const fragments = Object.entries(snapshot)
+      .filter(([id]) => id.startsWith('fragment-'))
+      .reduce((total, [, value]) => total + Math.max(0, Number(value) || 0), 0);
+    if (this.fragmentElement) this.fragmentElement.textContent = `Фрагменты ${fragments}/3`;
   }
 
   setStorageSummary(text = '') {
