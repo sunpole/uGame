@@ -23,6 +23,7 @@ import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
 import { GameClockSystem } from './game-clock-system.js';
+import { ChromeHeaderSystem } from './chrome-header-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -42,6 +43,7 @@ let saveSystem = null;
 let projectHubSystem = null;
 let chromeContextSystem = null;
 let gameClockSystem = null;
+let chromeHeaderSystem = null;
 
 
 function syncPlayerInputState() {
@@ -189,6 +191,7 @@ class ZoneScene extends Phaser.Scene {
           ].join(' · ');
           this.resourceStatusElement.textContent = `${core} · Фрагменты ${fragments}/3`;
         }
+        chromeHeaderSystem?.setResources(snapshot);
       }
     });
     resourceSystem.restore(restoredState.resources);
@@ -199,7 +202,9 @@ class ZoneScene extends Phaser.Scene {
       itemCatalog: this.itemCatalog,
       onChange: () => {
         if (this.inventoryStatusElement) {
-          this.inventoryStatusElement.textContent = `Хранилища: ${containerSystem.summary()}`;
+          const summary = `Хранилища: ${containerSystem.summary()}`;
+          this.inventoryStatusElement.textContent = summary;
+          chromeHeaderSystem?.setStorageSummary(summary);
         }
       }
     });
@@ -310,6 +315,8 @@ class ZoneScene extends Phaser.Scene {
     this.bindPersistenceEvents();
 
     if (!classSystem.apply(restoredState.player.classId)) classSystem.apply('wanderer');
+    chromeHeaderSystem?.setClass(classSystem.current);
+    chromeHeaderSystem?.setResources(resourceSystem.snapshot());
     this.initializeWorld(restoredState);
 
     this.scale.on('resize', () => visionSystem?.update());
@@ -479,6 +486,7 @@ class ZoneScene extends Phaser.Scene {
     if (!state || !this.playerStateElement) return;
     const dash = state.dashing ? ' · РЫВОК' : '';
     this.playerStateElement.textContent = `Stamina ${Math.round(state.stamina)}${dash}`;
+    chromeHeaderSystem?.setStamina(state);
 
     if (state.dashing && !this.wasDashing) this.audioSystem.play('dash');
     this.wasDashing = state.dashing;
@@ -548,6 +556,23 @@ gameClockSystem = new GameClockSystem({
   element: document.querySelector('#game-clock')
 });
 gameClockSystem.start();
+
+chromeHeaderSystem = new ChromeHeaderSystem({
+  nameElement: document.querySelector('#character-name'),
+  classElement: document.querySelector('#character-class'),
+  professionElement: document.querySelector('#character-profession'),
+  specializationElement: document.querySelector('#character-specialization'),
+  levelElement: document.querySelector('#character-level'),
+  xpElement: document.querySelector('#character-xp'),
+  staminaElement: document.querySelector('#header-stamina'),
+  staminaBarElement: document.querySelector('#header-stamina-bar'),
+  resourcesElement: document.querySelector('#pinned-resources'),
+  wealthElement: document.querySelector('#material-wealth'),
+  storageElement: document.querySelector('#header-storage-summary')
+});
+chromeHeaderSystem.load()
+  .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
+  .catch(() => {});
 
 fitPlayfield();
 window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
