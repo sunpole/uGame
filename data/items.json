@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "lost-token",
+      "name": "Забытый жетон",
+      "type": "quest",
+      "tags": [
+        "item",
+        "quest"
+      ],
+      "weightKg": 0.1,
+      "stackLimit": 10
+    },
+    {
+      "id": "core-spark",
+      "name": "Искра ядра",
+      "type": "quest",
+      "tags": [
+        "item",
+        "quest"
+      ],
+      "weightKg": 0.2,
+      "stackLimit": 1
+    },
+    {
+      "id": "first-mark",
+      "name": "Первая метка",
+      "type": "quest",
+      "tags": [
+        "item",
+        "quest"
+      ],
+      "weightKg": 0,
+      "stackLimit": 1
+    },
+    {
+      "id": "starter-cache",
+      "name": "Старый тайник",
+      "type": "container-item",
+      "tags": [
+        "item"
+      ],
+      "weightKg": 1,
+      "stackLimit": 1
+    },
+    {
+      "id": "test-item",
+      "name": "Тестовый предмет",
+      "type": "misc",
+      "tags": [
+        "item",
+        "dev"
+      ],
+      "weightKg": 0.1,
+      "stackLimit": 100,
+      "devOnly": true
+    },
+    {
+      "id": "training-helmet",
+      "name": "Учебный шлем",
+      "type": "equipment",
+      "tags": [
+        "item",
+        "equipment",
+        "dev"
+      ],
+      "equipSlot": "helmet",
+      "weightKg": 2,
+      "stackLimit": 1,
+      "devOnly": true
+    },
+    {
+      "id": "training-belt",
+      "name": "Учебный пояс",
+      "type": "equipment",
+      "tags": [
+        "item",
+        "equipment",
+        "dev"
+      ],
+      "equipSlot": "belt",
+      "weightKg": 0.5,
+      "stackLimit": 1,
+      "devOnly": true
+    }
+  ]
+}
