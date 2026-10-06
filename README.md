@@ -33,7 +33,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.37 — Project Hub + Simulation Lab + gameplay prototype
+## Game prototype v0.0.38 — Project Hub + Simulation Lab + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -115,6 +115,7 @@ this repository itself yet.
 same version for tooling. `VERSION.md` is the human-readable version history.
 
 `docs/SIMULATION-LAB.md` describes the headless balancing tool, report formats and web/local launch paths. The preferred no-install runner is GitHub Actions; generated local reports live under ignored `simulation-reports/`.
+`docs/SIMULATION-LAB-QUICKSTART.md` is the short first-run guide used by Project Hub. The local dev server supports directory index routes such as `/journal/`, matching GitHub Pages behavior.
 
 Option 4 runs the prototype through the local Node dev server. No npm package
 installation is required. Phaser is loaded by the browser from its CDN, so the
