@@ -161,7 +161,8 @@ export class ProjectHubSystem {
     contentElement,
     backButton,
     closeButton,
-    onOpenChange
+    onOpenChange,
+    interfaceSettings
   }) {
     this.openButton = openButton;
     this.overlay = overlay;
@@ -172,6 +173,7 @@ export class ProjectHubSystem {
     this.backButton = backButton;
     this.closeButton = closeButton;
     this.onOpenChange = onOpenChange;
+    this.interfaceSettings = interfaceSettings;
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
@@ -246,6 +248,11 @@ export class ProjectHubSystem {
 
     if (view.type === 'journal') {
       this.renderJournal(view);
+      return;
+    }
+
+    if (view.type === 'settings') {
+      this.renderSettings(view);
       return;
     }
 
@@ -325,7 +332,40 @@ export class ProjectHubSystem {
     if (item.type === 'journal') {
       this.stack.push({ type: 'journal', label: item.label, target: item.target });
       this.renderCurrent();
+      return;
     }
+
+    if (item.type === 'settings') {
+      this.stack.push({ type: 'settings', label: item.label });
+      this.renderCurrent();
+    }
+  }
+
+  renderSettings(view) {
+    this.setSubViewHeader(view.label || 'Настройки интерфейса', 'uGame / Настройки');
+    const enabled = Boolean(this.interfaceSettings?.isTextSelectionEnabled?.());
+
+    this.contentElement.innerHTML = [
+      '<div class="project-hub-settings">',
+      '<div class="project-hub-setting-row">',
+      '<div>',
+      '<strong>Выделение текста</strong>',
+      '<span>По умолчанию выключено, чтобы drag/click по игре не выделял интерфейс. Поля ввода остаются выделяемыми всегда.</span>',
+      '</div>',
+      '<button id="project-hub-text-selection" type="button" data-state="' + (enabled ? 'on' : 'off') + '">' +
+      (enabled ? 'ВКЛ' : 'ВЫКЛ') +
+      '</button>',
+      '</div>',
+      '</div>'
+    ].join('');
+
+    const button = this.contentElement.querySelector('#project-hub-text-selection');
+    button?.addEventListener('click', () => {
+      const next = this.interfaceSettings?.toggleTextSelection?.();
+      button.dataset.state = next ? 'on' : 'off';
+      button.textContent = next ? 'ВКЛ' : 'ВЫКЛ';
+    });
+    this.contentElement.scrollTop = 0;
   }
 
   setSubViewHeader(label, breadcrumb) {
