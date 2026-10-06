@@ -436,3 +436,25 @@ Simulation Lab не использует Phaser/Canvas и не строит гр
 Техническое описание: `docs/SIMULATION-LAB.md`.
 
 Первый automatic smoke run Simulation Lab успешно прошёл compile/config/unit/TRACE проверки и создал artifact. Полные TEST/DEEP/MATRIX результаты ещё нужно анализировать до принятия probability tables как gameplay balance.
+
+## 23. Player Effort
+
+`UGD-0019` добавляет отдельный слой измерения человеческого усилия:
+
+```text
+world probability
+↓
+сколько NPC нужно проверить
+↓
+сколько click/actions
+↓
+сколько reward-actions
+↓
+минимальный interaction time
+↓
+результат в общей value-equivalent единице
+```
+
+Первая аналитическая единица использует текущие baseValue: `1 Attention-equivalent = 5000 Stone-value`. Это не игровой обмен. Simulation Lab сравнивает поиск T1–T4 master и стоимость 1 Attention-equivalent отдельно для T1/T2/T3/T4 Location Tier.
+
+Master rotation теперь считается отдельно для каждого `resourceDirection + masterTier`; caps остаются максимумами, а не обязательным числом NPC.
