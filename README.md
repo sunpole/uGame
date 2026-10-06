@@ -32,7 +32,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.32 — Dynamic Event Spots
+## Game prototype v0.0.33 — Dynamic Event Spots + Remote Controls
 
 uGame keeps the First Playable slice and now adds a first changing-world layer on top of it.
 The current prototype includes:
@@ -54,6 +54,8 @@ The current prototype includes:
 - modular Vision, Class, WorldGraph, Zone, Player, Interactable, Event and Zone Rules systems;
 - a temporary layered top-down character with distinct centered idle and forward-leaning movement poses;
 - WASD/arrow movement, Shift dash and stamina;
+- interaction by E / Space / Enter;
+- always-visible footer mouse controls for directions, Action and Dash during remote testing;
 - NPC, resource, chest and portal variants built on one Interactable system;
 - temporary procedural sounds routed through one Audio system;
 - resource counters and a small stack-based inventory;
@@ -113,7 +115,8 @@ Dynamic Event QA: `8201` recreates current-zone events, `8202` rerolls current-z
 and `8299` shows Dynamic Event status.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
-immediately again.
+immediately again. For remote-desktop testing, the footer duplicates movement, Action and Dash
+as clickable buttons; mouse Dash is a short pulse so it can be clicked just before a direction.
 
 ## First update
 
