@@ -43,6 +43,12 @@ export class PlayerController {
     this.enabled = Boolean(enabled);
   }
 
+  queueAction() {
+    if (!this.enabled) return false;
+    this.virtualActionQueued = true;
+    return true;
+  }
+
   setSpeedMultiplier(multiplier = 1) {
     this.speedMultiplier = Math.max(0.2, Math.min(3, Number(multiplier) || 1));
   }
