@@ -71,6 +71,9 @@ Normal controls: WASD or arrows to move, `E` / Space to interact, Shift to dash.
 |---|---|
 | `8001` | Restart the first quest and reuse already recorded test signals |
 | `8099` | Show current quest status |
+| `8201` | Recreate dynamic Event Spots in the current zone without changing zone quality |
+| `8202` | Reroll current zone quality and recreate its dynamic Event Slots |
+| `8299` | Show Dynamic Event Spot status |
 
 ## Dev / Service
 
