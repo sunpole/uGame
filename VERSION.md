@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.37**
+Current version: **0.0.38**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.38 | Local /journal/ fix + beginner Simulation Lab quickstart in Project Hub |
 | 0.0.37 | Headless Simulation Lab: deterministic world calculations, reports, Actions runner and local launcher |
 | 0.0.36 | In-game Project Hub: navigation, embedded docs/Journal and GitHub links |
 | 0.0.35 | Modular ContainerSystem: Backpack, Bank, Equipment, Resource Pouch, weight and stacks |
@@ -43,6 +44,9 @@ Current version: **0.0.37**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.38
+Fixed the local Node dev server so directory URLs such as `/journal/` resolve their `index.html` just like GitHub Pages. Bare directory URLs are redirected to a trailing slash so relative CSS/JS paths remain correct. Project Hub no longer sends a first-time user straight into an unexplained GitHub Actions screen: the main Simulation Lab launch card now opens `docs/SIMULATION-LAB-QUICKSTART.md`, which explains what GitHub Actions is, why `Run workflow` is hidden while signed out, the exact first TEST 100k settings, where Artifacts/report.html appear, and the updater option 9 local alternative. A separate card still opens the Actions runner directly.
 
 ## 0.0.37
 Added the first working uGame Simulation Lab prototype without changing live gameplay balance. A standard-library Python engine reads candidate simulation rules from `data/simulation/simulation-defaults.json`, builds deterministic synthetic worlds and measures Location Tier, biome/resource selection, master Tier allocation, world/per-location caps, rotation fairness and reward/XP multipliers. TRACE, TEST, DEEP and multi-world MATRIX modes generate JSON/CSV summaries plus self-contained HTML/SVG reports; completed runs can also be compared A/B. Generated reports are ignored by Git.
