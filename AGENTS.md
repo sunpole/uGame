@@ -116,3 +116,15 @@
 - Generated reports не коммитить автоматически и не оставлять как untracked files, блокирующие updater.
 - Browser/DEV-анализатор не должен становиться отдельным источником экономики; он читает те же данные.
 - Backend не вводить только ради симулятора; текущий prototype использует локальный WorldSpawnState, а server-authoritative перенос делается при реальной multiplayer-потребности.
+
+## Project Hub UI
+
+Для навигации между игрой, документацией и dev-инструментами действует `UGD-0018`.
+
+- Не добавлять разрозненные постоянные ссылки/кнопки поверх игрового поля, если их можно поместить в Project Hub.
+- Внутренние docs/Journal читать в том же browser tab через Hub и relative paths.
+- Внешние `github.com` repository/Actions/commit links не пытаться насильно встраивать через iframe; открывать как external links.
+- Hub использует один overlay-shell и navigation stack вместо множества независимых modal поверх modal.
+- Пока Hub открыт, PlayerController должен быть отключён, но game state не пересоздаётся.
+- GitHub Pages и localhost должны использовать один и тот же Hub code; не hardcode Pages base URL для внутренних ресурсов.
+- Текущие browser saves Pages и localhost origin-specific; UI не должен изображать их общей синхронизированной сессией.
