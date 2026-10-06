@@ -298,6 +298,7 @@ Dynamic Event / Interactable
 - `UGD-0013` — Interaction UI, RewardGenerator и динамические Event Spots; первый реализованный changing-world слой.
 - `UGD-0014` — ContainerSystem, рюкзак, Банк, экипировка, ресурсный пояс и progression hooks хранения.
 - `UGD-0015` — ресурсные NPC, отношения, rarity, случайный каскад модулей и будущий Lore layer.
+- `UGD-0016` — Location Tier, biome, distance pressure, reward stacking и world caps master NPC.
 - `UGD-0001`, `UGD-0002`, `UGD-0005` — более ранние идеи о Внимании, Импульсе, отдыхе и КПД.
 - `UGD-0009` — content-first: не строить всю архитектуру до проверки игрового цикла.
 
@@ -353,12 +354,12 @@ ContainerSystem
 
 ## 20. NPC как лицо ресурсного направления
 
-Новая рабочая гипотеза `UGD-0015` предлагает заменить часть абстрактных ресурсных Event на NPC-специалистов.
+`UGD-0015` закрепляет ресурсных master NPC как основной entry point ресурсного направления.
 
 ```text
 Dynamic Event Spot
 → ресурсный NPC
-→ случайный Tier
+→ master с постоянным Tier
 → случайный набор доступных модулей
 → Dialogue / Process / Quest / Analytics / Skill Tree / Events
 → отношения + mastery + ресурсы + открытия
@@ -366,10 +367,42 @@ Dynamic Event Spot
 
 Для примера используется 6 модулей, но число не фиксировано. Добыча/Process всегда доступна; остальные выбираются случайно. Рабочая rarity-схема: `80% → 2–3 модуля → ×1.00`, `15% → 3–4 → ×1.20`, `3.5% → 4–6 → ×1.40`, `1.5% → все гарантированно → ×1.60`. T3 может случайно показать полный набор; T4 отличается гарантией полного набора и максимальным локальным коэффициентом встречи.
 
-Нужно разделять общий NPC-контент, временный Encounter и персональный прогресс игрока. NPC-личность/definition может быть постоянной, текущий spawn и набор модулей — временными, а отношения и реальные skill/mastery/modifier-улучшения принадлежат состоянию конкретного персонажа игрока. Связь Tier с конкретной личностью или только со встречей пока не утверждена.
+Нужно разделять общий master definition, временный Encounter и персональный прогресс игрока. Tier постоянен у master identity; текущий spawn и набор модулей временные, а Relationship и реальные skill/mastery/modifier-улучшения принадлежат конкретному персонажу. Все master одного resourceDirection работают с одним Character Skill Tree этого направления.
 
 ЛОР сознательно не придумывается заранее. Позже Tier может выражаться именами, званиями, портретами и характерами, но сейчас механика должна хранить нейтральные данные.
 
 Подробнее: `UGD-0015`.
 
 Consistency audit: `docs/project-journal/audits/2026-10-06-resource-npc-progression-audit.md`.
+
+## 21. Location Tier, biome и distance pressure
+
+`UGD-0016` добавляет пространственный слой поверх Dynamic Event Spots.
+
+```text
+мирный город
+↓ distance через WorldGraph
+внешняя зона + biome
+↓
+Location Tier T1–T4
+↓
+2–4 / 2–5 / 3–6 / 5–6 active spawn
+↓
+biome выбирает resourceDirection
+↓
+Location Tier повышает шанс сильных Event/master
+↓
+world/location caps
+↓
+master NPC Encounter
+```
+
+Подтверждённые location bonus: `×1.00 / ×1.20 / ×1.40 / ×1.60`. Более высокий Tier живёт меньше: `2–3h / 1.5–2.5h / 1–2h / 1–1.5h`.
+
+Biome влияет только на набор/веса ресурсов. Вероятность самого Location Tier зависит от расстояния до безопасного города: близкие зоны должны быть почти всегда низкого Tier, дальние могут получать значительно более высокий T4 chance. Точная probability curve ещё рассчитывается.
+
+Master multiplier применяется после обычных additive bonus к XP/reward, полученным через этого NPC. Например без других bonus `T4 zone + T4 master = ×1.6 × ×1.6 = ×2.56` от base.
+
+Текущий v0.0.32 имеет 5 Event Spots и старую схему `1/2/3/5`; это QA-прототип, а не целевой баланс. Для новой модели max=6 потребуется расширение spawn capacity.
+
+Подробнее: `UGD-0016` и `docs/project-journal/audits/2026-10-06-location-tier-npc-world-audit.md`.
