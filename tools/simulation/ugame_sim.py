@@ -768,6 +768,93 @@ def make_report_files(
     reward_rows = [[factor, count] for factor, count in summary["rewards"]["factorHistogram"].items()]
     write_csv(tables_dir / "reward-multipliers.csv", ["factor", "count"], reward_rows)
 
+    effort_rows = []
+    for row in summary["effort"]["byLocationTier"]:
+        effort_rows.append([
+            row["locationTier"],
+            row["expectedMasterMultiplier"],
+            row["locationFactor"],
+            row["expectedRewardPerAction"],
+            row["expectedRewardActions"],
+            row["interactionHours"],
+            row["freshEncounter"]["expectedEncounters"],
+            row["freshEncounter"]["expectedTotalClicks"],
+            row["randomArrival"]["expectedEncounters"],
+            row["randomArrival"]["expectedTotalClicks"],
+        ])
+    write_csv(
+        tables_dir / "attention-equivalent-effort.csv",
+        [
+            "locationTier",
+            "expectedMasterMultiplier",
+            "locationFactor",
+            "expectedRewardPerAction",
+            "expectedRewardActions",
+            "interactionHours",
+            "freshExpectedEncounters",
+            "freshExpectedTotalClicks",
+            "randomExpectedEncounters",
+            "randomExpectedTotalClicks",
+        ],
+        effort_rows,
+    )
+
+    search_rows = []
+    for row in summary["effort"]["searchByMasterTier"]:
+        search_rows.append([
+            row["locationTier"],
+            row["targetMasterTier"],
+            row["realizedProbabilityPct"],
+            row["expectedNpcChecks"],
+            row["medianNpcChecks"],
+            row["p95NpcChecks"],
+            row["expectedClicks"],
+            row["medianClicks"],
+            row["p95Clicks"],
+        ])
+    write_csv(
+        tables_dir / "master-search-clicks.csv",
+        [
+            "locationTier",
+            "targetMasterTier",
+            "realizedProbabilityPct",
+            "expectedNpcChecks",
+            "medianNpcChecks",
+            "p95NpcChecks",
+            "expectedClicks",
+            "medianClicks",
+            "p95Clicks",
+        ],
+        search_rows,
+    )
+
+    rotation_rows = []
+    for row in summary["rotation"]["coverage"]["masters"]:
+        rotation_rows.append([
+            row["resource"],
+            row["masterTier"],
+            row["assignments"],
+            row["uniqueZonesVisited"],
+            row["completedRounds"],
+            row["currentRoundVisited"],
+            row["meanCandidatePool"],
+            row["maxCandidatePool"],
+        ])
+    write_csv(
+        tables_dir / "master-rotation-coverage.csv",
+        [
+            "resource",
+            "masterTier",
+            "assignments",
+            "uniqueZonesVisited",
+            "completedRounds",
+            "currentRoundVisited",
+            "meanCandidatePool",
+            "maxCandidatePool",
+        ],
+        rotation_rows,
+    )
+
     distance_svg = svg_stacked_rows(distance_chart_rows, title="Location Tier by distance")
     master_svg = svg_stacked_rows(master_chart_rows, title="Realized master Tier by Location Tier")
     block_svg = svg_horizontal_bars(
@@ -783,11 +870,30 @@ def make_report_files(
         title="Reward / XP multiplier distribution",
         suffix="%",
     )
+    effort_svg = svg_horizontal_bars(
+        [
+            (row["locationTier"], float(row["freshEncounter"]["expectedTotalClicks"]))
+            for row in summary["effort"]["byLocationTier"]
+        ],
+        title="Expected clicks to 1 Attention-equivalent (fresh encounters)",
+        suffix=" clicks",
+    )
+    t4_search_svg = svg_horizontal_bars(
+        [
+            (row["locationTier"], float(row["expectedClicks"] or 0))
+            for row in summary["effort"]["searchByMasterTier"]
+            if row["targetMasterTier"] == "T4"
+        ],
+        title="Expected clicks to find T4 master",
+        suffix=" clicks",
+    )
 
     (charts_dir / "location-tier-by-distance.svg").write_text(distance_svg, encoding="utf-8")
     (charts_dir / "master-tier-distribution.svg").write_text(master_svg, encoding="utf-8")
     (charts_dir / "cap-block-rate.svg").write_text(block_svg, encoding="utf-8")
     (charts_dir / "reward-multiplier.svg").write_text(reward_svg, encoding="utf-8")
+    (charts_dir / "attention-equivalent-clicks.svg").write_text(effort_svg, encoding="utf-8")
+    (charts_dir / "t4-search-clicks.svg").write_text(t4_search_svg, encoding="utf-8")
 
     if trace_lines is not None:
         (output_dir / "trace.txt").write_text("\n".join(trace_lines) + "\n", encoding="utf-8")
@@ -808,6 +914,45 @@ def make_report_files(
         f"<td>{data['samples']}</td>"
         "</tr>"
         for resource, data in summary["masters"]["t4Wait"].items()
+    )
+
+    effort_html_rows = "".join(
+        "<tr>"
+        f"<td>{row['locationTier']}</td>"
+        f"<td>{row['expectedRewardPerAction']:.2f}</td>"
+        f"<td>{row['expectedRewardActions']:.1f}</td>"
+        f"<td>{row['interactionHours']:.2f} h</td>"
+        f"<td>{row['freshEncounter']['expectedEncounters']:.1f}</td>"
+        f"<td>{row['freshEncounter']['expectedTotalClicks']:.1f}</td>"
+        f"<td>{row['randomArrival']['expectedTotalClicks']:.1f}</td>"
+        "</tr>"
+        for row in summary["effort"]["byLocationTier"]
+    )
+
+    search_html_rows = "".join(
+        "<tr>"
+        f"<td>{row['locationTier']}</td>"
+        f"<td>{row['targetMasterTier']}</td>"
+        f"<td>{row['realizedProbabilityPct']:.3f}%</td>"
+        f"<td>{'—' if row['expectedNpcChecks'] is None else f'{row['expectedNpcChecks']:.1f}'}</td>"
+        f"<td>{'—' if row['expectedClicks'] is None else f'{row['expectedClicks']:.1f}'}</td>"
+        f"<td>{'—' if row['medianClicks'] is None else row['medianClicks']}</td>"
+        f"<td>{'—' if row['p95Clicks'] is None else row['p95Clicks']}</td>"
+        "</tr>"
+        for row in summary["effort"]["searchByMasterTier"]
+    )
+
+    rotation_html_rows = "".join(
+        "<tr>"
+        f"<td>{row['resource']}</td>"
+        f"<td>{row['masterTier']}</td>"
+        f"<td>{row['assignments']}</td>"
+        f"<td>{row['uniqueZonesVisited']}</td>"
+        f"<td>{row['completedRounds']}</td>"
+        f"<td>{row['meanCandidatePool']:.2f}</td>"
+        f"<td>{row['maxCandidatePool']}</td>"
+        "</tr>"
+        for row in summary["rotation"]["coverage"]["masters"]
     )
 
     report = f"""<!doctype html>
@@ -853,6 +998,19 @@ code{{color:#f0c66a}}li{{margin:6px 0}}.warning{{color:#f0c66a}}.error{{color:#f
 <section><h2>Realized master Tier</h2>{master_svg}</section>
 <section><h2>Allocation constraints</h2>{block_svg}</section>
 <section><h2>Reward / XP factors</h2>{reward_svg}</section>
+<section><h2>1 Attention-equivalent effort</h2>
+<p class="small">Analytical comparison only: {summary['effort']['targetSourceUnits']:.0f} {html.escape(summary['effort']['sourceResourceId'])}-value = 1 {html.escape(summary['effort']['targetValueResourceId'])}-value from current resources.json. This is not an in-game exchange rate. Search/movement time is not included unless represented by click actions.</p>
+{effort_svg}
+<table><thead><tr><th>Location</th><th>Stone/action</th><th>Reward actions</th><th>Interaction time</th><th>Fresh NPC encounters</th><th>Fresh total clicks</th><th>Random-arrival clicks</th></tr></thead><tbody>{effort_html_rows}</tbody></table>
+</section>
+<section><h2>Clicks to find a master Tier</h2>
+{t4_search_svg}
+<table><thead><tr><th>Location</th><th>Target master</th><th>Realized chance</th><th>Expected NPC checks</th><th>Expected clicks</th><th>Median clicks</th><th>P95 clicks</th></tr></thead><tbody>{search_html_rows}</tbody></table>
+</section>
+<section><h2>Master rotation coverage</h2>
+<p class="small">Each resource + master Tier has its own coverage history. Repeats are avoided inside the currently eligible pool until the round is covered; the pool itself can change after world rerolls.</p>
+<table><thead><tr><th>Resource</th><th>Tier</th><th>Assignments</th><th>Unique zones</th><th>Completed rounds</th><th>Mean candidate pool</th><th>Max pool</th></tr></thead><tbody>{rotation_html_rows}</tbody></table>
+</section>
 <section><h2>T4 availability</h2>
 <table><thead><tr><th>Resource</th><th>Uptime</th><th>Median gap</th><th>P95 gap</th><th>Gap samples</th></tr></thead>
 <tbody>{t4_wait_rows}</tbody></table></section>
