@@ -23,7 +23,7 @@
 - Принято `UGD-0014`: хранение строится поверх единого ContainerSystem; Backpack, Bank, Equipment и Resource Pouch отличаются конфигурацией/доступом, а slots/weight/stack/allowed-items должны позже расширяться навыками и профессиями.
 - Принято `UGD-0015`: ресурсные взаимодействия строятся через master NPC; Tier постоянен у master identity, Relationship/skill progression принадлежат конкретному персонажу, все master одного resourceDirection работают с единым деревом направления, а master multiplier `×1.00/1.20/1.40/1.60` умножает XP/reward этого NPC.
 - Принято `UGD-0016`: внешние зоны имеют Location Tier T1–T4; Tier-state живёт отдельно от зоны, задаёт `2–4 / 2–5 / 3–6 / 5–6` одновременно активных spawn, lifetime `2–3h / 1.5–2.5h / 1–2h / 1–1.5h` и bonus `×1.00 / ×1.20 / ×1.40 / ×1.60`. Biome определяет resourceDirection, distance from city меняет шанс Location Tier, а редкие master распределяются через world caps и rotation.
-- Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, использует shared JSON rules, имеет TRACE / 100k / 1M режимы, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. Предпочтительный no-install запуск — manual GitHub Actions; local updater станет fallback после реализации.
+- Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, имеет TRACE / TEST 100k / DEEP 1M / MATRIX, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. В `v0.0.37` реализованы manual GitHub Actions no-install runner и local updater option 9; candidate tables пока не являются live gameplay balance.
 - Принято `UGD-0018`: игра получает единый Project Hub в topbar. Внутренние документы/Project Journal читаются в том же browser tab через overlay/navigation stack; внешние GitHub repository/Actions ссылки открываются отдельно. Hub должен одинаково работать на GitHub Pages и localhost через relative paths и станет входом для будущих Simulation Lab/World Analyzer инструментов.
 
 ## Активные рабочие гипотезы
@@ -66,8 +66,12 @@
 
 ## Текущий приоритет
 
-**Сейчас приоритет — ручной QA `v0.0.35`: проверить ContainerSystem и связь `Reward → физическое хранение`.** Нужно проверить stack, ячейки и вес Backpack, Stone-only Resource Pouch, экипировку, локальный доступ к Bank через мировой объект, перенос между Bank/Backpack, сохранение после F5 и поведение награды при нехватке места. Dynamic Event слой `v0.0.32–0.0.34` остаётся частью той же проверки. Если эта связка работает, следующий смысловой шаг — протянуть один найденный Event в первый настоящий `Process/Idle`, а не наращивать ещё один большой framework. Правило content-first из `UGD-0009` остаётся в силе.
+**Сейчас приоритет — QA двух только что реализованных инструментальных слоёв, затем анализ Simulation Lab и только после этого возвращение к остальному gameplay.**
 
+1. Проверить `v0.0.36` Project Hub на GitHub Pages и локально: открыть/закрыть Hub, Back/Escape, CURRENT/VERSION/README, Project Journal search/record, Simulation Lab link и убедиться, что движение персонажа блокируется только пока открыт overlay.
+2. Проверить `v0.0.37` Simulation Lab: automatic smoke уже прошёл; выполнить TEST 100k, затем DEEP 1M и MATRIX 8/30/50/100, изучить отчёты и сравнить nominal vs realized вероятности/caps/fairness.
+3. Только после анализа не переносить candidate probability tables в gameplay автоматически: сначала принять/изменить их отдельным решением.
+4. После этого вернуться к следующему playable-механическому слою по content-first.
 ## Связанные записи
 
 - `UGD-0001` — «Внимание», «Импульс» и экономика коротких сессий.
