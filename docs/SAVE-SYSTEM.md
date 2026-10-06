@@ -18,7 +18,8 @@ Schema v1 stores:
 - active quest id and step;
 - completed quests;
 - already seen quest signals;
-- last completed quest title.
+- last completed quest title;
+- Dynamic Event Spot state: zone quality, quality expiry, active slots, event expiry/consumed state and pending reward choices.
 
 Exact player coordinates, stamina, animation phase, temporary dialogue UI state and other transient scene details are intentionally not saved.
 
@@ -43,7 +44,8 @@ The prototype saves after significant state changes:
 - resource change;
 - inventory change;
 - quest-state change;
-- use of a one-time interactable.
+- use of a one-time interactable;
+- Dynamic Event Spot reroll, reward-offer generation and reward-choice progress.
 
 Movement by itself does not trigger saves.
 
@@ -67,6 +69,8 @@ Movement by itself does not trigger saves.
 10. Confirm resource and inventory counters are restored.
 11. Confirm previously used one-time objects do not reappear as available objects.
 12. Confirm quest progress/completion is restored without granting rewards again.
+13. Open a dynamic resource/chest offer, reload before finishing it, and confirm the same generated offer remains instead of rerolling.
+14. Confirm zone quality/event timers continue from their saved timestamps.
 
 ## Current limitations
 
@@ -77,6 +81,6 @@ This is deliberately a prototype persistence adapter, not an account/cloud save 
 - No schema migrations yet; only schema v1 exists.
 - No conflict resolution.
 - No trusted/authoritative anti-cheat storage.
-- No offline/idle-time calculations yet.
+- Dynamic Event Spots use real timestamps, but there is still no general Process/Offline Idle progression system.
 
 Future systems should depend on the serializable Game State rather than writing their own unrelated localStorage records.
