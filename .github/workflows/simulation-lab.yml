@@ -7,10 +7,11 @@ on:
       - "tools/simulation/**"
       - "data/simulation/**"
       - "tests/simulation/**"
-      - "src/project-hub-system.js"
-      - "src/main.js"
+      - "src/**"
       - "data/project-hub.json"
       - "index.html"
+      - "journal/*.html"
+      - "reports/simulation/*.html"
       - "tools/dev-server.mjs"
       - "docs/SIMULATION-LAB-QUICKSTART.md"
   workflow_dispatch:
@@ -64,10 +65,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Check Project Hub JavaScript
+      - name: Check Game Chrome JavaScript
         run: |
           node --check src/project-hub-system.js
           node --check src/main.js
+          node --check src/chrome-context-system.js
+          node --check src/game-clock-system.js
+          node --check src/chrome-header-system.js
+          node --check src/action-router.js
+          node --check src/interface-settings.js
+          node --check src/project-page-chrome.js
           node --check tools/dev-server.mjs
 
       - name: Validate Project Hub JSON
