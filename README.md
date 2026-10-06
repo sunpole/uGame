@@ -32,7 +32,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.33 — Dynamic Event Spots + Remote Controls
+## Game prototype v0.0.34 — Dynamic Event Spots + Reward Choice Rules
 
 uGame keeps the First Playable slice and now adds a first changing-world layer on top of it.
 The current prototype includes:
@@ -45,6 +45,8 @@ The current prototype includes:
 - a reusable InteractionPanel for reward choice and informational event windows;
 - data-driven resource catalog and reward/event generation rules;
 - persistent pending reward offers so reload/zone travel cannot freely reroll them;
+- restricted reward choices are hidden until selection; if every option can be taken, rewards are shown immediately;
+- missed rewards can be revealed after the choice through a data flag, enabled by default;
 - a small loop with two routes toward the final area and labeled exits;
 - stable string zone ids and stable transition ids, with migration from the old numeric save ids;
 - the Guide NPC and the quest «Три фрагмента»;
