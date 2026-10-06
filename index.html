@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.34</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.0.34" />
+    <title>uGame v0.0.35</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.0.35" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
         <strong class="brand">uGame</strong>
-        <span class="version" id="app-version">v0.0.34</span>
+        <span class="version" id="app-version">v0.0.35</span>
       </header>
 
       <main class="game-shell">
@@ -40,6 +40,24 @@
             <div id="interaction-meta" class="interaction-meta"></div>
           </section>
 
+          <section id="inventory-panel" class="inventory-panel" hidden>
+            <div class="inventory-panel-header">
+              <div>
+                <strong id="inventory-title">Рюкзак</strong>
+                <div id="inventory-stats" class="inventory-stats"></div>
+              </div>
+              <button id="inventory-close" type="button">Закрыть</button>
+            </div>
+            <div id="inventory-tabs" class="inventory-tabs">
+              <button type="button" data-container-tab="backpack">Рюкзак</button>
+              <button type="button" data-container-tab="resourcePouch">Ресурсы</button>
+              <button type="button" data-container-tab="equipment">Экипировка</button>
+              <button type="button" data-container-tab="bank" disabled>Банк</button>
+            </div>
+            <div id="inventory-grid" class="inventory-grid"></div>
+            <div id="inventory-panel-status" class="inventory-panel-status"></div>
+          </section>
+
           <div id="touch-controls" class="touch-controls">
             <div class="touch-dpad">
               <button type="button" data-control="up">↑</button>
@@ -48,6 +66,7 @@
               <button type="button" data-control="right">→</button>
             </div>
             <div class="touch-actions">
+              <button id="inventory-open-touch" type="button">Рюкзак</button>
               <button type="button" data-control="dash">Рывок</button>
               <button type="button" data-control="action">Действие</button>
             </div>
@@ -67,6 +86,7 @@
           <button id="arrow-right" class="mouse-control arrow-key" type="button" data-control="right" title="Вправо">→</button>
           <button class="mouse-control mouse-control-action" type="button" data-control="action" title="Действие">Действие</button>
           <button class="mouse-control mouse-control-dash" type="button" data-control="dash" data-control-mode="pulse" title="Короткий импульс рывка">Рывок</button>
+          <button id="inventory-open" class="mouse-control mouse-control-inventory" type="button" title="Открыть рюкзак">Инвентарь</button>
         </div>
 
         <form id="dev-console" class="dev-console" autocomplete="off">
@@ -81,6 +101,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.0.34"></script>
+    <script type="module" src="./src/main.js?v=0.0.35"></script>
   </body>
 </html>
