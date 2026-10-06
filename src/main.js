@@ -290,6 +290,7 @@ class ZoneScene extends Phaser.Scene {
       visionSystem,
       onStatus: (text) => {
         if (this.zoneRuleStatusElement) this.zoneRuleStatusElement.textContent = text;
+        chromeContextSystem?.setZoneRuntimeStatus(text);
       }
     });
 
@@ -497,9 +498,11 @@ class ZoneScene extends Phaser.Scene {
   }
 
   updatePlayerHud(state) {
-    if (!state || !this.playerStateElement) return;
+    if (!state) return;
     const dash = state.dashing ? ' · РЫВОК' : '';
-    this.playerStateElement.textContent = `Stamina ${Math.round(state.stamina)}${dash}`;
+    if (this.playerStateElement) {
+      this.playerStateElement.textContent = `Stamina ${Math.round(state.stamina)}${dash}`;
+    }
     chromeHeaderSystem?.setStamina(state);
 
     if (state.dashing && !this.wasDashing) this.audioSystem.play('dash');
@@ -582,7 +585,8 @@ chromeHeaderSystem = new ChromeHeaderSystem({
   staminaBarElement: document.querySelector('#header-stamina-bar'),
   resourcesElement: document.querySelector('#pinned-resources'),
   wealthElement: document.querySelector('#material-wealth'),
-  storageElement: document.querySelector('#header-storage-summary')
+  storageElement: document.querySelector('#header-storage-summary'),
+  fragmentElement: document.querySelector('#header-fragment-status')
 });
 chromeHeaderSystem.load()
   .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
