@@ -42,43 +42,23 @@ No charts are generated inside the hot simulation loop.
 data/
   simulation/
     simulation-defaults.json
-    location-tier-rules.json
-    biome-resource-rules.json
-    master-spawn-rules.json
-    report-thresholds.json
 
 tools/
   simulation/
+    __init__.py
     ugame_sim.py
-    engine.py
-    world_model.py
-    allocator.py
-    metrics.py
-    reports.py
-    compare.py
-    validate_config.py
-    presets/
-      world-8.json
-      world-30.json
-      world-50.json
-      world-100.json
 
 tests/
   simulation/
-    fixtures/
-    test_determinism.py
-    test_allocator_caps.py
-    test_reward_formula.py
-    test_config_validation.py
+    test_simulation.py
 
 .github/workflows/
   simulation-lab.yml
 
-simulation-reports/        # generated locally; must be gitignored
+simulation-reports/        # generated locally; gitignored
 ```
 
-The first MVP intentionally keeps the engine/report code compact and auditable. Split it into more modules only when growth makes that useful.
-
+The first MVP intentionally keeps the engine/report code compact and auditable in one main Python module. Split it into `engine/allocator/reports/...` modules only when growth makes that separation useful.
 ## Source of truth
 
 Balance values should not be duplicated between Python and the game.
