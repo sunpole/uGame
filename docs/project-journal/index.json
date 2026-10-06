@@ -262,7 +262,8 @@
         "UGD-0008",
         "UGD-0010",
         "UGD-0013",
-        "UGD-0014"
+        "UGD-0014",
+        "UGD-0015"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -296,7 +297,8 @@
         "UGD-0011",
         "UGD-0012",
         "UGD-0013",
-        "UGD-0014"
+        "UGD-0014",
+        "UGD-0015"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -331,7 +333,8 @@
         "UGD-0010",
         "UGD-0012",
         "UGD-0013",
-        "UGD-0014"
+        "UGD-0014",
+        "UGD-0015"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -364,7 +367,8 @@
         "UGD-0005",
         "UGD-0010",
         "UGD-0011",
-        "UGD-0013"
+        "UGD-0013",
+        "UGD-0015"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -396,7 +400,8 @@
         "UGD-0010",
         "UGD-0011",
         "UGD-0012",
-        "UGD-0014"
+        "UGD-0014",
+        "UGD-0015"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -428,7 +433,45 @@
         "UGD-0009",
         "UGD-0010",
         "UGD-0011",
-        "UGD-0013"
+        "UGD-0013",
+        "UGD-0015"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0015",
+      "title": "Ресурсные NPC, отношения, редкость и каскад модулей",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "discussing",
+      "flags": [
+        "needs-prototype",
+        "needs-test",
+        "needs-calculation",
+        "needs-lore"
+      ],
+      "tags": [
+        "npc",
+        "relationships",
+        "idle",
+        "process",
+        "resources",
+        "skills",
+        "rarity",
+        "modules",
+        "quests",
+        "analytics",
+        "lore"
+      ],
+      "path": "records/UGD-0015-resource-npc-relationships-rarity-modules.md",
+      "related": [
+        "UGD-0009",
+        "UGD-0010",
+        "UGD-0011",
+        "UGD-0012",
+        "UGD-0013",
+        "UGD-0014"
       ],
       "supersedes": [],
       "superseded_by": []
