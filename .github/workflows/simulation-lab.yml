@@ -1,0 +1,103 @@
+name: uGame Simulation Lab
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Simulation mode
+        required: true
+        default: TEST
+        type: choice
+        options:
+          - TRACE
+          - TEST
+          - DEEP
+          - MATRIX
+      cycles:
+        description: Custom cycles (0 = mode default)
+        required: true
+        default: "0"
+        type: string
+      world_size:
+        description: External zones for TRACE/TEST/DEEP
+        required: true
+        default: "8"
+        type: choice
+        options:
+          - "8"
+          - "30"
+          - "50"
+          - "100"
+      seed:
+        description: Deterministic seed
+        required: true
+        default: "42"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate configuration
+        run: python tools/simulation/ugame_sim.py validate
+
+      - name: Run Simulation Lab tests
+        run: python -m unittest discover -s tests/simulation -p "test_*.py"
+
+      - name: Run simulation
+        shell: bash
+        env:
+          MODE: ${{ inputs.mode }}
+          CYCLES_INPUT: ${{ inputs.cycles }}
+          WORLD_SIZE: ${{ inputs.world_size }}
+          SEED: ${{ inputs.seed }}
+        run: |
+          set -euo pipefail
+
+          case "$MODE" in
+            TRACE) DEFAULT_CYCLES=20 ;;
+            TEST) DEFAULT_CYCLES=100000 ;;
+            DEEP) DEFAULT_CYCLES=1000000 ;;
+            MATRIX) DEFAULT_CYCLES=100000 ;;
+            *) echo "Unsupported mode: $MODE"; exit 2 ;;
+          esac
+
+          if [[ "$CYCLES_INPUT" =~ ^[0-9]+$ ]] && (( CYCLES_INPUT > 0 )); then
+            CYCLES="$CYCLES_INPUT"
+          else
+            CYCLES="$DEFAULT_CYCLES"
+          fi
+
+          if ! [[ "$SEED" =~ ^-?[0-9]+$ ]]; then
+            echo "Seed must be an integer."
+            exit 2
+          fi
+
+          if [[ "$MODE" == "TRACE" ]]; then
+            python tools/simulation/ugame_sim.py trace               --cycles "$CYCLES"               --world-size "$WORLD_SIZE"               --seed "$SEED"               --output-root simulation-reports
+          elif [[ "$MODE" == "MATRIX" ]]; then
+            python tools/simulation/ugame_sim.py matrix               --cycles "$CYCLES"               --world-sizes "8,30,50,100"               --seed "$SEED"               --output-root simulation-reports
+          else
+            python tools/simulation/ugame_sim.py run               --mode "$MODE"               --cycles "$CYCLES"               --world-size "$WORLD_SIZE"               --seed "$SEED"               --output-root simulation-reports
+          fi
+
+      - name: Upload simulation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ugame-simulation-${{ github.run_number }}-${{ inputs.mode }}-w${{ inputs.world_size }}-s${{ inputs.seed }}
+          path: simulation-reports/
+          if-no-files-found: error
+          retention-days: 30
