@@ -59,6 +59,7 @@ simulation-reports/        # generated locally; gitignored
 ```
 
 The first MVP intentionally keeps the engine/report code compact and auditable in one main Python module. Split it into `engine/allocator/reports/...` modules only when growth makes that separation useful.
+
 ## Source of truth
 
 Balance values should not be duplicated between Python and the game.
@@ -71,7 +72,7 @@ shared JSON config
    └── JavaScript uGame runtime
 ```
 
-If a rule cannot yet be safely shared with runtime, the simulator config must clearly mark it as `simulationCandidate` rather than pretending it is live gameplay.
+If a rule cannot yet be safely shared with runtime, the simulator config must clearly mark it as candidate data (the current MVP uses `candidate: true`) rather than pretending it is live gameplay.
 
 ## World presets
 
@@ -525,18 +526,22 @@ If profiling later shows Python itself is too slow, optimize the hot engine firs
 
 ## Testing
 
-Required before trusting reports:
+### Implemented automated checks
 
-- probability rows sum to 100;
-- impossible negative/NaN values rejected;
-- same seed gives same result;
-- world caps never exceeded;
-- per-location/resource T2+ cap never exceeded;
-- T4 master identity count respects cap;
-- completed/pending reward accounting conserves totals;
-- reward formula fixtures;
-- synthetic edge worlds: 0 resource spots, 1 zone, all T4 candidates, caps=0, extreme distance.
+- config probability rows and numeric ranges validate;
+- reward formula fixture confirms `T4 location × T4 master = ×2.56` with no other bonus;
+- same seed/config produces the same simulation summary (performance fields excluded);
+- a different seed changes the sampled distribution;
+- world caps never exceed configured values in the test run;
+- Python compilation, config validation, unit tests and a TRACE report run automatically on relevant pushes.
 
+### Future edge/regression checks
+
+- explicit zero-resource / one-zone / caps=0 fixtures;
+- all-T4 candidate stress fixture;
+- direct live-`world.json` fixture when that mode exists;
+- accounting tests for future pending reward integration;
+- longer benchmark regression thresholds after TEST/DEEP performance is measured.
 ## Safety against false confidence
 
 A million cycles do not prove game balance. They only show behavior of the supplied model.
