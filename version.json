@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.47",
-  "stage": "interface-settings",
+  "version": "0.0.48",
+  "stage": "persistent-game-chrome-complete",
   "updated": "2026-10-07",
-  "summary": "Persistent text-selection setting in Project Hub, disabled by default"
+  "summary": "Persistent Game Chrome, clocks/context, live header, unified input, settings and cross-page chrome"
 }
