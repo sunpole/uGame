@@ -109,6 +109,7 @@ Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat re
 Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
 until reload, `9099` show save status. `8001` restarts the current first quest for testing.
 Dynamic Event QA: `8201` recreates current-zone events, `8202` rerolls current-zone quality,
+`8211` / `8212` / `8213` / `8214` force Q1 / Q2 / Q3 / Q4 for fast slot-count testing,
 and `8299` shows Dynamic Event status.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
