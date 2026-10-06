@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.50**
+Current version: **0.0.51**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.51 | Formal Layer/Z Policy: окна одного modal-уровня больше не перекрываются случайно |
 | 0.0.50 | Scale-first Window Sizing: единый адаптивный масштаб, scroll только как fallback |
 | 0.0.49 | Workspace Window Bounds: игровые окна жёстко ограничены игровым Workspace |
 | 0.0.48 | Complete HUD migration + cross-page persistent project chrome |
@@ -56,6 +57,9 @@ Current version: **0.0.50**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.51
+Зафиксирована явная Z-policy: world → vision → HUD/touch → controls → game modal → OverlayRoot → Project Hub → persistent chrome. Dialogue, Interaction и Inventory принадлежат одному game-modal level; открытие одного корректно закрывает другое через его собственный close path, поэтому внутреннее состояние и input-lock не рассинхронизируются.
 
 ## 0.0.50
 Window Manager сначала уменьшает runtime-окно до минимально читаемого масштаба 82%. Только если даже при 82% содержимое не помещается, включается внутренний scroll. Dialogue и Interaction используют единый стандартный preferred width 640px; Inventory — широкий 780px. Это убирает случайно увеличенный вид Chest/Resource окон без превращения текста в микроскопический.

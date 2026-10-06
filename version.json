@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.50",
-  "stage": "scale-first-window-sizing",
+  "version": "0.0.51",
+  "stage": "formal-ui-layer-policy",
   "updated": "2026-10-07",
-  "summary": "Scale-first adaptive runtime windows with readable scroll fallback"
+  "summary": "Explicit Z-layer policy and same-level modal exclusivity"
 }

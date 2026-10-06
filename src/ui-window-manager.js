@@ -28,6 +28,15 @@ export class UIWindowManager {
 
   activate(panel) {
     if (!panel) return;
+    const current = this.registry.get(panel);
+    const level = current?.level || panel.dataset.uiWindowLevel || 'game-modal';
+
+    for (const [otherPanel, meta] of this.registry.entries()) {
+      if (otherPanel === panel || meta.level !== level || otherPanel.hasAttribute('hidden')) continue;
+      if (typeof meta.close === 'function') meta.close();
+      else otherPanel.setAttribute('hidden', '');
+    }
+
     this.fitSoon(panel);
   }
 

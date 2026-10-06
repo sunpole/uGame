@@ -1756,3 +1756,36 @@ html.ugame-text-selection-enabled .chrome-logo-block {
     transform: translate(-50%, -50%) scale(var(--ui-window-scale));
   }
 }
+
+
+/* v0.0.51 — explicit layer policy + same-level modal exclusivity */
+:root {
+  --ug-z-world: 1;
+  --ug-z-vision: 2;
+  --ug-z-hud: 4;
+  --ug-z-touch: 5;
+  --ug-z-controls: 40;
+  --ug-z-game-window: 60;
+  --ug-z-overlay-root: 80;
+  --ug-z-project-hub: 100;
+  --ug-z-chrome: 200;
+}
+
+#game canvas { z-index: var(--ug-z-world); }
+.vision-overlay { z-index: var(--ug-z-vision); }
+.game-hud,
+.quest-status,
+.interact-prompt { z-index: var(--ug-z-hud); }
+.touch-controls { z-index: var(--ug-z-touch); }
+.workspace-control-strip { z-index: var(--ug-z-controls); }
+
+.dialogue-panel,
+.interaction-panel,
+.inventory-panel {
+  z-index: var(--ug-z-game-window);
+}
+
+.overlay-root { z-index: var(--ug-z-overlay-root); }
+.project-hub { z-index: var(--ug-z-project-hub); }
+.game-chrome-header,
+.game-chrome-footer { z-index: var(--ug-z-chrome); }
