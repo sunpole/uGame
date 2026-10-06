@@ -27,6 +27,18 @@ function cleanQuestState(value) {
   };
 }
 
+function cleanDynamicEvents(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return { zones: {} };
+  const zones = value.zones;
+  if (!zones || typeof zones !== 'object' || Array.isArray(zones)) return { zones: {} };
+
+  try {
+    return JSON.parse(JSON.stringify({ zones }));
+  } catch {
+    return { zones: {} };
+  }
+}
+
 export function createDefaultGameState() {
   return {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
@@ -40,7 +52,10 @@ export function createDefaultGameState() {
     },
     resources: {},
     inventory: {},
-    quests: null
+    quests: null,
+    dynamicEvents: {
+      zones: {}
+    }
   };
 }
 
@@ -68,7 +83,8 @@ export function normalizeGameState(input) {
     },
     resources: cleanCounts(input.resources),
     inventory: cleanCounts(input.inventory),
-    quests: cleanQuestState(input.quests)
+    quests: cleanQuestState(input.quests),
+    dynamicEvents: cleanDynamicEvents(input.dynamicEvents)
   };
 }
 
@@ -114,5 +130,9 @@ export class GameState {
 
   setQuestState(snapshot) {
     this.state.quests = cleanQuestState(snapshot);
+  }
+
+  setDynamicEvents(snapshot) {
+    this.state.dynamicEvents = cleanDynamicEvents(snapshot);
   }
 }
