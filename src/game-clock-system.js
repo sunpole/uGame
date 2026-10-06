@@ -21,6 +21,13 @@ function phaseForHour(hour) {
   return 'Вечер';
 }
 
+function phaseIconForHour(hour) {
+  if (hour < 6) return '🌙';
+  if (hour < 12) return '🌅';
+  if (hour < 18) return '☀️';
+  return '🌆';
+}
+
 export class GameClockSystem {
   constructor({ element } = {}) {
     this.element = element;
@@ -59,6 +66,8 @@ export class GameClockSystem {
     const day = date.getUTCDate();
     const hour = date.getUTCHours();
     const minute = date.getUTCMinutes();
+    const phase = phaseForHour(hour);
+    const phaseIcon = phaseIconForHour(hour);
 
     return {
       elapsedGameMinutes,
@@ -67,8 +76,9 @@ export class GameClockSystem {
       day,
       hour,
       minute,
-      phase: phaseForHour(hour),
-      label: `${pad2(day)}.${pad2(month)}.${year} · ${pad2(hour)}:${pad2(minute)} · ${phaseForHour(hour)}`
+      phase,
+      phaseIcon,
+      label: `${pad2(day)}.${pad2(month)}.${year} · ${pad2(hour)}:${pad2(minute)} · ${phaseIcon} ${phase}`
     };
   }
 
@@ -96,5 +106,6 @@ export class GameClockSystem {
 export {
   GAME_START_UTC_MS,
   REAL_MS_PER_GAME_MINUTE,
-  phaseForHour
+  phaseForHour,
+  phaseIconForHour
 };

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.51**
+Current version: **0.0.52**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.52 | Game Clock phase UX: 🌙 Ночь / 🌅 Утро / ☀️ День / 🌆 Вечер |
 | 0.0.51 | Formal Layer/Z Policy: окна одного modal-уровня больше не перекрываются случайно |
 | 0.0.50 | Scale-first Window Sizing: единый адаптивный масштаб, scroll только как fallback |
 | 0.0.49 | Workspace Window Bounds: игровые окна жёстко ограничены игровым Workspace |
@@ -57,6 +58,9 @@ Current version: **0.0.51**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.52
+Game Clock теперь визуально показывает фазу суток компактной иконкой рядом с названием: 🌙 Ночь, 🌅 Утро, ☀️ День, 🌆 Вечер. Это только представление времени; никакой Event/Location/NPC/Process/cooldown не переведён на Game Clock.
 
 ## 0.0.51
 Зафиксирована явная Z-policy: world → vision → HUD/touch → controls → game modal → OverlayRoot → Project Hub → persistent chrome. Dialogue, Interaction и Inventory принадлежат одному game-modal level; открытие одного корректно закрывает другое через его собственный close path, поэтому внутреннее состояние и input-lock не рассинхронизируются.

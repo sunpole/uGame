@@ -89,7 +89,7 @@ function markup(pageTitle) {
       <div class="ugc-footer-block"><span id="ugc-build">BUILD —</span><span id="ugc-env">—</span></div>
       <div class="ugc-footer-block"><span>Сессия</span><strong id="ugc-session">00:00:00</strong></div>
       <div class="ugc-footer-block"><span id="ugc-location">Локация —</span></div>
-      <div class="ugc-footer-block"><span>🎮</span><strong id="ugc-game-clock">01.01.2026 · 00:00 · Ночь</strong></div>
+      <div class="ugc-footer-block"><span>🎮</span><strong id="ugc-game-clock">01.01.2026 · 00:00 · 🌙 Ночь</strong></div>
       <div class="ugc-footer-block ugc-real"><span id="ugc-real-date">—</span><strong id="ugc-real-clock">--:--:--</strong><span id="ugc-timezone">—</span></div>
     `
   };
