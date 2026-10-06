@@ -74,7 +74,7 @@ jobs:
         run: python -c "import json, pathlib; json.loads(pathlib.Path('data/project-hub.json').read_text(encoding='utf-8')); print('Project Hub JSON OK')"
 
       - name: Compile simulator
-        run: python -m py_compile tools/simulation/ugame_sim.py
+        run: python -m py_compile tools/simulation/ugame_sim.py tools/simulation/rotation.py tools/simulation/effort.py
 
       - name: Validate configuration
         run: python tools/simulation/ugame_sim.py validate
