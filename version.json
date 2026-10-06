@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "stage": "dynamic-events",
   "updated": "2026-10-06",
-  "summary": "Remote-friendly controls: Enter interaction key and always-visible mouse control bar"
+  "summary": "Blind restricted reward choices with optional post-choice reveal of missed rewards"
 }
