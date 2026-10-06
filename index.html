@@ -3,21 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.31</title>
+    <title>uGame v0.0.32</title>
     <link rel="stylesheet" href="./src/style.css?v=0.0.31" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
         <strong class="brand">uGame</strong>
-        <span class="version" id="app-version">v0.0.31</span>
+        <span class="version" id="app-version">v0.0.32</span>
       </header>
 
       <main class="game-shell">
         <div id="game">
           <div class="game-hud">
             <span id="player-state">Stamina 100</span>
-            <span id="resource-status">Фрагменты 0/3</span>
+            <span id="resource-status">Камень 0 · Дерево 0 · Вода 0 · Внимание 0 · Фрагменты 0/3</span>
             <span id="inventory-status">Инвентарь: пусто</span>
             <span id="zone-rule-status"></span>
           </div>
@@ -28,6 +28,16 @@
             <strong id="dialogue-speaker" class="dialogue-speaker"></strong>
             <p id="dialogue-text"></p>
             <button id="dialogue-next" type="button">Дальше</button>
+          </section>
+
+          <section id="interaction-panel" class="interaction-panel" hidden>
+            <div class="interaction-header">
+              <strong id="interaction-title">Событие</strong>
+              <button id="interaction-close" type="button">Закрыть</button>
+            </div>
+            <p id="interaction-text"></p>
+            <div id="interaction-options" class="interaction-options"></div>
+            <div id="interaction-meta" class="interaction-meta"></div>
           </section>
 
           <div id="touch-controls" class="touch-controls">
