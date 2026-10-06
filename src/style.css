@@ -416,6 +416,172 @@ input {
   font-size: 11px;
 }
 
+.inventory-panel {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 50%;
+  width: min(820px, calc(100% - 36px));
+  max-height: calc(100% - 36px);
+  padding: 14px;
+  box-sizing: border-box;
+  overflow: auto;
+  border: 1px solid #3c4450;
+  border-radius: 10px;
+  background: rgba(9, 11, 15, 0.98);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.58);
+  transform: translate(-50%, -50%);
+}
+
+.inventory-panel[hidden] {
+  display: none;
+}
+
+.inventory-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inventory-panel-header strong {
+  color: #f0c66a;
+  font-size: 16px;
+}
+
+.inventory-panel-header button,
+.inventory-tabs button,
+.inventory-slot-actions button {
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  background: #161b22;
+  color: #e6edf3;
+  cursor: pointer;
+}
+
+.inventory-panel-header button {
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.inventory-stats {
+  margin-top: 4px;
+  color: #8b949e;
+  font-size: 11px;
+}
+
+.inventory-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.inventory-tabs button {
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.inventory-tabs button[data-active='true'] {
+  border-color: #58a6ff;
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.inventory-tabs button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.inventory-slot {
+  position: relative;
+  min-height: 92px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  background: #101319;
+}
+
+.inventory-slot[data-empty='true'] {
+  border-style: dashed;
+  color: #69727d;
+}
+
+.inventory-slot-number {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  color: #69727d;
+  font-size: 10px;
+}
+
+.inventory-slot strong {
+  padding-right: 18px;
+  color: #e6edf3;
+  font-size: 12px;
+}
+
+.inventory-slot-empty,
+.inventory-slot-details,
+.equipment-slot-label {
+  color: #8b949e;
+  font-size: 10px;
+}
+
+.equipment-slot-label {
+  color: #d2a8ff;
+  font-weight: 700;
+}
+
+.inventory-slot-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.inventory-slot-actions button {
+  min-height: 25px;
+  padding: 0 7px;
+  font-size: 10px;
+}
+
+.inventory-slot-actions button:hover,
+.inventory-panel-header button:hover,
+.inventory-tabs button:hover:not(:disabled) {
+  border-color: #58a6ff;
+  background: #1f2937;
+}
+
+.inventory-panel-status {
+  min-height: 18px;
+  margin-top: 10px;
+  color: #8b949e;
+  font-size: 11px;
+}
+
+.inventory-panel-status[data-state='ok'] {
+  color: #7ee787;
+}
+
+.inventory-panel-status[data-state='error'] {
+  color: #ff7b72;
+}
+
+.mouse-control-inventory {
+  min-width: 78px;
+}
+
 .dialogue-speaker {
   color: #d2a8ff;
   font-size: 13px;
@@ -574,6 +740,17 @@ input {
   .interaction-panel {
     bottom: 122px;
     width: calc(100% - 24px);
+  }
+
+  .inventory-panel {
+    top: 10px;
+    width: calc(100% - 20px);
+    max-height: calc(100% - 130px);
+    transform: translateX(-50%);
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .interaction-options {
