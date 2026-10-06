@@ -351,6 +351,10 @@ character-owned skill progression
 9. Один NPC всегда относится к одному resourceDirection или позднее допустимы смешанные специализации?
 10. Можно ли перераспределять Character skill points?
 
+## Audit
+
+Подробный consistency-audit: `docs/project-journal/audits/2026-10-06-resource-npc-progression-audit.md`.
+
 ## Статус
 
 Это зафиксированная **рабочая гипотеза**. Подтверждённые правила внесены, но до ответов на вопросы аудита запись не переводится в `accepted` и система не реализуется.
