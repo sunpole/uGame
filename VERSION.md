@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.45**
+Current version: **0.0.46**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.46 | Mouse / AnyDesk controls use the same contextual Action path |
 | 0.0.45 | Unified contextual Action Router for primary/back/arrow navigation |
 | 0.0.44 | Live character/resource header with material wealth and storage summary |
 | 0.0.43 | Informational Game Clock: 1 game minute = 5 real seconds, four day phases |
@@ -51,6 +52,9 @@ Current version: **0.0.45**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.46
+Remote-desktop controls now use the same contextual action path as keyboard input. Visible Action buttons can advance/complete dialogues, select/close InteractionPanel content or interact with the world depending on context. Direction buttons remain hold controls and now light up when driven virtually as well as from physical arrow keys. This preserves mouse/AnyDesk as a first-class QA input adapter rather than a decorative duplicate.
 
 ## 0.0.45
 Added a unified contextual Action Router. E / Space / Enter now resolve through the active UI first (dialogue advance/complete, InteractionPanel selection/close) and fall back to the world interaction action only when no blocking interaction is open. Escape is the common Back/Cancel path. InteractionPanel options can be moved with arrow keys and show a visible keyboard focus; linear dialogue consumes arrows so character movement cannot leak through while the dialogue is open.
