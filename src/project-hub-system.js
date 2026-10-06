@@ -175,6 +175,7 @@ export class ProjectHubSystem {
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
+    this.currentDocumentBase = document.baseURI;
     this.boundKeydown = (event) => this.handleKeydown(event);
 
     this.openButton?.addEventListener('click', () => this.open());
@@ -338,8 +339,10 @@ export class ProjectHubSystem {
     this.setSubViewHeader(view.label, 'uGame / Документы / ' + view.label);
     this.contentElement.innerHTML = '<div class="project-hub-loading">Загрузка документа…</div>';
     try {
-      const markdown = await fetchText(view.target);
+      const resolvedTarget = new URL(view.target, document.baseURI);
+      const markdown = await fetchText(resolvedTarget.href);
       if (this.stack[this.stack.length - 1] !== view) return;
+      this.currentDocumentBase = resolvedTarget.href;
       this.contentElement.innerHTML = '<article class="project-hub-markdown">' + renderMarkdown(markdown) + '</article>';
       this.contentElement.scrollTop = 0;
     } catch (error) {
@@ -414,7 +417,7 @@ export class ProjectHubSystem {
     const rawHref = link.getAttribute('href');
     if (!rawHref || rawHref === '#') return;
 
-    const url = new URL(rawHref, document.baseURI);
+    const url = new URL(rawHref, this.currentDocumentBase || document.baseURI);
     if (url.origin === window.location.origin && url.pathname.endsWith('.md')) {
       event.preventDefault();
       const label = url.pathname.split('/').pop() || 'Документ';
