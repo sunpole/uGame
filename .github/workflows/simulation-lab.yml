@@ -1,6 +1,12 @@
 name: uGame Simulation Lab
 
 on:
+  push:
+    paths:
+      - ".github/workflows/simulation-lab.yml"
+      - "tools/simulation/**"
+      - "data/simulation/**"
+      - "tests/simulation/**"
   workflow_dispatch:
     inputs:
       mode:
@@ -38,7 +44,42 @@ permissions:
   contents: read
 
 jobs:
+  verify:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile simulator
+        run: python -m py_compile tools/simulation/ugame_sim.py
+
+      - name: Validate configuration
+        run: python tools/simulation/ugame_sim.py validate
+
+      - name: Run Simulation Lab tests
+        run: python -m unittest discover -s tests/simulation -p "test_*.py"
+
+      - name: Smoke TRACE
+        run: python tools/simulation/ugame_sim.py trace --cycles 20 --world-size 8 --seed 42 --output-root simulation-reports
+
+      - name: Upload smoke report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ugame-simulation-smoke-${{ github.run_number }}
+          path: simulation-reports/
+          if-no-files-found: error
+          retention-days: 7
+
   simulate:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
