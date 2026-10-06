@@ -24,6 +24,7 @@
 - Принято `UGD-0015`: ресурсные взаимодействия строятся через master NPC; Tier постоянен у master identity, Relationship/skill progression принадлежат конкретному персонажу, все master одного resourceDirection работают с единым деревом направления, а master multiplier `×1.00/1.20/1.40/1.60` умножает XP/reward этого NPC.
 - Принято `UGD-0016`: внешние зоны имеют Location Tier T1–T4; Tier-state живёт отдельно от зоны, задаёт `2–4 / 2–5 / 3–6 / 5–6` одновременно активных spawn, lifetime `2–3h / 1.5–2.5h / 1–2h / 1–1.5h` и bonus `×1.00 / ×1.20 / ×1.40 / ×1.60`. Biome определяет resourceDirection, distance from city меняет шанс Location Tier, а редкие master распределяются через world caps и rotation.
 - Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, использует shared JSON rules, имеет TRACE / 100k / 1M режимы, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. Предпочтительный no-install запуск — manual GitHub Actions; local updater станет fallback после реализации.
+- Принято `UGD-0018`: игра получает единый Project Hub в topbar. Внутренние документы/Project Journal читаются в том же browser tab через overlay/navigation stack; внешние GitHub repository/Actions ссылки открываются отдельно. Hub должен одинаково работать на GitHub Pages и localhost через relative paths и станет входом для будущих Simulation Lab/World Analyzer инструментов.
 
 ## Активные рабочие гипотезы
 
@@ -84,3 +85,4 @@
 - `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
 - `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
 - `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; принято, не реализовано.
+- `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; принято, не реализовано.
