@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "candidate": true,
+  "note": "Simulation candidate values only. Not live gameplay balance until explicitly accepted.",
+  "tickMinutes": 30,
+  "locationTiers": {
+    "T1": { "spawnMin": 2, "spawnMax": 4, "lifetimeHoursMin": 2.0, "lifetimeHoursMax": 3.0, "locationBonus": 0.0 },
+    "T2": { "spawnMin": 2, "spawnMax": 5, "lifetimeHoursMin": 1.5, "lifetimeHoursMax": 2.5, "locationBonus": 0.2 },
+    "T3": { "spawnMin": 3, "spawnMax": 6, "lifetimeHoursMin": 1.0, "lifetimeHoursMax": 2.0, "locationBonus": 0.4 },
+    "T4": { "spawnMin": 5, "spawnMax": 6, "lifetimeHoursMin": 1.0, "lifetimeHoursMax": 1.5, "locationBonus": 0.6 }
+  },
+  "distanceBands": [
+    { "min": 1, "max": 1, "locationTierWeights": { "T1": 98.5, "T2": 1.2, "T3": 0.25, "T4": 0.05 } },
+    { "min": 2, "max": 2, "locationTierWeights": { "T1": 92.0, "T2": 6.0, "T3": 1.5, "T4": 0.5 } },
+    { "min": 3, "max": 3, "locationTierWeights": { "T1": 80.0, "T2": 14.0, "T3": 4.5, "T4": 1.5 } },
+    { "min": 4, "max": 4, "locationTierWeights": { "T1": 65.0, "T2": 20.0, "T3": 10.0, "T4": 5.0 } },
+    { "min": 5, "max": 6, "locationTierWeights": { "T1": 48.0, "T2": 25.0, "T3": 17.0, "T4": 10.0 } },
+    { "min": 7, "max": 999, "locationTierWeights": { "T1": 35.0, "T2": 28.0, "T3": 22.0, "T4": 15.0 } }
+  ],
+  "masterTierByLocationTier": {
+    "T1": { "T1": 80.0, "T2": 15.0, "T3": 3.5, "T4": 1.5 },
+    "T2": { "T1": 60.0, "T2": 27.0, "T3": 9.0, "T4": 4.0 },
+    "T3": { "T1": 38.0, "T2": 32.0, "T3": 21.0, "T4": 9.0 },
+    "T4": { "T1": 20.0, "T2": 30.0, "T3": 32.0, "T4": 18.0 }
+  },
+  "masterMultipliers": {
+    "T1": 1.0,
+    "T2": 1.2,
+    "T3": 1.4,
+    "T4": 1.6
+  },
+  "worldCapsPerResource": {
+    "T2": 3,
+    "T3": 2,
+    "T4": 1
+  },
+  "biomes": {
+    "forest": { "wood": 65.0, "stone": 35.0 },
+    "swamp": { "water": 65.0, "stone": 35.0 },
+    "highlands": { "stone": 65.0, "wood": 25.0, "water": 10.0 },
+    "wetlands": { "water": 55.0, "wood": 25.0, "stone": 20.0 }
+  },
+  "syntheticWorlds": {
+    "8": { "externalZones": 8, "cities": 2, "maxDistance": 4 },
+    "30": { "externalZones": 30, "cities": 3, "maxDistance": 6 },
+    "50": { "externalZones": 50, "cities": 4, "maxDistance": 7 },
+    "100": { "externalZones": 100, "cities": 6, "maxDistance": 10 }
+  },
+  "reportThresholds": {
+    "review": {
+      "t4CapBlockedRatePct": 50.0,
+      "zoneFairnessMaxSharePct": 30.0,
+      "meanRewardMultiplier": 1.8
+    },
+    "bad": {
+      "capViolationCount": 1,
+      "invalidProbabilityRows": 1
+    }
+  }
+}
