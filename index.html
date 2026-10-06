@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.35</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.0.35" />
+    <title>uGame v0.0.36</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.0.36" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
-        <strong class="brand">uGame</strong>
-        <span class="version" id="app-version">v0.0.35</span>
+        <div class="topbar-brand">
+          <strong class="brand">uGame</strong>
+          <span class="version" id="app-version">v0.0.36</span>
+        </div>
+        <button id="project-hub-open" class="project-hub-open" type="button" title="Открыть Project Hub" aria-haspopup="dialog">☰ <span>Hub</span></button>
       </header>
 
       <main class="game-shell">
@@ -98,9 +101,30 @@
 
         <span id="zone-status">Перекрёсток</span>
       </footer>
+      <section id="project-hub" class="project-hub" role="dialog" aria-modal="true" aria-labelledby="project-hub-title" hidden>
+        <div class="project-hub-shell">
+          <header class="project-hub-toolbar">
+            <div class="project-hub-toolbar-left">
+              <button id="project-hub-back" class="project-hub-toolbar-button" type="button" hidden>← Назад</button>
+              <div>
+                <div id="project-hub-breadcrumb" class="project-hub-breadcrumb">uGame / Hub</div>
+                <strong id="project-hub-title" class="project-hub-title">Project Hub</strong>
+              </div>
+            </div>
+            <button id="project-hub-close" class="project-hub-toolbar-button" type="button">× Закрыть</button>
+          </header>
+          <div class="project-hub-body">
+            <nav id="project-hub-nav" class="project-hub-nav" aria-label="Project Hub"></nav>
+            <main id="project-hub-content" class="project-hub-content" tabindex="0">
+              <div class="project-hub-loading">Загрузка навигации…</div>
+            </main>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.0.35"></script>
+    <script type="module" src="./src/main.js?v=0.0.36"></script>
   </body>
 </html>
