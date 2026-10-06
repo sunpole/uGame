@@ -199,6 +199,17 @@ def normalized_percentages(counter: Counter[str]) -> dict[str, float]:
     return {tier: round(pct(counter.get(tier, 0), total), 6) for tier in TIERS}
 
 
+def reward_factor(
+    config: dict[str, Any],
+    location_tier: str,
+    master_tier: str,
+    other_additive_bonus: float = 0.0,
+) -> float:
+    location_bonus = float(config["locationTiers"][location_tier]["locationBonus"])
+    master_multiplier = float(config["masterMultipliers"][master_tier])
+    return (1.0 + location_bonus + float(other_additive_bonus)) * master_multiplier
+
+
 def distance_band_for(config: dict[str, Any], distance: int) -> dict[str, Any]:
     for band in config["distanceBands"]:
         if int(band["min"]) <= distance <= int(band["max"]):
@@ -333,9 +344,8 @@ class Simulation:
                 self.last_high_tick[zone_resource_key] = tick
                 return tier
             blocked_by_world_cap = True
-
-        if blocked_by_world_cap:
             self.blocked["worldCap"] += 1
+
         self.downgrades[f"{desired}->T1"] += 1
         return "T1"
 
@@ -395,18 +405,16 @@ class Simulation:
                 if realized == "T4":
                     t4_resources_this_tick.add(resource)
 
-                location_bonus = float(self.config["locationTiers"][location_tier]["locationBonus"])
-                master_multiplier = float(self.config["masterMultipliers"][realized])
-                reward_factor = (1.0 + location_bonus) * master_multiplier
-                self.reward_factor_hist[f"{reward_factor:.2f}"] += 1
-                self.reward_factor_sum += reward_factor
+                factor = reward_factor(self.config, location_tier, realized)
+                self.reward_factor_hist[f"{factor:.2f}"] += 1
+                self.reward_factor_sum += factor
                 self.reward_factor_count += 1
 
                 if self.trace_enabled:
                     self.trace_lines.append(
                         f"[tick {tick:06d}] SPAWN {spawn['zoneId']} slot={spawn['slotIndex']} "
                         f"resource={resource} location={location_tier} desired={spawn['desiredTier']} "
-                        f"realized={realized} rewardFactor={reward_factor:.2f}"
+                        f"realized={realized} rewardFactor={factor:.2f}"
                     )
 
             for resource in resources:
