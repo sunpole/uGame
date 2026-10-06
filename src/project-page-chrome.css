@@ -1,0 +1,141 @@
+/* v0.0.48 — shared always-visible chrome for non-game HTML pages */
+html.ugc-page body {
+  padding-top: 74px !important;
+  padding-bottom: 36px !important;
+}
+
+.ugc-page-header,
+.ugc-page-footer {
+  position: fixed;
+  z-index: 10000;
+  right: 0;
+  left: 0;
+  display: grid;
+  box-sizing: border-box;
+  background: rgba(8, 11, 15, 0.97);
+  border-color: #23272f;
+  color: #d6dde5;
+  font-family: Arial, sans-serif;
+  backdrop-filter: blur(8px);
+}
+
+.ugc-page-header {
+  top: 0;
+  min-height: 74px;
+  grid-template-columns: minmax(200px, 0.8fr) minmax(260px, 1fr) minmax(360px, 1.4fr);
+  gap: 8px;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #23272f;
+}
+
+.ugc-brand,
+.ugc-character,
+.ugc-resources {
+  min-width: 0;
+  min-height: 54px;
+  padding: 8px 10px;
+  border: 1px solid #20252d;
+  border-radius: 7px;
+  background: #0e1116;
+}
+
+.ugc-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ugc-brand a {
+  color: #f0f6fc;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ugc-brand span,
+.ugc-character span {
+  overflow: hidden;
+  color: #7d8793;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ugc-character {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.ugc-character strong {
+  overflow: hidden;
+  color: #e6edf3;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ugc-resources {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  align-items: center;
+}
+
+.ugc-resources span {
+  overflow: hidden;
+  padding: 5px 6px;
+  border-radius: 5px;
+  background: #0a0d11;
+  color: #c9d1d9;
+  font-size: 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ugc-page-footer {
+  bottom: 0;
+  height: 36px;
+  grid-template-columns: auto auto minmax(220px, 1fr) minmax(230px, auto) minmax(300px, auto);
+  align-items: stretch;
+  border-top: 1px solid #23272f;
+}
+
+.ugc-footer-block {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  overflow: hidden;
+  border-right: 1px solid #1b2027;
+  color: #8b949e;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.ugc-footer-block strong {
+  color: #e6edf3;
+  font: 10px/1 monospace;
+}
+
+.ugc-footer-block:first-child strong {
+  color: #f0c66a;
+}
+
+.ugc-real {
+  justify-content: flex-end;
+}
+
+@media (max-width: 1000px) {
+  .ugc-page-header {
+    grid-template-columns: minmax(180px, 0.8fr) minmax(220px, 1fr) minmax(300px, 1.2fr);
+  }
+
+  .ugc-page-footer {
+    grid-template-columns: auto auto minmax(180px, 1fr) minmax(190px, auto) minmax(240px, auto);
+  }
+}
