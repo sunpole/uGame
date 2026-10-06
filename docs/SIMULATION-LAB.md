@@ -1,8 +1,12 @@
 # uGame — Simulation Lab
 
-Status: design accepted, implementation not started.
+Status: **prototype implemented in v0.0.37; candidate balance only, not live gameplay.**
 
 Project Journal decision: `docs/project-journal/records/UGD-0017-simulation-lab.md`.
+
+### Important: candidate data
+
+The percentages in `data/simulation/simulation-defaults.json` are **candidate tables for measurement**. They do not replace the current gameplay `data/reward-rules.json` or current Dynamic Event behavior until a later explicit balance decision.
 
 ## Purpose
 
@@ -32,7 +36,7 @@ report phase
 
 No charts are generated inside the hot simulation loop.
 
-## Planned repository structure
+## Current MVP structure
 
 ```text
 data/
@@ -73,7 +77,7 @@ tests/
 simulation-reports/        # generated locally; must be gitignored
 ```
 
-Exact filenames may change during implementation, but responsibilities should remain separated.
+The first MVP intentionally keeps the engine/report code compact and auditable. Split it into more modules only when growth makes that useful.
 
 ## Source of truth
 
@@ -91,11 +95,11 @@ If a rule cannot yet be safely shared with runtime, the simulator config must cl
 
 ## World presets
 
-Two kinds of input are required.
+Two kinds of input are planned. **v0.0.37 currently implements synthetic worlds; direct ingestion of the live `data/world.json` remains a later extension.**
 
-### Real-world preset
+### Real-world preset — not implemented yet
 
-Read current `data/world.json` plus simulation metadata. Used to verify the actual playable world.
+Future mode: read current `data/world.json` plus simulation metadata to verify the actual playable world.
 
 ### Synthetic presets
 
@@ -114,11 +118,12 @@ Synthetic worlds should preserve the same model: peaceful hubs, graph distance b
 Planned command examples:
 
 ```text
-python tools/simulation/ugame_sim.py trace --seed 42
-python tools/simulation/ugame_sim.py run --cycles 100000 --preset world-8 --seed 42
-python tools/simulation/ugame_sim.py run --cycles 1000000 --preset world-100 --seed 42
+python tools/simulation/ugame_sim.py validate
+python tools/simulation/ugame_sim.py trace --cycles 20 --world-size 8 --seed 42
+python tools/simulation/ugame_sim.py run --mode TEST --cycles 100000 --world-size 8 --seed 42
+python tools/simulation/ugame_sim.py run --mode DEEP --cycles 1000000 --world-size 100 --seed 42
 python tools/simulation/ugame_sim.py compare <runA> <runB>
-python tools/simulation/ugame_sim.py matrix --cycles 100000 --world-sizes 8,30,50,100
+python tools/simulation/ugame_sim.py matrix --cycles 100000 --world-sizes 8,30,50,100 --seed 42
 ```
 
 The CLI must validate all inputs before running and print the exact config/seed/runId.
@@ -447,18 +452,18 @@ Suggested local path:
 
 This gives easy access while preserving updater clean-state checks.
 
-## Web launch — recommended
+## Web launch — implemented and recommended
 
 GitHub Actions manual workflow is the canonical no-install web launcher for the first implementation.
 
-Planned inputs:
+Current manual workflow inputs:
 
-- mode: TRACE / TEST / DEEP / CUSTOM;
-- cycles;
+- mode: TRACE / TEST / DEEP / MATRIX;
+- cycles (`0` uses the selected mode default);
 - seed;
-- world preset: current / 8 / 30 / 50 / 100;
-- optional config profile;
-- optional baseline artifact/reference when comparison is implemented.
+- world size: 8 / 30 / 50 / 100 for single-world runs.
+
+A/B comparison exists in the CLI/report layer; selecting an arbitrary previous GitHub artifact as baseline is not yet wired into the workflow UI.
 
 Workflow steps:
 
@@ -487,17 +492,17 @@ Reasons:
 
 A browser mini-simulator can be added later for quick interactive experiments, but it should consume the same configs and not become a separate source of truth.
 
-## Local updater integration
+## Local updater integration — implemented
 
 Existing updater safety properties must remain unchanged.
 
-Planned menu addition only after simulator exists:
+Updater menu:
 
 ```text
 9. Simulation Lab
 ```
 
-Suggested flow:
+Current flow:
 
 ```text
 choose preset
