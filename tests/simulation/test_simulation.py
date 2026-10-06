@@ -1,7 +1,10 @@
 import json
+import random
 import unittest
 from pathlib import Path
 
+from tools.simulation.effort import resource_value_equivalent
+from tools.simulation.rotation import MasterRotationAllocator
 from tools.simulation.ugame_sim import (
     Simulation,
     reward_factor,
@@ -10,18 +13,53 @@ from tools.simulation.ugame_sim import (
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / "data" / "simulation" / "simulation-defaults.json"
+RESOURCES_PATH = ROOT / "data" / "resources.json"
 
 
 class SimulationLabTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        cls.resources = json.loads(RESOURCES_PATH.read_text(encoding="utf-8"))
 
     def test_config_is_valid(self):
         self.assertEqual(validate_config(self.config), [])
 
     def test_reward_formula_t4_location_t4_master(self):
         self.assertAlmostEqual(reward_factor(self.config, "T4", "T4"), 2.56)
+
+    def test_attention_value_equivalent_is_5000_stone(self):
+        self.assertEqual(
+            resource_value_equivalent(self.resources, "stone", "attention"),
+            5000.0,
+        )
+
+    def test_t4_rotation_covers_two_candidate_zones_before_repeat(self):
+        allocator = MasterRotationAllocator(
+            random.Random(42),
+            {"T2": 3, "T3": 2, "T4": 1},
+        )
+        spawns = [
+            {"zoneId": "A", "resource": "stone", "desiredTier": "T4", "locationTier": "T4"},
+            {"zoneId": "B", "resource": "stone", "desiredTier": "T4", "locationTier": "T4"},
+        ]
+        first = allocator.allocate(spawns)["realized"]
+        second = allocator.allocate(spawns)["realized"]
+        first_zone = spawns[first.index("T4")]["zoneId"]
+        second_zone = spawns[second.index("T4")]["zoneId"]
+        self.assertNotEqual(first_zone, second_zone)
+
+    def test_no_t4_candidate_means_no_t4_spawn(self):
+        allocator = MasterRotationAllocator(
+            random.Random(42),
+            {"T2": 3, "T3": 2, "T4": 1},
+        )
+        spawns = [
+            {"zoneId": "A", "resource": "stone", "desiredTier": "T2", "locationTier": "T1"},
+            {"zoneId": "B", "resource": "stone", "desiredTier": "T1", "locationTier": "T1"},
+        ]
+        realized = allocator.allocate(spawns)["realized"]
+        self.assertNotIn("T4", realized)
 
     def test_world_caps_never_exceeded(self):
         simulation = Simulation(
