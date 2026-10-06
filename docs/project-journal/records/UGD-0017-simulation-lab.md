@@ -335,6 +335,19 @@ MVP Simulation Lab должен содержать:
 
 Первый automatic smoke run GitHub Actions завершился успешно и создал report artifact. Полные TEST/DEEP/MATRIX прогоны ещё требуют отдельного анализа результатов и не делают candidate probability tables принятым gameplay balance.
 
+## Расширение v0.0.39
+
+Simulation Lab v0.2 уточняет модель после MATRIX:
+
+- `T4=1 / T3=2 / T2=3` трактуются только как caps, не targetCount;
+- high-tier master отсутствует, если random candidate pool пуст;
+- для каждого `resourceDirection + masterTier` ведётся отдельный rotation coverage;
+- отчёт показывает candidate pool / completed rounds / unique visited zones;
+- добавлен Player Effort: поиск master по кликам и 1 Attention-equivalent по текущему `resources.json`;
+- generated CSV/SVG/HTML содержат click/time analytics.
+
+Подробнее: `UGD-0019`.
+
 ## Статус
 
 Решение использовать отдельный headless Simulation Lab перед фиксацией probability tables **принято**. Конкретные probability tables остаются предметом расчёта, а не частью этой записи.
