@@ -1,6 +1,6 @@
 # uGame — текущее состояние концепции
 
-Обновлено: 2026-10-06
+Обновлено: 2026-10-07
 
 Этот файл специально короткий. Он показывает текущее состояние важных тем; подробности и история находятся в `records/`. Общая структура последних Active/Idle-идей собрана в `ACTIVE-IDLE-CORE.md`.
 
@@ -23,8 +23,8 @@
 - Принято `UGD-0014`: хранение строится поверх единого ContainerSystem; Backpack, Bank, Equipment и Resource Pouch отличаются конфигурацией/доступом, а slots/weight/stack/allowed-items должны позже расширяться навыками и профессиями.
 - Принято `UGD-0015`: ресурсные взаимодействия строятся через master NPC; Tier постоянен у master identity, Relationship/skill progression принадлежат конкретному персонажу, все master одного resourceDirection работают с единым деревом направления, а master multiplier `×1.00/1.20/1.40/1.60` умножает XP/reward этого NPC.
 - Принято `UGD-0016`: внешние зоны имеют Location Tier T1–T4; Tier-state живёт отдельно от зоны, задаёт `2–4 / 2–5 / 3–6 / 5–6` одновременно активных spawn, lifetime `2–3h / 1.5–2.5h / 1–2h / 1–1.5h` и bonus `×1.00 / ×1.20 / ×1.40 / ×1.60`. Biome определяет resourceDirection, distance from city меняет шанс Location Tier, а редкие master распределяются через world caps и rotation.
-- T4 master каждого resourceDirection в baseline является **одним глобально уникальным, но постоянно странствующим** NPC: обязательного периода полного отсутствия после despawn нет. World/Event layer позже может временно override это правило — убрать T4, увеличить их число или изменить caps.
-- `T4=1` трактуется как `maxCount=1` **и** `targetCount=1`: при наличии допустимого spawn allocator должен поддерживать одного T4 в мире. Для `T3=2` и `T2=3` ещё нужно отдельно подтвердить, являются ли эти значения также targetCount или только caps.
+- Master T2/T3/T4 появляются только если текущий random/eligibility создаёт подходящие candidate. Caps `T4=1 / T3=2 / T2=3` на resourceDirection — только максимумы одновременных instance, не targetCount.
+- Для каждого `resourceDirection + masterTier` ведётся независимый rotation coverage: среди актуально допустимых зон сначала покрываются ещё не посещённые зоны текущего круга; candidate pool может измениться после world reroll.
 - Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, имеет TRACE / TEST 100k / DEEP 1M / MATRIX, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. В `v0.0.37` реализованы manual GitHub Actions no-install runner и local updater option 9; candidate tables пока не являются live gameplay balance.
 - Принято `UGD-0018`: игра получает единый Project Hub в topbar. Внутренние документы/Project Journal читаются в том же browser tab через overlay/navigation stack; внешние GitHub repository/Actions ссылки открываются отдельно. Hub должен одинаково работать на GitHub Pages и localhost через relative paths и станет входом для будущих Simulation Lab/World Analyzer инструментов.
 - Принято `UGD-0019`: Player Effort измеряется отдельно от внутренней экономики — клики/действия на поиск master и добычу, interaction cadence time и Attention-equivalent через текущий `resources.json`. `1 Attention-equivalent = 5000 Stone-value` используется только для аналитики, не как игровой обмен.
@@ -50,7 +50,7 @@
 - Для будущего дизайна предлагается различать `resource stock`, `mastery`, `active resonance` и `daily efficiency`, а не смешивать их в один показатель.
 - Рассматривается **поддержание активного резонанса**: исторически достигнутый прогресс может сохраняться, а текущая применяемая сила со временем ослабевать без поддержки. Более жёсткая идея потери самих уровней тоже зафиксирована, но не принята из-за риска FOMO.
 - Рассматривается **diminishing daily efficiency**: первые условные ~2 часа могут давать полную эффективность, затем отдача постепенно снижается вплоть до очень малого коэффициента. Числа `2 часа / 10 минут / -10 п.п. / 0.1%` пока только модель для обсуждения, не баланс.
-- Для `UGD-0016` остаётся **балансировочная**, а не архитектурная задача: симуляцией подобрать `distance → Location Tier`, `Location Tier → NPC/Event Tier`, rotation fairness и будущую формулу масштабирования T2/T3 caps при 30/50/100+ зонах. Высокая global uptime T4 в большом мире является возможным следствием большого числа candidate, но не заданной целью: при отсутствии T4 candidate мастер должен отсутствовать.
+- Для `UGD-0016` архитектурная модель подтверждена MATRIX #20: random candidate + caps + independent rotation coverage. Точные probability tables остаются candidate balance и не переносятся в gameplay автоматически.
 - Для prototype world-state достаточно локального serializable `WorldSpawnState`; backend нужен позже, когда один мир станет общей server-authoritative истиной для многих игроков.
 - Simulation Lab сначала проверяет `distance → Location Tier`, `Location Tier → NPC/Event Tier`, caps/rotation и reward multipliers на synthetic мирах 8/30/50/100+ зон; только после отчётов эти таблицы переносятся в gameplay.
 
@@ -67,23 +67,20 @@
 - `v0.0.37` добавляет Simulation Lab dev-tooling: deterministic Python engine, candidate tables, TRACE/TEST/DEEP/MATRIX, JSON/CSV/HTML/SVG отчёты, A/B compare, GitHub Actions no-install runner и updater option 9. Candidate probabilities пока не являются live gameplay balance.
 - `v0.0.38` исправляет локальный путь `/journal/` в dev-server и добавляет beginner quickstart для Simulation Lab в Project Hub: сначала понятная инструкция, затем отдельная ссылка на GitHub Actions runner.
 - `v0.0.39` обновляет Simulation Lab до v0.2: random high-tier caps без targetCount, независимый rotation coverage для каждого master, click/search/Attention-equivalent analytics и новые CSV/SVG/HTML отчёты.
+- `v0.0.40` публикует Simulation Results archive (#6/#7/#20), фиксирует Attention cadence guardrail и предварительный `NEXT-IMPLEMENTATION-PLAN.md`; большие ручные simulation runs поставлены на паузу.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Большие ручные simulation runs остановлены после #20; automatic smoke остаётся только технической проверкой.
-- Опубликован Simulation Results archive (#6/#7/#20), доступный из Project Hub и GitHub Pages.
-- Следующий gameplay-патч не начинать до анализа пользовательского пакета правок и совмещения его с `docs/NEXT-IMPLEMENTATION-PLAN.md`.
+- Большие ручные Simulation Lab TEST/MATRIX/DEEP остановлены после #20; automatic smoke остаётся только технической проверкой.
+- #20 является текущим baseline Simulation Lab v0.2; #6/#7 сохранены как historical.
+- Attention cadence guardrail принят: ~1/неделю normal, ~1/день hardcore, >10/неделю anomaly/log review.
+- Текущий Dynamic Event `Attention ×1` — QA placeholder и не является финальной экономикой.
+- Опубликован Simulation Results archive, доступный через Project Hub и GitHub Pages.
+- Следующий gameplay-патч **не начинать автоматически**: сначала получить пользовательский пакет правок, провести consistency/dependency audit и объединить его с `docs/NEXT-IMPLEMENTATION-PLAN.md`.
+- После объединения перейти обратно к content-first маленькими проверяемыми патчами; Simulation Lab снова запускать только при новом конкретном вопросе.
 
-- MATRIX #20 (v0.2, 100k × 8/30/50/100, seed 42) успешно завершён и зафиксирован отдельным audit. Caps/rotation работают в принятой random-модели; следующий блокирующий вопрос — экономический target реального времени на 1 Attention.
-
-**Сейчас приоритет — QA двух только что реализованных инструментальных слоёв, затем анализ Simulation Lab и только после этого возвращение к остальному gameplay.**
-
-1. Проверить `v0.0.36` Project Hub на GitHub Pages и локально: открыть/закрыть Hub, Back/Escape, CURRENT/VERSION/README, Project Journal search/record, Simulation Lab link и убедиться, что движение персонажа блокируется только пока открыт overlay.
-2. После `v0.0.39` заново выполнить TEST 100k и MATRIX 8/30/50/100: предыдущие #6/#7 остаются историческими, потому что allocator теперь использует явный per-master rotation coverage и новые effort-метрики.
-3. Только после анализа не переносить candidate probability tables в gameplay автоматически: сначала принять/изменить их отдельным решением.
-4. После этого вернуться к следующему playable-механическому слою по content-first.
 ## Связанные записи
 
 - `UGD-0001` — «Внимание», «Импульс» и экономика коротких сессий.
@@ -101,8 +98,8 @@
 - `UGD-0013` — Interaction UI, генерация наград и динамические Event Spots; прототип начат в `v0.0.32`, правило слепого ограниченного выбора уточнено в `v0.0.34`.
 - `UGD-0014` — ContainerSystem: рюкзак, Банк, экипировка, ресурсный пояс, вес, stack и будущие progression hooks; реализовано как прототип `v0.0.35`.
 - `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
-- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
-- `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; prototype реализован в `v0.0.37`, требуется анализ TEST/DEEP результатов.
+- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, baseline проверен MATRIX #20, live gameplay ещё не реализован.
+- `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение run; v0.2 baseline #20 зафиксирован, большие ручные прогоны поставлены на паузу.
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
 - `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, baseline #20 зафиксирован.
 - `UGD-0020` — Attention cadence guardrail + пауза больших simulation runs; принято.
