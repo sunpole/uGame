@@ -146,6 +146,32 @@ def build_attention_effort(
         )
         location_factor = 1.0 + float(config["locationTiers"][location_tier]["locationBonus"])
         expected_reward_per_action = reward_mean * location_factor * expected_master_multiplier
+        if expected_reward_per_action <= 0:
+            rows.append(
+                {
+                    "locationTier": location_tier,
+                    "targetSourceUnits": round(target_source_units, 6),
+                    "expectedMasterMultiplier": 0.0,
+                    "locationFactor": round(location_factor, 6),
+                    "expectedRewardPerAction": None,
+                    "expectedRewardActions": None,
+                    "interactionMinutes": None,
+                    "interactionHours": None,
+                    "freshEncounter": {
+                        "meanRewardActionsAvailable": max_reward_actions,
+                        "expectedEncounters": None,
+                        "expectedTotalClicks": None,
+                    },
+                    "randomArrival": {
+                        "meanRewardActionsAvailable": round(random_arrival_mean_actions, 6),
+                        "expectedEncounters": None,
+                        "expectedTotalClicks": None,
+                    },
+                    "sampled": False,
+                }
+            )
+            continue
+
         reward_actions = target_source_units / expected_reward_per_action
         interaction_minutes = reward_actions * interval_minutes
 
@@ -185,6 +211,7 @@ def build_attention_effort(
                     "expectedEncounters": round(random_encounters, 6),
                     "expectedTotalClicks": round(reward_actions + random_overhead, 6),
                 },
+                "sampled": True,
             }
         )
 
