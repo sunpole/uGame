@@ -73,6 +73,10 @@ Normal controls: WASD or arrows to move, `E` / Space to interact, Shift to dash.
 | `8099` | Show current quest status |
 | `8201` | Recreate dynamic Event Spots in the current zone without changing zone quality |
 | `8202` | Reroll current zone quality and recreate its dynamic Event Slots |
+| `8211` | Force current zone to Q1 for QA |
+| `8212` | Force current zone to Q2 for QA |
+| `8213` | Force current zone to Q3 for QA |
+| `8214` | Force current zone to Q4 for QA |
 | `8299` | Show Dynamic Event Spot status |
 
 ## Dev / Service
