@@ -270,3 +270,4 @@ quality duration: 150–180 / 120–160 / 75–120 / 60–90 min
 - UGD-0011 — resourceDirection и character progression.
 - UGD-0013 — текущий Dynamic Event Spot prototype.
 - UGD-0015 — resource NPC / master / relationship / modules.
+- UGD-0017 — Simulation Lab для расчёта distance tables, conditional tier matrix, caps и rotation fairness.
