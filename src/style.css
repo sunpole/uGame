@@ -399,6 +399,11 @@ input {
   color: #7ee787;
 }
 
+.interaction-option[data-missed='true'] {
+  border-style: dashed;
+  color: #8b949e;
+}
+
 .interaction-option:disabled {
   cursor: default;
   opacity: 0.72;
