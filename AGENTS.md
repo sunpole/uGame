@@ -128,3 +128,17 @@
 - Пока Hub открыт, PlayerController должен быть отключён, но game state не пересоздаётся.
 - GitHub Pages и localhost должны использовать один и тот же Hub code; не hardcode Pages base URL для внутренних ресурсов.
 - Текущие browser saves Pages и localhost origin-specific; UI не должен изображать их общей синхронизированной сессией.
+
+
+## Post-Simulation freeze
+
+После MATRIX #20 действует UGD-0020.
+
+- Не запускать новые большие TEST/MATRIX/DEEP только «для уверенности».
+- Automatic smoke можно оставлять: он проверяет tooling, а не баланс.
+- Новый большой simulation run нужен только после изменения формулы/экономики/world-state или при конкретном вопросе.
+- Ключевые опубликованные результаты лежат в `reports/simulation/`.
+- #6/#7 — historical; #20 — current baseline для Simulation Lab v0.2.
+- Attention cadence guardrail: ~1/week normal, ~1/day hardcore, >10/week anomaly/log review.
+- Текущий Dynamic Event `Attention ×1` — prototype placeholder и не должен закрепляться как финальная экономика.
+- Перед следующим gameplay-патчем сначала разобрать пользовательский пакет правок и совместить его с `docs/NEXT-IMPLEMENTATION-PLAN.md`.
