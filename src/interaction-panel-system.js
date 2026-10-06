@@ -40,6 +40,45 @@ export class InteractionPanelSystem {
     this.onOpenChange?.(false);
   }
 
+  navigableButtons() {
+    return [...(this.optionsElement?.querySelectorAll('.interaction-option:not(:disabled)') || [])];
+  }
+
+  focusButton(button) {
+    for (const item of this.optionsElement?.querySelectorAll('.interaction-option') || []) {
+      delete item.dataset.focused;
+    }
+    if (!button) return;
+    button.dataset.focused = 'true';
+    button.focus({ preventScroll: true });
+  }
+
+  navigate(code) {
+    const buttons = this.navigableButtons();
+    if (!buttons.length) return false;
+
+    const current = buttons.findIndex((button) => button.dataset.focused === 'true' || button === document.activeElement);
+    const step = code === 'ArrowLeft' || code === 'ArrowUp' ? -1 : 1;
+    const nextIndex = current < 0
+      ? 0
+      : (current + step + buttons.length) % buttons.length;
+    this.focusButton(buttons[nextIndex]);
+    return true;
+  }
+
+  primaryAction() {
+    if (!this.isOpen()) return false;
+    const buttons = this.navigableButtons();
+    if (buttons.length) {
+      const current = buttons.find((button) => button.dataset.focused === 'true' || button === document.activeElement) || buttons[0];
+      this.focusButton(current);
+      current.click();
+      return true;
+    }
+    this.close();
+    return true;
+  }
+
   clear() {
     if (this.titleElement) this.titleElement.textContent = '';
     if (this.textElement) this.textElement.textContent = '';
@@ -160,6 +199,7 @@ export class InteractionPanelSystem {
       revealMissed: alreadyComplete && revealUnchosenAfterComplete
     });
     this.open();
+    this.focusButton(this.navigableButtons()[0] || null);
 
     if (alreadyComplete) onComplete?.(offer);
     return true;
