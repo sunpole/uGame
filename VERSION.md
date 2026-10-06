@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.40**
+Current version: **0.0.41**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.41 | Persistent Game Chrome shell: Header / Workspace / Footer boundaries |
 | 0.0.40 | Simulation results archive + Attention cadence guardrail + next implementation plan |
 | 0.0.39 | Simulation Lab v0.2: per-master rotation coverage + Player Effort/click analytics |
 | 0.0.38 | Local /journal/ fix + beginner Simulation Lab quickstart in Project Hub |
@@ -46,6 +47,9 @@ Current version: **0.0.40**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.41
+Introduced the persistent Game Chrome shell. Header and Footer are now structural siblings of the central Workspace; Project Hub lives inside a dedicated Workspace OverlayRoot, so future modals cannot cover the persistent chrome by z-index alone. Desktop layout reserves a larger information header, a compact one-line footer and a remote-control strip inside the Workspace. Existing gameplay HUD values are intentionally kept during migration until their replacements are wired.
 
 ## 0.0.40
 Published a permanent GitHub Pages archive for the key Simulation Lab runs: #6 TEST, #7 historical MATRIX and #20 current Simulation Lab v0.2 baseline. Project Hub now links directly to the archive and to the new post-simulation implementation plan.
