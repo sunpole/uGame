@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.36**
+Current version: **0.0.37**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.37 | Headless Simulation Lab: deterministic world calculations, reports, Actions runner and local launcher |
 | 0.0.36 | In-game Project Hub: navigation, embedded docs/Journal and GitHub links |
 | 0.0.35 | Modular ContainerSystem: Backpack, Bank, Equipment, Resource Pouch, weight and stacks |
 | 0.0.34 | Blind restricted reward choices + optional reveal of missed rewards after selection |
@@ -42,6 +43,11 @@ Current version: **0.0.36**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.37
+Added the first working uGame Simulation Lab prototype without changing live gameplay balance. A standard-library Python engine reads candidate simulation rules from `data/simulation/simulation-defaults.json`, builds deterministic synthetic worlds and measures Location Tier, biome/resource selection, master Tier allocation, world/per-location caps, rotation fairness and reward/XP multipliers. TRACE, TEST, DEEP and multi-world MATRIX modes generate JSON/CSV summaries plus self-contained HTML/SVG reports; completed runs can also be compared A/B. Generated reports are ignored by Git.
+
+A dedicated `.github/workflows/simulation-lab.yml` provides the preferred no-install browser route through GitHub Actions. Pushes affecting the simulator run compile/config/unit/TRACE smoke verification automatically; the first smoke workflow completed successfully and produced an artifact. Manual Actions runs expose TRACE, TEST 100k, DEEP 1M and MATRIX modes. The Windows updater now has option 9, Simulation Lab: it never installs Python or packages automatically, runs only the checked-out simulator after explicit `SIMULATE` confirmation, and falls back to the GitHub Actions URL when Python is unavailable. Project Hub links directly to the web runner. Candidate probability tables are simulation inputs only and are not yet live game balance.
 
 ## 0.0.36
 Added the first Project Hub UI directly inside the game shell. The top bar now has one Hub entry instead of scattering project/dev links across the playfield. The Hub uses one responsive overlay shell with root sections and a navigation stack, so documents and Project Journal records can open in the same browser tab with Back/Close/Escape navigation. Internal Markdown is fetched through relative same-origin paths and rendered with a lightweight safe viewer supporting headings, lists, code, quotes and tables. The Hub exposes CURRENT, VERSION, README, Active/Idle Core, Simulation Lab docs, DEV codes and Project Journal search/listing. External GitHub repository/Actions and Pages links open separately. Opening the Hub now participates in the shared input-lock rule with Dialogue, Interaction and Inventory overlays, so player movement does not resume until every blocking overlay is closed. No save schema or gameplay-world rules changed.
