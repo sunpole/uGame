@@ -73,7 +73,9 @@ The current prototype includes:
 - mobile touch controls for movement, action and dash;
 - Vision overlay locked to the same playfield bounds as Phaser;
 - local-network dev-server access for phones and laptops on the same Wi-Fi/LAN;
-- the four-digit DEV console and live physical-arrow indicator.
+- the four-digit DEV console and live physical-arrow indicator;
+- an in-game Project Hub with embedded README/VERSION/Project Journal/document viewing plus GitHub/Actions/Pages links;
+- a headless Simulation Lab developer tool with deterministic TRACE/TEST/DEEP/MATRIX runs, reports and comparison tooling.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
