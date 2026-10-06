@@ -3,128 +3,177 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.40</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.0.40" />
+    <title>uGame v0.0.41</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.0.41" />
   </head>
   <body>
-    <div id="app">
-      <header class="topbar">
-        <div class="topbar-brand">
-          <strong class="brand">uGame</strong>
-          <span class="version" id="app-version">v0.0.40</span>
+    <div id="app" class="selection-disabled">
+      <header id="global-header" class="game-chrome-header">
+        <button id="project-hub-open" class="chrome-logo-block" type="button" title="Открыть главное меню / Project Hub" aria-haspopup="dialog">
+          <strong class="chrome-logo">uGame</strong>
+          <span class="chrome-menu-hint">☰ MENU</span>
+        </button>
+
+        <div class="chrome-header-block character-identity-block">
+          <span class="chrome-label">ПЕРСОНАЖ</span>
+          <strong id="character-name">Имя —</strong>
+          <span id="character-class">Класс —</span>
+          <span id="character-profession">Профессия —</span>
+          <span id="character-specialization">Специализация —</span>
         </div>
-        <button id="project-hub-open" class="project-hub-open" type="button" title="Открыть Project Hub" aria-haspopup="dialog">☰ <span>Hub</span></button>
+
+        <div class="chrome-header-block character-progress-block">
+          <span class="chrome-label">ПРОГРЕСС</span>
+          <strong id="character-level">LV —</strong>
+          <span id="character-xp">XP —</span>
+          <span id="header-stamina">Stamina 100 / 100</span>
+          <div class="chrome-progress-track" aria-hidden="true"><i id="header-stamina-bar" style="width:100%"></i></div>
+        </div>
+
+        <div class="chrome-header-block resource-summary-block">
+          <div class="resource-summary-top">
+            <span class="chrome-label">РЕСУРСЫ</span>
+            <strong id="material-wealth">Материалы Σ 0 🪨</strong>
+          </div>
+          <div id="pinned-resources" class="pinned-resources">
+            <span>Камень 0</span><span>Дерево 0</span><span>Вода 0</span><span>Внимание 0</span>
+          </div>
+          <span id="header-storage-summary" class="header-storage-summary">Хранилища: загрузка…</span>
+        </div>
       </header>
 
-      <main class="game-shell">
-        <div id="game">
-          <div class="game-hud">
-            <span id="player-state">Stamina 100</span>
-            <span id="resource-status">Камень 0 · Дерево 0 · Вода 0 · Внимание 0 · Фрагменты 0/3</span>
-            <span id="inventory-status">Инвентарь: пусто</span>
-            <span id="zone-rule-status"></span>
-          </div>
-          <div id="quest-status" class="quest-status">Загрузка квеста…</div>
-          <div id="interact-prompt" class="interact-prompt"></div>
-
-          <section id="dialogue-panel" class="dialogue-panel" hidden>
-            <strong id="dialogue-speaker" class="dialogue-speaker"></strong>
-            <p id="dialogue-text"></p>
-            <button id="dialogue-next" type="button">Дальше</button>
-          </section>
-
-          <section id="interaction-panel" class="interaction-panel" hidden>
-            <div class="interaction-header">
-              <strong id="interaction-title">Событие</strong>
-              <button id="interaction-close" type="button">Закрыть</button>
+      <div id="workspace" class="workspace">
+        <main class="game-shell">
+          <div id="game">
+            <div class="game-hud">
+              <span id="player-state">Stamina 100</span>
+              <span id="resource-status">Камень 0 · Дерево 0 · Вода 0 · Внимание 0 · Фрагменты 0/3</span>
+              <span id="inventory-status">Инвентарь: пусто</span>
+              <span id="zone-rule-status"></span>
             </div>
-            <p id="interaction-text"></p>
-            <div id="interaction-options" class="interaction-options"></div>
-            <div id="interaction-meta" class="interaction-meta"></div>
-          </section>
+            <div id="quest-status" class="quest-status">Загрузка квеста…</div>
+            <div id="interact-prompt" class="interact-prompt"></div>
 
-          <section id="inventory-panel" class="inventory-panel" hidden>
-            <div class="inventory-panel-header">
-              <div>
-                <strong id="inventory-title">Рюкзак</strong>
-                <div id="inventory-stats" class="inventory-stats"></div>
+            <section id="dialogue-panel" class="dialogue-panel" hidden>
+              <strong id="dialogue-speaker" class="dialogue-speaker"></strong>
+              <p id="dialogue-text"></p>
+              <button id="dialogue-next" type="button">Дальше</button>
+            </section>
+
+            <section id="interaction-panel" class="interaction-panel" hidden>
+              <div class="interaction-header">
+                <strong id="interaction-title">Событие</strong>
+                <button id="interaction-close" type="button">Закрыть</button>
               </div>
-              <button id="inventory-close" type="button">Закрыть</button>
-            </div>
-            <div id="inventory-tabs" class="inventory-tabs">
-              <button type="button" data-container-tab="backpack">Рюкзак</button>
-              <button type="button" data-container-tab="resourcePouch">Ресурсы</button>
-              <button type="button" data-container-tab="equipment">Экипировка</button>
-              <button type="button" data-container-tab="bank" disabled>Банк</button>
-            </div>
-            <div id="inventory-grid" class="inventory-grid"></div>
-            <div id="inventory-panel-status" class="inventory-panel-status"></div>
-          </section>
+              <p id="interaction-text"></p>
+              <div id="interaction-options" class="interaction-options"></div>
+              <div id="interaction-meta" class="interaction-meta"></div>
+            </section>
 
-          <div id="touch-controls" class="touch-controls">
-            <div class="touch-dpad">
-              <button type="button" data-control="up">↑</button>
-              <button type="button" data-control="left">←</button>
-              <button type="button" data-control="down">↓</button>
-              <button type="button" data-control="right">→</button>
-            </div>
-            <div class="touch-actions">
-              <button id="inventory-open-touch" type="button">Рюкзак</button>
-              <button type="button" data-control="dash">Рывок</button>
-              <button type="button" data-control="action">Действие</button>
+            <section id="inventory-panel" class="inventory-panel" hidden>
+              <div class="inventory-panel-header">
+                <div>
+                  <strong id="inventory-title">Рюкзак</strong>
+                  <div id="inventory-stats" class="inventory-stats"></div>
+                </div>
+                <button id="inventory-close" type="button">Закрыть</button>
+              </div>
+              <div id="inventory-tabs" class="inventory-tabs">
+                <button type="button" data-container-tab="backpack">Рюкзак</button>
+                <button type="button" data-container-tab="resourcePouch">Ресурсы</button>
+                <button type="button" data-container-tab="equipment">Экипировка</button>
+                <button type="button" data-container-tab="bank" disabled>Банк</button>
+              </div>
+              <div id="inventory-grid" class="inventory-grid"></div>
+              <div id="inventory-panel-status" class="inventory-panel-status"></div>
+            </section>
+
+            <div id="touch-controls" class="touch-controls">
+              <div class="touch-dpad">
+                <button type="button" data-control="up">↑</button>
+                <button type="button" data-control="left">←</button>
+                <button type="button" data-control="down">↓</button>
+                <button type="button" data-control="right">→</button>
+              </div>
+              <div class="touch-actions">
+                <button id="inventory-open-touch" type="button">Рюкзак</button>
+                <button type="button" data-control="dash">Рывок</button>
+                <button type="button" data-control="action">Действие</button>
+              </div>
             </div>
           </div>
+        </main>
+
+        <div id="workspace-control-strip" class="workspace-control-strip" aria-label="Удалённое управление и DEV">
+          <div class="mouse-controls" aria-label="Управление мышью">
+            <button id="arrow-left" class="mouse-control arrow-key" type="button" data-control="left" title="Влево">←</button>
+            <button id="arrow-up" class="mouse-control arrow-key" type="button" data-control="up" title="Вверх">↑</button>
+            <button id="arrow-down" class="mouse-control arrow-key" type="button" data-control="down" title="Вниз">↓</button>
+            <button id="arrow-right" class="mouse-control arrow-key" type="button" data-control="right" title="Вправо">→</button>
+            <button class="mouse-control mouse-control-action" type="button" data-control="action" title="Действие · E / Space / Enter">Действие</button>
+            <button class="mouse-control mouse-control-dash" type="button" data-control="dash" data-control-mode="pulse" title="Короткий импульс рывка">Рывок</button>
+            <button id="inventory-open" class="mouse-control mouse-control-inventory" type="button" title="Открыть рюкзак">Инвентарь</button>
+          </div>
+
+          <form id="dev-console" class="dev-console" autocomplete="off">
+            <label for="dev-code-input">DEV</label>
+            <input id="dev-code-input" name="dev-code" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="0000" />
+            <button type="submit">OK</button>
+            <span id="dev-code-status" class="dev-code-status"></span>
+          </form>
         </div>
-      </main>
 
-      <footer class="bottombar">
-        <span class="controls-help">
-          <span>WASD / стрелки · E / Space / Enter действие · Shift рывок</span>
-        </span>
-
-        <div class="mouse-controls" aria-label="Управление мышью">
-          <button id="arrow-left" class="mouse-control arrow-key" type="button" data-control="left" title="Влево">←</button>
-          <button id="arrow-up" class="mouse-control arrow-key" type="button" data-control="up" title="Вверх">↑</button>
-          <button id="arrow-down" class="mouse-control arrow-key" type="button" data-control="down" title="Вниз">↓</button>
-          <button id="arrow-right" class="mouse-control arrow-key" type="button" data-control="right" title="Вправо">→</button>
-          <button class="mouse-control mouse-control-action" type="button" data-control="action" title="Действие">Действие</button>
-          <button class="mouse-control mouse-control-dash" type="button" data-control="dash" data-control-mode="pulse" title="Короткий импульс рывка">Рывок</button>
-          <button id="inventory-open" class="mouse-control mouse-control-inventory" type="button" title="Открыть рюкзак">Инвентарь</button>
+        <div id="overlay-root" class="overlay-root">
+          <section id="project-hub" class="project-hub" role="dialog" aria-modal="true" aria-labelledby="project-hub-title" hidden>
+            <div class="project-hub-shell">
+              <header class="project-hub-toolbar">
+                <div class="project-hub-toolbar-left">
+                  <button id="project-hub-back" class="project-hub-toolbar-button" type="button" hidden>← Назад</button>
+                  <div>
+                    <div id="project-hub-breadcrumb" class="project-hub-breadcrumb">uGame / Hub</div>
+                    <strong id="project-hub-title" class="project-hub-title">Project Hub</strong>
+                  </div>
+                </div>
+                <button id="project-hub-close" class="project-hub-toolbar-button" type="button">× Закрыть</button>
+              </header>
+              <div class="project-hub-body">
+                <nav id="project-hub-nav" class="project-hub-nav" aria-label="Project Hub"></nav>
+                <div id="project-hub-content" class="project-hub-content" tabindex="0">
+                  <div class="project-hub-loading">Загрузка навигации…</div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
+      </div>
 
-        <form id="dev-console" class="dev-console" autocomplete="off">
-          <label for="dev-code-input">DEV</label>
-          <input id="dev-code-input" name="dev-code" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="0000" />
-          <button type="submit">OK</button>
-          <span id="dev-code-status" class="dev-code-status"></span>
-        </form>
-
-        <span id="zone-status">Перекрёсток</span>
+      <footer id="global-footer" class="game-chrome-footer">
+        <div class="chrome-footer-block build-block">
+          <strong id="footer-version">v0.0.41</strong>
+          <span id="footer-build">BUILD …</span>
+          <span id="footer-environment">LOCAL</span>
+        </div>
+        <div class="chrome-footer-block session-block">
+          <span class="chrome-label">СЕССИЯ</span>
+          <strong id="session-time">00:00:00</strong>
+        </div>
+        <div class="chrome-footer-block location-block">
+          <span id="location-primary">Перекрёсток · zone-001</span>
+          <span id="location-secondary">T— · Биом — · в зоне 00:00:00</span>
+        </div>
+        <div class="chrome-footer-block game-clock-block">
+          <span class="chrome-label">ИГРОВОЕ ВРЕМЯ</span>
+          <strong id="game-clock">01.01.2026 · 00:00 · Ночь</strong>
+        </div>
+        <div class="chrome-footer-block real-clock-block">
+          <span id="real-date">—</span>
+          <strong id="real-clock">--:--:--</strong>
+          <span id="real-timezone">—</span>
+        </div>
       </footer>
-      <section id="project-hub" class="project-hub" role="dialog" aria-modal="true" aria-labelledby="project-hub-title" hidden>
-        <div class="project-hub-shell">
-          <header class="project-hub-toolbar">
-            <div class="project-hub-toolbar-left">
-              <button id="project-hub-back" class="project-hub-toolbar-button" type="button" hidden>← Назад</button>
-              <div>
-                <div id="project-hub-breadcrumb" class="project-hub-breadcrumb">uGame / Hub</div>
-                <strong id="project-hub-title" class="project-hub-title">Project Hub</strong>
-              </div>
-            </div>
-            <button id="project-hub-close" class="project-hub-toolbar-button" type="button">× Закрыть</button>
-          </header>
-          <div class="project-hub-body">
-            <nav id="project-hub-nav" class="project-hub-nav" aria-label="Project Hub"></nav>
-            <div id="project-hub-content" class="project-hub-content" tabindex="0">
-              <div class="project-hub-loading">Загрузка навигации…</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.0.40"></script>
+    <script type="module" src="./src/main.js?v=0.0.41"></script>
   </body>
 </html>
