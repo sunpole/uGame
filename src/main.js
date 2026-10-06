@@ -25,6 +25,7 @@ import { ChromeContextSystem } from './chrome-context-system.js';
 import { GameClockSystem } from './game-clock-system.js';
 import { ChromeHeaderSystem } from './chrome-header-system.js';
 import { ActionRouter } from './action-router.js';
+import { InterfaceSettingsSystem } from './interface-settings.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -46,6 +47,7 @@ let chromeContextSystem = null;
 let gameClockSystem = null;
 let chromeHeaderSystem = null;
 let actionRouter = null;
+let interfaceSettingsSystem = null;
 
 
 function syncPlayerInputState() {
@@ -604,6 +606,8 @@ new Phaser.Game({
   }
 });
 
+interfaceSettingsSystem = new InterfaceSettingsSystem();
+
 projectHubSystem = new ProjectHubSystem({
   openButton: document.querySelector('#project-hub-open'),
   overlay: document.querySelector('#project-hub'),
@@ -613,7 +617,8 @@ projectHubSystem = new ProjectHubSystem({
   contentElement: document.querySelector('#project-hub-content'),
   backButton: document.querySelector('#project-hub-back'),
   closeButton: document.querySelector('#project-hub-close'),
-  onOpenChange: () => syncPlayerInputState()
+  onOpenChange: () => syncPlayerInputState(),
+  interfaceSettings: interfaceSettingsSystem
 });
 
 projectHubSystem.load().catch((error) => {
