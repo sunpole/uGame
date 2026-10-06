@@ -14,7 +14,8 @@ Schema v1 stores:
 - current zone id and entry side;
 - ids of used one-time interactables;
 - resource counters;
-- inventory stacks;
+- legacy flat inventory field for backward compatibility;
+- ContainerSystem state: Backpack, Bank, Equipment and Resource Pouch slots/modifiers;
 - active quest id and step;
 - completed quests;
 - already seen quest signals;
@@ -42,7 +43,7 @@ The prototype saves after significant state changes:
 - class change;
 - zone entry;
 - resource change;
-- inventory change;
+- container change / item transfer / equipment change;
 - quest-state change;
 - use of a one-time interactable;
 - Dynamic Event Spot reroll, reward-offer generation and reward-choice progress.
@@ -66,11 +67,13 @@ Movement by itself does not trigger saves.
 7. Reload the browser page.
 8. Confirm the selected class profile is restored.
 9. Confirm the game starts in the saved zone/entry context.
-10. Confirm resource and inventory counters are restored.
+10. Confirm resources and all ContainerSystem slots are restored.
 11. Confirm previously used one-time objects do not reappear as available objects.
 12. Confirm quest progress/completion is restored without granting rewards again.
 13. Open a dynamic resource/chest offer, reload before finishing it, and confirm the same generated offer remains instead of rerolling.
 14. Confirm zone quality/event timers continue from their saved timestamps.
+15. Move an item Backpack → Bank, reload, and confirm placement remains.
+16. Equip a DEV item, reload, and confirm the equipment slot remains.
 
 ## Current limitations
 
@@ -78,7 +81,7 @@ This is deliberately a prototype persistence adapter, not an account/cloud save 
 
 - No server synchronization.
 - No cross-device save transfer.
-- No schema migrations yet; only schema v1 exists.
+- Game State still uses schema v1; v0.0.35 performs an additive runtime migration from the old flat inventory/resource placement into ContainerSystem when no container snapshot exists.
 - No conflict resolution.
 - No trusted/authoritative anti-cheat storage.
 - Dynamic Event Spots use real timestamps, but there is still no general Process/Offline Idle progression system.
