@@ -1,0 +1,29 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>uGame Simulation #20</title><link rel="stylesheet" href="./style.css"></head><body><main>
+<header class="hero"><div><div class="small">Current baseline · Simulation Lab v0.2</div><h1>#20 · MATRIX + Player Effort</h1><p>Первый валидный MATRIX после исправления random caps, per-master rotation coverage и click/time analytics.</p></div><div class="actions"><a class="button" href="./">← Архив</a><a class="button" href="https://github.com/sunpole/uGame/actions/runs/37534965258">Actions ↗</a></div></header>
+<section><h2>World-size matrix</h2><table><thead><tr><th>Zones</th><th>Location T4</th><th>Master T4</th><th>T4 suppressed</th><th>Mean reward</th><th>Max zone share</th></tr></thead><tbody>
+<tr><td>8</td><td>1.064%</td><td>2.085%</td><td>11.328%</td><td>×1.112</td><td>15.617%</td></tr>
+<tr><td>30</td><td>2.842%</td><td>1.973%</td><td>40.481%</td><td>×1.151</td><td>4.704%</td></tr>
+<tr><td>50</td><td>3.839%</td><td>1.560%</td><td>58.518%</td><td>×1.155</td><td>3.186%</td></tr>
+<tr><td>100</td><td>5.773%</td><td>0.874%</td><td>81.009%</td><td>×1.176</td><td>1.426%</td></tr>
+</tbody></table></section>
+<section><h2>Expected clicks to find T4</h2><table><thead><tr><th>Search only inside</th><th>8-zone world</th><th>100-zone world</th></tr></thead><tbody>
+<tr><td>T1 Location</td><td>~146 clicks</td><td>~564 clicks</td></tr>
+<tr><td>T2 Location</td><td>~55</td><td>~240</td></tr>
+<tr><td>T3 Location</td><td>~26</td><td>~118</td></tr>
+<tr><td>T4 Location</td><td>~15</td><td>~70</td></tr>
+</tbody></table>
+<div class="bar-row"><span>T1 · 8 zones</span><div class="bar"><i style="width:25.9%"></i></div><b>146</b></div>
+<div class="bar-row"><span>T4 · 8 zones</span><div class="bar"><i style="width:2.7%"></i></div><b>15</b></div>
+<div class="bar-row"><span>T1 · 100 zones</span><div class="bar purple"><i style="width:100%"></i></div><b>564</b></div>
+<div class="bar-row"><span>T4 · 100 zones</span><div class="bar purple"><i style="width:12.4%"></i></div><b>70</b></div>
+</section>
+<section><h2>1 Attention-equivalent · current analytical model</h2><p class="small">5000 Stone-value — только аналитическая единица, не игровой обмен.</p><table><thead><tr><th>Location</th><th>8 zones · interaction time</th><th>8 zones · fresh total clicks</th><th>100 zones · interaction time</th><th>100 zones · fresh total clicks</th></tr></thead><tbody>
+<tr><td>T1</td><td>43.38 h</td><td>1041</td><td>44.99 h</td><td>1080</td></tr>
+<tr><td>T2</td><td>34.67 h</td><td>832</td><td>37.18 h</td><td>892</td></tr>
+<tr><td>T3</td><td>28.53 h</td><td>685</td><td>31.52 h</td><td>757</td></tr>
+<tr><td>T4</td><td>24.30 h</td><td>583</td><td>27.33 h</td><td>656</td></tr>
+</tbody></table></section>
+<section><h2>Принятый вывод после #20</h2><div class="callout ok">Caps/rotation оставляем как random model. Большие тесты на этом останавливаем. Для реального Attention принят другой cadence guardrail: около 1/неделю — нормальный ориентир, около 1/день — hardcore, &gt;10/неделю — anomaly/log review.</div></section>
+<section><h2>Документы</h2><div class="actions"><a class="button" href="../../docs/project-journal/audits/2026-10-07-simulation-matrix-v02-player-effort.md">Audit #20</a><a class="button" href="../../docs/project-journal/records/UGD-0019-player-effort-click-cost.md">UGD-0019</a><a class="button" href="../../docs/project-journal/records/UGD-0020-attention-cadence-guardrail.md">UGD-0020</a></div></section>
+<footer>Run #20 · commit 06168198a1de · seed 42 · 100,000 cycles per world size</footer>
+</main></body></html>
