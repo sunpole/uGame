@@ -297,9 +297,14 @@ export class EventSpotSystem {
     }
 
     const isChest = event.kind === 'chest';
+    const restrictedChoice = Number(offer.maxChoices || 1) < offer.options.length;
     const description = isChest
-      ? `Появилось сундуков: ${offer.options.length}. Можно забрать: ${offer.maxChoices}. Содержимое скрыто до выбора.`
-      : `Сгенерировано вариантов: ${offer.options.length}. Выбери один ресурсный результат.`;
+      ? restrictedChoice
+        ? `Появилось сундуков: ${offer.options.length}. Можно забрать: ${offer.maxChoices}. Это слепой выбор: содержимое скрыто до решения.`
+        : `Появилось сундуков: ${offer.options.length}. Можно забрать все — содержимое показано сразу.`
+      : restrictedChoice
+        ? `Сгенерировано вариантов: ${offer.options.length}. Можно забрать: ${offer.maxChoices}. Это слепой выбор: награды скрыты до решения.`
+        : `Сгенерировано вариантов: ${offer.options.length}. Можно забрать все — награды показаны сразу.`;
 
     this.interactionPanel?.showRewardOffer({
       title: isChest ? 'Случайные сундуки' : 'Ресурсное событие',
