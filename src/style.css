@@ -287,6 +287,91 @@ input {
   display: none;
 }
 
+.interaction-panel {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  bottom: 24px;
+  width: min(680px, calc(100% - 40px));
+  padding: 14px;
+  box-sizing: border-box;
+  border: 1px solid #3c4450;
+  border-radius: 8px;
+  background: rgba(9, 11, 15, 0.97);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.interaction-panel[hidden] {
+  display: none;
+}
+
+.interaction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.interaction-header strong {
+  color: #f0c66a;
+  font-size: 14px;
+}
+
+.interaction-header button,
+.interaction-option {
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  background: #161b22;
+  color: #e6edf3;
+  cursor: pointer;
+}
+
+.interaction-header button {
+  min-height: 28px;
+  padding: 0 10px;
+}
+
+.interaction-panel > p {
+  margin: 10px 0;
+  color: #c9d1d9;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.interaction-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.interaction-option {
+  min-height: 58px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.interaction-option:hover:not(:disabled) {
+  border-color: #58a6ff;
+  background: #1f2937;
+}
+
+.interaction-option[data-selected='true'] {
+  border-color: #238636;
+  color: #7ee787;
+}
+
+.interaction-option:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.interaction-meta {
+  min-height: 18px;
+  margin-top: 10px;
+  color: #8b949e;
+  font-size: 11px;
+}
+
 .dialogue-speaker {
   color: #d2a8ff;
   font-size: 13px;
@@ -426,9 +511,14 @@ input {
     bottom: 122px;
   }
 
-  .dialogue-panel {
+  .dialogue-panel,
+  .interaction-panel {
     bottom: 122px;
     width: calc(100% - 24px);
+  }
+
+  .interaction-options {
+    grid-template-columns: 1fr;
   }
 
   .game-hud {
