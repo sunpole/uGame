@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.48**
+Current version: **0.0.49**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.49 | Workspace Window Bounds: игровые окна жёстко ограничены игровым Workspace |
 | 0.0.48 | Complete HUD migration + cross-page persistent project chrome |
 | 0.0.47 | Project Hub interface settings with text selection disabled by default |
 | 0.0.46 | Mouse / AnyDesk controls use the same contextual Action path |
@@ -54,6 +55,9 @@ Current version: **0.0.48**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.49
+Все runtime-окна получили общий Window Manager и единый контракт containment. Dialogue, Interaction/Chest/Resource и Inventory измеряются относительно реального `#game` внутри Workspace и не могут выйти за его границы. Project Hub по-прежнему живёт только внутри OverlayRoot, поэтому Header/Footer остаются физически отдельными областями.
 
 ## 0.0.48
 Completed the Game Chrome migration. The legacy in-canvas HUD is hidden only after its information has replacements: Stamina/resources/storage/fragments are in the persistent header and live zone-rule context is in the footer; quest/context prompts remain in the Workspace. Remote Action input is hardened so an open modal cannot leak a world interaction. Class changes and initial storage load update the header immediately.

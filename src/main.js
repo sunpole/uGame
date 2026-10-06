@@ -26,6 +26,7 @@ import { GameClockSystem } from './game-clock-system.js';
 import { ChromeHeaderSystem } from './chrome-header-system.js';
 import { ActionRouter } from './action-router.js';
 import { InterfaceSettingsSystem } from './interface-settings.js';
+import { UIWindowManager } from './ui-window-manager.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -48,6 +49,7 @@ let gameClockSystem = null;
 let chromeHeaderSystem = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
+let uiWindowManager = null;
 
 
 function syncPlayerInputState() {
@@ -232,7 +234,8 @@ class ZoneScene extends Phaser.Scene {
       speakerElement: document.querySelector('#dialogue-speaker'),
       textElement: document.querySelector('#dialogue-text'),
       nextButton: document.querySelector('#dialogue-next'),
-      onOpenChange: () => syncPlayerInputState()
+      onOpenChange: () => syncPlayerInputState(),
+      windowManager: uiWindowManager
     });
 
     this.interactionPanel = new InteractionPanelSystem({
@@ -242,7 +245,8 @@ class ZoneScene extends Phaser.Scene {
       optionsElement: document.querySelector('#interaction-options'),
       metaElement: document.querySelector('#interaction-meta'),
       closeButton: document.querySelector('#interaction-close'),
-      onOpenChange: () => syncPlayerInputState()
+      onOpenChange: () => syncPlayerInputState(),
+      windowManager: uiWindowManager
     });
 
     this.inventoryPanel = new InventoryPanelSystem({
@@ -260,7 +264,8 @@ class ZoneScene extends Phaser.Scene {
         document.querySelector('#inventory-open'),
         document.querySelector('#inventory-open-touch')
       ],
-      onOpenChange: () => syncPlayerInputState()
+      onOpenChange: () => syncPlayerInputState(),
+      windowManager: uiWindowManager
     });
 
     actionRouter?.destroy?.();
@@ -593,6 +598,11 @@ chromeHeaderSystem = new ChromeHeaderSystem({
 chromeHeaderSystem.load()
   .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
   .catch(() => {});
+
+uiWindowManager = new UIWindowManager({
+  host: document.querySelector('#game'),
+  margin: 12
+});
 
 fitPlayfield();
 window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));

@@ -1,11 +1,16 @@
 export class DialogueSystem {
-  constructor({ eventSystem, panel, speakerElement, textElement, nextButton, onOpenChange } = {}) {
+  constructor({ eventSystem, panel, speakerElement, textElement, nextButton, onOpenChange, windowManager } = {}) {
     this.eventSystem = eventSystem;
     this.panel = panel;
     this.speakerElement = speakerElement;
     this.textElement = textElement;
     this.nextButton = nextButton;
     this.onOpenChange = onOpenChange;
+    this.windowManager = windowManager;
+    this.unregisterWindow = this.windowManager?.register(this.panel, {
+      level: 'game-modal',
+      close: () => this.close(false)
+    }) || null;
     this.dialogues = {};
     this.current = null;
     this.index = 0;
@@ -27,9 +32,11 @@ export class DialogueSystem {
     const dialogue = this.dialogues[id];
     if (!dialogue?.lines?.length) return false;
 
+    this.windowManager?.activate(this.panel);
     this.current = { id, ...dialogue };
     this.index = 0;
     this.panel?.removeAttribute('hidden');
+    this.windowManager?.fitSoon(this.panel);
     this.onOpenChange?.(true);
     this.eventSystem?.emit('dialogue:open', { id });
     this.render();
@@ -46,6 +53,7 @@ export class DialogueSystem {
     if (this.speakerElement) this.speakerElement.textContent = line.speaker || this.current.speaker || '';
     if (this.textElement) this.textElement.textContent = line.text || '';
     if (this.nextButton) this.nextButton.textContent = this.index >= this.current.lines.length - 1 ? 'Закрыть' : 'Дальше';
+    this.windowManager?.fitSoon(this.panel);
   }
 
   advance() {
@@ -64,6 +72,7 @@ export class DialogueSystem {
     this.current = null;
     this.index = 0;
     this.panel?.setAttribute('hidden', '');
+    this.windowManager?.closed(this.panel);
     this.onOpenChange?.(false);
     this.eventSystem?.emit('dialogue:close', { id, completed });
     if (completed) {

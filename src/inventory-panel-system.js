@@ -31,7 +31,8 @@ export class InventoryPanelSystem {
     statusElement,
     closeButton,
     openButtons = [],
-    onOpenChange
+    onOpenChange,
+    windowManager
   } = {}) {
     this.eventSystem = eventSystem;
     this.containerSystem = containerSystem;
@@ -45,8 +46,13 @@ export class InventoryPanelSystem {
     this.closeButton = closeButton;
     this.openButtons = openButtons.filter(Boolean);
     this.onOpenChange = onOpenChange;
+    this.windowManager = windowManager;
     this.currentTab = 'backpack';
     this.bankAccess = false;
+    this.unregisterWindow = this.windowManager?.register(this.panel, {
+      level: 'game-modal',
+      close: () => this.close()
+    }) || null;
 
     this.closeButton?.addEventListener('click', () => this.close());
     for (const button of this.openButtons) {
@@ -78,17 +84,20 @@ export class InventoryPanelSystem {
   }
 
   open(tab = 'backpack', { bankAccess = false } = {}) {
+    this.windowManager?.activate(this.panel);
     this.bankAccess = Boolean(bankAccess);
     this.currentTab = tab === 'bank' && !this.bankAccess ? 'backpack' : tab;
     if (this.panel) this.panel.removeAttribute('hidden');
     this.onOpenChange?.(true);
     this.render();
+    this.windowManager?.fitSoon(this.panel);
   }
 
   close() {
     this.bankAccess = false;
     this.currentTab = 'backpack';
     this.panel?.setAttribute('hidden', '');
+    this.windowManager?.closed(this.panel);
     this.onOpenChange?.(false);
   }
 
@@ -115,6 +124,7 @@ export class InventoryPanelSystem {
 
     if (config.kind === 'equipment') this.renderEquipment(config, state);
     else this.renderGrid(config, state);
+    this.windowManager?.fitSoon(this.panel);
   }
 
   renderTabs() {

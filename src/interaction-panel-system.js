@@ -6,7 +6,8 @@ export class InteractionPanelSystem {
     optionsElement,
     metaElement,
     closeButton,
-    onOpenChange
+    onOpenChange,
+    windowManager
   } = {}) {
     this.panel = panel;
     this.titleElement = titleElement;
@@ -15,7 +16,12 @@ export class InteractionPanelSystem {
     this.metaElement = metaElement;
     this.closeButton = closeButton;
     this.onOpenChange = onOpenChange;
+    this.windowManager = windowManager;
     this.currentOffer = null;
+    this.unregisterWindow = this.windowManager?.register(this.panel, {
+      level: 'game-modal',
+      close: () => this.close()
+    }) || null;
 
     this.closeButton?.addEventListener('click', () => this.close());
     window.addEventListener('keydown', (event) => {
@@ -30,13 +36,16 @@ export class InteractionPanelSystem {
   }
 
   open() {
+    this.windowManager?.activate(this.panel);
     this.panel?.removeAttribute('hidden');
+    this.windowManager?.fitSoon(this.panel);
     this.onOpenChange?.(true);
   }
 
   close() {
     this.currentOffer = null;
     this.panel?.setAttribute('hidden', '');
+    this.windowManager?.closed(this.panel);
     this.onOpenChange?.(false);
   }
 
@@ -161,6 +170,7 @@ export class InteractionPanelSystem {
         renderOption(button, option, index, revealMissed);
       }
       updateMeta();
+      this.windowManager?.fitSoon(this.panel);
     };
 
     offer.options.forEach((option, index) => {
