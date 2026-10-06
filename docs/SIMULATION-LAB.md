@@ -567,49 +567,39 @@ Every report should display:
 
 Later real gameplay telemetry can be compared against simulator predictions, but should never be silently mixed.
 
-## Implementation phases
+## Implementation status
 
-### S1 — Engine skeleton
+### Implemented in v0.0.37
 
-Config validation, deterministic RNG, synthetic world, counters.
+- deterministic standard-library Python engine and config validation;
+- synthetic worlds for arbitrary N, with normal presets 8 / 30 / 50 / 100;
+- Location Tier timers and distance-band candidate probabilities;
+- biome/resource selection and master allocator with world/per-location-resource caps;
+- accepted reward/XP multiplier ordering;
+- TRACE / TEST / DEEP / MATRIX modes;
+- JSON / CSV / self-contained HTML / SVG reports;
+- warnings and OK / REVIEW / BAD verdict;
+- CLI A/B comparison;
+- GitHub Actions manual no-install runner;
+- automatic push smoke verification;
+- updater option 9 as safe local fallback.
 
-### S2 — Location Tier + distance
+### Verified
 
-Distance bands and location state timers.
+The first automatic GitHub Actions smoke run completed successfully: Python compilation, config validation, unit tests, deterministic checks, TRACE simulation and artifact generation all passed.
 
-### S3 — Resource/master allocator
+### Still future
 
-Biome eligibility, world caps, local caps, rotation.
-
-### S4 — Reward/XP model
-
-Additive bonuses + final master multiplier.
-
-### S5 — Reports
-
-JSON/CSV/HTML/SVG + warnings.
-
-### S6 — Compare
-
-A/B comparison and config diff.
-
-### S7 — Web run
-
-GitHub Actions workflow + artifact.
-
-### S8 — Local updater
-
-Safe menu integration.
-
-### S9 — DEV World Analyzer
-
-Text/diagram analyzer inside the actual game using live WorldSpawnState.
-
+- ingest the actual `data/world.json` as a simulation preset;
+- richer waiting-time/CDF and nominal-vs-realized chart set;
+- workflow UI for directly selecting/comparing previous artifacts;
+- in-game DEV World Analyzer backed by the future live `WorldSpawnState`;
+- performance optimization only if measured TEST/DEEP/MATRIX runtimes justify it.
 ## Acceptance criteria for MVP
 
 Simulation Lab MVP is accepted when:
 
-1. TEST 100k and DEEP 1M complete without graphical runtime;
+1. TRACE is automatically smoke-verified; TEST 100k and DEEP 1M complete without graphical runtime in manual benchmark runs;
 2. same seed/config reproduces summary;
 3. reports include manifest, JSON, CSV, HTML and required charts;
 4. 8/30/50/100 world-size matrix can be produced;
