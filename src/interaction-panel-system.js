@@ -71,40 +71,68 @@ export class InteractionPanelSystem {
     if (this.textElement) this.textElement.textContent = text;
     if (this.closeButton) this.closeButton.textContent = 'Закрыть';
 
+    const maxChoices = Math.max(1, Number(offer.maxChoices || 1));
     const selected = new Set(
       Array.isArray(offer.selectedIndices)
         ? offer.selectedIndices.filter((value) => Number.isInteger(value))
         : []
     );
+    const revealUnchosenAfterComplete = offer.revealUnchosenAfterComplete !== false;
+    const optionButtons = [];
 
-    const updateMeta = () => {
-      const remaining = Math.max(0, Number(offer.maxChoices || 1) - selected.size);
-      if (this.metaElement) {
-        this.metaElement.textContent = remaining > 0
-          ? `Можно выбрать ещё: ${remaining}`
-          : 'Выбор завершён';
-      }
+    const done = () => selected.size >= maxChoices;
+
+    const rewardText = (option, index) => {
+      const reward = option.reward || {};
+      const label = option.label || `Вариант ${index + 1}`;
+      const value = `${reward.qualityLabel || ''} · ${reward.resourceName || reward.resourceId || 'Награда'} ×${reward.amount || 1}`;
+      return offer.hidden ? `${label} → ${value}` : value;
     };
 
-    const revealText = (option, index, wasSelected = false) => {
-      const reward = option.reward || {};
-      if (offer.hidden && !wasSelected) return option.label || `Сундук ${index + 1}`;
-      const prefix = offer.hidden ? `${option.label || `Сундук ${index + 1}`} → ` : '';
-      return `${prefix}${reward.qualityLabel || ''} · ${reward.resourceName || reward.resourceId || 'Награда'} ×${reward.amount || 1}`;
+    const hiddenText = (option, index) => option.label || `Вариант ${index + 1}`;
+
+    const renderOption = (button, option, index, revealMissed = false) => {
+      const isSelected = selected.has(index);
+      const reveal = !offer.hidden || isSelected || revealMissed;
+
+      button.textContent = reveal ? rewardText(option, index) : hiddenText(option, index);
+      button.disabled = isSelected || done();
+
+      if (isSelected) button.dataset.selected = 'true';
+      else delete button.dataset.selected;
+
+      if (revealMissed && !isSelected) button.dataset.missed = 'true';
+      else delete button.dataset.missed;
+    };
+
+    const updateMeta = () => {
+      if (!this.metaElement) return;
+      const remaining = Math.max(0, maxChoices - selected.size);
+      if (remaining > 0) {
+        this.metaElement.textContent = `Можно выбрать ещё: ${remaining}`;
+        return;
+      }
+      this.metaElement.textContent = revealUnchosenAfterComplete && offer.hidden
+        ? 'Выбор завершён · показано, что было в остальных вариантах'
+        : 'Выбор завершён';
+    };
+
+    const renderAll = ({ revealMissed = false } = {}) => {
+      for (const { button, option, index } of optionButtons) {
+        renderOption(button, option, index, revealMissed);
+      }
+      updateMeta();
     };
 
     offer.options.forEach((option, index) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'interaction-option';
-      const alreadySelected = selected.has(index);
-      button.textContent = revealText(option, index, alreadySelected);
-      button.disabled = alreadySelected || selected.size >= Number(offer.maxChoices || 1);
-      if (alreadySelected) button.dataset.selected = 'true';
+      optionButtons.push({ button, option, index });
+      renderOption(button, option, index, false);
 
       button.addEventListener('click', async () => {
-        if (selected.has(index)) return;
-        if (selected.size >= Number(offer.maxChoices || 1)) return;
+        if (selected.has(index) || done()) return;
 
         button.disabled = true;
         const accepted = await onChoose?.(option, index);
@@ -115,30 +143,25 @@ export class InteractionPanelSystem {
 
         selected.add(index);
         offer.selectedIndices = [...selected];
-        button.dataset.selected = 'true';
-        button.textContent = revealText(option, index, true);
 
-        const done = selected.size >= Number(offer.maxChoices || 1);
-        for (const sibling of this.optionsElement?.querySelectorAll('button') || []) {
-          if (done) sibling.disabled = true;
-        }
-        updateMeta();
-        if (done) onComplete?.(offer);
+        const isComplete = done();
+        renderAll({
+          revealMissed: isComplete && revealUnchosenAfterComplete
+        });
+
+        if (isComplete) onComplete?.(offer);
       });
 
       this.optionsElement?.append(button);
     });
 
-    updateMeta();
+    const alreadyComplete = done();
+    renderAll({
+      revealMissed: alreadyComplete && revealUnchosenAfterComplete
+    });
     this.open();
 
-    if (selected.size >= Number(offer.maxChoices || 1)) {
-      for (const button of this.optionsElement?.querySelectorAll('button') || []) {
-        button.disabled = true;
-      }
-      onComplete?.(offer);
-    }
-
+    if (alreadyComplete) onComplete?.(offer);
     return true;
   }
 }
