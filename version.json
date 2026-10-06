@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.38",
-  "stage": "project-hub-simulation-ux",
+  "version": "0.0.39",
+  "stage": "simulation-lab-v0.2",
   "updated": "2026-10-06",
-  "summary": "Fix local journal routes and add beginner-friendly Simulation Lab launch guidance"
+  "summary": "Simulation Lab v0.2 with master rotation coverage and player effort/click analytics"
 }
