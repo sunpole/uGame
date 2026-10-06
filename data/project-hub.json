@@ -88,8 +88,15 @@
         },
         {
           "id": "simulation-run",
-          "label": "Запустить Simulation Lab",
-          "description": "TRACE / TEST 100k / DEEP 1M / MATRIX через GitHub Actions без локальной установки Python.",
+          "label": "Как запустить Simulation Lab",
+          "description": "Короткая инструкция для первого запуска: GitHub Actions, TEST 100k, где найти отчёт и локальный вариант.",
+          "type": "document",
+          "target": "./docs/SIMULATION-LAB-QUICKSTART.md"
+        },
+        {
+          "id": "simulation-actions",
+          "label": "Открыть GitHub Actions runner",
+          "description": "Прямой переход к ручному запуску TRACE / TEST / DEEP / MATRIX.",
           "type": "external",
           "target": "https://github.com/sunpole/uGame/actions/workflows/simulation-lab.yml"
         },
