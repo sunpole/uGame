@@ -2,8 +2,8 @@
 
 Дата: 2026-10-06  
 Тип: system  
-Статус: discussing  
-Flags: needs-prototype, needs-test, needs-calculation, needs-lore, needs-scope-decision  
+Статус: accepted  
+Flags: needs-prototype, needs-test, needs-calculation, needs-lore  
 Теги: npc, relationships, idle, process, resources, skills, rarity, modules, quests, analytics, lore, character-progression
 
 ## Контекст
@@ -94,15 +94,7 @@ T4 = ×1.60
 
 Это **локальный коэффициент взаимодействия с текущим NPC/Encounter**, а не автоматически тот же показатель, что глобальный `КПД`, `daily efficiency` или `Импульс` из UGD-0001 / UGD-0005 / UGD-0012.
 
-Точная область применения локального коэффициента пока не утверждена. Кандидаты:
-
-- Relationship XP;
-- прогресс Process/Idle;
-- mastery ресурсного направления;
-- training / skill progression;
-- отдельные квестовые действия.
-
-Не принято, должен ли этот коэффициент менять количество физического ресурса/Reward напрямую.
+Локальный коэффициент подтверждён как внешний multiplier **опыта и наград, полученных через этого NPC**. Он не усиливает опыт/награды, полученные из других источников. Обычные bonus сначала складываются, после чего master multiplier применяется к итоговому результату. Точная формула пересечения с Location Tier вынесена в `UGD-0016`.
 
 ## Четыре разных слоя данных
 
@@ -159,7 +151,7 @@ currentProcessOfferIds[]
 temporaryFlags[]
 ```
 
-Если Tier в итоге будет постоянным свойством NPC, Encounter читает его из NPC Definition. Если Tier окажется свойством встречи, Encounter хранит результат roll. Этот выбор ещё не закрыт.
+Tier является постоянным свойством master/NPC Definition. Encounter всегда читает Tier из выбранной master identity.
 
 ### 3. Character ↔ NPC Relationship State — персональные отношения
 
@@ -180,7 +172,7 @@ specialFlags[]
 
 Отношения не должны расти от бесконечного спама кнопки Dialogue. Источники роста — значимые действия: квесты, Process, помощь, одноразовые диалоги, мероприятия и специальные запросы.
 
-Точный scope отношений для нескольких персонажей одного аккаунта ещё требует отдельного решения: `character` или `account`.
+Relationship State принадлежит **конкретному персонажу**, а не аккаунту целиком. Несколько персонажей одного аккаунта имеют независимые отношения с одним и тем же master.
 
 ### 4. Character Resource / Skill Progression — развитие персонажа
 
@@ -203,21 +195,7 @@ NPC/направление может определять **шаблон дер
 
 ## Дерево развития
 
-Изначальная идея «у каждого NPC своя ветка» сохраняется как возможный **контентный шаблон**, но не как место хранения прогрессии.
-
-Есть две ещё не разведённые модели:
-
-```text
-A. NPC-specific tree template
-каждый NPC предлагает свою ветку/набор узлов
-→ эффекты записываются в персонажа игрока
-
-B. Resource-direction tree
-несколько NPC направления Камня открывают разные части одного Stone Tree
-→ эффекты также записываются в персонажа игрока
-```
-
-Какую модель выбрать — открытый вопрос аудита.
+Подтверждена модель **Resource-direction tree**. Все master одного resourceDirection работают с одним деревом развития этого направления у конкретного персонажа. Например, все master Камня дают доступ к одному дереву Каменолома персонажа. Смешанных специализаций NPC нет.
 
 Пример возможных веток Камня:
 
@@ -271,7 +249,7 @@ Process живёт во времени / offline
 открываются новые возможности
 ```
 
-Нужно отдельно решить, продолжает ли уже запущенный Process работать после исчезновения 30-минутного NPC Encounter.
+Process/Quest этого wandering NPC ограничен оставшимся временем Encounter: система не предлагает длительность больше `expiresAt - now`. После despawn незавершённое взаимодействие закрывается. Если результат успел завершиться, он сохраняется как pending reward в Character↔Master state и может быть выдан при будущей встрече с этим master, когда нужный модуль снова доступен.
 
 ## 30-минутный цикл
 
@@ -281,7 +259,7 @@ Process живёт во времени / offline
 - новый Encounter получает новый набор доступных модулей;
 - NPC/Event может исчезнуть, но персональный прогресс игрока не стирается.
 
-Способ выбора Tier/NPC после пересчёта пока не закрыт окончательно.
+Tier принадлежит master identity постоянно. Выбор master и его фактическая доступность зависят от Location Tier, biome/resourceDirection и мировых spawn-ограничений, описанных в `UGD-0016`.
 
 ## Tier и будущий Lore layer
 
@@ -298,7 +276,7 @@ Process живёт во времени / offline
 - происхождение/регион;
 - уникальные lore tags.
 
-Игроки потенциально смогут со временем узнавать сильных/редких NPC по имени и званию. Это аргумент в пользу постоянного Tier у личности, но окончательное правило пока не принято.
+Игроки смогут со временем узнавать сильных/редких master по имени и званию; постоянный Tier личности подтверждён. Финальные имена и звания остаются частью будущего ЛОРа.
 
 ## Пересечение с текущими системами
 
@@ -338,18 +316,19 @@ character-owned skill progression
 1 экран аналитики
 ```
 
-## Открытые вопросы перед закреплением
+## Принятые уточнения после аудита
 
-1. Tier — постоянное свойство NPC Definition или временный roll Encounter?
-2. NPC Tier roll независим от Zone Quality и Reward Rarity или должен быть связан с одним из них?
-3. Что именно умножает локальный коэффициент `×1.00…×1.60`?
-4. Skill Tree template принадлежит конкретному NPC или всему ресурсному направлению?
-5. Relationship State принадлежит персонажу или аккаунту, если на одном аккаунте будет несколько персонажей?
-6. Можно ли всегда просматривать уже изученную аналитику/дерево, когда соответствующий модуль не выпал в текущем Encounter?
-7. Продолжает ли уже запущенный Process работать после despawn NPC?
-8. Все Resource Events должны стать NPC или NPC является только одним из вариантов ресурсного Event?
-9. Один NPC всегда относится к одному resourceDirection или позднее допустимы смешанные специализации?
-10. Можно ли перераспределять Character skill points?
+1. Tier постоянен у master identity.
+2. Location Tier влияет на шанс более высокого master Tier; точная conditional matrix вынесена в `UGD-0016`.
+3. Master multiplier умножает только XP и reward этого NPC.
+4. Skill Tree принадлежит resourceDirection и хранится у персонажа.
+5. Relationship — character-scoped, не account-wide.
+6. Просмотр своего skill/progression доступен всегда; тратить очки/учиться можно только через NPC Encounter, где выпал соответствующий Training/Development module.
+7. Process/Quest не может длиться дольше оставшегося lifetime NPC; после despawn незавершённое закрывается, завершённый результат сохраняется как pending reward.
+8. Resource interactions представлены wandering NPC; Bank/service — resident NPC мирного города.
+9. У NPC только одна resource specialization; mixed specialization нет.
+10. Respec по умолчанию отсутствует; в будущем возможен специальный редкий quest/механика.
+11. На один resourceDirection существует четыре master identity — T1/T2/T3/T4; runtime появления являются spawn-instance/копиями этих master.
 
 ## Audit
 
@@ -357,7 +336,7 @@ character-owned skill progression
 
 ## Статус
 
-Это зафиксированная **рабочая гипотеза**. Подтверждённые правила внесены, но до ответов на вопросы аудита запись не переводится в `accepted` и система не реализуется.
+Ключевые правила NPC/Relationship/Character Progression **приняты**. Spawn/balance часть, зависящая от Location Tier, distance, biome и world caps, продолжает обсуждаться отдельно в `UGD-0016`.
 
 ## Связи
 
@@ -369,3 +348,4 @@ character-owned skill progression
 - UGD-0012 — daily efficiency.
 - UGD-0013 — Dynamic Event Spots и Interaction UI.
 - UGD-0014 — ContainerSystem и progression hooks хранения.
+- UGD-0016 — Location Tier, biome, distance from city и мировые caps master NPC.
