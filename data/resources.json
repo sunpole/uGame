@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "baseResourceId": "stone",
+  "resources": [
+    {
+      "id": "stone",
+      "name": "Камень",
+      "baseValue": 1,
+      "tierHint": "normal"
+    },
+    {
+      "id": "wood",
+      "name": "Дерево",
+      "baseValue": 10,
+      "tierHint": "rare"
+    },
+    {
+      "id": "water",
+      "name": "Вода",
+      "baseValue": 100,
+      "tierHint": "magic"
+    },
+    {
+      "id": "attention",
+      "name": "Внимание",
+      "baseValue": 5000,
+      "tierHint": "unique",
+      "accountBound": true
+    }
+  ]
+}
