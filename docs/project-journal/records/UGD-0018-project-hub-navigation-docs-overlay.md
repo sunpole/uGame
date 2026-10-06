@@ -3,7 +3,7 @@
 Дата: 2026-10-06  
 Тип: ui-ux  
 Статус: accepted  
-Flags: needs-prototype, needs-test  
+Flags: needs-test  
 Теги: ui, ux, navigation, documentation, developer-tools, overlay, project-hub
 
 ## Контекст
@@ -286,6 +286,12 @@ MVP:
 ## Почему это делаем до дальнейшего усложнения проекта
 
 Project Hub становится постоянным входом в developer/project surfaces. Simulation Lab, World Analyzer и последующие инструменты смогут подключаться к уже готовой навигации вместо добавления новых случайных кнопок по интерфейсу.
+
+## Реализация v0.0.36
+
+Project Hub MVP реализован в игре: topbar entry, единый responsive overlay, navigation stack, Back/Close/Escape, встроенный Markdown viewer, поиск/открытие Project Journal records, external GitHub/Actions/Pages links и shared input lock с другими игровыми overlay.
+
+В v0.0.37 раздел Tools дополнен прямым переходом к GitHub Actions Simulation Lab.
 
 ## Статус
 
