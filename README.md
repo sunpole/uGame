@@ -32,9 +32,9 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.35 — Dynamic Events + Modular Containers
+## Game prototype v0.0.36 — Project Hub + Dynamic Events + Modular Containers
 
-uGame keeps the First Playable slice and now adds a first changing-world layer on top of it.
+uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
 
 - four connected top-down zones loaded from `data/world.json` through WorldGraph;
@@ -78,7 +78,9 @@ The original First Playable quest remains available: speak with the Guide, explo
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
 On top of that static loop, v0.0.32 tests whether changing Event Spots make revisiting zones
 more interesting. v0.0.35 adds the first inventory/storage gameplay layer: physical rewards now
-need portable container capacity, while Attention remains intangible/account storage. Event Portal
+need portable container capacity, while Attention remains intangible/account storage. v0.0.36 adds
+the Project Hub so project documentation, Journal records and project/tool links can be reached
+without leaving or reloading the current game session. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
