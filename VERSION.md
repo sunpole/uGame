@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.33**
+Current version: **0.0.34**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.34 | Blind restricted reward choices + optional reveal of missed rewards after selection |
 | 0.0.33 | Remote-friendly controls: Enter interaction key + always-visible mouse buttons |
 | 0.0.32 | Dynamic Event Spots, timed zone quality, reusable reward-choice UI and persistent generated offers |
 | 0.0.31 | First Playable content slice: four-zone loop, guide, three fragments and final core objective |
@@ -39,6 +40,9 @@ Current version: **0.0.33**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.34
+Reward-choice presentation now follows one general rule. If the player can take every generated option, rewards are shown immediately because there is no meaningful choice to protect. If the player may take only part of the generated set, all options are hidden before selection so the interaction behaves as a lottery instead of a value-comparison menu. After the allowed choices are taken, unchosen rewards can be revealed as informational feedback; this behavior is controlled by `choicePresentation.revealUnchosenAfterComplete` in `data/reward-rules.json` and is enabled by default. The same rule applies to resource and chest reward offers.
 
 ## 0.0.33
 Remote testing through desktop-control apps no longer depends on sending the E or Space key. Enter is now a third interaction key alongside E and Space. The bottom bar also contains persistent clickable controls for left/up/down/right, Action and Dash, so the prototype can be operated with a mouse cursor. Direction buttons support press-and-hold. The mouse Dash button uses a short queued pulse, making it possible to click Dash and then a movement direction without needing two simultaneous mouse presses. Existing touch controls remain unchanged for direct mobile play.
