@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.35**
+Current version: **0.0.36**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.36 | In-game Project Hub: navigation, embedded docs/Journal and GitHub links |
 | 0.0.35 | Modular ContainerSystem: Backpack, Bank, Equipment, Resource Pouch, weight and stacks |
 | 0.0.34 | Blind restricted reward choices + optional reveal of missed rewards after selection |
 | 0.0.33 | Remote-friendly controls: Enter interaction key + always-visible mouse buttons |
@@ -41,6 +42,9 @@ Current version: **0.0.35**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.36
+Added the first Project Hub UI directly inside the game shell. The top bar now has one Hub entry instead of scattering project/dev links across the playfield. The Hub uses one responsive overlay shell with root sections and a navigation stack, so documents and Project Journal records can open in the same browser tab with Back/Close/Escape navigation. Internal Markdown is fetched through relative same-origin paths and rendered with a lightweight safe viewer supporting headings, lists, code, quotes and tables. The Hub exposes CURRENT, VERSION, README, Active/Idle Core, Simulation Lab docs, DEV codes and Project Journal search/listing. External GitHub repository/Actions and Pages links open separately. Opening the Hub now participates in the shared input-lock rule with Dialogue, Interaction and Inventory overlays, so player movement does not resume until every blocking overlay is closed. No save schema or gameplay-world rules changed.
 
 ## 0.0.35
 Runtime inventory is moved from the old flat InventorySystem into a modular ContainerSystem. Backpack, Resource Pouch, Equipment and Bank are now configurations of one storage engine with slots, per-item stack limits, weight limits, transfer rules and persistent state. The starter Backpack has 12 slots / 30 kg. Resource Pouch has one slot / 15 kg and currently accepts only Stone, proving the future skill-driven specialization model without implementing the Skill tree yet. Equipment has named helmet/chest/pants/boots/gloves/ring1/ring2/amulet/cloak/belt slots. A prototype Bank interactable on Перекрёсток opens a 60-slot weight-unlimited local Bank; the Bank tab is not available from the ordinary global inventory button. Resources now carry test weights and stack limits: Stone 1 kg, Wood 0.5 kg, Water 0.1 kg, Attention weightless/account-bound. Physical dynamic rewards must fit portable storage or the reward choice remains pending. Old flat inventory and physical resource placement migrate into new containers; migration overflow goes to Bank to avoid data loss. DEV 5011 adds test helmet/belt for equipment QA. See docs/CONTAINER-SYSTEM.md and UGD-0014.
