@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.37",
-  "stage": "simulation-lab",
+  "version": "0.0.38",
+  "stage": "project-hub-simulation-ux",
   "updated": "2026-10-06",
-  "summary": "Headless Simulation Lab with GitHub Actions, reports, comparisons and safe local launcher"
+  "summary": "Fix local journal routes and add beginner-friendly Simulation Lab launch guidance"
 }
