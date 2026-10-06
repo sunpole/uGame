@@ -27,6 +27,7 @@
 - `T4=1` трактуется как `maxCount=1` **и** `targetCount=1`: при наличии допустимого spawn allocator должен поддерживать одного T4 в мире. Для `T3=2` и `T2=3` ещё нужно отдельно подтвердить, являются ли эти значения также targetCount или только caps.
 - Принято `UGD-0017`: probability tables и world caps перед игровой реализацией проверяются отдельным headless Simulation Lab. Он работает deterministic по seed, имеет TRACE / TEST 100k / DEEP 1M / MATRIX, формирует JSON/CSV/self-contained HTML+SVG отчёты и умеет сравнивать runs. В `v0.0.37` реализованы manual GitHub Actions no-install runner и local updater option 9; candidate tables пока не являются live gameplay balance.
 - Принято `UGD-0018`: игра получает единый Project Hub в topbar. Внутренние документы/Project Journal читаются в том же browser tab через overlay/navigation stack; внешние GitHub repository/Actions ссылки открываются отдельно. Hub должен одинаково работать на GitHub Pages и localhost через relative paths и станет входом для будущих Simulation Lab/World Analyzer инструментов.
+- Принято `UGD-0019`: Player Effort измеряется отдельно от внутренней экономики — клики/действия на поиск master и добычу, interaction cadence time и Attention-equivalent через текущий `resources.json`. `1 Attention-equivalent = 5000 Stone-value` используется только для аналитики, не как игровой обмен.
 
 ## Активные рабочие гипотезы
 
@@ -64,6 +65,7 @@
 - `v0.0.36` добавляет Project Hub: единый overlay из игры, встроенное чтение README/VERSION/Journal/docs, Back/Close/Escape, поиск UGD и внешние ссылки GitHub/Actions/Pages.
 - `v0.0.37` добавляет Simulation Lab dev-tooling: deterministic Python engine, candidate tables, TRACE/TEST/DEEP/MATRIX, JSON/CSV/HTML/SVG отчёты, A/B compare, GitHub Actions no-install runner и updater option 9. Candidate probabilities пока не являются live gameplay balance.
 - `v0.0.38` исправляет локальный путь `/journal/` в dev-server и добавляет beginner quickstart для Simulation Lab в Project Hub: сначала понятная инструкция, затем отдельная ссылка на GitHub Actions runner.
+- `v0.0.39` обновляет Simulation Lab до v0.2: random high-tier caps без targetCount, независимый rotation coverage для каждого master, click/search/Attention-equivalent analytics и новые CSV/SVG/HTML отчёты.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
@@ -72,7 +74,7 @@
 **Сейчас приоритет — QA двух только что реализованных инструментальных слоёв, затем анализ Simulation Lab и только после этого возвращение к остальному gameplay.**
 
 1. Проверить `v0.0.36` Project Hub на GitHub Pages и локально: открыть/закрыть Hub, Back/Escape, CURRENT/VERSION/README, Project Journal search/record, Simulation Lab link и убедиться, что движение персонажа блокируется только пока открыт overlay.
-2. Проверить `v0.0.37` Simulation Lab: automatic smoke уже прошёл; выполнить TEST 100k, затем DEEP 1M и MATRIX 8/30/50/100, изучить отчёты и сравнить nominal vs realized вероятности/caps/fairness.
+2. После `v0.0.39` заново выполнить TEST 100k и MATRIX 8/30/50/100: предыдущие #6/#7 остаются историческими, потому что allocator теперь использует явный per-master rotation coverage и новые effort-метрики.
 3. Только после анализа не переносить candidate probability tables в gameplay автоматически: сначала принять/изменить их отдельным решением.
 4. После этого вернуться к следующему playable-механическому слою по content-first.
 ## Связанные записи
@@ -95,3 +97,4 @@
 - `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
 - `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; prototype реализован в `v0.0.37`, требуется анализ TEST/DEEP результатов.
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
+- `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, требует расчётов на TEST/MATRIX/DEEP.
