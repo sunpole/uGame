@@ -39,6 +39,27 @@ function cleanDynamicEvents(value) {
   }
 }
 
+function cleanContainers(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { schemaVersion: 1, containers: {} };
+  }
+
+  const containers = value.containers;
+  if (!containers || typeof containers !== 'object' || Array.isArray(containers)) {
+    return { schemaVersion: 1, containers: {} };
+  }
+
+  try {
+    return JSON.parse(JSON.stringify({
+      schemaVersion: 1,
+      containers
+    }));
+  } catch {
+    return { schemaVersion: 1, containers: {} };
+  }
+}
+
+
 export function createDefaultGameState() {
   return {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
@@ -52,6 +73,10 @@ export function createDefaultGameState() {
     },
     resources: {},
     inventory: {},
+    containers: {
+      schemaVersion: 1,
+      containers: {}
+    },
     quests: null,
     dynamicEvents: {
       zones: {}
@@ -83,6 +108,7 @@ export function normalizeGameState(input) {
     },
     resources: cleanCounts(input.resources),
     inventory: cleanCounts(input.inventory),
+    containers: cleanContainers(input.containers),
     quests: cleanQuestState(input.quests),
     dynamicEvents: cleanDynamicEvents(input.dynamicEvents)
   };
@@ -126,6 +152,10 @@ export class GameState {
 
   setInventory(snapshot) {
     this.state.inventory = cleanCounts(snapshot);
+  }
+
+  setContainers(snapshot) {
+    this.state.containers = cleanContainers(snapshot);
   }
 
   setQuestState(snapshot) {
