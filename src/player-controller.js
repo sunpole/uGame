@@ -78,7 +78,7 @@ export class PlayerController {
           if (mode === 'pulse') this.virtualDashUntil = performance.now() + 900;
           else this.virtual.dash = true;
         }
-        if (control === 'action') this.virtualActionQueued = true;
+        if (control === 'action' && this.enabled) this.virtualActionQueued = true;
       });
       button.addEventListener('pointerup', release);
       button.addEventListener('pointercancel', release);
@@ -130,7 +130,7 @@ export class PlayerController {
       Phaser.Input.Keyboard.JustDown(this.keys.interactAlt) ||
       Phaser.Input.Keyboard.JustDown(this.keys.interactEnter)
     );
-    const interactPressed = keyboardInteract || this.virtualActionQueued;
+    const interactPressed = keyboardInteract || (this.enabled && this.virtualActionQueued);
     this.virtualActionQueued = false;
 
     const state = {
