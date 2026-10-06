@@ -6,7 +6,8 @@
     <meta name="color-scheme" content="dark" />
     <title>uGame · Active–Idle Core</title>
     <link rel="stylesheet" href="./style.css" />
-  </head>
+    <link rel="stylesheet" href="../src/project-page-chrome.css">
+</head>
   <body>
     <header class="site-header">
       <div>
@@ -39,5 +40,6 @@
     </footer>
 
     <script type="module" src="./system.js"></script>
-  </body>
+  <script type="module">import { initProjectPageChrome } from '../src/project-page-chrome.js'; initProjectPageChrome({ pageTitle: 'Active–Idle Core' });</script>
+</body>
 </html>
