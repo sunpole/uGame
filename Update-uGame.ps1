@@ -149,6 +149,7 @@ function Run-Simulation {
     if ($mode -eq '0') { return }
 
     $seedText = Read-Host 'Seed [42]'
+    $seed = 0
     if ([string]::IsNullOrWhiteSpace($seedText)) { $seed = 42 }
     elseif (-not [int]::TryParse($seedText,[ref]$seed)) { throw 'Seed must be an integer.' }
 
@@ -182,9 +183,10 @@ function Run-Simulation {
     Write-Host 'The simulation is headless. Generated reports go only to ignored simulation-reports/.'
     if ((Read-Host 'Type SIMULATE to run') -cne 'SIMULATE') { return }
 
+    $allArguments = @($python.Prefix) + $arguments
     Push-Location -LiteralPath $script:Root
     try {
-        & $python.Exe @($python.Prefix) @arguments
+        & $python.Exe @allArguments
         if ($LASTEXITCODE -ne 0) { throw "Simulation failed with exit code $LASTEXITCODE." }
     } finally { Pop-Location }
 
