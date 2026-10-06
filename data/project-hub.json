@@ -52,6 +52,13 @@
           "description": "Связанная карта механик ресурсов, времени, NPC и мира.",
           "type": "document",
           "target": "./docs/project-journal/ACTIVE-IDLE-CORE.md"
+        },
+        {
+          "id": "next-plan",
+          "label": "Следующий план реализации",
+          "description": "Предварительная очередь после Simulation Lab; будет объединена с пользовательским пакетом патчей.",
+          "type": "document",
+          "target": "./docs/NEXT-IMPLEMENTATION-PLAN.md"
         }
       ]
     },
@@ -99,6 +106,13 @@
           "description": "Прямой переход к ручному запуску TRACE / TEST / DEEP / MATRIX.",
           "type": "external",
           "target": "https://github.com/sunpole/uGame/actions/workflows/simulation-lab.yml"
+        },
+        {
+          "id": "simulation-results",
+          "label": "Результаты Simulation Lab",
+          "description": "Опубликованный архив ключевых TEST/MATRIX: #6, #7 и текущий baseline #20.",
+          "type": "external",
+          "target": "./reports/simulation/"
         },
         {
           "id": "dev-codes",
