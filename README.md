@@ -33,7 +33,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.39 — Project Hub + Simulation Lab v0.2 + gameplay prototype
+## Game prototype v0.0.40 — Project Hub + Simulation archive + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -77,6 +77,9 @@ The current prototype includes:
 - an in-game Project Hub with embedded README/VERSION/Project Journal/document viewing plus GitHub/Actions/Pages links;
 - a headless Simulation Lab developer tool with deterministic TRACE/TEST/DEEP/MATRIX runs, reports and comparison tooling.
 - Simulation Lab v0.2 Player Effort analytics: click cost to find T1–T4 masters, Attention-equivalent effort and per-master rotation coverage.
+- a published Simulation Results archive under `reports/simulation/`, with #20 as the current v0.2 baseline and #6/#7 retained as historical benchmarks;
+- an Attention cadence guardrail: ~1/week normal, ~1/day hardcore, >10/week anomaly/log review;
+- a provisional `docs/NEXT-IMPLEMENTATION-PLAN.md` that must be reconciled with the user's next patch package before new gameplay work starts.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
