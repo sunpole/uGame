@@ -168,6 +168,7 @@ class ZoneScene extends Phaser.Scene {
       }
     });
     playerController.bindVirtualControls(document);
+    syncPlayerInputState();
 
     this.characterView = new CharacterView({ scene: this, player: this.player });
 
