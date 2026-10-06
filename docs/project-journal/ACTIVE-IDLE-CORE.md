@@ -458,3 +458,20 @@ world probability
 Первая аналитическая единица использует текущие baseValue: `1 Attention-equivalent = 5000 Stone-value`. Это не игровой обмен. Simulation Lab сравнивает поиск T1–T4 master и стоимость 1 Attention-equivalent отдельно для T1/T2/T3/T4 Location Tier.
 
 Master rotation теперь считается отдельно для каждого `resourceDirection + masterTier`; caps остаются максимумами, а не обязательным числом NPC.
+
+
+## 24. Attention cadence guardrail
+
+UGD-0020 задаёт текущий человеческий ориентир для реального Attention:
+
+```text
+~1 / week  → normal healthy target
+~1 / day   → hardcore activity
+>10 / week → anomaly flag + logs/source review
+```
+
+Это не hard cap и не автоматическое наказание.
+
+Текущий Dynamic Event `Attention ×1` остаётся prototype QA reward и не считается финальной экономикой.
+
+После MATRIX #20 большие ручные simulation runs приостановлены. Следующие TEST/MATRIX/DEEP запускаются только после реального изменения формулы/экономики/world-state или для конкретного вопроса.
