@@ -3,7 +3,7 @@
 Дата: 2026-10-06  
 Тип: tooling  
 Статус: accepted  
-Flags: needs-prototype, needs-test  
+Flags: needs-test  
 Теги: simulation, balancing, tooling, world, probability, analytics, reports, deterministic
 
 ## Контекст
@@ -317,6 +317,23 @@ MVP Simulation Lab должен содержать:
 - UGD-0013 — Dynamic Event Spots.
 - UGD-0015 — resource master NPC.
 - UGD-0016 — Location Tier / biome / distance / world caps.
+
+## Реализация v0.0.37
+
+Первый рабочий prototype Simulation Lab реализован:
+
+- standard-library Python headless engine;
+- candidate config в `data/simulation/simulation-defaults.json`;
+- TRACE / TEST 100k / DEEP 1M / MATRIX;
+- deterministic seed и unit tests;
+- JSON / CSV / HTML / SVG reports;
+- A/B compare;
+- GitHub Actions manual runner без локальной установки Python;
+- automatic push smoke verification;
+- updater option 9 как локальный fallback без автоматической установки Python/pip;
+- generated `simulation-reports/` исключены из Git.
+
+Первый automatic smoke run GitHub Actions завершился успешно и создал report artifact. Полные TEST/DEEP/MATRIX прогоны ещё требуют отдельного анализа результатов и не делают candidate probability tables принятым gameplay balance.
 
 ## Статус
 
