@@ -8,10 +8,24 @@
       "date": "2026-09-16",
       "type": "system",
       "status": "discussing",
-      "flags": ["needs-calculation", "needs-test"],
-      "tags": ["economy", "attention", "impulse", "progression", "philosophy"],
+      "flags": [
+        "needs-calculation",
+        "needs-test"
+      ],
+      "tags": [
+        "economy",
+        "attention",
+        "impulse",
+        "progression",
+        "philosophy"
+      ],
       "path": "records/UGD-0001-attention-impulse.md",
-      "related": ["UGD-0002", "UGD-0005", "UGD-0006", "UGD-0007"],
+      "related": [
+        "UGD-0002",
+        "UGD-0005",
+        "UGD-0006",
+        "UGD-0007"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -21,10 +35,23 @@
       "date": "2026-09-16",
       "type": "philosophy",
       "status": "discussing",
-      "flags": ["needs-test", "return-later"],
-      "tags": ["sunday", "philosophy", "idle", "impulse", "progression"],
+      "flags": [
+        "needs-test",
+        "return-later"
+      ],
+      "tags": [
+        "sunday",
+        "philosophy",
+        "idle",
+        "impulse",
+        "progression"
+      ],
       "path": "records/UGD-0002-sunday-rest-cycle.md",
-      "related": ["UGD-0001", "UGD-0003", "UGD-0007"],
+      "related": [
+        "UGD-0001",
+        "UGD-0003",
+        "UGD-0007"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -34,10 +61,27 @@
       "date": "2026-09-16",
       "type": "game-direction",
       "status": "hypothesis",
-      "flags": ["needs-prototype", "return-later"],
-      "tags": ["gameplay", "platformer", "idle", "progression", "world"],
+      "flags": [
+        "needs-prototype",
+        "return-later"
+      ],
+      "tags": [
+        "gameplay",
+        "platformer",
+        "idle",
+        "progression",
+        "world"
+      ],
       "path": "records/UGD-0003-active-platformer-idle-hybrid.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0004", "UGD-0006", "UGD-0007", "UGD-0008", "UGD-0010"],
+      "related": [
+        "UGD-0001",
+        "UGD-0002",
+        "UGD-0004",
+        "UGD-0006",
+        "UGD-0007",
+        "UGD-0008",
+        "UGD-0010"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -47,10 +91,27 @@
       "date": "2026-09-16",
       "type": "mechanic",
       "status": "hypothesis",
-      "flags": ["needs-prototype", "return-later"],
-      "tags": ["world", "locations", "portals", "procedural-generation", "npc", "quests", "gameplay"],
+      "flags": [
+        "needs-prototype",
+        "return-later"
+      ],
+      "tags": [
+        "world",
+        "locations",
+        "portals",
+        "procedural-generation",
+        "npc",
+        "quests",
+        "gameplay"
+      ],
       "path": "records/UGD-0004-world-portals-activities.md",
-      "related": ["UGD-0003", "UGD-0006", "UGD-0007", "UGD-0008", "UGD-0010"],
+      "related": [
+        "UGD-0003",
+        "UGD-0006",
+        "UGD-0007",
+        "UGD-0008",
+        "UGD-0010"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -60,10 +121,25 @@
       "date": "2026-09-16",
       "type": "metric",
       "status": "discussing",
-      "flags": ["needs-calculation", "needs-test", "return-later"],
-      "tags": ["attention", "impulse", "rating", "seasons", "progression", "philosophy"],
+      "flags": [
+        "needs-calculation",
+        "needs-test",
+        "return-later"
+      ],
+      "tags": [
+        "attention",
+        "impulse",
+        "rating",
+        "seasons",
+        "progression",
+        "philosophy"
+      ],
       "path": "records/UGD-0005-time-kpd-lifetime-metrics.md",
-      "related": ["UGD-0001", "UGD-0006", "UGD-0007"],
+      "related": [
+        "UGD-0001",
+        "UGD-0006",
+        "UGD-0007"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -73,10 +149,26 @@
       "date": "2026-09-16",
       "type": "design-area",
       "status": "deferred",
-      "flags": ["return-later", "needs-prototype", "needs-calculation"],
-      "tags": ["combat", "rewards", "loot", "gameplay", "progression"],
+      "flags": [
+        "return-later",
+        "needs-prototype",
+        "needs-calculation"
+      ],
+      "tags": [
+        "combat",
+        "rewards",
+        "loot",
+        "gameplay",
+        "progression"
+      ],
       "path": "records/UGD-0006-combat-rewards-direction.md",
-      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0007"],
+      "related": [
+        "UGD-0001",
+        "UGD-0003",
+        "UGD-0004",
+        "UGD-0005",
+        "UGD-0007"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -86,10 +178,32 @@
       "date": "2026-09-16",
       "type": "architecture",
       "status": "hypothesis",
-      "flags": ["needs-prototype", "needs-test"],
-      "tags": ["technical", "architecture", "persistence", "time", "world", "idle", "seasons", "progression"],
+      "flags": [
+        "needs-prototype",
+        "needs-test"
+      ],
+      "tags": [
+        "technical",
+        "architecture",
+        "persistence",
+        "time",
+        "world",
+        "idle",
+        "seasons",
+        "progression"
+      ],
       "path": "records/UGD-0007-early-architecture-foundation.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0003", "UGD-0004", "UGD-0005", "UGD-0006", "UGD-0008", "UGD-0009", "UGD-0010"],
+      "related": [
+        "UGD-0001",
+        "UGD-0002",
+        "UGD-0003",
+        "UGD-0004",
+        "UGD-0005",
+        "UGD-0006",
+        "UGD-0008",
+        "UGD-0009",
+        "UGD-0010"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -99,10 +213,30 @@
       "date": "2026-09-30",
       "type": "game-direction",
       "status": "accepted",
-      "flags": ["needs-prototype"],
-      "tags": ["gameplay", "movement", "top-down", "world", "locations", "portals", "npc", "quests", "persistence", "idle", "architecture"],
+      "flags": [
+        "needs-prototype"
+      ],
+      "tags": [
+        "gameplay",
+        "movement",
+        "top-down",
+        "world",
+        "locations",
+        "portals",
+        "npc",
+        "quests",
+        "persistence",
+        "idle",
+        "architecture"
+      ],
       "path": "records/UGD-0008-core-gameplay-v1-decisions.md",
-      "related": ["UGD-0003", "UGD-0004", "UGD-0007", "UGD-0009", "UGD-0010"],
+      "related": [
+        "UGD-0003",
+        "UGD-0004",
+        "UGD-0007",
+        "UGD-0009",
+        "UGD-0010"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -112,10 +246,23 @@
       "date": "2026-10-02",
       "type": "game-direction",
       "status": "accepted",
-      "flags": ["needs-test"],
-      "tags": ["gameplay", "development-process", "architecture", "prototype", "first-playable"],
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "gameplay",
+        "development-process",
+        "architecture",
+        "prototype",
+        "first-playable"
+      ],
       "path": "records/UGD-0009-content-first-first-playable.md",
-      "related": ["UGD-0007", "UGD-0008", "UGD-0010"],
+      "related": [
+        "UGD-0007",
+        "UGD-0008",
+        "UGD-0010",
+        "UGD-0013"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -125,10 +272,30 @@
       "date": "2026-10-05",
       "type": "system",
       "status": "discussing",
-      "flags": ["needs-prototype", "needs-test"],
-      "tags": ["gameplay", "idle", "architecture", "world", "npc", "progression", "technical"],
+      "flags": [
+        "needs-prototype",
+        "needs-test"
+      ],
+      "tags": [
+        "gameplay",
+        "idle",
+        "architecture",
+        "world",
+        "npc",
+        "progression",
+        "technical"
+      ],
       "path": "records/UGD-0010-event-modules-contextual-idle.md",
-      "related": ["UGD-0003", "UGD-0004", "UGD-0007", "UGD-0008", "UGD-0009", "UGD-0011", "UGD-0012"],
+      "related": [
+        "UGD-0003",
+        "UGD-0004",
+        "UGD-0007",
+        "UGD-0008",
+        "UGD-0009",
+        "UGD-0011",
+        "UGD-0012",
+        "UGD-0013"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -138,10 +305,31 @@
       "date": "2026-10-06",
       "type": "system",
       "status": "discussing",
-      "flags": ["needs-prototype", "needs-test", "needs-calculation"],
-      "tags": ["idle", "resources", "progression", "skills", "character-build", "world", "randomness", "gameplay"],
+      "flags": [
+        "needs-prototype",
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "idle",
+        "resources",
+        "progression",
+        "skills",
+        "character-build",
+        "world",
+        "randomness",
+        "gameplay"
+      ],
       "path": "records/UGD-0011-resource-resonance-multilayer-progression.md",
-      "related": ["UGD-0001", "UGD-0003", "UGD-0004", "UGD-0009", "UGD-0010", "UGD-0012"],
+      "related": [
+        "UGD-0001",
+        "UGD-0003",
+        "UGD-0004",
+        "UGD-0009",
+        "UGD-0010",
+        "UGD-0012",
+        "UGD-0013"
+      ],
       "supersedes": [],
       "superseded_by": []
     },
@@ -151,10 +339,61 @@
       "date": "2026-10-06",
       "type": "system",
       "status": "discussing",
-      "flags": ["needs-prototype", "needs-test", "needs-calculation"],
-      "tags": ["time", "efficiency", "idle", "progression", "anti-grind", "retention", "gameplay", "resources"],
+      "flags": [
+        "needs-prototype",
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "time",
+        "efficiency",
+        "idle",
+        "progression",
+        "anti-grind",
+        "retention",
+        "gameplay",
+        "resources"
+      ],
       "path": "records/UGD-0012-time-efficiency-stability-decay.md",
-      "related": ["UGD-0001", "UGD-0002", "UGD-0005", "UGD-0010", "UGD-0011"],
+      "related": [
+        "UGD-0001",
+        "UGD-0002",
+        "UGD-0005",
+        "UGD-0010",
+        "UGD-0011",
+        "UGD-0013"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0013",
+      "title": "Interaction UI, награды и динамические Event Spots",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "gameplay",
+        "events",
+        "interaction",
+        "rewards",
+        "resources",
+        "world",
+        "randomness",
+        "persistence",
+        "ui"
+      ],
+      "path": "records/UGD-0013-interaction-rewards-dynamic-event-spots.md",
+      "related": [
+        "UGD-0009",
+        "UGD-0010",
+        "UGD-0011",
+        "UGD-0012"
+      ],
       "supersedes": [],
       "superseded_by": []
     }
