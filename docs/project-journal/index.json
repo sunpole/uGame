@@ -24,7 +24,8 @@
         "UGD-0002",
         "UGD-0005",
         "UGD-0006",
-        "UGD-0007"
+        "UGD-0007",
+        "UGD-0019"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -480,7 +481,8 @@
         "UGD-0013",
         "UGD-0014",
         "UGD-0016",
-        "UGD-0017"
+        "UGD-0017",
+        "UGD-0019"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -516,7 +518,8 @@
         "UGD-0011",
         "UGD-0013",
         "UGD-0015",
-        "UGD-0017"
+        "UGD-0017",
+        "UGD-0019"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -545,7 +548,8 @@
         "UGD-0013",
         "UGD-0015",
         "UGD-0016",
-        "UGD-0018"
+        "UGD-0018",
+        "UGD-0019"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -572,6 +576,36 @@
       "related": [
         "UGD-0008",
         "UGD-0009",
+        "UGD-0017"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0019",
+      "title": "Player Effort: клики, поиск master и Attention-equivalent",
+      "date": "2026-10-06",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "player-effort",
+        "clicks",
+        "attention",
+        "resources",
+        "npc",
+        "simulation",
+        "analytics",
+        "qa"
+      ],
+      "path": "records/UGD-0019-player-effort-click-cost.md",
+      "related": [
+        "UGD-0001",
+        "UGD-0015",
+        "UGD-0016",
         "UGD-0017"
       ],
       "supersedes": [],
