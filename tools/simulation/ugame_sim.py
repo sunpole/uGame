@@ -878,6 +878,7 @@ def make_report_files(
         [
             (row["locationTier"], float(row["freshEncounter"]["expectedTotalClicks"]))
             for row in summary["effort"]["byLocationTier"]
+            if row["freshEncounter"]["expectedTotalClicks"] is not None
         ],
         title="Expected clicks to 1 Attention-equivalent (fresh encounters)",
         suffix=" clicks",
@@ -923,12 +924,12 @@ def make_report_files(
     effort_html_rows = "".join(
         "<tr>"
         f"<td>{row['locationTier']}</td>"
-        f"<td>{row['expectedRewardPerAction']:.2f}</td>"
-        f"<td>{row['expectedRewardActions']:.1f}</td>"
-        f"<td>{row['interactionHours']:.2f} h</td>"
-        f"<td>{row['freshEncounter']['expectedEncounters']:.1f}</td>"
-        f"<td>{row['freshEncounter']['expectedTotalClicks']:.1f}</td>"
-        f"<td>{row['randomArrival']['expectedTotalClicks']:.1f}</td>"
+        f"<td>{'—' if row['expectedRewardPerAction'] is None else format(row['expectedRewardPerAction'], '.2f')}</td>"
+        f"<td>{'—' if row['expectedRewardActions'] is None else format(row['expectedRewardActions'], '.1f')}</td>"
+        f"<td>{'—' if row['interactionHours'] is None else format(row['interactionHours'], '.2f') + ' h'}</td>"
+        f"<td>{'—' if row['freshEncounter']['expectedEncounters'] is None else format(row['freshEncounter']['expectedEncounters'], '.1f')}</td>"
+        f"<td>{'—' if row['freshEncounter']['expectedTotalClicks'] is None else format(row['freshEncounter']['expectedTotalClicks'], '.1f')}</td>"
+        f"<td>{'—' if row['randomArrival']['expectedTotalClicks'] is None else format(row['randomArrival']['expectedTotalClicks'], '.1f')}</td>"
         "</tr>"
         for row in summary["effort"]["byLocationTier"]
     )
