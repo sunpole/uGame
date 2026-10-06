@@ -1577,3 +1577,12 @@ input {
     gap: 4px;
   }
 }
+
+
+/* v0.0.45 — contextual keyboard focus */
+.interaction-option[data-focused='true'] {
+  outline: 2px solid #58a6ff;
+  outline-offset: 2px;
+  border-color: #58a6ff;
+  background: #172337;
+}
