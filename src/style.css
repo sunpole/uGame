@@ -1586,3 +1586,80 @@ input {
   border-color: #58a6ff;
   background: #172337;
 }
+
+
+/* v0.0.47 — global text-selection setting */
+html.ugame-text-selection-disabled body {
+  user-select: none;
+}
+
+html.ugame-text-selection-disabled input,
+html.ugame-text-selection-disabled textarea,
+html.ugame-text-selection-disabled select,
+html.ugame-text-selection-disabled [contenteditable='true'] {
+  user-select: text;
+}
+
+html.ugame-text-selection-enabled body {
+  user-select: text;
+}
+
+html.ugame-text-selection-enabled button,
+html.ugame-text-selection-enabled .mouse-control,
+html.ugame-text-selection-enabled .chrome-logo-block {
+  user-select: none;
+}
+
+.project-hub-settings {
+  max-width: 760px;
+}
+
+.project-hub-setting-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #252b33;
+  border-radius: 9px;
+  background: #10151b;
+}
+
+.project-hub-setting-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.project-hub-setting-row strong {
+  color: #f0f6fc;
+  font-size: 14px;
+}
+
+.project-hub-setting-row span {
+  color: #8b949e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.project-hub-setting-row button {
+  min-width: 72px;
+  min-height: 36px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: #151b23;
+  color: #c9d1d9;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-hub-setting-row button[data-state='on'] {
+  border-color: #238636;
+  color: #7ee787;
+}
+
+.project-hub-setting-row button[data-state='off'] {
+  border-color: #9e6a03;
+  color: #f0c66a;
+}
