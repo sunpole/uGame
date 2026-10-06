@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.43**
+Current version: **0.0.44**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.44 | Live character/resource header with material wealth and storage summary |
 | 0.0.43 | Informational Game Clock: 1 game minute = 5 real seconds, four day phases |
 | 0.0.42 | Build/environment, session, location duration and real clock context |
 | 0.0.41 | Persistent Game Chrome shell: Header / Workspace / Footer boundaries |
@@ -49,6 +50,9 @@ Current version: **0.0.43**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.44
+The persistent header is now live. It shows the current class, placeholder identity/profession/specialization until those systems exist, Stamina + bar, up to five pinned resources from the resource catalog, a material Stone-equivalent total and storage summary. Attention is visible but intentionally excluded from material wealth because its current baseValue is an analytical comparison value rather than an accepted exchange rate.
 
 ## 0.0.43
 Added a persistent informational Game Clock. The game calendar starts at 01.01.2026 00:00 on first initialization, continues across reloads/offline time, advances one game minute every five real seconds, and labels Night 00–06, Morning 06–12, Day 12–18 and Evening 18–24. This clock is display-only: all existing gameplay/event/location/process timers remain real-time and are not accelerated.
