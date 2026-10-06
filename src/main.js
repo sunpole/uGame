@@ -22,6 +22,7 @@ import { GameState } from './game-state.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
+import { GameClockSystem } from './game-clock-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -40,6 +41,7 @@ let eventSpotSystem = null;
 let saveSystem = null;
 let projectHubSystem = null;
 let chromeContextSystem = null;
+let gameClockSystem = null;
 
 
 function syncPlayerInputState() {
@@ -541,6 +543,11 @@ chromeContextSystem = new ChromeContextSystem({
 });
 chromeContextSystem.loadBuildContext();
 chromeContextSystem.start();
+
+gameClockSystem = new GameClockSystem({
+  element: document.querySelector('#game-clock')
+});
+gameClockSystem.start();
 
 fitPlayfield();
 window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
