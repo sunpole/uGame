@@ -10,7 +10,9 @@ import { CharacterView } from './character-view.js';
 import { AudioSystem } from './audio-system.js';
 import { ZoneRulesSystem } from './zone-rules-system.js';
 import { ResourceSystem } from './resource-system.js';
-import { InventorySystem } from './inventory-system.js';
+import { ItemCatalog } from './item-catalog.js';
+import { ContainerSystem } from './container-system.js';
+import { InventoryPanelSystem } from './inventory-panel-system.js';
 import { DialogueSystem } from './dialogue-system.js';
 import { InteractionPanelSystem } from './interaction-panel-system.js';
 import { RewardGenerator } from './reward-generator.js';
@@ -30,7 +32,7 @@ let visionSystem = null;
 let classSystem = null;
 let playerController = null;
 let resourceSystem = null;
-let inventorySystem = null;
+let containerSystem = null;
 let questSystem = null;
 let eventSpotSystem = null;
 let saveSystem = null;
@@ -79,7 +81,7 @@ function executeDevCode(code) {
     visionSystem,
     classSystem,
     playerController,
-    inventorySystem,
+    containerSystem,
     resourceSystem,
     questSystem,
     eventSpotSystem,
@@ -173,15 +175,17 @@ class ZoneScene extends Phaser.Scene {
     });
     resourceSystem.restore(restoredState.resources);
 
-    inventorySystem = new InventorySystem({
+    this.itemCatalog = new ItemCatalog();
+    containerSystem = new ContainerSystem({
       eventSystem: this.eventSystem,
+      itemCatalog: this.itemCatalog,
       onChange: () => {
         if (this.inventoryStatusElement) {
-          this.inventoryStatusElement.textContent = `Инвентарь: ${inventorySystem.summary()}`;
+          this.inventoryStatusElement.textContent = `Хранилища: ${containerSystem.summary()}`;
         }
       }
     });
-    inventorySystem.restore(restoredState.inventory);
+    this.containerSystem = containerSystem;
 
     questSystem = new QuestSystem({
       eventSystem: this.eventSystem,
@@ -189,8 +193,8 @@ class ZoneScene extends Phaser.Scene {
         if (this.questStatusElement) this.questStatusElement.textContent = text;
       },
       grantReward: (reward) => {
-        if (reward.type === 'item') inventorySystem.add(reward.id, reward.amount || 1);
-        if (reward.type === 'resource') resourceSystem.add(reward.id, reward.amount || 1);
+        if (reward.type === 'item') this.grantItem(reward.id, reward.amount || 1);
+        if (reward.type === 'resource') this.grantResource(reward.id, reward.amount || 1);
         this.audioSystem.play('quest');
       }
     });
@@ -213,6 +217,25 @@ class ZoneScene extends Phaser.Scene {
       closeButton: document.querySelector('#interaction-close'),
       onOpenChange: (open) => playerController.setEnabled(!open)
     });
+
+    this.inventoryPanel = new InventoryPanelSystem({
+      eventSystem: this.eventSystem,
+      containerSystem,
+      itemCatalog: this.itemCatalog,
+      panel: document.querySelector('#inventory-panel'),
+      titleElement: document.querySelector('#inventory-title'),
+      statsElement: document.querySelector('#inventory-stats'),
+      tabsElement: document.querySelector('#inventory-tabs'),
+      gridElement: document.querySelector('#inventory-grid'),
+      statusElement: document.querySelector('#inventory-panel-status'),
+      closeButton: document.querySelector('#inventory-close'),
+      openButtons: [
+        document.querySelector('#inventory-open'),
+        document.querySelector('#inventory-open-touch')
+      ],
+      onOpenChange: (open) => playerController.setEnabled(!open)
+    });
+
     this.rewardGenerator = new RewardGenerator();
 
     this.interactableSystem = new InteractableSystem({
@@ -253,7 +276,7 @@ class ZoneScene extends Phaser.Scene {
       eventSystem: this.eventSystem,
       rewardGenerator: this.rewardGenerator,
       interactionPanel: this.interactionPanel,
-      grantResource: (id, amount) => resourceSystem.add(id, amount),
+      grantResource: (id, amount) => this.grantResource(id, amount),
       onStateChange: (snapshot) => {
         this.gameState.setDynamicEvents(snapshot);
         this.persistGameState();
@@ -283,8 +306,18 @@ class ZoneScene extends Phaser.Scene {
     try {
       await Promise.all([
         this.worldGraph.load(),
-        this.rewardGenerator.load()
+        this.rewardGenerator.load(),
+        this.itemCatalog.load()
       ]);
+
+      await containerSystem.load({
+        snapshot: restoredState.containers,
+        legacyInventory: restoredState.inventory
+      });
+      this.gameState.setContainers(containerSystem.snapshot());
+      this.gameState.setInventory({});
+      this.persistGameState();
+
       this.eventSpotSystem.initialize(restoredState.dynamicEvents);
 
       const zoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId)
@@ -321,8 +354,8 @@ class ZoneScene extends Phaser.Scene {
       this.persistGameState();
     });
 
-    this.eventSystem.on('inventory:changed', () => {
-      this.gameState.setInventory(inventorySystem.snapshot());
+    this.eventSystem.on('containers:changed', ({ state }) => {
+      this.gameState.setContainers(state);
       this.persistGameState();
     });
 
@@ -360,13 +393,18 @@ class ZoneScene extends Phaser.Scene {
       }
 
       if (item.type === 'resource') {
-        resourceSystem.add(item.resourceId || 'shard', item.amount || 1);
+        this.grantResource(item.resourceId || 'shard', item.amount || 1);
         return;
       }
 
       if (item.type === 'chest') {
-        inventorySystem.add(item.itemId || 'starter-cache', item.amount || 1);
-        if (item.questSignal) this.eventSystem.emit('quest:signal', { key: item.questSignal });
+        const granted = this.grantItem(item.itemId || 'starter-cache', item.amount || 1);
+        if (granted && item.questSignal) this.eventSystem.emit('quest:signal', { key: item.questSignal });
+        return;
+      }
+
+      if (item.type === 'bank') {
+        this.inventoryPanel.open('bank', { bankAccess: true });
         return;
       }
 
@@ -376,6 +414,39 @@ class ZoneScene extends Phaser.Scene {
     });
 
     this.eventSystem.on('quest:complete', () => this.audioSystem.play('quest'));
+  }
+
+  grantItem(id, amount = 1) {
+    if (!containerSystem?.loaded) return false;
+    const result = containerSystem.addAuto(id, amount, { atomic: true });
+    if (result.added === Math.max(1, Math.floor(Number(amount) || 1))) return true;
+    this.setStatus('Рюкзак переполнен или превышен вес');
+    return false;
+  }
+
+  grantResource(id, amount = 1) {
+    const requested = Math.max(1, Math.floor(Number(amount) || 1));
+    const item = this.itemCatalog?.get(id);
+
+    if (!item || item.type !== 'resource') {
+      resourceSystem.add(id, requested);
+      return true;
+    }
+
+    if (item.storageMode === 'account') {
+      resourceSystem.add(id, requested);
+      return true;
+    }
+
+    if (!containerSystem?.loaded) return false;
+    const stored = containerSystem.addAuto(id, requested, { atomic: true });
+    if (stored.added !== requested) {
+      this.setStatus('Не хватает ячеек или переносимого веса для награды');
+      return false;
+    }
+
+    resourceSystem.add(id, requested);
+    return true;
   }
 
   setStatus(text) {
