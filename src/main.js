@@ -24,6 +24,7 @@ import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
 import { GameClockSystem } from './game-clock-system.js';
 import { ChromeHeaderSystem } from './chrome-header-system.js';
+import { ActionRouter } from './action-router.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -44,6 +45,7 @@ let projectHubSystem = null;
 let chromeContextSystem = null;
 let gameClockSystem = null;
 let chromeHeaderSystem = null;
+let actionRouter = null;
 
 
 function syncPlayerInputState() {
@@ -257,6 +259,15 @@ class ZoneScene extends Phaser.Scene {
         document.querySelector('#inventory-open-touch')
       ],
       onOpenChange: () => syncPlayerInputState()
+    });
+
+    actionRouter?.destroy?.();
+    actionRouter = new ActionRouter({
+      getDialogue: () => this.dialogueSystem,
+      getInteraction: () => this.interactionPanel,
+      getInventory: () => this.inventoryPanel,
+      getProjectHub: () => projectHubSystem,
+      onWorldPrimary: () => playerController?.queueAction()
     });
 
     this.rewardGenerator = new RewardGenerator();
