@@ -180,3 +180,18 @@ World reroll может изменить candidate pool. Повтор одной
 ## Статус
 
 Метрика Player Effort и первая модель click/time анализа **приняты как инструмент балансировки**, но сами числа наград 1–10, интервал 3 минуты и эквивалент через текущий baseValue остаются кандидатами для расчётов и не считаются финальной экономикой.
+
+
+## Первый MATRIX v0.2 — Run #20
+
+Первый валидный MATRIX после исправления allocator: GitHub Actions #20, seed 42, 100000 cycles на 8/30/50/100 zones.
+
+Audit: `docs/project-journal/audits/2026-10-07-simulation-matrix-v02-player-effort.md`.
+
+Ключевые результаты:
+
+- в 8-zone world expected clicks to find T4 master: T1 loc ~146, T2 ~55, T3 ~26, T4 ~15;
+- в 100-zone world: ~564 / 240 / 118 / 70 соответственно;
+- 1 Attention-equivalent по текущему analytical value 5000 Stone требует примерно 24–45h interaction cadence в 8-zone world и 27–45h в 100-zone world;
+- это не считается принятым gameplay target: текущий 5000 — value-equivalent, не подтверждённый игровой обмен;
+- следующий блокирующий вопрос — сколько реального игрового времени должен стоить 1 Attention.
