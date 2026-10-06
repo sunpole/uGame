@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.45",
-  "stage": "unified-action-router",
+  "version": "0.0.46",
+  "stage": "remote-input-parity",
   "updated": "2026-10-07",
-  "summary": "Contextual E/Space/Enter primary action, Escape back and arrow navigation"
+  "summary": "Mouse/AnyDesk Action parity and virtual direction feedback"
 }
