@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.42**
+Current version: **0.0.43**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.43 | Informational Game Clock: 1 game minute = 5 real seconds, four day phases |
 | 0.0.42 | Build/environment, session, location duration and real clock context |
 | 0.0.41 | Persistent Game Chrome shell: Header / Workspace / Footer boundaries |
 | 0.0.40 | Simulation results archive + Attention cadence guardrail + next implementation plan |
@@ -48,6 +49,9 @@ Current version: **0.0.42**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.43
+Added a persistent informational Game Clock. The game calendar starts at 01.01.2026 00:00 on first initialization, continues across reloads/offline time, advances one game minute every five real seconds, and labels Night 00–06, Morning 06–12, Day 12–18 and Evening 18–24. This clock is display-only: all existing gameplay/event/location/process timers remain real-time and are not accelerated.
 
 ## 0.0.42
 Footer context is now live. It shows version, LOCAL/PAGES environment, a short source SHA when it can be resolved, session duration, current zone id/name, time spent in that zone, available current zone rule details, local real date/time and IANA timezone + UTC offset. Session/location timers use sessionStorage so F5 does not reset them; changing zone resets only the location timer. The local dev server exposes a read-only build metadata endpoint containing the checked-out Git SHA.
