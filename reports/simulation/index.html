@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>uGame · Simulation Results</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body><main>
+<header class="hero">
+  <div>
+    <div class="small">uGame · published benchmark archive</div>
+    <h1>Simulation Results</h1>
+    <p>Ключевые TEST/MATRIX-прогоны, которые реально повлияли на решения проекта. Smoke-проверки сюда не входят.</p>
+  </div>
+  <div class="actions">
+    <a class="button" href="../../">← Игра</a>
+    <a class="button" href="../../journal/">Project Journal</a>
+    <a class="button" href="https://github.com/sunpole/uGame/actions/workflows/simulation-lab.yml">GitHub Actions ↗</a>
+  </div>
+</header>
+
+<section>
+  <h2>Текущий baseline</h2>
+  <div class="callout ok">
+    <strong>#20 · MATRIX · Simulation Lab v0.2</strong><br>
+    100 000 cycles для 8 / 30 / 50 / 100 внешних зон, seed 42. Это первый валидный MATRIX после исправления master rotation и Player Effort.
+  </div>
+</section>
+
+<section>
+  <h2>Архив запусков</h2>
+  <div class="run-list">
+    <div class="run-card">
+      <span class="badge current">CURRENT</span>
+      <div>
+        <strong>#20 · MATRIX v0.2</strong>
+        <small>Rotation coverage + click/search + Attention-equivalent analytics</small>
+      </div>
+      <div class="actions">
+        <a class="button" href="./run-020.html">Открыть отчёт</a>
+        <a class="button" href="https://github.com/sunpole/uGame/actions/runs/37534965258">Actions ↗</a>
+      </div>
+    </div>
+
+    <div class="run-card">
+      <span class="badge historical">HISTORICAL</span>
+      <div>
+        <strong>#7 · MATRIX v0.1</strong>
+        <small>Первое масштабирование 8 / 30 / 50 / 100 до явного rotation coverage</small>
+      </div>
+      <div class="actions">
+        <a class="button" href="./run-007.html">Открыть отчёт</a>
+        <a class="button" href="https://github.com/sunpole/uGame/actions/runs/37525568356">Actions ↗</a>
+      </div>
+    </div>
+
+    <div class="run-card">
+      <span class="badge historical">HISTORICAL</span>
+      <div>
+        <strong>#6 · TEST 100k</strong>
+        <small>Первый полноценный 100 000-cycle тест на мире из 8 зон</small>
+      </div>
+      <div class="actions">
+        <a class="button" href="./run-006.html">Открыть отчёт</a>
+        <a class="button" href="https://github.com/sunpole/uGame/actions/runs/37515955603">Actions ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Что принято после этих запусков</h2>
+  <div class="grid">
+    <div class="card"><h3>Master caps</h3><p><code>T4=1 / T3=2 / T2=3</code> — только max simultaneous instance на resourceDirection, не targetCount.</p></div>
+    <div class="card"><h3>Rotation</h3><p>У каждого resourceDirection + Tier своя coverage history по актуальному candidate pool.</p></div>
+    <div class="card"><h3>Player Effort</h3><p>Клики, поиск master и interaction cadence считаются отдельно от внутренней экономики.</p></div>
+    <div class="card"><h3>Attention cadence</h3><p>≈1/неделю — нормальный ориентир; ≈1/день — hardcore; &gt;10/неделю — anomaly/log review.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Статус тестирования</h2>
+  <p>После #20 большие ручные TEST/MATRIX/DEEP временно остановлены. Автоматический smoke остаётся только технической проверкой tooling. Следующие большие прогоны — только после реального изменения механик или экономики.</p>
+</section>
+
+<footer>
+Simulation results are model output, not player telemetry. Published reports are frozen project snapshots; newer gameplay decisions may supersede them.
+</footer>
+</main></body></html>
