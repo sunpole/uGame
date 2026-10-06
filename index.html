@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.0.32</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.0.32" />
+    <title>uGame v0.0.33</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.0.33" />
   </head>
   <body>
     <div id="app">
       <header class="topbar">
         <strong class="brand">uGame</strong>
-        <span class="version" id="app-version">v0.0.32</span>
+        <span class="version" id="app-version">v0.0.33</span>
       </header>
 
       <main class="game-shell">
@@ -57,14 +57,17 @@
 
       <footer class="bottombar">
         <span class="controls-help">
-          <span>WASD / стрелки · E действие · Shift рывок</span>
-          <span class="arrow-indicator">
-            <kbd id="arrow-left" class="arrow-key">←</kbd>
-            <kbd id="arrow-up" class="arrow-key">↑</kbd>
-            <kbd id="arrow-down" class="arrow-key">↓</kbd>
-            <kbd id="arrow-right" class="arrow-key">→</kbd>
-          </span>
+          <span>WASD / стрелки · E / Space / Enter действие · Shift рывок</span>
         </span>
+
+        <div class="mouse-controls" aria-label="Управление мышью">
+          <button id="arrow-left" class="mouse-control arrow-key" type="button" data-control="left" title="Влево">←</button>
+          <button id="arrow-up" class="mouse-control arrow-key" type="button" data-control="up" title="Вверх">↑</button>
+          <button id="arrow-down" class="mouse-control arrow-key" type="button" data-control="down" title="Вниз">↓</button>
+          <button id="arrow-right" class="mouse-control arrow-key" type="button" data-control="right" title="Вправо">→</button>
+          <button class="mouse-control mouse-control-action" type="button" data-control="action" title="Действие">Действие</button>
+          <button class="mouse-control mouse-control-dash" type="button" data-control="dash" data-control-mode="pulse" title="Короткий импульс рывка">Рывок</button>
+        </div>
 
         <form id="dev-console" class="dev-console" autocomplete="off">
           <label for="dev-code-input">DEV</label>
@@ -78,6 +81,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.0.32"></script>
+    <script type="module" src="./src/main.js?v=0.0.33"></script>
   </body>
 </html>
