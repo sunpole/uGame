@@ -59,6 +59,8 @@
 - `v0.0.33` добавляет Enter и постоянные мышиные органы управления для удалённого QA.
 - `v0.0.34` уточняет выбор наград: ограниченный выбор скрыт до решения; при полном доступе содержимое видно сразу; после выбора непринятые варианты по флагу раскрываются только для информации.
 - `v0.0.35` добавляет ContainerSystem: рюкзак 12 слотов/30 кг, ресурсный пояс 1 слот/15 кг (пока только Камень), именованные слоты экипировки, городской Банк 60 слотов без лимита веса, stack/weight правила и сохранение/миграцию.
+- `v0.0.36` добавляет Project Hub: единый overlay из игры, встроенное чтение README/VERSION/Journal/docs, Back/Close/Escape, поиск UGD и внешние ссылки GitHub/Actions/Pages.
+- `v0.0.37` добавляет Simulation Lab dev-tooling: deterministic Python engine, candidate tables, TRACE/TEST/DEEP/MATRIX, JSON/CSV/HTML/SVG отчёты, A/B compare, GitHub Actions no-install runner и updater option 9. Candidate probabilities пока не являются live gameplay balance.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
@@ -84,5 +86,5 @@
 - `UGD-0014` — ContainerSystem: рюкзак, Банк, экипировка, ресурсный пояс, вес, stack и будущие progression hooks; реализовано как прототип `v0.0.35`.
 - `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
 - `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
-- `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; принято, не реализовано.
-- `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; принято, не реализовано.
+- `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение балансировочных run; prototype реализован в `v0.0.37`, требуется анализ TEST/DEEP результатов.
+- `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
