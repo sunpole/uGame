@@ -46,7 +46,7 @@ input {
 
 .bottombar {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) auto minmax(150px, 1fr);
+  grid-template-columns: minmax(190px, 1fr) auto auto minmax(150px, 1fr);
   border-top-width: 1px;
   color: #aeb7c2;
   font-size: 12px;
@@ -70,22 +70,61 @@ input {
   white-space: nowrap;
 }
 
-.arrow-indicator {
-  display: inline-flex;
+.mouse-controls {
+  display: flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.mouse-control {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  background: #101319;
+  color: #c9d1d9;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 28px;
+  text-align: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.mouse-control:hover {
+  border-color: #58a6ff;
+  background: #161b22;
+}
+
+.mouse-control:active {
+  border-color: #56d364;
+  background: #16351f;
+  color: #a8f0b2;
+}
+
+.mouse-control-action {
+  min-width: 76px;
+}
+
+.mouse-control-dash {
+  min-width: 58px;
 }
 
 .arrow-key {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 4px;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
   box-sizing: border-box;
   border: 1px solid #30363d;
   border-radius: 4px;
   background: #101319;
   color: #69727d;
-  font: 12px/18px monospace;
+  font: 14px/28px monospace;
   text-align: center;
 }
 
@@ -449,13 +488,27 @@ input {
 
 @media (max-width: 900px) {
   .bottombar {
-    grid-template-columns: auto 1fr auto;
-    gap: 10px;
+    grid-template-columns: auto auto minmax(120px, 1fr);
+    gap: 8px;
   }
 
-  .controls-help > span:first-child,
+  .controls-help,
   .dev-code-status {
     display: none;
+  }
+
+  .mouse-control {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+  }
+
+  .mouse-control-action {
+    min-width: 64px;
+  }
+
+  .mouse-control-dash {
+    min-width: 50px;
   }
 
   .game-hud {
@@ -483,7 +536,8 @@ input {
     font-size: 10px;
   }
 
-  .controls-help {
+  .controls-help,
+  .mouse-controls {
     display: none;
   }
 
