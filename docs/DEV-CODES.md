@@ -80,6 +80,23 @@ Normal controls: WASD or arrows to move, `E` / Space / Enter to interact, Shift 
 | `8214` | Force current zone to Q4 for QA |
 | `8299` | Show Dynamic Event Spot status |
 
+## Master NPC QA — reserved for future WorldSpawnState
+
+These codes are reserved now so the future implementation has stable developer hooks. They do **not** become active until master NPC world state exists in gameplay.
+
+| Code | Planned action |
+|---|---|
+| `8300` | Open/show Master NPC world registry summary |
+| `8302` | List/filter active T2 master instances |
+| `8303` | List/filter active T3 master instances |
+| `8304` | List/filter active T4 master instances |
+| `8312` | Teleport/cycle to next active T2 master |
+| `8313` | Teleport/cycle to next active T3 master |
+| `8314` | Teleport/cycle to next active T4 master |
+| `8399` | Show master candidate pools, caps and rotation coverage summary |
+
+The preferred UX later is a clickable **DEV World Analyzer** inside Project Hub with a list of active masters and TP buttons. Console codes remain a fast keyboard fallback.
+
 ## Dev / Service
 
 | Code | Action |
