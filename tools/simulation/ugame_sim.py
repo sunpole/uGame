@@ -18,11 +18,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from tools.simulation.effort import build_attention_effort
+from tools.simulation.rotation import MasterRotationAllocator
+
 TIERS = ("T1", "T2", "T3", "T4")
 HIGH_TIERS = ("T4", "T3", "T2")
 TIER_RANK = {tier: index + 1 for index, tier in enumerate(TIERS)}
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = ROOT / "data" / "simulation" / "simulation-defaults.json"
+DEFAULT_RESOURCES = ROOT / "data" / "resources.json"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -155,6 +159,33 @@ def validate_config(config: dict[str, Any]) -> list[str]:
     except (TypeError, ValueError):
         errors.append("tickMinutes must be an integer")
 
+    effort = config.get("effortModel", {})
+    required_effort = [
+        "sourceResourceId",
+        "targetValueResourceId",
+        "rewardPerActionMin",
+        "rewardPerActionMax",
+        "rewardActionIntervalMinutes",
+        "encounterLifetimeMinutes",
+        "initialCityExitActions",
+        "dialogueActionsPerEncounter",
+        "searchNextNpcActions",
+    ]
+    for key in required_effort:
+        if key not in effort:
+            errors.append(f"effortModel.{key} is required")
+    try:
+        reward_min = float(effort.get("rewardPerActionMin", 0))
+        reward_max = float(effort.get("rewardPerActionMax", 0))
+        interval = float(effort.get("rewardActionIntervalMinutes", 0))
+        lifetime = float(effort.get("encounterLifetimeMinutes", 0))
+        if reward_min <= 0 or reward_max < reward_min:
+            errors.append("effortModel reward range is invalid")
+        if interval <= 0 or lifetime < interval:
+            errors.append("effortModel timing is invalid")
+    except (TypeError, ValueError):
+        errors.append("effortModel numeric values are invalid")
+
     return errors
 
 
@@ -244,8 +275,10 @@ class Simulation:
         world_size: int,
         seed: int,
         trace: bool = False,
+        resources_data: dict[str, Any] | None = None,
     ) -> None:
         self.config = config
+        self.resources_data = resources_data or load_json(DEFAULT_RESOURCES)
         self.cycles = cycles
         self.world_size = world_size
         self.seed = seed
@@ -254,7 +287,7 @@ class Simulation:
         self.tick_minutes = int(config["tickMinutes"])
         self.zones = build_synthetic_world(config, world_size)
         self.zone_states: dict[str, dict[str, Any]] = {}
-        self.last_high_tick: dict[tuple[str, str], int] = {}
+        self.rotation_allocator = MasterRotationAllocator(self.rng, config["worldCapsPerResource"])
         self.last_t4_presence_tick: dict[str, int] = {}
         self.t4_wait_hours: dict[str, list[float]] = defaultdict(list)
         self.trace_lines: list[str] = []
@@ -299,56 +332,6 @@ class Simulation:
             )
         return state
 
-    def candidate_priority(self, spawn: dict[str, Any], tick: int) -> tuple[float, float, float, float]:
-        desired = spawn["desiredTier"]
-        location_tier = spawn["locationTier"]
-        key = (spawn["resource"], spawn["zoneId"])
-        last = self.last_high_tick.get(key)
-        age = float(tick + 1 if last is None else max(0, tick - last))
-        return (
-            float(TIER_RANK[desired]),
-            float(TIER_RANK[location_tier]),
-            age,
-            self.rng.random(),
-        )
-
-    def choose_realized_tier(
-        self,
-        spawn: dict[str, Any],
-        active_counts: dict[str, Counter[str]],
-        zone_high: set[tuple[str, str]],
-        tick: int,
-    ) -> str:
-        desired = spawn["desiredTier"]
-        if desired == "T1":
-            return "T1"
-
-        resource = spawn["resource"]
-        zone_resource_key = (spawn["zoneId"], resource)
-        if zone_resource_key in zone_high:
-            self.blocked["perLocationResourceCap"] += 1
-            self.downgrades[f"{desired}->T1"] += 1
-            return "T1"
-
-        desired_rank = TIER_RANK[desired]
-        caps = self.config["worldCapsPerResource"]
-        blocked_by_world_cap = False
-
-        for tier in reversed(TIERS[1:desired_rank]):
-            cap = int(caps[tier])
-            if active_counts[resource][tier] < cap:
-                if tier != desired:
-                    self.downgrades[f"{desired}->{tier}"] += 1
-                active_counts[resource][tier] += 1
-                zone_high.add(zone_resource_key)
-                self.last_high_tick[zone_resource_key] = tick
-                return tier
-            blocked_by_world_cap = True
-            self.blocked["worldCap"] += 1
-
-        self.downgrades[f"{desired}->T1"] += 1
-        return "T1"
-
     def run(self) -> dict[str, Any]:
         start = time.perf_counter()
         resources = list({resource for weights in self.config["biomes"].values() for resource in weights})
@@ -387,13 +370,14 @@ class Simulation:
                         }
                     )
 
-            spawns.sort(key=lambda spawn: self.candidate_priority(spawn, tick), reverse=True)
-            active_counts: dict[str, Counter[str]] = defaultdict(Counter)
-            zone_high: set[tuple[str, str]] = set()
+            allocation = self.rotation_allocator.allocate(spawns)
+            active_counts = allocation["activeCounts"]
+            self.blocked.update(allocation["blocked"])
+            self.downgrades.update(allocation["downgrades"])
             t4_resources_this_tick: set[str] = set()
 
-            for spawn in spawns:
-                realized = self.choose_realized_tier(spawn, active_counts, zone_high, tick)
+            for index, spawn in enumerate(spawns):
+                realized = allocation["realized"][index]
                 location_tier = spawn["locationTier"]
                 resource = spawn["resource"]
                 self.realized_master_total[realized] += 1
@@ -541,12 +525,18 @@ class Simulation:
                 "highTierAssignments": high_total,
                 "maxSingleZoneSharePct": round(max_zone_share, 6),
                 "byZone": zone_fairness,
+                "coverage": self.rotation_allocator.rotation_summary(),
             },
             "rewards": {
                 "meanMultiplier": round(reward_mean, 6),
                 "factorHistogram": dict(sorted(self.reward_factor_hist.items(), key=lambda item: float(item[0]))),
             },
         }
+        summary["effort"] = build_attention_effort(
+            self.config,
+            self.resources_data,
+            master_rows,
+        )
         return summary
 
 
@@ -941,7 +931,7 @@ th{{background:#151b23}}p{{color:#9da7b3}}code{{color:#f0c66a}}
     return result
 
 
-def run_once(args: argparse.Namespace, config: dict[str, Any], *, mode: str) -> Path:
+def run_once(args: argparse.Namespace, config: dict[str, Any], resources_data: dict[str, Any], *, mode: str) -> Path:
     cycles = int(args.cycles)
     if cycles <= 0:
         raise ValueError("cycles must be positive")
@@ -956,6 +946,7 @@ def run_once(args: argparse.Namespace, config: dict[str, Any], *, mode: str) -> 
         world_size=world_size,
         seed=seed,
         trace=(mode == "TRACE"),
+        resources_data=resources_data,
     )
     summary = simulator.run()
     verdict, warnings = evaluate_summary(config, summary)
@@ -964,13 +955,13 @@ def run_once(args: argparse.Namespace, config: dict[str, Any], *, mode: str) -> 
     run_id = args.run_id or f"SIM-{now.strftime('%Y%m%d-%H%M%S')}-{mode.lower()}-w{world_size}-s{seed}"
     output_root = Path(args.output_root).resolve()
     output_dir = output_root / run_id
-    config_hash = canonical_hash(config)
+    config_hash = canonical_hash({"simulation": config, "resources": resources_data})
     report_start = time.perf_counter()
 
     manifest = {
         "runId": run_id,
         "createdAt": now.isoformat(),
-        "simulatorVersion": "0.1.0",
+        "simulatorVersion": "0.2.0",
         "gitCommit": git_sha(),
         "configHash": config_hash,
         "seed": seed,
@@ -978,7 +969,7 @@ def run_once(args: argparse.Namespace, config: dict[str, Any], *, mode: str) -> 
         "cycles": cycles,
         "worldSize": world_size,
         "externalZoneCount": world_size,
-        "inputFiles": [str(Path(args.config).resolve())],
+        "inputFiles": [str(Path(args.config).resolve()), str(Path(args.resources).resolve())],
         "durationMs": round(summary["performance"]["simulationSeconds"] * 1000.0, 3),
         "reportDurationMs": 0.0,
         "pythonVersion": sys.version.split()[0],
@@ -1001,7 +992,7 @@ def run_once(args: argparse.Namespace, config: dict[str, Any], *, mode: str) -> 
     return output_dir
 
 
-def matrix_run(args: argparse.Namespace, config: dict[str, Any]) -> Path:
+def matrix_run(args: argparse.Namespace, config: dict[str, Any], resources_data: dict[str, Any]) -> Path:
     sizes = [int(value.strip()) for value in args.world_sizes.split(",") if value.strip()]
     if not sizes:
         raise ValueError("world-sizes is empty")
@@ -1016,7 +1007,7 @@ def matrix_run(args: argparse.Namespace, config: dict[str, Any]) -> Path:
         child_args.world_size = size
         child_args.output_root = str(matrix_dir)
         child_args.run_id = f"world-{size}"
-        output = run_once(child_args, config, mode="TEST")
+        output = run_once(child_args, config, resources_data, mode="TEST")
         summary = load_json(output / "summary.json")
         rows.append(
             [
@@ -1068,6 +1059,7 @@ th,td{{padding:8px;border:1px solid #30363d}}th{{background:#151b23}}svg{{width:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="uGame headless Simulation Lab")
     parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to simulation config JSON")
+    parser.add_argument("--resources", default=str(DEFAULT_RESOURCES), help="Path to resources.json for value-equivalent effort analysis")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate", help="Validate simulation configuration")
@@ -1106,7 +1098,9 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
     config_path = Path(args.config).resolve()
+    resources_path = Path(args.resources).resolve()
     config = load_json(config_path)
+    resources_data = load_json(resources_path)
     errors = validate_config(config)
 
     if args.command == "validate":
@@ -1131,14 +1125,14 @@ def main() -> int:
         return 0
 
     if args.command == "matrix":
-        output = matrix_run(args, config)
+        output = matrix_run(args, config, resources_data)
         print(f"Matrix report: {output / 'matrix.html'}")
         return 0
 
     mode = args.mode
     if args.command == "trace":
         mode = "TRACE"
-    output = run_once(args, config, mode=mode)
+    output = run_once(args, config, resources_data, mode=mode)
     print(f"Simulation complete: {output}")
     print(f"Open report: {output / 'report.html'}")
     return 0
