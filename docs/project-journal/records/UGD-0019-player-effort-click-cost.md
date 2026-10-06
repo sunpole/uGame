@@ -194,4 +194,4 @@ Audit: `docs/project-journal/audits/2026-10-07-simulation-matrix-v02-player-effo
 - в 100-zone world: ~564 / 240 / 118 / 70 соответственно;
 - 1 Attention-equivalent по текущему analytical value 5000 Stone требует примерно 24–45h interaction cadence в 8-zone world и 27–45h в 100-zone world;
 - это не считается принятым gameplay target: текущий 5000 — value-equivalent, не подтверждённый игровой обмен;
-- следующий блокирующий вопрос — сколько реального игрового времени должен стоить 1 Attention.
+- прямой Stone-value equivalent не используется как gameplay target Attention; реальный cadence задаётся UGD-0020: около 1/неделю normal, около 1/день hardcore, >10/неделю review/logging threshold.
