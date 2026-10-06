@@ -22,6 +22,7 @@
 - Для следующего playable-слоя принято направление `UGD-0013`: каждая зона имеет набор возможных Dynamic Event Spots; качество зоны определяет число активных слотов, события и качество меняются по независимым таймерам, а Resource/Chest/Portal взаимодействия используют сохраняемую генерацию наград и переиспользуемый Interaction UI. Конкретные вероятности и цены пока прототипные.
 - Принято `UGD-0014`: хранение строится поверх единого ContainerSystem; Backpack, Bank, Equipment и Resource Pouch отличаются конфигурацией/доступом, а slots/weight/stack/allowed-items должны позже расширяться навыками и профессиями.
 - Принято `UGD-0015`: ресурсные взаимодействия строятся через master NPC; Tier постоянен у master identity, Relationship/skill progression принадлежат конкретному персонажу, все master одного resourceDirection работают с единым деревом направления, а master multiplier `×1.00/1.20/1.40/1.60` умножает XP/reward этого NPC.
+- Принято `UGD-0016`: внешние зоны имеют Location Tier T1–T4; Tier-state живёт отдельно от зоны, задаёт `2–4 / 2–5 / 3–6 / 5–6` одновременно активных spawn, lifetime `2–3h / 1.5–2.5h / 1–2h / 1–1.5h` и bonus `×1.00 / ×1.20 / ×1.40 / ×1.60`. Biome определяет resourceDirection, distance from city меняет шанс Location Tier, а редкие master распределяются через world caps и rotation.
 
 ## Активные рабочие гипотезы
 
@@ -43,9 +44,8 @@
 - Для будущего дизайна предлагается различать `resource stock`, `mastery`, `active resonance` и `daily efficiency`, а не смешивать их в один показатель.
 - Рассматривается **поддержание активного резонанса**: исторически достигнутый прогресс может сохраняться, а текущая применяемая сила со временем ослабевать без поддержки. Более жёсткая идея потери самих уровней тоже зафиксирована, но не принята из-за риска FOMO.
 - Рассматривается **diminishing daily efficiency**: первые условные ~2 часа могут давать полную эффективность, затем отдача постепенно снижается вплоть до очень малого коэффициента. Числа `2 часа / 10 минут / -10 п.п. / 0.1%` пока только модель для обсуждения, не баланс.
-- Рассматривается `UGD-0016`: внешние зоны имеют Location Tier T1–T4; подтверждены диапазоны active spawn `2–4 / 2–5 / 3–6 / 5–6`, lifetime `2–3h / 1.5–2.5h / 1–2h / 1–1.5h` и location bonus `×1.00 / ×1.20 / ×1.40 / ×1.60`.
-- Биом определяет доступные resourceDirection и их веса; расстояние от мирного города изменяет шанс самого Location Tier. Высокий Location Tier также повышает вероятность более сильных NPC/Event.
-- Для одного resourceDirection рассматриваются четыре master identity T1–T4 и world caps редких spawn; точная distance probability curve, conditional NPC-tier matrix и cap fallback ещё требуют расчёта/симуляции.
+- Для `UGD-0016` остаётся **балансировочная**, а не архитектурная задача: симуляцией подобрать `distance → Location Tier`, `Location Tier → NPC/Event Tier`, rotation fairness и будущую формулу масштабирования caps при 30/50/100+ зонах.
+- Для prototype world-state достаточно локального serializable `WorldSpawnState`; backend нужен позже, когда один мир станет общей server-authoritative истиной для многих игроков.
 
 ## Реализованный фундамент
 
@@ -80,4 +80,4 @@
 - `UGD-0013` — Interaction UI, генерация наград и динамические Event Spots; прототип начат в `v0.0.32`, правило слепого ограниченного выбора уточнено в `v0.0.34`.
 - `UGD-0014` — ContainerSystem: рюкзак, Банк, экипировка, ресурсный пояс, вес, stack и будущие progression hooks; реализовано как прототип `v0.0.35`.
 - `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
-- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; обсуждается, требуется симуляция.
+- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, требует симуляции баланса.
