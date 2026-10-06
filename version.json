@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.36",
-  "stage": "project-hub",
+  "version": "0.0.37",
+  "stage": "simulation-lab",
   "updated": "2026-10-06",
-  "summary": "In-game Project Hub with documentation, Project Journal and project navigation"
+  "summary": "Headless Simulation Lab with GitHub Actions, reports, comparisons and safe local launcher"
 }
