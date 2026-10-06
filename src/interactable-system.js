@@ -87,6 +87,9 @@ export class InteractableSystem {
         color: '#d2a8ff'
       }).setOrigin(0.5);
       scene.tweens.add({ targets: glow, alpha: { from: 0.22, to: 0.7 }, scale: { from: 0.9, to: 1.2 }, duration: 1000, yoyo: true, repeat: -1 });
+    } else if (item.type === 'bank') {
+      body = scene.add.rectangle(item.x, item.y, item.width || 46, item.height || 36, 0x6e7681, 1).setStrokeStyle(2, 0xc9d1d9);
+      label = scene.add.text(item.x, item.y - 32, item.label || 'Банк', { ...labelStyle, color: '#c9d1d9' }).setOrigin(0.5);
     } else if (item.type === 'chest') {
       body = scene.add.rectangle(item.x, item.y, item.width || 40, item.height || 30, 0xc9963b, 1).setStrokeStyle(2, 0xf0c66a);
       label = scene.add.text(item.x, item.y - 28, item.label || 'Сундук', { ...labelStyle, color: '#f0c66a' }).setOrigin(0.5);
