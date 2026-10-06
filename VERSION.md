@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.47**
+Current version: **0.0.48**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.48 | Complete HUD migration + cross-page persistent project chrome |
 | 0.0.47 | Project Hub interface settings with text selection disabled by default |
 | 0.0.46 | Mouse / AnyDesk controls use the same contextual Action path |
 | 0.0.45 | Unified contextual Action Router for primary/back/arrow navigation |
@@ -53,6 +54,11 @@ Current version: **0.0.47**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.48
+Completed the Game Chrome migration. The legacy in-canvas HUD is hidden only after its information has replacements: Stamina/resources/storage/fragments are in the persistent header and live zone-rule context is in the footer; quest/context prompts remain in the Workspace. Remote Action input is hardened so an open modal cannot leak a world interaction. Class changes and initial storage load update the header immediately.
+
+Version and build/source identity are separate movable footer blocks. Journal, Active–Idle and the published Simulation Results pages now load shared always-visible project chrome with version/build/environment, session, saved location, Game Clock and real local date/time/timezone. The persistent text-selection setting applies there as well. This completes the accepted UGD-0021 v0.0.41→v0.0.48 series.
 
 ## 0.0.47
 Added persistent Interface Settings in Project Hub. Text selection is disabled by default across the application to prevent accidental drag-selection during gameplay/remote control, while input, textarea, select and contenteditable fields remain selectable. The setting can be switched on/off instantly without reload and persists in localStorage.
