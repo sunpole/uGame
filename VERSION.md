@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.38**
+Current version: **0.0.39**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.39 | Simulation Lab v0.2: per-master rotation coverage + Player Effort/click analytics |
 | 0.0.38 | Local /journal/ fix + beginner Simulation Lab quickstart in Project Hub |
 | 0.0.37 | Headless Simulation Lab: deterministic world calculations, reports, Actions runner and local launcher |
 | 0.0.36 | In-game Project Hub: navigation, embedded docs/Journal and GitHub links |
@@ -44,6 +45,11 @@ Current version: **0.0.38**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.39
+Simulation Lab v0.2 corrects the high-tier master model after MATRIX analysis. T2/T3/T4 counts are maximum simultaneous caps, never target counts; if no random candidate exists, that master Tier is absent. A new per-master rotation allocator keeps independent coverage history for each resourceDirection + Tier and prefers unvisited eligible zones until the current coverage round is exhausted.
+
+Added Player Effort analytics. The simulator reads current resource baseValue from `data/resources.json`, treats `1 Attention-equivalent = 5000 Stone-value` strictly as an analytical comparison unit, and reports expected click/action cost, NPC checks, reward actions and interaction time. Reports now include `attention-equivalent-effort.csv`, `master-search-clicks.csv`, `master-rotation-coverage.csv` plus SVG/HTML charts. DEV codes 83xx are reserved for future master registry/list/teleport QA when WorldSpawnState becomes live gameplay. Previous TEST/MATRIX #6/#7 remain useful historical runs but must be rerun for the corrected allocator.
 
 ## 0.0.38
 Fixed the local Node dev server so directory URLs such as `/journal/` resolve their `index.html` just like GitHub Pages. Bare directory URLs are redirected to a trailing slash so relative CSS/JS paths remain correct. Project Hub no longer sends a first-time user straight into an unexplained GitHub Actions screen: the main Simulation Lab launch card now opens `docs/SIMULATION-LAB-QUICKSTART.md`, which explains what GitHub Actions is, why `Run workflow` is hidden while signed out, the exact first TEST 100k settings, where Artifacts/report.html appear, and the updater option 9 local alternative. A separate card still opens the Actions runner directly.
