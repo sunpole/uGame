@@ -30,6 +30,7 @@
 - Принято `UGD-0019`: Player Effort измеряется отдельно от внутренней экономики — клики/действия на поиск master и добычу, interaction cadence time и Attention-equivalent через текущий `resources.json`. `1 Attention-equivalent = 5000 Stone-value` используется только для аналитики, не как игровой обмен.
 - Принято `UGD-0020`: Attention cadence guardrail — около 1/неделю normal, около 1/день hardcore, >10/неделю anomaly/log review. Текущий `Attention ×1` из Dynamic Resource Event — QA placeholder, не финальная экономика.
 - Принято и реализовано `UGD-0021`: persistent Game Chrome. Header/Footer находятся вне Workspace overlay, Game Clock display-only, real-time gameplay timers не изменены, E/Space/Enter идут через Action Router, mouse/AnyDesk — равноправный input, text selection default OFF.
+- Принято и реализовано `UGD-0022`: runtime-окна обязаны оставаться внутри Workspace; при нехватке места используется scale-first до читаемого минимума 82%, затем scroll fallback; окна одного game-modal уровня не перекрываются случайно; Game Clock показывает фазу суток, секунды и ×12.
 
 ## Активные рабочие гипотезы
 
@@ -70,12 +71,13 @@
 - `v0.0.39` обновляет Simulation Lab до v0.2: random high-tier caps без targetCount, независимый rotation coverage для каждого master, click/search/Attention-equivalent analytics и новые CSV/SVG/HTML отчёты.
 - `v0.0.40` публикует Simulation Results archive (#6/#7/#20), фиксирует Attention cadence guardrail и предварительный `NEXT-IMPLEMENTATION-PLAN.md`; большие ручные simulation runs поставлены на паузу.
 - `v0.0.41–v0.0.48` реализуют Game Chrome series: persistent Header/Workspace/Footer, build/session/location/real clock, informational Game Clock, live character/resources header, Action Router, AnyDesk controls, text-selection settings и shared chrome на Journal/Simulation pages.
+- `v0.0.49–v0.0.53` реализуют Workspace Window Policy: общий Window Manager, scale-first fit с scroll fallback, формальную layer/Z policy и Game Clock UX с 🌙/🌅/☀️/🌆, секундами и ×12.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.48 после локального Update: Header/Footer, размеры Workspace, Project Hub containment, clocks, location/session timers, resources/Stamina/storage, AnyDesk buttons, dialogue/action keyboard flow и text-selection toggle.
+- Выполнить ручной desktop QA v0.0.53 после локального Update: Chest/Resource/Dialogue/Inventory bounds, scale-first поведение, отсутствие same-level overlap, Header/Footer containment и видимое движение Game Clock секунд.
 - Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown остаются REAL TIME до отдельного решения.
 - После QA пользователь передаёт/уточняет следующий пакет gameplay-патчей; только затем пересобирается implementation queue.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.
@@ -102,4 +104,5 @@
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
 - `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, baseline #20 зафиксирован.
 - `UGD-0020` — Attention cadence guardrail + пауза больших simulation runs; принято.
-- `UGD-0021` — Persistent Game Chrome / clocks / input UX; реализовано v0.0.41–v0.0.48, требуется ручной desktop QA.
+- `UGD-0021` — Persistent Game Chrome / clocks / input UX; реализовано v0.0.41–v0.0.48.
+- `UGD-0022` — Workspace Window Policy + Game Clock UX; реализовано v0.0.49–v0.0.53, требуется ручной desktop QA.

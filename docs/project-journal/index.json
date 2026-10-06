@@ -676,6 +676,35 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0022",
+      "title": "Workspace Window Policy + Game Clock UX",
+      "date": "2026-10-07",
+      "type": "ui-ux",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "ui",
+        "windows",
+        "workspace",
+        "scaling",
+        "scroll",
+        "layers",
+        "game-clock",
+        "time"
+      ],
+      "path": "records/UGD-0022-workspace-window-policy-game-clock-ux.md",
+      "related": [
+        "UGD-0013",
+        "UGD-0014",
+        "UGD-0018",
+        "UGD-0021"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

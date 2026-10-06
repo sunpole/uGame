@@ -1789,3 +1789,19 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .project-hub { z-index: var(--ug-z-project-hub); }
 .game-chrome-header,
 .game-chrome-footer { z-index: var(--ug-z-chrome); }
+
+
+/* v0.0.53 — visible Game Clock seconds + ×12 speed */
+.game-chrome-footer {
+  grid-template-columns: auto minmax(130px, auto) minmax(105px, auto) minmax(250px, 1.15fr) minmax(285px, 1fr) minmax(280px, auto);
+}
+
+.game-clock-block strong {
+  font-size: 10px;
+}
+
+@media (max-width: 1050px) {
+  .game-chrome-footer {
+    grid-template-columns: auto auto auto minmax(180px, 1fr) minmax(245px, auto) minmax(210px, auto);
+  }
+}

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.52",
-  "stage": "game-clock-phase-ux",
+  "version": "0.0.53",
+  "stage": "window-clock-ux-complete",
   "updated": "2026-10-07",
-  "summary": "Game Clock day-phase icons while remaining display-only"
+  "summary": "Workspace-safe scale-first windows, explicit layer policy and visible x12 Game Clock seconds"
 }

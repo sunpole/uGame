@@ -1,6 +1,8 @@
 const CLOCK_KEY = 'ugame.world-clock.v1';
 const GAME_START_UTC_MS = Date.UTC(2026, 0, 1, 0, 0, 0);
 const REAL_MS_PER_GAME_MINUTE = 5000;
+const GAME_TIME_SCALE = 60_000 / REAL_MS_PER_GAME_MINUTE;
+const RENDER_INTERVAL_MS = 250;
 
 function safeLocalStorage() {
   try {
@@ -58,34 +60,39 @@ export class GameClockSystem {
 
   snapshot(now = Date.now()) {
     const elapsedRealMs = Math.max(0, now - this.realStartedAt);
-    const elapsedGameMinutes = Math.floor(elapsedRealMs / REAL_MS_PER_GAME_MINUTE);
-    const gameMs = GAME_START_UTC_MS + elapsedGameMinutes * 60_000;
+    const elapsedGameMs = Math.floor(elapsedRealMs * GAME_TIME_SCALE);
+    const elapsedGameMinutes = Math.floor(elapsedGameMs / 60_000);
+    const gameMs = GAME_START_UTC_MS + elapsedGameMs;
     const date = new Date(gameMs);
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth() + 1;
     const day = date.getUTCDate();
     const hour = date.getUTCHours();
     const minute = date.getUTCMinutes();
+    const second = date.getUTCSeconds();
     const phase = phaseForHour(hour);
     const phaseIcon = phaseIconForHour(hour);
 
     return {
+      elapsedGameMs,
       elapsedGameMinutes,
       year,
       month,
       day,
       hour,
       minute,
+      second,
       phase,
       phaseIcon,
-      label: `${pad2(day)}.${pad2(month)}.${year} · ${pad2(hour)}:${pad2(minute)} · ${phaseIcon} ${phase}`
+      speed: GAME_TIME_SCALE,
+      label: `${pad2(day)}.${pad2(month)}.${year} · ${pad2(hour)}:${pad2(minute)}:${pad2(second)} · ${phaseIcon} ${phase} · ×${GAME_TIME_SCALE}`
     };
   }
 
   start() {
     this.stop();
     this.render();
-    this.timer = window.setInterval(() => this.render(), 1000);
+    this.timer = window.setInterval(() => this.render(), RENDER_INTERVAL_MS);
   }
 
   stop() {
@@ -97,7 +104,7 @@ export class GameClockSystem {
     const snapshot = this.snapshot();
     if (this.element) {
       this.element.textContent = snapshot.label;
-      this.element.title = 'Game Clock: 1 игровая минута = 5 реальных секунд. Пока не влияет на gameplay timers.';
+      this.element.title = 'Game Clock: ×12; 1 игровая минута = 5 реальных секунд. Только отображение — gameplay timers остаются real-time.';
     }
     return snapshot;
   }
@@ -106,6 +113,8 @@ export class GameClockSystem {
 export {
   GAME_START_UTC_MS,
   REAL_MS_PER_GAME_MINUTE,
+  GAME_TIME_SCALE,
+  RENDER_INTERVAL_MS,
   phaseForHour,
   phaseIconForHour
 };
