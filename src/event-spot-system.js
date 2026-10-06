@@ -377,6 +377,36 @@ export class EventSpotSystem {
     this.eventSystem?.emit('dynamic-events:state', { state: this.snapshot() });
   }
 
+  forceQuality(zone, level, now = Date.now()) {
+    const labels = {
+      1: { id: 'normal', label: 'Обычное' },
+      2: { id: 'rare', label: 'Редкое' },
+      3: { id: 'magic', label: 'Магическое' },
+      4: { id: 'unique', label: 'Уникальное' }
+    };
+    const quality = labels[level];
+    if (!zone || !quality) return null;
+
+    const zoneState = {
+      qualityLevel: level,
+      qualityRarityId: quality.id,
+      qualityLabel: quality.label,
+      qualityExpiresAt: now + this.rewardGenerator.locationDurationMs(level),
+      events: []
+    };
+
+    this.state.zones[zone.id] = zoneState;
+    this.fillEventSlots(zone, zoneState, now, true);
+
+    if (zone.id === this.currentZoneId) {
+      this.interactionPanel?.close?.();
+      this.renderCurrentZone();
+      this.updateZoneStatus(now);
+    }
+    this.publish();
+    return zoneState;
+  }
+
   executeDevCode(code) {
     const zone = this.currentZoneId ? this.worldGraph?.getZone(this.currentZoneId) : null;
     if (!zone) return { handled: false };
@@ -397,6 +427,16 @@ export class EventSpotSystem {
       return {
         handled: true,
         message: `8202 · Качество зоны: ${state.qualityLevel}/4 · ${state.qualityLabel}`,
+        state: 'ok'
+      };
+    }
+
+    if (['8211', '8212', '8213', '8214'].includes(code)) {
+      const level = Number(code.at(-1));
+      const state = this.forceQuality(zone, level, Date.now());
+      return {
+        handled: true,
+        message: `${code} · DEV качество зоны: ${state.qualityLevel}/4 · событий ${state.events.length}`,
         state: 'ok'
       };
     }
