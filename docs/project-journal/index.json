@@ -449,7 +449,8 @@
         "needs-prototype",
         "needs-test",
         "needs-calculation",
-        "needs-lore"
+        "needs-lore",
+        "needs-scope-decision"
       ],
       "tags": [
         "npc",
