@@ -42,7 +42,7 @@ export class ContainerSystem {
     this.loaded = false;
   }
 
-  async load({ snapshot = null, legacyInventory = null } = {}) {
+  async load({ snapshot = null, legacyInventory = null, legacyResources = null } = {}) {
     if (!this.itemCatalog?.loaded) {
       throw new Error('ItemCatalog must load before ContainerSystem');
     }
@@ -90,7 +90,25 @@ export class ContainerSystem {
       for (const [itemId, rawAmount] of Object.entries(legacyInventory)) {
         const amount = Math.max(0, Math.floor(Number(rawAmount) || 0));
         if (!itemId || amount <= 0) continue;
-        this.addTo('backpack', itemId, amount, { atomic: false, silent: true });
+        const backpack = this.addTo('backpack', itemId, amount, { atomic: false, silent: true });
+        if (backpack.remaining > 0) {
+          this.addTo('bank', itemId, backpack.remaining, { atomic: false, silent: true });
+        }
+      }
+    }
+
+    if (!hasStoredContainers && legacyResources && typeof legacyResources === 'object') {
+      for (const [itemId, rawAmount] of Object.entries(legacyResources)) {
+        const item = this.itemCatalog.get(itemId);
+        if (!item || item.type !== 'resource' || item.storageMode === 'account') continue;
+
+        const amount = Math.max(0, Math.floor(Number(rawAmount) || 0));
+        if (amount <= 0) continue;
+
+        const carried = this.addAuto(itemId, amount, { atomic: false, silent: true });
+        if (carried.remaining > 0) {
+          this.addTo('bank', itemId, carried.remaining, { atomic: false, silent: true });
+        }
       }
     }
 
