@@ -32,7 +32,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.34 — Dynamic Event Spots + Reward Choice Rules
+## Game prototype v0.0.35 — Dynamic Events + Modular Containers
 
 uGame keeps the First Playable slice and now adds a first changing-world layer on top of it.
 The current prototype includes:
@@ -60,7 +60,12 @@ The current prototype includes:
 - always-visible footer mouse controls for directions, Action and Dash during remote testing;
 - NPC, resource, chest and portal variants built on one Interactable system;
 - temporary procedural sounds routed through one Audio system;
-- resource counters and a small stack-based inventory;
+- ResourceSystem counters plus a modular ContainerSystem for physical item placement;
+- Backpack with slots, stack limits and weight;
+- Resource Pouch with starter Stone-only storage;
+- named Equipment slots for helmet/chest/pants/boots/gloves/rings/amulet/cloak/belt;
+- a local prototype Bank service on Перекрёсток with large storage and no weight limit;
+- persistent container placement and legacy inventory/resource migration;
 - JSON-driven dialogue and quest data;
 - versioned Persistent Game State schema v1 plus browser-local SaveSystem;
 - restoration of class, stable zone/entry context, resources, inventory, quest state and used one-time interactables;
@@ -72,7 +77,9 @@ The current prototype includes:
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
 On top of that static loop, v0.0.32 tests whether changing Event Spots make revisiting zones
-more interesting. Event Portal encounters are placeholders only; they do not travel anywhere yet.
+more interesting. v0.0.35 adds the first inventory/storage gameplay layer: physical rewards now
+need portable container capacity, while Attention remains intangible/account storage. Event Portal
+encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
 resolves stable ids and transitions; `ZoneSystem` renders the selected zone rather than
@@ -81,8 +88,9 @@ owning the authoritative zone list. Existing v0.0.29 saves containing numeric zo
 next zone entry/save. See `docs/WORLD-GRAPH.md`.
 
 Persistent state intentionally stores significant consequences rather than every
-runtime detail. Exact player coordinates, animation phase and temporary UI state are
-not saved. See `docs/SAVE-SYSTEM.md` for schema, limitations and the acceptance test.
+runtime detail. Container placement, Bank, Equipment and Resource Pouch state are now part of the
+same Game State. Exact player coordinates, animation phase and temporary UI state are not saved.
+See `docs/SAVE-SYSTEM.md` and `docs/CONTAINER-SYSTEM.md` for schema, limitations and QA.
 Browser saves are origin-local, so localhost, a LAN address and GitHub Pages each have
 their own separate save.
 
