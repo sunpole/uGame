@@ -116,7 +116,10 @@ export class EventSpotSystem {
     this.state.zones[zone.id] = zoneState;
     this.fillEventSlots(zone, zoneState, now, true);
 
-    if (zone.id === this.currentZoneId) this.renderCurrentZone();
+    if (zone.id === this.currentZoneId) {
+      this.interactionPanel?.close?.();
+      this.renderCurrentZone();
+    }
     if (shouldPublish) this.publish();
     return zoneState;
   }
@@ -154,7 +157,10 @@ export class EventSpotSystem {
     }
 
     if (changed) {
-      if (zone.id === this.currentZoneId) this.renderCurrentZone();
+      if (zone.id === this.currentZoneId) {
+        this.interactionPanel?.close?.();
+        this.renderCurrentZone();
+      }
       this.publish();
     }
     return changed;
@@ -337,20 +343,18 @@ export class EventSpotSystem {
     if (!this.initialized || now < this.nextTickAt) return;
     this.nextTickAt = now + 1000;
 
-    let currentChanged = false;
+    let changedAny = false;
     for (const zone of this.worldGraph?.zones?.values?.() || []) {
       const zoneState = this.state.zones?.[zone.id];
       if (!zoneState || Number(zoneState.qualityExpiresAt) <= now) {
         this.rerollQuality(zone, now, false);
-        if (zone.id === this.currentZoneId) currentChanged = true;
+        changedAny = true;
         continue;
       }
-      if (this.refreshEvents(zone, zoneState, now) && zone.id === this.currentZoneId) {
-        currentChanged = true;
-      }
+      if (this.refreshEvents(zone, zoneState, now)) changedAny = true;
     }
 
-    if (currentChanged) this.renderCurrentZone();
+    if (changedAny) this.publish();
     this.updateZoneStatus(now);
   }
 
