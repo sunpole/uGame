@@ -2,8 +2,8 @@
 
 Дата: 2026-10-06  
 Тип: system  
-Статус: discussing  
-Flags: needs-calculation, needs-simulation, needs-prototype, needs-scope-decision  
+Статус: accepted  
+Flags: needs-calculation, needs-simulation, needs-prototype  
 Теги: world, zones, location-tier, biome, distance, events, npc, rarity, rewards, progression, simulation
 
 ## Контекст
@@ -27,7 +27,7 @@ NPC Tier → насколько эффективен конкретный мас
 | T3 | 3–6 | 1–2 часа | ×1.40 / +40% |
 | T4 | 5–6 | 1–1.5 часа | ×1.60 / +60% |
 
-Термин «время жизни локации» пока требует технического уточнения: предполагается ли время жизни **текущего Tier-state** постоянной зоны или сама зона должна исчезать/заменяться. В текущем WorldGraph зоны постоянны, поэтому первый вариант проще и совместимее, но он ещё не подтверждён отдельной фразой.
+Подтверждено: зона остаётся постоянной частью WorldGraph. Указанное время — это lifetime **текущего Tier-state** зоны. После истечения Tier-state пересчитывается, сама зона не исчезает.
 
 ## Биомы
 
@@ -107,9 +107,11 @@ T1 → остальные доступные spawn
 
 Также в одной локации одновременно допускается максимум **один NPC T2+**; остальные ресурсные NPC этой локации должны быть T1.
 
-Числа `1 / 2 / 3` были приведены в обсуждении на примере примерно 40 каменных spawn и требуют подтверждения: это фиксированные глобальные caps или стартовые тестовые значения, которые должны масштабироваться с размером мира.
+На текущем этапе `T4=1 / T3=2 / T2=3` принимаются как **мировые ограничения на один resourceDirection**. Позже, при расширении мира и появлении реальной статистики, caps могут быть пересчитаны; они также могут зависеть от режиссуры и ЛОРа.
 
-Не определено поведение, если roll выбрал Tier, чей world/location cap уже заполнен: reroll среди разрешённых Tier, downgrade или другое правило.
+Ограничение `max one T2+ per location` действует **отдельно для каждого resourceDirection**. Например, T3 Камня не запрещает T2 Дерева в той же зоне, но запрещает второй T2+ Камня.
+
+При заполненном high-tier cap система не должна оставлять слот пустым. Для прототипа применяется WorldSpawn allocator: редкие master распределяются централизованно между eligible spawn, а остальные точки получают разрешённый более низкий Tier. Точная weighted-формула выбора кандидата подбирается симуляцией.
 
 ## Reward / XP stacking
 
@@ -152,6 +154,35 @@ NPC осталось 12 минут
 После despawn текущие незавершённые взаимодействия этого NPC закрываются.
 
 Если задача/Process **успела завершиться до despawn**, результат не теряется: он записывается в персональное состояние Character↔Master как pending/earned reward. Игрок получает его при будущей встрече с этим master, когда снова доступен соответствующий модуль.
+
+## WorldSpawnState и ротация редких master
+
+Для текущего single-player/prototype масштаба backend не требуется. Нужен локальный serializable `WorldSpawnState`, который позднее можно перенести на server-authoritative backend без смены data model.
+
+Минимально он должен знать:
+
+```text
+locationTierStateByZone
+activeMasterSpawns
+activeCountsByResourceAndTier
+recentHighTierZonesByResource
+recentMasterRotation
+nextRerollAt / expiresAt
+```
+
+Рекомендуемый принцип распределения T2–T4:
+
+```text
+1. собрать eligible spawn по biome/resourceDirection;
+2. учитывать Location Tier как вес кандидата;
+3. исключить zone/resource, где уже есть T2+ того же resourceDirection;
+4. проверить world cap нужного Tier;
+5. предпочитать зоны, которые ещё не получали этот high-tier master в текущем/недавнем rotation window;
+6. при отсутствии допустимого high-tier назначения использовать более низкий разрешённый Tier, не оставляя slot пустым;
+7. сохранить выбор в WorldSpawnState, чтобы F5/переходы не давали бесплатный reroll.
+```
+
+Это техническая архитектура прототипа. Позже тот же registry переносится на backend и становится общей истиной MMORPG-мира.
 
 ## Быстрый математический sanity check
 
@@ -206,21 +237,31 @@ quality duration: 150–180 / 120–160 / 75–120 / 60–90 min
 - завершённые, но не забранные результаты сохраняются у Character↔Master до будущей подходящей встречи.
 - города — resident NPC; внешние зоны — wandering resource/Event NPC.
 
-## Что ещё не ясно
+## Подтверждённые уточнения после аудита
 
-1. `location lifetime` означает lifetime текущего Tier-state постоянной зоны или физическое исчезновение/замену зоны?
-2. `2–4 / 2–5 / 3–6 / 5–6` — это количество **одновременно активных** spawn или количество появлений за весь lifetime?
-3. Какая точная probability curve/table `Location Tier ← distanceFromSafeHub`?
-4. Какая точная условная матрица `NPC Tier ← Location Tier`?
-5. Caps `T4=1 / T3=2 / T2=3` фиксированы на resourceDirection или масштабируются с числом eligible spawn/размером мира?
-6. Что делает spawn engine, когда желаемый high Tier запрещён world cap или правилом `max one T2+ per location`?
-7. Ограничение `max one T2+ per location` действует на всех resourceDirection вместе или отдельно для каждого ресурса?
-8. Сохраняется ли текущая 30-минутная жизнь отдельного Event/NPC внутри более длинного Location Tier-state?
-9. Как округлять fractional reward/XP после всех коэффициентов?
+1. Lifetime относится к Tier-state постоянной зоны; зона не исчезает.
+2. `2–4 / 2–5 / 3–6 / 5–6` — число **одновременно активных** Event/NPC spawn.
+3. Distance-from-city влияет только на probability самого Location Tier; точную curve выбираем после симуляции.
+4. Location Tier повышает шанс high-tier NPC/Event; точная conditional matrix выбирается после симуляции.
+5. `T4=1 / T3=2 / T2=3` пока являются world caps на один resourceDirection; позже могут масштабироваться по статистике/режиссуре/ЛОРу.
+6. При заполненном high-tier cap слот не пустует: WorldSpawn allocator назначает разрешённый более низкий Tier и ведёт rotation history.
+7. `max one T2+ per location` действует отдельно на каждый resourceDirection.
+8. Wandering Event/NPC живёт по собственному таймеру (текущий ориентир 30 минут), независимо от более длинного Location Tier-state.
+9. Backend сейчас не нужен: prototype использует локальный serializable WorldSpawnState; позже модель переносится на backend.
+
+## Осталось подобрать расчётом
+
+- probability table `distance band → Location Tier`;
+- conditional matrix `Location Tier → NPC/Event Tier`;
+- параметры rotation window / fairness для редких master;
+- масштабирование world caps при 30/50/100+ зонах;
+- округление fractional resource/XP.
+
+Это уже **баланс и симуляция**, а не архитектурные неясности.
 
 ## Статус
 
-Направление согласовано концептуально, но **полная spawn/balance реализация пока заблокирована вопросами 1–8**. Уже можно проектировать data schema и отдельный симулятор вероятностей, но не стоит фиксировать финальные spawn formulas до расчётов.
+Архитектурное направление **принято**. Следующий обязательный этап перед игровой реализацией — deterministic world simulator, который подберёт и проверит probability tables, caps и rotation fairness.
 
 ## Связи
 
