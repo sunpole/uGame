@@ -239,7 +239,8 @@
         "UGD-0007",
         "UGD-0009",
         "UGD-0010",
-        "UGD-0018"
+        "UGD-0018",
+        "UGD-0021"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -578,7 +579,8 @@
       "related": [
         "UGD-0008",
         "UGD-0009",
-        "UGD-0017"
+        "UGD-0017",
+        "UGD-0021"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -609,7 +611,8 @@
         "UGD-0015",
         "UGD-0016",
         "UGD-0017",
-        "UGD-0020"
+        "UGD-0020",
+        "UGD-0021"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -638,7 +641,38 @@
       "related": [
         "UGD-0001",
         "UGD-0017",
-        "UGD-0019"
+        "UGD-0019",
+        "UGD-0021"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0021",
+      "title": "Persistent Game Chrome: Header / Workspace / Footer + Input UX",
+      "date": "2026-10-07",
+      "type": "ui-ux",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "ui-shell",
+        "header",
+        "footer",
+        "clocks",
+        "session",
+        "location",
+        "input",
+        "remote",
+        "settings"
+      ],
+      "path": "records/UGD-0021-persistent-game-chrome-input-ux.md",
+      "related": [
+        "UGD-0008",
+        "UGD-0018",
+        "UGD-0019",
+        "UGD-0020"
       ],
       "supersedes": [],
       "superseded_by": []
