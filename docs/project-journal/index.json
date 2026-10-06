@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-06",
+  "updated": "2026-10-07",
   "records": [
     {
       "id": "UGD-0001",
@@ -25,7 +25,8 @@
         "UGD-0005",
         "UGD-0006",
         "UGD-0007",
-        "UGD-0019"
+        "UGD-0019",
+        "UGD-0020"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -549,7 +550,8 @@
         "UGD-0015",
         "UGD-0016",
         "UGD-0018",
-        "UGD-0019"
+        "UGD-0019",
+        "UGD-0020"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -606,7 +608,37 @@
         "UGD-0001",
         "UGD-0015",
         "UGD-0016",
-        "UGD-0017"
+        "UGD-0017",
+        "UGD-0020"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0020",
+      "title": "Attention cadence guardrail и пауза балансировочных прогонов",
+      "date": "2026-10-07",
+      "type": "economy",
+      "status": "accepted",
+      "flags": [
+        "needs-implementation",
+        "needs-telemetry",
+        "needs-later-test"
+      ],
+      "tags": [
+        "attention",
+        "economy",
+        "cadence",
+        "anti-grind",
+        "telemetry",
+        "simulation",
+        "qa"
+      ],
+      "path": "records/UGD-0020-attention-cadence-guardrail.md",
+      "related": [
+        "UGD-0001",
+        "UGD-0017",
+        "UGD-0019"
       ],
       "supersedes": [],
       "superseded_by": []
