@@ -11,6 +11,8 @@ on:
       - "src/main.js"
       - "data/project-hub.json"
       - "index.html"
+      - "tools/dev-server.mjs"
+      - "docs/SIMULATION-LAB-QUICKSTART.md"
   workflow_dispatch:
     inputs:
       mode:
@@ -66,6 +68,7 @@ jobs:
         run: |
           node --check src/project-hub-system.js
           node --check src/main.js
+          node --check tools/dev-server.mjs
 
       - name: Validate Project Hub JSON
         run: python -c "import json, pathlib; json.loads(pathlib.Path('data/project-hub.json').read_text(encoding='utf-8')); print('Project Hub JSON OK')"
