@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "rarityProfile": [
+    { "id": "normal", "label": "Обычное", "chance": 80, "qualityLevel": 1 },
+    { "id": "rare", "label": "Редкое", "chance": 15, "qualityLevel": 2 },
+    { "id": "magic", "label": "Магическое", "chance": 3.5, "qualityLevel": 3 },
+    { "id": "unique", "label": "Уникальное", "chance": 1.5, "qualityLevel": 4 }
+  ],
+  "location": {
+    "activeSlotsByQuality": {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "4": 5
+    },
+    "qualityDurationMinutes": {
+      "1": [150, 180],
+      "2": [120, 160],
+      "3": [75, 120],
+      "4": [60, 90]
+    },
+    "eventLifetimeMinutes": 30,
+    "eventTypes": [
+      { "id": "resource", "chance": 60 },
+      { "id": "chest", "chance": 30 },
+      { "id": "event-portal", "chance": 10 }
+    ]
+  },
+  "resourceEvent": {
+    "offerCount": [2, 3],
+    "maxChoices": 1
+  },
+  "chestEvent": {
+    "countByRarity": {
+      "normal": 1,
+      "rare": 2,
+      "magic": 3,
+      "unique": 5
+    }
+  },
+  "reward": {
+    "resourceByRarity": {
+      "normal": "stone",
+      "rare": "wood",
+      "magic": "water",
+      "unique": "attention"
+    },
+    "budgetInStoneByRarity": {
+      "normal": [1, 10],
+      "rare": [10, 20],
+      "magic": [20, 100],
+      "unique": [100, 250]
+    }
+  }
+}
