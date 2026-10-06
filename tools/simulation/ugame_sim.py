@@ -18,8 +18,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from tools.simulation.effort import build_attention_effort
-from tools.simulation.rotation import MasterRotationAllocator
+try:
+    from tools.simulation.effort import build_attention_effort
+    from tools.simulation.rotation import MasterRotationAllocator
+except ModuleNotFoundError:
+    from effort import build_attention_effort
+    from rotation import MasterRotationAllocator
 
 TIERS = ("T1", "T2", "T3", "T4")
 HIGH_TIERS = ("T4", "T3", "T2")
