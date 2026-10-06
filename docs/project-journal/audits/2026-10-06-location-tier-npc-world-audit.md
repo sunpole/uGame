@@ -1,7 +1,7 @@
 # uGame — Audit: Location Tier / Biome / NPC World Spawn / Reward Stack
 
 Дата: 2026-10-06
-Статус: OPEN — архитектура в целом совместима, баланс/spawn formula требует уточнений
+Статус: CLOSED FOR ARCHITECTURE — остаётся отдельная задача симуляции и балансировки
 
 ## Проверено
 
@@ -174,65 +174,36 @@ characterDirectionProgression:
   skill tree / mastery...
 ```
 
-## Остались блокирующие уточнения
+## Закрытие блокирующих уточнений
 
-### B1. Семантика «жизнь локации»
+- B1 закрыт: lifetime относится к Tier-state постоянной зоны.
+- B2 закрыт: диапазоны означают simultaneously active spawn.
+- B3 не архитектурный blocker: distance curve подбирается симуляцией.
+- B4 не архитектурный blocker: conditional NPC-tier matrix подбирается симуляцией.
+- B5 закрыт: `T4=1 / T3=2 / T2=3` пока world caps на resourceDirection; масштабирование отложено до статистики большого мира.
+- B6 закрыт технически: WorldSpawn allocator не оставляет slot пустым; при недоступном high Tier назначает допустимый более низкий Tier с учётом rotation history.
+- B7 закрыт: one-high-tier restriction применяется отдельно на каждый resourceDirection.
+- B8 закрыт: wandering Event/NPC сохраняет собственный таймер (ориентир 30 минут) внутри более длинного Location Tier-state.
 
-Это lifetime текущего **Tier-state** постоянной зоны, после чего она reroll T1–T4, или сама зона физически исчезает/перегенерируется?
+## Рекомендуемая реализация прототипа
 
-Для текущего авторского WorldGraph логичнее Tier-state lifetime.
+Не переходить на backend преждевременно. Реализовать локальный serializable `WorldSpawnState` поверх текущего Save/Game State. Он становится единым локальным registry активных Location Tier и master spawn. При будущей MMORPG-развёртке тот же model/API переносится на server-authoritative backend.
 
-### B2. Значение диапазона Event spawn
+Редкие master назначаются не независимым random каждого spot, а WorldSpawn allocator, который видит весь текущий мир, caps и rotation history. Это позволяет обеспечить глобальную уникальность T4 и контролируемую редкость T2/T3.
 
-`2–4 / 2–5 / 3–6 / 5–6` — число **одновременно активных** точек или всего Event за lifetime Tier-state?
+## Оставшаяся задача
 
-Контекст предыдущей механики указывает на simultaneous active, но это нужно подтвердить.
+До изменения playable balance нужен deterministic simulation script. Он должен прогнать минимум 100k+ world cycles для разных размеров мира и показать:
 
-### B3. Distance curve
-
-Нужно выбрать точную таблицу или формулу `distance → P(Location Tier)`.
-
-Рекомендуется не зашивать формулу в код на первом шаге, а хранить probability table по `distanceBand`, а затем подобрать её симуляцией.
-
-### B4. Conditional NPC Tier matrix
-
-Нужно определить `P(Master Tier | Location Tier)`. Принцип уже ясен: high-tier location повышает high-tier master, но конкретные проценты ещё не приняты.
-
-### B5. World caps
-
-`T4=1 / T3=2 / T2=3` на один resourceDirection — финальное правило или пример для мира примерно из 40 eligible resource spawns?
-
-Если мир увеличится в 10 раз, фиксированный cap даст совершенно другую редкость.
-
-### B6. Cap fallback
-
-Если roll выбрал T4, но T4 cap уже занят, что происходит:
-
-- weighted reroll только среди разрешённых tiers;
-- downgrade T4→T3→T2→T1;
-- spawn T1;
-- слот остаётся пустым?
-
-Это сильно влияет на реальную статистику.
-
-### B7. One high-tier per location
-
-Правило `max 1 NPC T2+ в локации` действует на **все ресурсы вместе** или отдельно на каждый resourceDirection?
-
-### B8. Event lifetime
-
-Сохраняем ли отдельному wandering NPC/Event текущие **30 минут** жизни внутри более длинного Location Tier-state?
-
-## Неблокирующие вопросы
-
-- округление fractional XP/resources;
-- визуальное название `Tier` после появления ЛОРа;
-- допустимость нескольких spawn-instance одного и того же named T2/T3 master одновременно;
-- точные веса ресурсов внутри каждого биома;
-- как будет масштабироваться система при сотнях зон.
+- фактическую долю T1/T2/T3/T4 зон по distance bands;
+- фактическую долю master Tier по Location Tier;
+- среднее и p95 время ожидания T4;
+- сколько high-tier attempts блокируется caps;
+- насколько равномерно high-tier master ротируются между eligible zones;
+- средний reward/XP multiplier;
+- чувствительность при 8 / 30 / 50 / 100 внешних зонах;
+- какую масштабируемую cap-формулу стоит использовать позже.
 
 ## Вердикт
 
-**Архитектуру уже можно проектировать. Финальную игровую реализацию spawn/balance — пока нет.**
-
-Наиболее полезный следующий технический шаг после ответов B1/B2/B5–B8 — отдельный deterministic simulation script, который по WorldGraph, городам, биомам, distance tables, caps и conditional Tier matrix прогоняет десятки/сотни тысяч циклов и показывает фактическую частоту T1–T4, blocked/rerolled spawn, средний reward/XP и время ожидания редких master.
+**Архитектурных блокеров больше нет. UGD-0016 можно принять.** Игровую реализацию spawn/balance лучше начинать после симулятора, чтобы не зашить случайные проценты в основной код.
