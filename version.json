@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.44",
-  "stage": "character-resource-header",
+  "version": "0.0.45",
+  "stage": "unified-action-router",
   "updated": "2026-10-07",
-  "summary": "Live character class/stamina/resources/material wealth/storage header"
+  "summary": "Contextual E/Space/Enter primary action, Escape back and arrow navigation"
 }
