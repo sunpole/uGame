@@ -160,3 +160,21 @@ UI различает:
 ## Desktop scope
 
 Эта серия оптимизируется для landscape desktop. DOM/component boundaries и CSS grid areas делаются так, чтобы позже portrait/mobile layout мог переставить готовые status-block без переписывания систем.
+
+
+## Реализация v0.0.41–v0.0.48
+
+Серия реализована полностью:
+
+- v0.0.41 — structural Header / Workspace / Footer + OverlayRoot;
+- v0.0.42 — build/environment, session, location/time-in-zone и real clock/timezone;
+- v0.0.43 — persistent informational Game Clock;
+- v0.0.44 — live character/Stamina/resources/material wealth/storage header;
+- v0.0.45 — unified contextual Action Router;
+- v0.0.46 — mouse/AnyDesk input parity;
+- v0.0.47 — persistent text-selection setting;
+- v0.0.48 — legacy HUD migration, modal leak fix и shared chrome на Journal/Simulation HTML pages.
+
+Game Clock остаётся display-only. Все существующие gameplay timers остаются REAL TIME.
+
+Следующий шаг — ручной desktop QA после локального обновления.
