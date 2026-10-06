@@ -528,7 +528,6 @@
       "type": "tooling",
       "status": "accepted",
       "flags": [
-        "needs-prototype",
         "needs-test"
       ],
       "tags": [
@@ -558,7 +557,6 @@
       "type": "ui-ux",
       "status": "accepted",
       "flags": [
-        "needs-prototype",
         "needs-test"
       ],
       "tags": [
