@@ -486,12 +486,11 @@
       "title": "Tier локации, биомы, расстояние от города и мировые лимиты NPC",
       "date": "2026-10-06",
       "type": "system",
-      "status": "discussing",
+      "status": "accepted",
       "flags": [
         "needs-calculation",
         "needs-simulation",
-        "needs-prototype",
-        "needs-scope-decision"
+        "needs-prototype"
       ],
       "tags": [
         "world",
