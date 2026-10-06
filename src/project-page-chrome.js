@@ -85,7 +85,8 @@ function markup(pageTitle) {
       <div id="ugc-resources" class="ugc-resources"><span>Камень 0</span><span>Дерево 0</span><span>Вода 0</span><span>Внимание 0</span></div>
     `,
     footer: `
-      <div class="ugc-footer-block"><strong id="ugc-version">v—</strong><span id="ugc-build">BUILD —</span><span id="ugc-env">—</span></div>
+      <div class="ugc-footer-block ugc-version"><strong id="ugc-version">v—</strong></div>
+      <div class="ugc-footer-block"><span id="ugc-build">BUILD —</span><span id="ugc-env">—</span></div>
       <div class="ugc-footer-block"><span>Сессия</span><strong id="ugc-session">00:00:00</strong></div>
       <div class="ugc-footer-block"><span id="ugc-location">Локация —</span></div>
       <div class="ugc-footer-block"><span>🎮</span><strong id="ugc-game-clock">01.01.2026 · 00:00 · Ночь</strong></div>
