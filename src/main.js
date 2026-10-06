@@ -360,6 +360,7 @@ class ZoneScene extends Phaser.Scene {
       });
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
+      chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
       this.persistGameState();
 
       this.eventSpotSystem.initialize(restoredState.dynamicEvents);
@@ -383,8 +384,9 @@ class ZoneScene extends Phaser.Scene {
   }
 
   bindPersistenceEvents() {
-    this.eventSystem.on('class:changed', ({ id }) => {
+    this.eventSystem.on('class:changed', ({ id, classData }) => {
       this.gameState.setClassId(id);
+      chromeHeaderSystem?.setClass(classData || classSystem?.current);
       this.persistGameState();
     });
 
