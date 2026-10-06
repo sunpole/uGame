@@ -1,6 +1,6 @@
 # uGame — Simulation Lab
 
-Status: **prototype implemented in v0.0.37; candidate balance only, not live gameplay.**
+Status: **prototype implemented; v0.0.39 adds per-master rotation coverage and Player Effort/click analytics. Candidate balance only, not live gameplay.**
 
 Project Journal decision: `docs/project-journal/records/UGD-0017-simulation-lab.md`.
 
@@ -169,6 +169,12 @@ next timestamp = minimum of:
 This is preferred for large DEEP runs because it avoids wasting CPU simulating empty time.
 
 ## WorldSpawn allocator
+### Rotation coverage semantics
+
+High-tier masters are still random. Caps `T4=1 / T3=2 / T2=3` are maximum simultaneous instance counts per resourceDirection, **not target counts**.
+
+Simulation Lab v0.2 keeps an independent rotation history for every `resourceDirection + masterTier`. Among currently eligible candidate zones, unvisited zones in the current round are preferred. A round resets only after the currently eligible pool has been covered. Candidate pools can change after world rerolls, so a zone may legitimately host the same master again in a later world state.
+
 
 The allocator consumes an already-valid set of candidate spawn positions.
 
@@ -280,6 +286,33 @@ Simulator reports must distinguish:
 - additive factor;
 - master factor;
 - final factor.
+
+## Player Effort / click-cost analytics
+
+v0.2 reads resource values from `data/resources.json` and reports a human-effort view in addition to world probabilities.
+
+Current analytical baseline:
+
+```text
+Stone baseValue = 1
+Attention baseValue = 5000
+1 Attention-equivalent = 5000 Stone-value
+resource reward/action = 1..10
+reward action interval = 3 min
+wandering NPC lifetime = 30 min
+```
+
+This is **not an in-game conversion rate**. It is only a common value-equivalent for comparing effort.
+
+Reports now include:
+
+- expected/median/p95 clicks to find T1/T2/T3/T4 master from each Location Tier, based on realized post-cap distribution;
+- expected Stone per reward action;
+- reward actions, interaction hours and NPC encounters to reach 1 Attention-equivalent;
+- fresh-Encounter and random-arrival click scenarios;
+- per-master rotation coverage and candidate-pool diagnostics.
+
+The first click model counts city exit, NPC dialogue, search-next-NPC and reward collection as explicit actions. Real world travel duration is not yet included.
 
 ## Metrics schema
 
@@ -557,6 +590,8 @@ Later real gameplay telemetry can be compared against simulator predictions, but
 ### Implemented in v0.0.37
 
 - deterministic standard-library Python engine and config validation;
+- per-master rotation coverage allocator with dynamic candidate pools;
+- Player Effort / click-cost analysis using shared resource baseValue;
 - synthetic worlds for arbitrary N, with normal presets 8 / 30 / 50 / 100;
 - Location Tier timers and distance-band candidate probabilities;
 - biome/resource selection and master allocator with world/per-location-resource caps;
