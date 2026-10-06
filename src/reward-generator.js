@@ -122,16 +122,26 @@ export class RewardGenerator {
     };
   }
 
+  choicePresentation(count, maxChoices) {
+    const restricted = maxChoices < count;
+    const hideWhenRestricted = this.rules?.choicePresentation?.hideWhenRestricted !== false;
+    return {
+      hidden: restricted && hideWhenRestricted,
+      revealUnchosenAfterComplete: this.rules?.choicePresentation?.revealUnchosenAfterComplete !== false
+    };
+  }
+
   generateResourceOffer() {
     const range = this.rules?.resourceEvent?.offerCount || [2, 3];
     const count = randomInt(range[0], range[1]);
-    const maxChoices = Math.max(1, Number(this.rules?.resourceEvent?.maxChoices) || 1);
+    const maxChoices = Math.min(count, Math.max(1, Number(this.rules?.resourceEvent?.maxChoices) || 1));
+    const presentation = this.choicePresentation(count, maxChoices);
 
     return {
       kind: 'resource-choice',
-      hidden: false,
+      ...presentation,
       generatedAt: Date.now(),
-      maxChoices: Math.min(count, maxChoices),
+      maxChoices,
       selectedIndices: [],
       options: Array.from({ length: count }, (_unused, index) => ({
         id: `resource-${index + 1}`,
@@ -152,10 +162,11 @@ export class RewardGenerator {
 
     const count = Math.max(1, Number(table[countTier.id]) || 1);
     const maxChoices = Math.min(count, Math.max(1, Number(table[choiceTier.id]) || 1));
+    const presentation = this.choicePresentation(count, maxChoices);
 
     return {
       kind: 'chest-choice',
-      hidden: true,
+      ...presentation,
       generatedAt: Date.now(),
       offerQuality: { id: countTier.id, label: countTier.label },
       choiceQuality: { id: choiceTier.id, label: choiceTier.label },
