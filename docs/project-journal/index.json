@@ -236,7 +236,8 @@
         "UGD-0004",
         "UGD-0007",
         "UGD-0009",
-        "UGD-0010"
+        "UGD-0010",
+        "UGD-0018"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -264,7 +265,8 @@
         "UGD-0010",
         "UGD-0013",
         "UGD-0014",
-        "UGD-0015"
+        "UGD-0015",
+        "UGD-0018"
       ],
       "supersedes": [],
       "superseded_by": []
@@ -543,7 +545,36 @@
       "related": [
         "UGD-0013",
         "UGD-0015",
-        "UGD-0016"
+        "UGD-0016",
+        "UGD-0018"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0018",
+      "title": "Project Hub: единая навигация игры, документации и dev-инструментов",
+      "date": "2026-10-06",
+      "type": "ui-ux",
+      "status": "accepted",
+      "flags": [
+        "needs-prototype",
+        "needs-test"
+      ],
+      "tags": [
+        "ui",
+        "ux",
+        "navigation",
+        "documentation",
+        "developer-tools",
+        "overlay",
+        "project-hub"
+      ],
+      "path": "records/UGD-0018-project-hub-navigation-docs-overlay.md",
+      "related": [
+        "UGD-0008",
+        "UGD-0009",
+        "UGD-0017"
       ],
       "supersedes": [],
       "superseded_by": []
