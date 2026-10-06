@@ -6,26 +6,55 @@
       "id": "stone",
       "name": "Камень",
       "baseValue": 1,
-      "tierHint": "normal"
+      "tierHint": "normal",
+      "weightKg": 1,
+      "stackLimit": 100,
+      "storageMode": "physical",
+      "tags": [
+        "resource",
+        "material"
+      ]
     },
     {
       "id": "wood",
       "name": "Дерево",
       "baseValue": 10,
-      "tierHint": "rare"
+      "tierHint": "rare",
+      "weightKg": 0.5,
+      "stackLimit": 100,
+      "storageMode": "physical",
+      "tags": [
+        "resource",
+        "material"
+      ]
     },
     {
       "id": "water",
       "name": "Вода",
       "baseValue": 100,
-      "tierHint": "magic"
+      "tierHint": "magic",
+      "weightKg": 0.1,
+      "stackLimit": 100,
+      "storageMode": "physical",
+      "tags": [
+        "resource",
+        "material"
+      ]
     },
     {
       "id": "attention",
       "name": "Внимание",
       "baseValue": 5000,
       "tierHint": "unique",
-      "accountBound": true
+      "accountBound": true,
+      "weightKg": 0,
+      "stackLimit": 999999,
+      "storageMode": "account",
+      "tags": [
+        "resource",
+        "currency",
+        "intangible"
+      ]
     }
   ]
 }
