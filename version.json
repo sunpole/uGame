@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.31",
-  "stage": "first-playable",
-  "updated": "2026-10-02",
-  "summary": "First Playable content slice with four zones, three fragments, a guide and a final core objective"
+  "version": "0.0.32",
+  "stage": "dynamic-events",
+  "updated": "2026-10-06",
+  "summary": "Dynamic Event Spots, reusable interaction reward UI, timed zone quality and persistent reward choices"
 }
