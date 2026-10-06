@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.32**
+Current version: **0.0.33**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.33 | Remote-friendly controls: Enter interaction key + always-visible mouse buttons |
 | 0.0.32 | Dynamic Event Spots, timed zone quality, reusable reward-choice UI and persistent generated offers |
 | 0.0.31 | First Playable content slice: four-zone loop, guide, three fragments and final core objective |
 | 0.0.30 | WorldGraph with stable zone/transition ids and legacy save migration |
@@ -38,6 +39,9 @@ Current version: **0.0.32**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.33
+Remote testing through desktop-control apps no longer depends on sending the E or Space key. Enter is now a third interaction key alongside E and Space. The bottom bar also contains persistent clickable controls for left/up/down/right, Action and Dash, so the prototype can be operated with a mouse cursor. Direction buttons support press-and-hold. The mouse Dash button uses a short queued pulse, making it possible to click Dash and then a movement direction without needing two simultaneous mouse presses. Existing touch controls remain unchanged for direct mobile play.
 
 ## 0.0.32
 Each current zone now contains five possible Dynamic Event Spots. Zone quality Q1–Q4 is rolled from the prototype 80% / 15% / 3.5% / 1.5% rarity profile and controls 1 / 2 / 3 / 5 active event slots. Quality rerolls independently per zone on quality-dependent real-time windows (Q1 roughly 150–180 minutes down to Q4 roughly 60–90 minutes), while each dynamic event has its own 30-minute lifetime and visible countdown. Resource, chest and placeholder event-portal encounters are generated from data-driven rules. A reusable InteractionPanel supports reward-choice and message interactions; resource events show 2–3 generated options, while chest events separately roll how many closed chests appear and how many may be selected. Chest contents are generated in advance but hidden until selection. Resource definitions and relative values moved to `data/resources.json`, reward/event rules to `data/reward-rules.json`. Dynamic event state and pending reward offers are saved in Game State so zone changes/F5 do not become free rerolls. DEV codes `8201`, `8202`, `8299` speed up QA. Event portals are intentionally placeholders and do not yet travel to event zones.
