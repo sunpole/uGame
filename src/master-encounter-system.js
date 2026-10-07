@@ -1,0 +1,81 @@
+function formatRemaining(ms) {
+  const total = Math.max(0, Math.ceil(Number(ms || 0) / 1000));
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+}
+
+export class MasterEncounterSystem {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, interactionPanel } = {}) {
+    this.worldGraph = worldGraph;
+    this.zoneSystem = zoneSystem;
+    this.interactableSystem = interactableSystem;
+    this.eventSystem = eventSystem;
+    this.worldSpawnStateSystem = worldSpawnStateSystem;
+    this.masterCatalog = masterCatalog;
+    this.interactionPanel = interactionPanel;
+    this.currentZoneId = null;
+    this.renderedIds = new Set();
+
+    this.eventSystem?.on('zone:enter', ({ zone }) => {
+      this.currentZoneId = zone?.id || null;
+      this.renderCurrentZone();
+    });
+    this.eventSystem?.on('zone:leave', () => this.clearRendered());
+    this.eventSystem?.on('zone:relayout', () => this.renderCurrentZone());
+    this.eventSystem?.on('master-spawns:changed', () => this.renderCurrentZone());
+  }
+
+  clearRendered() {
+    for (const id of this.renderedIds) this.interactableSystem?.remove?.(id);
+    this.renderedIds.clear();
+  }
+
+  renderCurrentZone() {
+    if (!this.currentZoneId) return;
+    const zone = this.worldGraph?.getZone?.(this.currentZoneId);
+    if (!zone) return;
+    this.clearRendered();
+    const spots = new Map((zone.eventSpots || []).map((spot) => [spot.id, spot]));
+    const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id }) || [];
+
+    for (const spawn of spawns) {
+      const spot = spots.get(spawn.spotId);
+      if (!spot) continue;
+      const point = this.zoneSystem?.mapPoint?.(spot) || spot;
+      const master = this.masterCatalog?.get?.(spawn.masterId);
+      const id = 'master-interactable:' + spawn.encounterId;
+      this.interactableSystem?.add({
+        id,
+        type: 'master-npc',
+        masterEncounterId: spawn.encounterId,
+        masterId: spawn.masterId,
+        masterTier: spawn.tier,
+        x: point.x,
+        y: point.y,
+        label: master?.displayName || spawn.displayName || 'Мастер',
+        prompt: 'Взаимодействовать с мастером',
+        expiresAt: Number(spawn.expiresAt),
+        interactionRadius: 68,
+        trigger: 'action',
+        sound: 'interact'
+      });
+      this.renderedIds.add(id);
+    }
+  }
+
+  activate(item) {
+    const encounterId = item?.masterEncounterId;
+    if (!encounterId) return false;
+    const spawn = this.worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
+    if (!spawn || Number(spawn.expiresAt) <= Date.now()) return false;
+    const master = this.masterCatalog?.get?.(spawn.masterId);
+    const multiplier = Number(spawn.efficiencyMultiplier || master?.efficiencyMultiplier || 1).toFixed(2);
+    this.interactionPanel?.showMessage({
+      title: (master?.displayName || spawn.displayName || 'Мастер') + ' · ' + spawn.tier,
+      text: 'Странствующий мастер направления «Камень». Это persistent Encounter из WorldSpawnState; функциональные модули будут подключаться отдельными слоями.',
+      meta: 'Эффективность ×' + multiplier + ' · осталось ' + formatRemaining(Number(spawn.expiresAt) - Date.now())
+    });
+    return true;
+  }
+}

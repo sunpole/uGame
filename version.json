@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.67",
-  "stage": "stone-master-allocator",
+  "version": "0.0.68",
+  "stage": "visible-stone-master-encounters",
   "updated": "2026-10-07",
-  "summary": "Persistent Stone master encounters with candidate tiers, world caps and independent rotation coverage"
+  "summary": "Persistent Stone master encounters render as Tier-colored NPCs and share Location Tier capacity with generic events"
 }

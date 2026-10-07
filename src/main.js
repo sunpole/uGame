@@ -31,6 +31,7 @@ import { ResponsiveViewportSystem } from './responsive-viewport-system.js';
 import { BiomeTextureSettingsSystem, GroundTextureSystem, preloadGroundTextures } from './ground-texture-system.js';
 import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
 import { MasterCatalog } from './master-catalog.js';
+import { MasterEncounterSystem } from './master-encounter-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -58,6 +59,7 @@ let biomeTextureSettingsSystem = new BiomeTextureSettingsSystem();
 let groundTextureSystem = null;
 let worldSpawnStateSystem = null;
 let masterCatalog = new MasterCatalog();
+let masterEncounterSystem = null;
 
 
 function syncPlayerInputState() {
@@ -369,6 +371,17 @@ class ZoneScene extends Phaser.Scene {
     });
     this.eventSpotSystem = eventSpotSystem;
 
+    masterEncounterSystem = new MasterEncounterSystem({
+      worldGraph: this.worldGraph,
+      zoneSystem: this.zoneSystem,
+      interactableSystem: this.interactableSystem,
+      eventSystem: this.eventSystem,
+      worldSpawnStateSystem,
+      masterCatalog,
+      interactionPanel: this.interactionPanel
+    });
+    this.masterEncounterSystem = masterEncounterSystem;
+
     this.eventSystem.on('world-spawn:state', () => {
       const zoneId = this.zoneSystem?.currentZoneId || worldSpawnStateSystem?.currentZoneId;
       if (zoneId) chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem?.getLocationSummary?.(zoneId) || null);
@@ -495,6 +508,11 @@ class ZoneScene extends Phaser.Scene {
   bindGameEvents() {
     this.eventSystem.on('interactable:activate', ({ item }) => {
       if (!item) return;
+
+      if (item.masterEncounterId) {
+        masterEncounterSystem?.activate(item);
+        return;
+      }
 
       if (item.dynamicEventId) {
         this.eventSpotSystem.activate(item).catch(() => {});

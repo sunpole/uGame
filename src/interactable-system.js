@@ -98,6 +98,20 @@ export class InteractableSystem {
       body.width = (item.radius || 16) * 2;
       body.height = (item.radius || 16) * 2;
       label = scene.add.text(item.x, item.y - 30, item.label || 'Ресурс', { ...labelStyle, color: '#9ecbff' }).setOrigin(0.5);
+    } else if (item.type === 'master-npc') {
+      const palette = {
+        T1: { fill: 0x8b949e, stroke: 0xc9d1d9, text: '#c9d1d9' },
+        T2: { fill: 0x1f6feb, stroke: 0x79c0ff, text: '#79c0ff' },
+        T3: { fill: 0x8957e5, stroke: 0xd2a8ff, text: '#d2a8ff' },
+        T4: { fill: 0xc9963b, stroke: 0xf0c66a, text: '#f0c66a' }
+      };
+      const colors = palette[item.masterTier] || palette.T1;
+      glow = scene.add.circle(item.x, item.y, 24, colors.fill, 0.22);
+      body = scene.add.circle(item.x, item.y, item.radius || 17, colors.fill, 1).setStrokeStyle(3, colors.stroke);
+      body.width = (item.radius || 17) * 2;
+      body.height = (item.radius || 17) * 2;
+      label = scene.add.text(item.x, item.y - 36, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
+      scene.tweens.add({ targets: glow, alpha: { from: 0.18, to: 0.48 }, scale: { from: 0.92, to: 1.12 }, duration: 1200, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
       body.width = (item.radius || 15) * 2;

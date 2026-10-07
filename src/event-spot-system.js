@@ -70,6 +70,15 @@ export class EventSpotSystem {
       this.renderCurrentZone();
     });
 
+    this.eventSystem?.on('master-spawns:changed', () => {
+      if (!this.initialized) return;
+      const zone = this.currentZoneId ? this.worldGraph?.getZone(this.currentZoneId) : null;
+      if (!zone) return;
+      this.ensureZone(zone, Date.now());
+      this.renderCurrentZone();
+      this.updateZoneStatus(Date.now());
+    });
+
     this.eventSystem?.on('location-tier:changed', ({ zone }) => {
       if (!this.initialized || !zone) return;
       this.ensureZone(zone, Date.now());
@@ -103,13 +112,19 @@ export class EventSpotSystem {
     return Boolean(zone?.id && zone.isSafeCity !== true && this.worldSpawnStateSystem?.getLocationTier?.(zone.id));
   }
 
+  masterSpotIds(zoneId) {
+    return new Set((this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId }) || []).map((spawn) => spawn.spotId));
+  }
+
   desiredSlots(zone, zoneState) {
     const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots : [];
     if (this.isExternalTierZone(zone)) {
-      return Math.min(
+      const capacity = Math.min(
         Math.max(0, Number(this.worldSpawnStateSystem?.getSpawnCapacity?.(zone.id)) || 0),
         spots.length
       );
+      const masters = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id })?.length || 0;
+      return Math.max(0, capacity - masters);
     }
     return Math.min(this.rewardGenerator.activeSlots(zoneState?.qualityLevel), spots.length);
   }
@@ -178,7 +193,8 @@ export class EventSpotSystem {
   }
 
   refreshEvents(zone, zoneState, now = Date.now()) {
-    const spots = Array.isArray(zone.eventSpots) ? zone.eventSpots : [];
+    const masterSpots = this.masterSpotIds(zone.id);
+    const spots = Array.isArray(zone.eventSpots) ? zone.eventSpots.filter((spot) => !masterSpots.has(spot.id)) : [];
     const spotIds = new Set(spots.map((spot) => spot.id));
     const desired = this.desiredSlots(zone, zoneState);
     let changed = false;
@@ -220,7 +236,8 @@ export class EventSpotSystem {
   }
 
   fillEventSlots(zone, zoneState, now = Date.now(), rebuild = false) {
-    const spots = Array.isArray(zone.eventSpots) ? zone.eventSpots : [];
+    const masterSpots = this.masterSpotIds(zone.id);
+    const spots = Array.isArray(zone.eventSpots) ? zone.eventSpots.filter((spot) => !masterSpots.has(spot.id)) : [];
     if (rebuild) zoneState.events = [];
 
     const desired = this.desiredSlots(zone, zoneState);
@@ -434,15 +451,19 @@ export class EventSpotSystem {
     if (!zone || !state) return;
 
     const slots = this.desiredSlots(zone, state);
-    const active = (state.events || []).filter((event) => !event.consumed).length;
+    const genericActive = (state.events || []).filter((event) => !event.consumed).length;
     if (this.isExternalTierZone(zone)) {
+      const masterActive = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id })?.length || 0;
+      const active = genericActive + masterActive;
+      const totalCapacity = Math.max(0, Number(this.worldSpawnStateSystem?.getSpawnCapacity?.(zone.id)) || 0);
       const location = this.worldSpawnStateSystem.getLocationTier(zone.id);
       const bonus = Math.round((Number(location?.locationBonus) || 0) * 100);
       this.onZoneStatus?.(
-        `${zone.name} · LT ${location?.tier || '?'} · spawn ${active}/${slots} · бонус +${bonus}% · Tier-state ${formatCountdown(Number(location?.expiresAt) - now)}`
+        `${zone.name} · LT ${location?.tier || '?'} · spawn ${active}/${totalCapacity} (${masterActive} master) · бонус +${bonus}% · Tier-state ${formatCountdown(Number(location?.expiresAt) - now)}`
       );
       return;
     }
+    const active = genericActive;
 
     this.onZoneStatus?.(
       `${zone.name} · город · события ${active}/${slots} · смена ${formatCountdown(Number(state.qualityExpiresAt) - now)}`
