@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.96**
+Current version: **0.0.97**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.97 | Event Spot Variety Audit: document 12 candidate spots and weighted anti-repeat placement |
 | 0.0.96 | Master Spot Anti-Repeat: persistent weighted random placement reduces recent spot repetition |
 | 0.0.95 | Generic Event Spot Anti-Repeat: weighted random selection penalizes recently used candidate spots |
 | 0.0.94 | 12 Candidate Event Spots per current map: larger placement pool without increasing active capacity |
@@ -102,6 +103,9 @@ Current version: **0.0.96**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.97
+Добавлен `UGD-0028` и аудит новой placement-модели: 12 candidate spots на каждой текущей карте, active capacity остаётся отдельной, generic Event и Master используют weighted anti-repeat. Статически подтверждено: во всех 4 зонах ровно 12 уникальных spot id и ни один центр spot не лежит внутри wall rectangle. Anti-repeat веса остаются `candidate-QA`.
 
 ## 0.0.96
 Master allocator получил ту же anti-repeat идею: для каждой зоны хранится история последних 6 Master spots, переживающая reload в `WorldSpawnState`. Последняя точка имеет около `15%` обычного веса, затем `30% / 50% / 70% / 85%`; старые точки снова имеют полный вес. Повтор **разрешён**, но статистически менее вероятен. Active occupancy по-прежнему жёстко исключает уже занятые spots.

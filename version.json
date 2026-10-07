@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.96",
-  "stage": "master-spot-antirepeat",
+  "version": "0.0.97",
+  "stage": "eventspot-placement-variety-audit",
   "updated": "2026-10-07",
-  "summary": "Master allocator uses persistent weighted anti-repeat history across the 12 candidate Event Spots"
+  "summary": "Document and audit 12 candidate Event Spots plus weighted anti-repeat placement"
 }

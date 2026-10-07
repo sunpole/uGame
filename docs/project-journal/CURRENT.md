@@ -83,13 +83,14 @@
 - `v0.0.73–v0.0.79` реализуют Master UX/DEV series: live timer, biome 40/40, Spawn Zone Debug + controls, humanoid shell, slow facing и wandering.
 - `v0.0.85–v0.0.88` реализуют первый vertical Process loop: module action menu → persistent Stone Extraction → offline pending reward → claim.
 - `v0.0.90–v0.0.92` исправляют EventSpot↔WorldSpawn integration и закрепляют hard occupancy invariant `1 spotId = 1 occupant` с safe relocation generic Event.
+- `v0.0.94–v0.0.96` расширяют каждую текущую карту до 12 candidate Event Spot и добавляют weighted anti-repeat для generic Event и Master placement.
 - `v0.0.81–v0.0.83` убирают внешний legacy Resource Event, вводят отдельный candidate-QA Chest/Portal mix и включают Spawn Zone Debug по умолчанию на время разработки.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
-- **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
+- Первый Stone Extraction / Offline Process vertical slice уже реализован как prototype; ещё не реализованы полноценные Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.93: сначала Event Spot exclusivity (`8298`, визуально один occupant на circle, capacity через `8299`), затем продолжить module buttons + Extraction start/F5/offline completion/pending/claim/container failure.
+- Выполнить ручной desktop QA v0.0.97: проверить 12 candidate circles, exclusivity (`8298`), recent generic history (`8297`), визуальное снижение повторов spot при нескольких refresh, затем продолжить Extraction QA.
 - Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier/Master Encounter остаются REAL TIME до отдельного решения.
 - После успешного QA первый Extraction loop считается вертикально проверенным; следующие Dialogue/Analytics/Quest/Training/Event подключать отдельными маленькими патчами, не объявляя placeholders готовой механикой.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.
@@ -122,3 +123,5 @@
 - `UGD-0024` — Persistent Location Intel + Stone Master Runtime + DEV World Analyzer; реализовано prototype v0.0.65–v0.0.72, требуется ручной gameplay QA.
 - `UGD-0025` — live timer, biome 40/40, Spawn Zone DEV и wandering/presentation Stone Master; реализовано v0.0.73–v0.0.84, требуется ручной browser QA.
 - `UGD-0026` — первый functional Stone Extraction Process с offline completion / pending reward / claim; реализовано v0.0.85–v0.0.88, требуется ручной gameplay QA.
+- `UGD-0027` — hard Event Spot exclusivity `1 spotId = 1 occupant`; реализовано v0.0.90–v0.0.92, требуется ручной gameplay QA.
+- `UGD-0028` — 12 candidate Event Spots + weighted anti-repeat placement; реализовано v0.0.94–v0.0.96, веса требуют визуального QA.

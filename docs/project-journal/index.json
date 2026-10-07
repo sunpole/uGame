@@ -858,6 +858,34 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0028",
+      "title": "12 candidate Event Spots + weighted anti-repeat",
+      "date": "2026-10-07",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "candidate-balance"
+      ],
+      "tags": [
+        "event-spots",
+        "placement",
+        "anti-repeat",
+        "master",
+        "dynamic-events",
+        "worldspawn"
+      ],
+      "path": "records/UGD-0028-event-spot-antirepeat.md",
+      "related": [
+        "UGD-0013",
+        "UGD-0016",
+        "UGD-0024",
+        "UGD-0027"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

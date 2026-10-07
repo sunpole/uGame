@@ -1,6 +1,6 @@
 # WorldSpawnState / Location Tier runtime
 
-Current implementation: **v0.0.93**
+Current implementation: **v0.0.97**
 
 ## Scope
 
@@ -68,8 +68,9 @@ No new TEST/MATRIX/DEEP run was started for v0.0.64–v0.0.72. Candidate Locatio
 
 ## Dynamic Event capacity migration
 
-External zones now expose six eligible Event/NPC spots and derive desired active slots from Location Tier:
+All current maps now expose **12 candidate Event/NPC spots**. External zones derive desired active slots from Location Tier:
 
+- 12 candidate spots are placement options, not 12 simultaneous occupants;
 - old Q1/Q2/Q3/Q4 external capacity `1/2/3/5` is no longer authoritative;
 - new external capacity comes from the persisted Tier-state;
 - each encounter keeps its own ~30-minute Event lifetime;
@@ -80,6 +81,10 @@ The safe-city prototype keeps its old event-quality behavior for now because Loc
 ### Event Spot exclusivity
 
 Since v0.0.90–v0.0.92 the runtime enforces `1 spotId = 1 active occupant`. A Master occupies one shared Event/NPC slot and reserves its `spotId`; generic Dynamic Events use only remaining spots. If a Master takes a spot that already held a Chest/Portal, that Event is relocated to another free spot with id/timer/offer preserved. DEV `8298` checks conflicts in the current zone.
+
+### Placement variety / anti-repeat
+
+Since v0.0.94 every current map has 12 candidate spots. Since v0.0.95–v0.0.96 both generic Event placement and Master placement use weighted random with reduced weight for recently used spots. The last six selections are remembered; the newest has the strongest repeat penalty. Repeats remain possible. Exact weights are candidate-QA.
 
 ## Stone Master registry since v0.0.66
 
