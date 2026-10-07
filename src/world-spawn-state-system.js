@@ -34,6 +34,8 @@ function normalizeSnapshot(value) {
     activeMasterSpawns: [],
     activeCountsByResourceAndTier: {},
     rotations: {},
+    candidatePools: {},
+    allocationAudit: [],
     updatedAt: 0
   };
 
@@ -57,6 +59,10 @@ function normalizeSnapshot(value) {
       rotations: source.rotations && typeof source.rotations === 'object' && !Array.isArray(source.rotations)
         ? source.rotations
         : {},
+      candidatePools: source.candidatePools && typeof source.candidatePools === 'object' && !Array.isArray(source.candidatePools)
+        ? source.candidatePools
+        : {},
+      allocationAudit: Array.isArray(source.allocationAudit) ? source.allocationAudit.slice(-100) : [],
       updatedAt: Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
     };
   } catch {
@@ -65,10 +71,11 @@ function normalizeSnapshot(value) {
 }
 
 export class WorldSpawnStateSystem {
-  constructor({ worldGraph, eventSystem, onStateChange, configUrl = DEFAULT_CONFIG_URL } = {}) {
+  constructor({ worldGraph, eventSystem, onStateChange, masterCatalog, configUrl = DEFAULT_CONFIG_URL } = {}) {
     this.worldGraph = worldGraph;
     this.eventSystem = eventSystem;
     this.onStateChange = onStateChange;
+    this.masterCatalog = masterCatalog;
     this.configUrl = configUrl;
     this.config = null;
     this.state = normalizeSnapshot(null);
@@ -100,6 +107,7 @@ export class WorldSpawnStateSystem {
       if (this.ensureLocationTier(zone, now, false)) changed = true;
     }
 
+    this.refreshMasterSpawns(now, { publish: false });
     this.state.updatedAt = Number(this.state.updatedAt) || now;
     this.publish();
     return this.snapshot();
@@ -264,6 +272,192 @@ export class WorldSpawnStateSystem {
     return true;
   }
 
+  getActiveMasters({ resourceDirectionId = null, tier = null, zoneId = null } = {}) {
+    return (this.state.activeMasterSpawns || [])
+      .filter((spawn) => !resourceDirectionId || spawn.resourceDirectionId === resourceDirectionId)
+      .filter((spawn) => !tier || spawn.tier === tier)
+      .filter((spawn) => !zoneId || spawn.zoneId === zoneId)
+      .map(clone);
+  }
+
+  getMasterSpawn(encounterId) {
+    const value = (this.state.activeMasterSpawns || []).find((spawn) => spawn.encounterId === encounterId);
+    return value ? clone(value) : null;
+  }
+
+  masterTierWeights(zoneId) {
+    const locationTier = this.getLocationTier(zoneId)?.tier || 'T1';
+    return this.config?.masterTierByLocationTier?.[locationTier] || { T1: 100 };
+  }
+
+  lowerMasterTier(tier) {
+    if (tier === 'T4') return 'T3';
+    if (tier === 'T3') return 'T2';
+    return 'T1';
+  }
+
+  rebuildMasterCounts() {
+    const counts = {};
+    for (const spawn of this.state.activeMasterSpawns || []) {
+      const resource = spawn.resourceDirectionId || 'unknown';
+      if (!counts[resource]) counts[resource] = { T1: 0, T2: 0, T3: 0, T4: 0 };
+      if (counts[resource][spawn.tier] === undefined) counts[resource][spawn.tier] = 0;
+      counts[resource][spawn.tier] += 1;
+    }
+    this.state.activeCountsByResourceAndTier = counts;
+    return counts;
+  }
+
+  rotationPick(resourceDirectionId, tier, zoneIds, limit) {
+    const unique = [...new Set(zoneIds.filter(Boolean))];
+    if (!unique.length || limit <= 0) return [];
+    const key = resourceDirectionId + ':' + tier;
+    const current = this.state.rotations?.[key] || { round: 1, visitedZoneIds: [] };
+    const eligible = new Set(unique);
+    let visited = (current.visitedZoneIds || []).filter((zoneId) => eligible.has(zoneId));
+    let unvisited = unique.filter((zoneId) => !visited.includes(zoneId));
+
+    if (!unvisited.length) {
+      current.round = Math.max(1, Number(current.round) || 1) + 1;
+      visited = [];
+      unvisited = [...unique];
+    }
+
+    for (let index = unvisited.length - 1; index > 0; index -= 1) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [unvisited[index], unvisited[swap]] = [unvisited[swap], unvisited[index]];
+    }
+
+    const picked = unvisited.slice(0, limit);
+    current.visitedZoneIds = [...new Set([...visited, ...picked])];
+    current.lastPickedZoneIds = [...picked];
+    current.updatedAt = Date.now();
+    if (!this.state.rotations || typeof this.state.rotations !== 'object') this.state.rotations = {};
+    this.state.rotations[key] = current;
+    return picked;
+  }
+
+  chooseMasterSpot(zone, occupiedSpotIds = new Set()) {
+    const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots.filter((spot) => !occupiedSpotIds.has(spot.id)) : [];
+    if (!spots.length) return null;
+    return spots[Math.floor(Math.random() * spots.length)]?.id || spots[0]?.id || null;
+  }
+
+  createMasterSpawn(zone, resourceDirectionId, tier, requestedTier, now, occupiedSpotIds) {
+    const master = this.masterCatalog?.find?.(resourceDirectionId, tier);
+    if (!master) return null;
+    const lifetimeMinutes = Math.max(1, Number(this.config?.encounterLifetimeMinutes) || 30);
+    const spotId = this.chooseMasterSpot(zone, occupiedSpotIds);
+    if (!spotId) return null;
+    occupiedSpotIds.add(spotId);
+    return {
+      encounterId: 'master-' + resourceDirectionId + '-' + tier + '-' + zone.id + '-' + now + '-' + Math.random().toString(36).slice(2, 7),
+      masterId: master.id,
+      displayName: master.displayName,
+      resourceDirectionId,
+      tier,
+      requestedTier,
+      zoneId: zone.id,
+      spotId,
+      spawnedAt: now,
+      expiresAt: now + lifetimeMinutes * 60_000,
+      efficiencyMultiplier: Number(master.efficiencyMultiplier) || 1,
+      activeModules: [],
+      source: 'candidate-allocator'
+    };
+  }
+
+  refreshMasterSpawns(now = Date.now(), { publish = true } = {}) {
+    if (!this.initialized && !this.config) return false;
+    if (!this.masterCatalog?.loaded) return false;
+
+    const before = JSON.stringify(this.state.activeMasterSpawns || []);
+    const active = (this.state.activeMasterSpawns || []).filter((spawn) =>
+      spawn?.encounterId && Number.isFinite(Number(spawn.expiresAt)) && Number(spawn.expiresAt) > now
+    );
+    this.state.activeMasterSpawns = active;
+    const counts = this.rebuildMasterCounts();
+
+    const occupiedByZone = new Map();
+    for (const spawn of active) {
+      if (!occupiedByZone.has(spawn.zoneId)) occupiedByZone.set(spawn.zoneId, new Set());
+      occupiedByZone.get(spawn.zoneId).add(spawn.spotId);
+    }
+
+    const candidates = [];
+    for (const zone of this.worldGraph?.zones?.values?.() || []) {
+      if (!zone?.id || zone.isSafeCity === true) continue;
+      const resources = this.worldGraph?.resourceDirectionsFor?.(zone.id) || [];
+      for (const resourceDirectionId of resources) {
+        const already = active.some((spawn) => spawn.zoneId === zone.id && spawn.resourceDirectionId === resourceDirectionId);
+        if (already) continue;
+        const requestedTier = weightedTier(this.masterTierWeights(zone.id));
+        candidates.push({ zone, resourceDirectionId, currentTier: requestedTier, requestedTier });
+      }
+    }
+
+    const audit = [];
+    const pools = {};
+    for (const tier of ['T4', 'T3', 'T2']) {
+      const byResource = new Map();
+      for (const candidate of candidates.filter((item) => !item.assigned && item.currentTier === tier)) {
+        if (!byResource.has(candidate.resourceDirectionId)) byResource.set(candidate.resourceDirectionId, []);
+        byResource.get(candidate.resourceDirectionId).push(candidate);
+      }
+
+      for (const [resourceDirectionId, pool] of byResource.entries()) {
+        const cap = Math.max(0, Number(this.config?.worldCapsPerResource?.[tier]) || 0);
+        const used = Number(counts?.[resourceDirectionId]?.[tier]) || 0;
+        const remaining = Math.max(0, cap - used);
+        const poolZoneIds = pool.map((item) => item.zone.id);
+        pools[resourceDirectionId + ':' + tier] = [...poolZoneIds];
+        const chosenIds = new Set(this.rotationPick(resourceDirectionId, tier, poolZoneIds, remaining));
+
+        for (const candidate of pool) {
+          if (chosenIds.has(candidate.zone.id)) {
+            const occupied = occupiedByZone.get(candidate.zone.id) || new Set();
+            const spawn = this.createMasterSpawn(candidate.zone, resourceDirectionId, tier, candidate.requestedTier, now, occupied);
+            if (spawn) {
+              if (!occupiedByZone.has(candidate.zone.id)) occupiedByZone.set(candidate.zone.id, occupied);
+              this.state.activeMasterSpawns.push(spawn);
+              candidate.assigned = true;
+              if (!counts[resourceDirectionId]) counts[resourceDirectionId] = { T1: 0, T2: 0, T3: 0, T4: 0 };
+              counts[resourceDirectionId][tier] = (counts[resourceDirectionId][tier] || 0) + 1;
+              audit.push({ zoneId: candidate.zone.id, resourceDirectionId, requestedTier: candidate.requestedTier, finalTier: tier, reason: 'allocated' });
+            }
+          } else {
+            candidate.currentTier = this.lowerMasterTier(tier);
+          }
+        }
+      }
+    }
+
+    for (const candidate of candidates.filter((item) => !item.assigned)) {
+      const tier = candidate.currentTier || 'T1';
+      const occupied = occupiedByZone.get(candidate.zone.id) || new Set();
+      const spawn = this.createMasterSpawn(candidate.zone, candidate.resourceDirectionId, tier, candidate.requestedTier, now, occupied);
+      if (!spawn && tier !== 'T1') {
+        candidate.currentTier = 'T1';
+        const fallback = this.createMasterSpawn(candidate.zone, candidate.resourceDirectionId, 'T1', candidate.requestedTier, now, occupied);
+        if (fallback) this.state.activeMasterSpawns.push(fallback);
+        if (fallback) audit.push({ zoneId: candidate.zone.id, resourceDirectionId: candidate.resourceDirectionId, requestedTier: candidate.requestedTier, finalTier: 'T1', reason: 'fallback' });
+      } else if (spawn) {
+        this.state.activeMasterSpawns.push(spawn);
+        audit.push({ zoneId: candidate.zone.id, resourceDirectionId: candidate.resourceDirectionId, requestedTier: candidate.requestedTier, finalTier: tier, reason: tier === candidate.requestedTier ? 'allocated' : 'fallback' });
+      }
+    }
+
+    this.state.candidatePools = pools;
+    this.state.allocationAudit = [...(this.state.allocationAudit || []), ...audit].slice(-100);
+    this.rebuildMasterCounts();
+    const changed = before !== JSON.stringify(this.state.activeMasterSpawns || []);
+    if (changed) {
+      this.state.updatedAt = now;
+      if (publish) this.publish();
+      this.eventSystem?.emit('master-spawns:changed', { spawns: this.getActiveMasters() });
+    }
+    return changed;
+  }
   update(now = Date.now()) {
     if (!this.initialized || now < this.nextTickAt) return false;
     this.nextTickAt = now + 1000;
@@ -273,6 +467,7 @@ export class WorldSpawnStateSystem {
       if (zone?.isSafeCity === true) continue;
       if (this.ensureLocationTier(zone, now, false)) changed = true;
     }
+    if (this.refreshMasterSpawns(now, { publish: false })) changed = true;
     if (changed) this.publish();
     return changed;
   }

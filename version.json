@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.66",
-  "stage": "stone-master-registry",
+  "version": "0.0.67",
+  "stage": "stone-master-allocator",
   "updated": "2026-10-07",
-  "summary": "Four persistent neutral Stone master identities T1-T4 and candidate spawn metadata"
+  "summary": "Persistent Stone master encounters with candidate tiers, world caps and independent rotation coverage"
 }

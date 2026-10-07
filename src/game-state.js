@@ -46,6 +46,8 @@ function cleanWorldSpawnState(value) {
     activeMasterSpawns: [],
     activeCountsByResourceAndTier: {},
     rotations: {},
+    candidatePools: {},
+    allocationAudit: [],
     updatedAt: 0
   };
 
@@ -65,6 +67,10 @@ function cleanWorldSpawnState(value) {
       rotations: copy.rotations && typeof copy.rotations === 'object' && !Array.isArray(copy.rotations)
         ? copy.rotations
         : {},
+      candidatePools: copy.candidatePools && typeof copy.candidatePools === 'object' && !Array.isArray(copy.candidatePools)
+        ? copy.candidatePools
+        : {},
+      allocationAudit: Array.isArray(copy.allocationAudit) ? copy.allocationAudit.slice(-100) : [],
       updatedAt: Number.isFinite(Number(copy.updatedAt)) ? Number(copy.updatedAt) : 0
     };
   } catch {

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.66**
+Current version: **0.0.67**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.67 | Stone Master Allocator: 30m persistent encounters, world caps и independent rotation coverage |
 | 0.0.66 | Stone Master Registry: четыре постоянные identity T1–T4 + data-driven module metadata |
 | 0.0.65 | Persistent Location Tier HUD: LT, distance, chance и bonus всегда видны в Header/Footer |
 | 0.0.64 | Location Tier QA: 8400/8401–8404/8499 и защита от старых Quality-кодов |
@@ -72,6 +73,9 @@ Current version: **0.0.66**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.67
+WorldSpawnState теперь поддерживает по одному Stone master Encounter на текущую external zone/resourceDirection, живущему ~30 минут по REAL TIME. Candidate tier берётся из `P(masterTier | LocationTier)`, high-tier caps применяются глобально на Stone (`T4≤1/T3≤2/T2≤3`), проигравшие cap не оставляют слот пустым и понижаются. Для каждого `stone:T2/T3/T4` ведётся независимый rotation round/visited coverage. Spawn-instance, spot, requested/final tier, multiplier и allocation audit сохраняются, поэтому F5 не даёт бесплатный master reroll.
 
 ## 0.0.66
 Добавлен `data/master-npcs.json` и `MasterCatalog`. Для Stone существуют четыре постоянные master identity `T1/T2/T3/T4` с multiplier `×1.00/1.20/1.40/1.60`, гарантированной Добычей и data-driven module pool. Имена специально нейтральные placeholders до Lore. В world-spawn config добавлены candidate `P(masterTier | LocationTier)`, caps `T2=3/T3=2/T4=1`, максимум один T2+ Stone в зоне и 30-минутный Encounter lifetime; всё это остаётся candidate/prototype balance.

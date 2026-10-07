@@ -160,6 +160,7 @@ class ZoneScene extends Phaser.Scene {
     worldSpawnStateSystem = new WorldSpawnStateSystem({
       worldGraph: this.worldGraph,
       eventSystem: this.eventSystem,
+      masterCatalog,
       onStateChange: (snapshot) => {
         this.gameState.setWorldSpawnState(snapshot);
         this.persistGameState();
