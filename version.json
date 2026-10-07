@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.99",
-  "stage": "four-screen-local-world",
+  "version": "0.1.00",
+  "stage": "twenty-five-location-worldgraph",
   "updated": "2026-10-08",
-  "summary": "Local zones are now 1920x1080 worlds (2x width x 2x height) with a following camera showing roughly one legacy screen at a time"
+  "summary": "WorldGraph replaced by a 25-location logical 5x5 grid rendered as a 45-degree diamond: 5 safe cities and 20 field zones"
 }

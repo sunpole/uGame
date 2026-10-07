@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.99**
+Current version: **0.1.00**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.00 | 25-location Diamond WorldGraph: logical 5×5 grid, 5 safe cities, 20 fields, 80 directed links and temporary names/IDs |
 | 0.0.99 | Four-screen Local World: each zone is 1920×1080 with camera follow while the visible screen remains roughly 960×540 |
 | 0.0.98 | Clickable DEV Code Reference: every documented 4-digit code row in Project Hub gets a one-click Execute button |
 | 0.0.97 | Event Spot Variety Audit: document 12 candidate spots and weighted anti-repeat placement |
@@ -105,6 +106,9 @@ Current version: **0.0.99**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.00
+WorldGraph заменён новой сеткой **25 локаций**: логический `5×5` квадрат, который на мировой карте предназначен для отображения ромбом с поворотом 45°. Пять safe city: север `loc-00001`, восток `loc-00005`, стартовый центр `loc-00013`, запад `loc-00021`, юг `loc-00025`; остальные 20 — field zones. Всем выданы порядковые ID `loc-00001…loc-00025` и временные названия. Старые `zone-001…004` сохранены как legacy aliases к новым зонам для миграции save. В каждой field zone уже 12 candidate spots, распределённых по всей площади 1920×1080; в city zones Event Spot отсутствуют.
 
 ## 0.0.99
 Локальная карта увеличена по площади ×4: world bounds теперь `1920×1080` (2× ширина и 2× высота), а камера показывает примерно один прежний экран `960×540` и следует за игроком. Вход с left/right/top/bottom начинает игрока у соответствующей границы, поэтому первое видимое пространство естественно зависит от стороны входа. Vision overlay переведён на camera worldView; старые 4 тестовые зоны временно масштабированы ×2, чтобы этот фундамент оставался запускаемым до замены WorldGraph.
