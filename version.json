@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.80",
-  "stage": "master-ux-series-audit",
+  "version": "0.0.81",
+  "stage": "external-resource-event-retirement",
   "updated": "2026-10-07",
-  "summary": "Document and audit v0.0.73-v0.0.79 Master UX and Spawn Zone series"
+  "summary": "External Location Tier zones no longer spawn legacy generic resource events; resource gameplay is routed through Master NPC"
 }

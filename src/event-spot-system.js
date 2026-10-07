@@ -204,8 +204,13 @@ export class EventSpotSystem {
       changed = true;
     }
 
+    const externalTierZone = this.isExternalTierZone(zone);
     zoneState.events = zoneState.events
-      .filter((event) => event?.id && spotIds.has(event.spotId))
+      .filter((event) =>
+        event?.id
+        && spotIds.has(event.spotId)
+        && (!externalTierZone || event.kind !== 'resource')
+      )
       .slice(0, desired);
 
     for (let index = 0; index < zoneState.events.length; index += 1) {
@@ -255,7 +260,9 @@ export class EventSpotSystem {
     return {
       id: `dynamic-${zone.id}-${now}-${nonce}`,
       spotId: spot?.id || 'spot',
-      kind: this.rewardGenerator.rollEventKind(),
+      kind: this.isExternalTierZone(zone)
+        ? this.rewardGenerator.rollExternalEventKind()
+        : this.rewardGenerator.rollEventKind(),
       spawnedAt: now,
       expiresAt: now + this.rewardGenerator.eventLifetimeMs(),
       consumed: false,

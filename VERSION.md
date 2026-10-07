@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.80**
+Current version: **0.0.81**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.81 | Retire legacy external Resource Events: external Location Tier resource interaction goes through Master NPC |
 | 0.0.80 | Master UX Series Audit: document v0.0.73–v0.0.79 and resolve stale T4-always-present contradiction |
 | 0.0.79 | Master Slow Wandering: ~5 px/s movement around Event Spot center using the configured radius |
 | 0.0.78 | Master Slow Facing: very slow idle rotation with long pauses and smooth turn speed |
@@ -86,6 +87,9 @@ Current version: **0.0.80**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.81
+Во внешних Location Tier-зонах больше не создаётся legacy generic `resource` Event («Неизвестный ресурс»). Сохранённые resource-events таких зон удаляются при refresh и свободные Event Spot снова заполняются допустимыми generic Event. Ресурсное направление внешнего мира теперь представлено Master NPC; chest/portal остаются отдельными world Event. Safe-city legacy layer этим патчем не меняется.
 
 ## 0.0.80
 Документирована серия v0.0.73–v0.0.79, добавлены UGD-0025 и QA-аудит. Устаревшее правило «T4 всегда существует где-то» удалено: актуально random candidate → cap, поэтому T4 может отсутствовать. Нового gameplay/balance в v0.0.80 нет.

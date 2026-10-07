@@ -98,6 +98,14 @@ export class RewardGenerator {
     return weightedPick(this.rules?.location?.eventTypes || [])?.id || 'resource';
   }
 
+  rollExternalEventKind() {
+    const configured = this.rules?.location?.externalEventTypes;
+    const pool = Array.isArray(configured) && configured.length
+      ? configured
+      : (this.rules?.location?.eventTypes || []).filter((entry) => entry?.id && entry.id !== 'resource');
+    return weightedPick(pool)?.id || 'chest';
+  }
+
   rewardFromTier(tier = this.rollRarity()) {
     const resourceId = this.rules?.reward?.resourceByRarity?.[tier.id] || 'stone';
     const resource = this.resources.get(resourceId) || {

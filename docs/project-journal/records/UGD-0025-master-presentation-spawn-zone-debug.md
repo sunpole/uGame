@@ -35,3 +35,7 @@ Flags: needs-test
 ## Следующий шаг
 
 Ручной browser QA v0.0.80, затем функциональная Stone Extraction / Process.
+
+## v0.0.81 — legacy external Resource Event retired
+
+Во внешних Location Tier-зонах generic `resource` больше не является параллельным источником ресурсного взаимодействия. Existing saved external resource-events удаляются при refresh; новые generic slots используют только non-resource world events. Wandering Master остаётся входной точкой resourceDirection.
