@@ -671,7 +671,8 @@ projectHubSystem = new ProjectHubSystem({
   backButton: document.querySelector('#project-hub-back'),
   closeButton: document.querySelector('#project-hub-close'),
   onOpenChange: () => syncPlayerInputState(),
-  interfaceSettings: interfaceSettingsSystem
+  interfaceSettings: interfaceSettingsSystem,
+  biomeTextureSettings: biomeTextureSettingsSystem
 });
 
 projectHubSystem.load().catch((error) => {

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.57",
-  "stage": "biome-ground-texture-system",
+  "version": "0.0.58",
+  "stage": "biome-visual-lab",
   "updated": "2026-10-07",
-  "summary": "Biome/city ground texture runtime with per-texture scale and opacity settings"
+  "summary": "Temporary admin Biome Visual Lab with live tile preview and persistent local overrides"
 }

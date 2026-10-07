@@ -1,3 +1,5 @@
+import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
+
 function escapeHtml(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -162,7 +164,8 @@ export class ProjectHubSystem {
     backButton,
     closeButton,
     onOpenChange,
-    interfaceSettings
+    interfaceSettings,
+    biomeTextureSettings
   }) {
     this.openButton = openButton;
     this.overlay = overlay;
@@ -174,6 +177,7 @@ export class ProjectHubSystem {
     this.closeButton = closeButton;
     this.onOpenChange = onOpenChange;
     this.interfaceSettings = interfaceSettings;
+    this.biomeTextureSettings = biomeTextureSettings;
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
@@ -253,6 +257,11 @@ export class ProjectHubSystem {
 
     if (view.type === 'settings') {
       this.renderSettings(view);
+      return;
+    }
+
+    if (view.type === 'biome-lab') {
+      this.renderBiomeLab(view);
       return;
     }
 
@@ -338,6 +347,12 @@ export class ProjectHubSystem {
     if (item.type === 'settings') {
       this.stack.push({ type: 'settings', label: item.label });
       this.renderCurrent();
+      return;
+    }
+
+    if (item.type === 'biome-lab') {
+      this.stack.push({ type: 'biome-lab', label: item.label, selectedId: 'grass' });
+      this.renderCurrent();
     }
   }
 
@@ -366,6 +381,139 @@ export class ProjectHubSystem {
       button.textContent = next ? 'ВКЛ' : 'ВЫКЛ';
     });
     this.contentElement.scrollTop = 0;
+  }
+
+
+  async renderBiomeLab(view) {
+    this.setSubViewHeader(view.label || 'Biome Visual Lab', 'uGame / DEV / Biome Visual Lab');
+    this.contentElement.innerHTML = '<div class="project-hub-loading">Загрузка настроек текстур…</div>';
+
+    try {
+      await this.biomeTextureSettings?.load?.();
+      if (this.stack[this.stack.length - 1] !== view) return;
+
+      const entries = this.biomeTextureSettings?.list?.() || [];
+      const selected = entries.find((entry) => entry.id === view.selectedId) || entries[0];
+      if (!selected) {
+        this.contentElement.innerHTML = '<div class="project-hub-error">Biome texture config пуст.</div>';
+        return;
+      }
+      view.selectedId = selected.id;
+
+      const slotOptions = entries.map((entry) => {
+        const area = entry.city ? 'город' : 'вне города';
+        return '<option value="' + escapeHtml(entry.id) + '"' + (entry.id === selected.id ? ' selected' : '') + '>' +
+          escapeHtml(entry.textureName + ' · ' + area + ' · ' + entry.biome) + '</option>';
+      }).join('');
+
+      const assetOptions = GROUND_TEXTURE_ASSETS.map((asset) =>
+        '<option value="' + escapeHtml(asset.file) + '"' + (asset.file === selected.textureFile ? ' selected' : '') + '>' +
+        escapeHtml(asset.label) + '</option>'
+      ).join('');
+
+      this.contentElement.innerHTML = [
+        '<div class="biome-lab">',
+        '<div class="biome-lab-controls">',
+        '<label class="biome-lab-field biome-lab-field-wide"><span>Слот биома</span><select id="biome-lab-slot">' + slotOptions + '</select></label>',
+        '<div class="biome-lab-meta"><span>biome: <b>' + escapeHtml(selected.biome) + '</b></span><span>тип: <b>' + (selected.city ? 'город' : 'вне города') + '</b></span><span>id: <b>' + escapeHtml(selected.id) + '</b></span></div>',
+        '<label class="biome-lab-field"><span>Название текстуры</span><input id="biome-lab-name" type="text" value="' + escapeHtml(selected.textureName) + '"></label>',
+        '<label class="biome-lab-field"><span>Файл текстуры</span><select id="biome-lab-file">' + assetOptions + '</select></label>',
+        '<label class="biome-lab-field biome-lab-field-wide"><span>Путь</span><input id="biome-lab-path" type="text" readonly value="' + escapeHtml(selected.textureFile) + '"></label>',
+        '<div class="biome-lab-number-row">',
+        '<label class="biome-lab-field"><span>Масштаб · 1–10 000%</span><div class="biome-lab-stepper"><button type="button" data-scale-step="-10">−10</button><input id="biome-lab-scale" type="number" min="1" max="10000" step="1" value="' + selected.scalePercent + '"><button type="button" data-scale-step="10">+10</button></div></label>',
+        '<label class="biome-lab-field"><span>Opacity · 0–100%</span><div class="biome-lab-stepper"><button type="button" data-opacity-step="-5">−5</button><input id="biome-lab-opacity" type="number" min="0" max="100" step="1" value="' + selected.opacityPercent + '"><button type="button" data-opacity-step="5">+5</button></div></label>',
+        '</div>',
+        '<label class="biome-lab-enabled"><input id="biome-lab-enabled" type="checkbox"' + (selected.enabled ? ' checked' : '') + '><span>Текстура включена</span></label>',
+        '<div class="biome-lab-actions"><button id="biome-lab-reset" type="button">Сбросить этот слот</button><button id="biome-lab-apply" class="primary" type="button">Применить</button><span id="biome-lab-status"></span></div>',
+        '</div>',
+        '<div class="biome-lab-preview-wrap">',
+        '<div class="biome-lab-preview-title"><strong>Предпросмотр биома</strong><span>tile / repeat · тот же scale + opacity</span></div>',
+        '<div id="biome-lab-preview" class="biome-lab-preview"><div class="biome-lab-preview-label"></div></div>',
+        '</div>',
+        '</div>'
+      ].join('');
+
+      const q = (selector) => this.contentElement.querySelector(selector);
+      const slot = q('#biome-lab-slot');
+      const name = q('#biome-lab-name');
+      const file = q('#biome-lab-file');
+      const path = q('#biome-lab-path');
+      const scale = q('#biome-lab-scale');
+      const opacity = q('#biome-lab-opacity');
+      const enabled = q('#biome-lab-enabled');
+      const preview = q('#biome-lab-preview');
+      const status = q('#biome-lab-status');
+
+      const clamp = (value, min, max, fallback) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.max(min, Math.min(max, number)) : fallback;
+      };
+
+      const updatePreview = () => {
+        const scaleValue = clamp(scale?.value, 1, 10000, 100);
+        const opacityValue = clamp(opacity?.value, 0, 100, 100);
+        if (path) path.value = file?.value || '';
+        if (!preview) return;
+        preview.style.backgroundImage = enabled?.checked && file?.value ? 'url("' + file.value + '")' : 'none';
+        preview.style.backgroundRepeat = 'repeat';
+        const tilePx = 1024 * scaleValue / 100;
+        preview.style.backgroundSize = tilePx + 'px ' + tilePx + 'px';
+        preview.style.setProperty('--biome-preview-opacity', String(opacityValue / 100));
+        preview.dataset.enabled = String(Boolean(enabled?.checked));
+        const label = preview.querySelector('.biome-lab-preview-label');
+        if (label) label.textContent = scaleValue + '% · opacity ' + opacityValue + '% · ' + (enabled?.checked ? 'ON' : 'OFF');
+      };
+
+      slot?.addEventListener('change', () => {
+        view.selectedId = slot.value;
+        this.renderBiomeLab(view);
+      });
+
+      file?.addEventListener('change', updatePreview);
+      name?.addEventListener('input', updatePreview);
+      scale?.addEventListener('input', updatePreview);
+      opacity?.addEventListener('input', updatePreview);
+      enabled?.addEventListener('change', updatePreview);
+
+      for (const button of this.contentElement.querySelectorAll('[data-scale-step]')) {
+        button.addEventListener('click', () => {
+          scale.value = String(clamp(Number(scale.value) + Number(button.dataset.scaleStep), 1, 10000, 100));
+          updatePreview();
+        });
+      }
+
+      for (const button of this.contentElement.querySelectorAll('[data-opacity-step]')) {
+        button.addEventListener('click', () => {
+          opacity.value = String(clamp(Number(opacity.value) + Number(button.dataset.opacityStep), 0, 100, 100));
+          updatePreview();
+        });
+      }
+
+      q('#biome-lab-apply')?.addEventListener('click', () => {
+        const next = this.biomeTextureSettings?.update?.(selected.id, {
+          textureName: name?.value?.trim() || selected.textureName,
+          textureFile: file?.value || selected.textureFile,
+          scalePercent: clamp(scale?.value, 1, 10000, 100),
+          opacityPercent: clamp(opacity?.value, 0, 100, 100),
+          enabled: Boolean(enabled?.checked)
+        });
+        if (status) {
+          status.textContent = next ? 'Применено · сохранено локально' : 'Не удалось применить';
+          status.dataset.state = next ? 'ok' : 'error';
+        }
+        updatePreview();
+      });
+
+      q('#biome-lab-reset')?.addEventListener('click', () => {
+        this.biomeTextureSettings?.reset?.(selected.id);
+        this.renderBiomeLab(view);
+      });
+
+      updatePreview();
+      this.contentElement.scrollTop = 0;
+    } catch (error) {
+      this.contentElement.innerHTML = '<div class="project-hub-error">Biome Visual Lab: ' + escapeHtml(error.message) + '</div>';
+    }
   }
 
   setSubViewHeader(label, breadcrumb) {

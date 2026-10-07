@@ -19,6 +19,12 @@
           "type": "settings"
         },
         {
+          "id": "biome-visual-lab",
+          "label": "Biome Visual Lab · DEV",
+          "description": "Временный администраторский редактор пола: текстура, масштаб 1–10 000%, opacity и живой preview.",
+          "type": "biome-lab"
+        },
+        {
           "id": "pages",
           "label": "GitHub Pages",
           "description": "Публичная браузерная версия uGame.",

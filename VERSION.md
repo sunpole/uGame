@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.57**
+Current version: **0.0.58**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.58 | Biome Visual Lab: DEV/admin редактор texture name/file, scale, opacity и preview |
 | 0.0.57 | Biome Ground Texture System: grass/sand/snow + city variants, scale/opacity-ready |
 | 0.0.56 | Responsive World Camera: широкий экран показывает больше мира без искажения |
 | 0.0.55 | Full Workspace Game Viewport: игровое поле занимает всю центральную область |
@@ -63,6 +64,9 @@ Current version: **0.0.57**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.58
+В Project Hub → Игра добавлен временный `Biome Visual Lab · DEV`, архитектурно отделённый от runtime GroundTextureSystem. Для каждого из шести biome/city slots можно выбрать файл из набора текстур, менять отображаемое имя, scale 1–10000%, opacity 0–100%, enabled, Reset/Apply. 16:9 preview тайлит текстуру с теми же scale/opacity правилами. Apply сохраняет локальные overrides и через settings subscription сразу обновляет активный floor, если редактируется используемый слот.
 
 ## 0.0.57
 Добавлен отдельный GroundTextureSystem и централизованный `data/biome-textures.json` для шести 1024×1024 floor textures. Выбор выполняется по `zone.biome + zone.isCity`; текстура тайлится как world floor, 100% означает исходный 1024-unit масштаб, допустимы 1–10000% scale и 0–100% opacity. Для локального прототипа updater автоматически копирует точные PNG с Desktop в `assets/textures/biomes/`; они игнорируются Git, поэтому не мешают Update/Rollback. При отсутствии локального файла игра сохраняет тёмный fallback вместо падения.
