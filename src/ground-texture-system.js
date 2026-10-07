@@ -33,8 +33,8 @@ function normalizeEntry(entry = {}) {
     textureName: String(entry.textureName || entry.id || 'Texture'),
     textureFile: String(entry.textureFile || ''),
     enabled: entry.enabled !== false,
-    scalePercent: clamp(entry.scalePercent, 1, 10000, 100),
-    opacityPercent: clamp(entry.opacityPercent, 0, 100, 100)
+    scalePercent: clamp(entry.scalePercent, 1, 10000, 40),
+    opacityPercent: clamp(entry.opacityPercent, 0, 100, 40)
   };
 }
 

@@ -11,7 +11,7 @@
       "textureFile": "./assets/textures/biomes/grass_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     },
     {
       "id": "sand",
@@ -21,7 +21,7 @@
       "textureFile": "./assets/textures/biomes/sand_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     },
     {
       "id": "snow",
@@ -31,7 +31,7 @@
       "textureFile": "./assets/textures/biomes/snow_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     },
     {
       "id": "city-grass",
@@ -41,7 +41,7 @@
       "textureFile": "./assets/textures/biomes/city_grass_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     },
     {
       "id": "city-sand",
@@ -51,7 +51,7 @@
       "textureFile": "./assets/textures/biomes/city_sand_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     },
     {
       "id": "city-snow",
@@ -61,7 +61,7 @@
       "textureFile": "./assets/textures/biomes/city_snow_1024.png",
       "enabled": true,
       "scalePercent": 40,
-      "opacityPercent": 100
+      "opacityPercent": 40
     }
   ]
 }

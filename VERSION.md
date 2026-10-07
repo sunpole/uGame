@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.73**
+Current version: **0.0.74**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.74 | Biome Texture Baseline 40/40: all current floor defaults use 40% scale and 40% opacity |
 | 0.0.73 | Master Live Timer Sync: interaction dialog and world label use the same real-time Encounter expiresAt |
 | 0.0.72 | Master Module Availability: Extraction guaranteed, Tier-driven persistent module set per Encounter |
 | 0.0.71 | DEV World Analyzer: active masters, Location Tier context, candidate pools, rotation и one-click TP |
@@ -79,6 +80,9 @@ Current version: **0.0.73**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.74
+Все шесть текущих biome/city floor texture defaults закреплены на `scale 40%` и `opacity 40%`. Runtime fallback нормализации также использует 40/40. Явные локальные overrides из Biome Visual Lab по-прежнему имеют приоритет, поэтому пользовательская настройка не стирается автоматически.
 
 ## 0.0.73
 Таймер Stone Master в InteractionPanel теперь обновляется в реальном времени от того же `Encounter.expiresAt`, что и таймер над NPC. Оба представления используют одинаковое округление до секунд; окно автоматически закрывается после истечения Encounter, чтобы устаревшее взаимодействие не оставалось открытым. Game Clock по-прежнему display-only и не влияет на этот таймер.

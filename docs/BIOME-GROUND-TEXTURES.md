@@ -1,6 +1,6 @@
 # Biome Ground Texture System
 
-Current implementation: **v0.0.58**
+Current implementation: **v0.0.74**
 
 ## Purpose
 
@@ -70,3 +70,7 @@ Check:
 6. Reset restores JSON defaults;
 7. a missing texture does not break the game;
 8. responsive viewport resizing keeps the floor covering all visible world space.
+
+## v0.0.74 baseline
+
+All six current biome/city slots default to **40% scale + 40% opacity**. Browser-local Biome Visual Lab overrides remain explicit overrides and are not erased by the default change.

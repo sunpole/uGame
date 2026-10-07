@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.73",
-  "stage": "master-live-timer",
+  "version": "0.0.74",
+  "stage": "biome-texture-baseline-40-40",
   "updated": "2026-10-07",
-  "summary": "Stone Master interaction timer now live-syncs to Encounter expiresAt"
+  "summary": "All current biome/city ground textures default to 40% scale and 40% opacity"
 }
