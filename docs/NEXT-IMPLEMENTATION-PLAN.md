@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: рабочий план после UI/Workspace/biome серии v0.0.41–v0.0.58; следующий gameplay-пакет начинается только после ручного QA v0.0.58 и нового подтверждения пользователя.
+Статус: Stage C WorldSpawnState / Location Tier runtime реализован в v0.0.60–v0.0.64 после подтверждения пользователя; текущая точка — ручной QA v0.0.64, затем Stage D Stone Master NPC runtime.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.58:
+Состояние после v0.0.64:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -42,6 +42,7 @@
 - Persistent Game Chrome v0.0.41–v0.0.48: Header/Workspace/Footer, build/session/location/real/game clocks, live character/resources header, Action Router, AnyDesk controls, text-selection settings, shared Journal/Simulation chrome;
 - Workspace Window Policy v0.0.49–v0.0.53: bounded runtime windows, scale-first fallback, formal layers and visible Game Clock seconds/phase;
 - Responsive Workspace + Biome Visual Layer v0.0.54–v0.0.58: normal-size Bank/Inventory, full Workspace game viewport, responsive non-stretch camera, six biome/city floor slots and temporary Biome Visual Lab;
+- WorldSpawnState / Location Tier Stage C v0.0.60–v0.0.64: persistent local world state, safe-city graph distance, Stone eligibility, external T1–T4 real-time Tier-state, 2–6 capacity and 84xx QA;
 - combat по-прежнему отложен.
 
 Никакой новой большой механики на этом этапе не добавлять.
@@ -61,6 +62,8 @@
 Результат — конкретная patch queue.
 
 ## Этап C — WorldSpawnState / Location Tier runtime
+
+**Prototype implemented: v0.0.60–v0.0.64. Manual QA pending.**
 
 Перенести принятые идеи UGD-0016 из Simulation Lab в реальный gameplay **без лишнего контента**.
 
@@ -221,6 +224,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной desktop QA v0.0.58, включая local texture import и Biome Visual Lab.
-2. Не начинать Этап C автоматически.
-3. После QA получить новое подтверждение пользователя и только затем формировать следующий content-first gameplay пакет на базе этого плана.
+1. Провести ручной QA v0.0.64: F5 persistence, 8400/8401–8404/8499, 2–6 external slots и Tier-state lifetime/status.
+2. После успешного QA перейти к уже принятому Stage D: Stone Master definitions/encounters/relationship/caps/rotation.
+3. После Stage D реализовать Stage E DEV World Analyzer до массового контента.

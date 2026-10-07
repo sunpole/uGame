@@ -34,15 +34,15 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.58 — Responsive Workspace + Biome Visual Lab + gameplay prototype
+## Game prototype v0.0.64 — WorldSpawnState + Location Tier runtime + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
 
 - four connected top-down zones loaded from `data/world.json` through WorldGraph;
-- five possible Dynamic Event Spots in every current zone;
-- zone quality Q1–Q4 with 1 / 2 / 3 / 5 active dynamic-event slots;
-- independent real-time zone-quality timers and 30-minute event timers;
+- five Dynamic Event Spots in the safe-city prototype and six eligible Event/NPC Spots in each current external zone;
+- persistent external Location Tier T1–T4 with real-time Tier-state lifetime, safe-city distance and 2–6 active spawn capacity;
+- 30-minute Dynamic Event encounters continue to live independently inside the longer Location Tier-state;
 - random Resource, Chest and placeholder Event Portal encounters;
 - a reusable InteractionPanel for reward choice and informational event windows;
 - data-driven resource catalog and reward/event generation rules;
@@ -91,7 +91,10 @@ The current prototype includes:
 - a full-Workspace responsive Phaser viewport: wide screens reveal more world instead of stretching sprites or vision;
 - biome/city ground textures for grass, sand and snow through a dedicated GroundTextureSystem;
 - per-texture enabled, name/file, scale 1–10,000% and opacity 0–100% settings;
-- a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides.
+- a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides;
+- local serializable `WorldSpawnState` persisted inside Game State so reload/zone travel cannot freely reroll Location Tier;
+- WorldGraph shortest-distance to `isSafeCity` plus Stone-only resource eligibility for the current external-zone prototype;
+- Location Tier QA codes `8400`, `8401–8404`, `8499` for controlled testing without waiting hours.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
@@ -106,7 +109,7 @@ caps, produce analysis reports and run either from GitHub Actions or locally thr
 not alter the current gameplay rules. v0.0.41–v0.0.48 then rebuild the permanent application chrome:
 Header/Footer remain outside every Workspace overlay, current build/session/location/clocks are always
 visible, the old duplicate HUD is migrated only after replacement data exists, and keyboard/mouse
-actions share one contextual route. v0.0.49–v0.0.53 add bounded scale-first windows and visible Game Clock seconds/phase. v0.0.54–v0.0.58 then keep Bank/Inventory at normal slot size, expand the game to the full Workspace, add a non-stretch responsive camera and introduce biome floor textures plus the temporary Biome Visual Lab. Event Portal
+actions share one contextual route. v0.0.49–v0.0.53 add bounded scale-first windows and visible Game Clock seconds/phase. v0.0.54–v0.0.58 then keep Bank/Inventory at normal slot size, expand the game to the full Workspace, add a non-stretch responsive camera and introduce biome floor textures plus the temporary Biome Visual Lab. v0.0.59 fixes the approved 40% texture baseline; v0.0.60–v0.0.64 implement Stage C WorldSpawnState/Location Tier runtime, including persistent Tier-state, graph distance, Stone eligibility, 2–6 external spawn capacity and QA controls. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
@@ -151,9 +154,7 @@ Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat re
 
 Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
 until reload, `9099` show save status. `8001` restarts the current first quest for testing.
-Dynamic Event QA: `8201` recreates current-zone events, `8202` rerolls current-zone quality,
-`8211` / `8212` / `8213` / `8214` force Q1 / Q2 / Q3 / Q4 for fast slot-count testing,
-and `8299` shows Dynamic Event status.
+Dynamic Event QA: `8201` recreates current-zone events and `8299` shows status. In the safe-city prototype, `8202` and `8211–8214` still control the legacy city quality layer. External zones now use Location Tier QA: `8400` rerolls the current Tier, `8401–8404` force T1–T4, and `8499` shows distance/capacity/lifetime.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
 immediately again. For remote-desktop testing, the footer duplicates movement, Action and Dash

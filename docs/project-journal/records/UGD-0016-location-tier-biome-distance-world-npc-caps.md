@@ -261,9 +261,25 @@ quality duration: 150–180 / 120–160 / 75–120 / 60–90 min
 
 Это уже **баланс и симуляция**, а не архитектурные неясности.
 
+## Реализация Stage C — v0.0.60–v0.0.64
+
+После Simulation Lab MATRIX #20 и нового подтверждения пользователя реализован первый live prototype UGD-0016:
+
+- local serializable `WorldSpawnState` внутри Game State;
+- graph shortest distance до `isSafeCity`;
+- текущая external eligibility = Stone-only;
+- persistent T1–T4 Location Tier-state с REAL TIME lifetime;
+- spawn capacity `2–4 / 2–5 / 3–6 / 5–6`;
+- три внешние зоны получили по шестому eligible Event Spot;
+- external Dynamic Event capacity читает WorldSpawnState вместо старых QA `1/2/3/5`;
+- candidate distance bands вынесены в `data/world-spawn-config.json` и явно помечены не финальным балансом;
+- DEV `8400 / 8401–8404 / 8499` дают контролируемый QA редких Tier.
+
+Master NPC definitions/caps/rotation ещё не реализованы — это следующий Stage D.
+
 ## Статус
 
-Архитектурное направление **принято**. Следующий обязательный этап перед игровой реализацией — deterministic world simulator, который подберёт и проверит probability tables, caps и rotation fairness.
+Архитектурное направление **принято**. Stage C Location Tier runtime реализован как prototype и требует ручного QA. Probability tables остаются candidate balance; следующий принятый этап — Stone Master NPC runtime, world caps и independent rotation coverage.
 
 ## Связи
 

@@ -496,9 +496,8 @@
       "type": "system",
       "status": "accepted",
       "flags": [
-        "needs-calculation",
-        "needs-simulation",
-        "needs-prototype"
+        "needs-test",
+        "needs-calculation"
       ],
       "tags": [
         "world",

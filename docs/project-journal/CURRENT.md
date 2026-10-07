@@ -74,14 +74,15 @@
 - `v0.0.41–v0.0.48` реализуют Game Chrome series: persistent Header/Workspace/Footer, build/session/location/real clock, informational Game Clock, live character/resources header, Action Router, AnyDesk controls, text-selection settings и shared chrome на Journal/Simulation pages.
 - `v0.0.49–v0.0.53` реализуют Workspace Window Policy: общий Window Manager, scale-first fit с scroll fallback, формальную layer/Z policy и Game Clock UX с 🌙/🌅/☀️/🌆, секундами и ×12.
 - `v0.0.54–v0.0.58` реализуют Responsive Workspace + Biome Visual Layer: Bank/Inventory без лишнего scale, full-Workspace viewport, responsive world camera без искажений, шесть biome/city floor slots и временный Biome Visual Lab с scale 1–10 000% / opacity 0–100%.
+- `v0.0.59–v0.0.64` реализуют Stage C WorldSpawnState / Location Tier runtime: texture baseline 40%, persistent local WorldSpawnState, shortest distance to safe city, Stone-only eligibility для текущих внешних зон, persistent T1–T4 real-time Tier-state, external spawn capacity 2–6 и DEV 84xx QA.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.58 после локального Update: Bank/Inventory 100% scale и одинаковые ячейки; отсутствие бокового letterbox; responsive camera без искажения персонажа/vision; корректные границы/порталы/Event Spots; импорт шести PNG; переключение biome/city floor; Biome Visual Lab Apply/Reset, 1–10 000% scale и 0–100% opacity.
-- Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown остаются REAL TIME до отдельного решения.
-- После QA вернуться к content-first gameplay queue; следующий архитектурный кандидат — WorldSpawnState / Location Tier runtime, но только после нового подтверждения пользователя.
+- Выполнить ручной desktop QA v0.0.64: проверить сохранение Tier после F5, `8499`, force `8401–8404`, количество external Event slots 2–6, шестой spot, смену status/footer и отсутствие влияния Game Clock.
+- Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier остаются REAL TIME до отдельного решения.
+- После QA следующий уже принятый этап — Stage D Stone Master NPC runtime (UGD-0015/0016), затем DEV World Analyzer.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.
 
 ## Связанные записи
@@ -101,11 +102,11 @@
 - `UGD-0013` — Interaction UI, генерация наград и динамические Event Spots; прототип начат в `v0.0.32`, правило слепого ограниченного выбора уточнено в `v0.0.34`.
 - `UGD-0014` — ContainerSystem: рюкзак, Банк, экипировка, ресурсный пояс, вес, stack и будущие progression hooks; реализовано как прототип `v0.0.35`.
 - `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
-- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; принято, baseline проверен MATRIX #20, live gameplay ещё не реализован.
+- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; Stage C Location Tier runtime реализован v0.0.60–v0.0.64, candidate balance остаётся не финальным; Master NPC allocator/caps/rotation — следующий Stage D.
 - `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение run; v0.2 baseline #20 зафиксирован, большие ручные прогоны поставлены на паузу.
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
 - `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, baseline #20 зафиксирован.
 - `UGD-0020` — Attention cadence guardrail + пауза больших simulation runs; принято.
 - `UGD-0021` — Persistent Game Chrome / clocks / input UX; реализовано v0.0.41–v0.0.48.
 - `UGD-0022` — Workspace Window Policy + Game Clock UX; реализовано v0.0.49–v0.0.53; визуальная desktop-проверка пройдена, а выявленное уменьшение Bank/Inventory исправлено в v0.0.54.
-- `UGD-0023` — Responsive Workspace + Biome Ground Texture / Visual Lab; реализовано v0.0.54–v0.0.58, требуется ручной desktop QA.
+- `UGD-0023` — Responsive Workspace + Biome Ground Texture / Visual Lab; реализовано v0.0.54–v0.0.58; визуально подтверждён текущий texture scale baseline 40% и закреплён в v0.0.59.

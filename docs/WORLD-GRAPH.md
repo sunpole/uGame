@@ -91,7 +91,9 @@ The authored prototype layout remains a 960×540 **base coordinate space**, but 
 
 This preserves player/NPC/Vision proportions while allowing wide displays to show more world.
 
-Zone definitions also now carry prototype `biome` and `isCity` fields used by `GroundTextureSystem`. These visual fields do not change stable zone identity or transition identity.
+Zone definitions also carry prototype `biome` / `isCity` fields used by `GroundTextureSystem`, plus `isSafeCity` and `resourceDirections` used by WorldSpawnState. These fields do not change stable zone identity or transition identity.
+
+Since v0.0.61, WorldGraph exposes undirected neighbor traversal, shortest transition distance and `distanceFromSafeCity()`. Current external-zone prototype eligibility is intentionally Stone-only; final biome↔resource weighting remains data-driven future balance.
 
 ## Scope of v0.0.30
 

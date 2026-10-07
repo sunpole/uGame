@@ -40,6 +40,8 @@
 - `docs/WORLD-GRAPH.md` — текущая техническая документация WorldGraph, responsive coordinate model и миграции сохранений.
 - `data/biome-textures.json` — source config для шести biome/city floor slots; browser-local DEV overrides не заменяют этот файл как default source.
 - `src/ground-texture-system.js` — runtime пола и настройки; `docs/BIOME-GROUND-TEXTURES.md` — техническая документация.
+- `src/world-spawn-state-system.js` + `data/world-spawn-config.json` — текущий runtime/source config для persistent Location Tier-state; `docs/WORLD-SPAWN-STATE.md` — техническая документация Stage C.
+- Distance-band weights в `world-spawn-config.json` помечены candidate-balance. Не называть их финальным балансом и не запускать новый большой Simulation run без конкретного изменения/вопроса.
 - `Biome Visual Lab · DEV` — временный admin UI. Его можно позже скрыть, но нельзя связывать жизнеспособность runtime GroundTextureSystem с наличием этой кнопки.
 - `docs/SIMULATION-LAB.md` — источник правил для headless-симулятора баланса, форматов отчётов и запуска. Если задача касается Location Tier, distance pressure, world caps, rotation или probability balance, сначала сверить этот документ и `UGD-0017`.
 - Не переименовывать уже используемый стабильный id только ради более красивого имени. Отображаемое название и техническая идентичность — разные вещи.
