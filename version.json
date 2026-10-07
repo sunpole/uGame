@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.88",
-  "stage": "stone-process-reward-claim",
+  "version": "0.0.89",
+  "stage": "first-stone-process-audit",
   "updated": "2026-10-07",
-  "summary": "Pending Stone Extraction rewards can be claimed at the same Master using Location additive bonus then Master multiplier"
+  "summary": "Document and audit the first functional Stone Extraction real-time/offline/pending-reward vertical loop"
 }

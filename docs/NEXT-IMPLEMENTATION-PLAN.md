@@ -129,7 +129,7 @@ Project Hub → DEV World Analyzer:
 
 ## Этап F — Resource master modules
 
-**Availability layer implemented in v0.0.72; functional module actions are still pending.**
+**Availability layer implemented in v0.0.72; first functional Extraction implemented in v0.0.85–v0.0.88. Other module actions are still pending.**
 
 После стабильного WorldSpawnState:
 
@@ -235,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.83: прежний Stone runtime + live timer + 40/40 textures + Spawn Zone DEV + slow facing/wandering + отсутствие external legacy Resource Event.
-2. После QA реализовать первый функциональный Stage F модуль — **Extraction / Добыча / Process** для Stone Master, ограниченный оставшимся Encounter lifetime.
+1. Провести ручной QA v0.0.89: Stone runtime + Spawn Zone + module action menu + persistent Extraction + offline pending reward + claim.
+2. После успешного QA считать первый Process vertical slice подтверждённым.
 3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.

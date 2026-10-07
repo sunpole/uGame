@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.88**
+Current version: **0.0.89**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.89 | First Stone Process Audit: document module menu → persistent REAL TIME Extraction → offline pending reward → claim |
 | 0.0.88 | Stone Process Reward Claim: pending result can be collected; QA formula applies Location additive bonus then Master multiplier |
 | 0.0.87 | Offline Process Completion: real timestamp completion moves finished Extraction into persistent pendingRewards |
 | 0.0.86 | Persistent Stone Extraction Process: start a REAL TIME QA process from Master; startedAt/endsAt persist in Character↔Master state |
@@ -94,6 +95,9 @@ Current version: **0.0.88**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.89
+Закрыта документационная серия первого функционального Stone Process: добавлен `UGD-0026`, обновлены CURRENT / Stage F / Master runtime и QA audit. Текущие 60 секунд, Stone ×10 и округление явно закреплены как `candidate-QA`, а не финальный баланс. Relationship XP/Mastery намеренно не начисляются до отдельного решения.
 
 ## 0.0.88
 Завершённый Stone Extraction теперь можно забрать через того же Master. Prototype formula следует принятому порядку: `base × (1 + LocationBonus) × MasterMultiplier`, затем округление до ближайшего целого. Текущий QA base = `Stone ×10`; это `candidate-QA`, не финальная экономика. Pending reward удаляется **только после успешной выдачи**: если контейнер/вес не позволяют принять Stone, результат остаётся у Master.

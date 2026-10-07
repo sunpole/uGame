@@ -343,7 +343,7 @@ character-owned skill progression
 - persistent `activeModules`: Extraction гарантирован, T1 2–3 / T2 3–4 / T3 4–6 / T4 all;
 - module set показывается в Interaction и DEV World Analyzer.
 
-Пока **не реализованы как функциональные действия**: реальный Extraction Process, Quest, Training/Skill Tree, Analytics и special Event. v0.0.72 фиксирует только availability layer.
+В v0.0.85–v0.0.88 реализован первый функциональный **Extraction Process**: persistent REAL TIME startedAt/endsAt, offline completion, pending reward и claim через ту же Master identity. QA duration/base reward пока candidate, Relationship XP/Mastery сознательно не начисляются. **Ещё не реализованы функционально:** Dialogue, Quest, Training/Skill Tree, Analytics и special Event.
 
 ## Audit
 
@@ -351,7 +351,7 @@ character-owned skill progression
 
 ## Статус
 
-Ключевые правила NPC/Relationship/Character Progression **приняты**. Stone identity/Encounter/relationship/module-availability prototype реализован; функциональный Process/Quest/Training и character resource progression остаются следующими слоями. Spawn/balance остаётся candidate и отслеживается в `UGD-0016`.
+Ключевые правила NPC/Relationship/Character Progression **приняты**. Stone identity/Encounter/relationship/module availability и первый functional Extraction Process реализованы; Quest/Dialogue/Analytics/Training и character resource progression остаются следующими слоями. Spawn/balance остаётся candidate и отслеживается в `UGD-0016`.
 
 ## Связи
 

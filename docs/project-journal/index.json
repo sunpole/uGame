@@ -798,6 +798,38 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0026",
+      "title": "First functional Stone Extraction Process",
+      "date": "2026-10-07",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "candidate-balance"
+      ],
+      "tags": [
+        "master",
+        "process",
+        "extraction",
+        "idle",
+        "offline",
+        "pending-reward",
+        "stone",
+        "real-time"
+      ],
+      "path": "records/UGD-0026-first-stone-extraction-process.md",
+      "related": [
+        "UGD-0010",
+        "UGD-0014",
+        "UGD-0015",
+        "UGD-0016",
+        "UGD-0024",
+        "UGD-0025"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

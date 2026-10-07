@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.79**
+Current implementation: **v0.0.89**
 
 ## Scope
 
@@ -13,6 +13,8 @@ Source files:
 - `src/world-spawn-state-system.js`
 - `src/master-encounter-system.js`
 - `src/character-master-relationship-system.js`
+- `src/master-process-system.js`
+- `data/master-processes.json`
 - `src/interactable-system.js`
 
 ## Identity vs Encounter vs Relationship
@@ -126,7 +128,7 @@ Current neutral module ids:
 - training;
 - special-event.
 
-At v0.0.72 these are **availability metadata**, not six completed gameplay systems. Extraction/Process is the next intended functional module.
+At v0.0.72 these started as availability metadata. Since v0.0.85–v0.0.88 **Extraction is the first functional module**; Dialogue / Quest / Analytics / Training / Special Event are still availability-only placeholders.
 
 ## Persistent UI / QA
 
@@ -163,3 +165,20 @@ Since v0.0.78 the temporary vector shell has a slow idle-facing controller. Rota
 ## Wandering movement
 
 Since v0.0.79 the rendered master has ephemeral local movement around its Event Spot center. Default speed is about 5 world-px/s. The current Spawn Zone Debug radius (150 px by default) is also the wandering boundary; this does not alter allocator probabilities or the persisted Encounter identity. Movement pauses while an InteractionPanel is open, while the real-time Encounter timer continues normally.
+
+
+## First functional Extraction Process — v0.0.85–v0.0.88
+
+Master interaction now renders module actions explicitly. Extraction starts a persistent REAL TIME Process stored inside Character↔Master state.
+
+Current QA profile:
+
+```text
+duration <= 60 s and <= remaining Encounter lifetime
+base = Stone ×10
+final = round(base × (1 + LocationBonus) × MasterMultiplier)
+```
+
+The values are `candidate-QA`. The architecture is the part being tested.
+
+A finished Process is converted to `pendingRewards` even after reload/offline. The result belongs to the same Master identity and can be claimed on a later suitable encounter. Grant failure does not delete it.
