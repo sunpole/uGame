@@ -830,6 +830,34 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0027",
+      "title": "Event Spot exclusive occupancy",
+      "date": "2026-10-07",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "event-spots",
+        "occupancy",
+        "master",
+        "dynamic-events",
+        "worldspawn",
+        "capacity"
+      ],
+      "path": "records/UGD-0027-event-spot-exclusive-occupancy.md",
+      "related": [
+        "UGD-0013",
+        "UGD-0016",
+        "UGD-0024",
+        "UGD-0025",
+        "UGD-0026"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

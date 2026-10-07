@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.92**
+Current version: **0.0.93**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.93 | Event Spot Exclusivity Audit: document root cause, hard `1 spotId = 1 occupant` rule and QA |
 | 0.0.92 | Safe Event Relocation: Master reservation moves an existing generic Event to a free spot without losing id/timer/offer |
 | 0.0.91 | Event Spot Exclusive Occupancy: dedupe state, skip Master spots at render, remove duplicate fallback, DEV 8298 conflict check |
 | 0.0.90 | EventSpot ↔ WorldSpawn integration fix: EventSpotSystem now sees Location Tier capacity and Master-reserved spots |
@@ -98,6 +99,9 @@ Current version: **0.0.92**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.93
+Добавлен `UGD-0027` и отдельный аудит Event Spot exclusivity. Явно зафиксировано правило `1 spotId = 1 active occupant`, причина бага v0.0.89, приоритет Master reservation, safe relocation Chest/Portal и DEV `8298`. Gameplay/balance в этом патче не менялись.
 
 ## 0.0.92
 Закрыт связанный риск потери generic Event при появлении Master. Если Master резервирует уже занятый generic spot, существующий Chest/Portal теперь переносится на свободный разрешённый `spotId` с сохранением `event.id`, `spawnedAt/expiresAt`, `kind`, `offer` и consumed-state. Legacy external `resource` по-прежнему удаляется намеренно. Если свободного spot действительно нет из-за capacity, лишний Event удаляется как превышающий допустимую вместимость.

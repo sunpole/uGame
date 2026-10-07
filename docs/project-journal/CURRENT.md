@@ -35,6 +35,7 @@
 - Принято и реализовано как prototype `UGD-0024`: Location Tier/distance/chance/bonus всегда видны в Game Chrome; Stone Master T1–T4 имеют persistent Encounter, caps/rotation и character-scoped relationship history; DEV World Analyzer читает тот же WorldSpawnState; module availability persistent per Encounter.
 - Принято и реализовано `UGD-0025`: live REAL TIME countdown, biome default 40/40, Spawn Zone DEV controls, temporary humanoid Master shell, slow facing и slow wandering в пределах Event Spot radius. Внешний legacy `resource` Event удалён: resourceDirection идёт через Master NPC; остальные generic slots используют временный candidate-QA Chest/Portal mix. На этапе разработки Spawn Zone Debug default ON.
 - Принято и реализовано `UGD-0026`: первый functional Stone Extraction Process — REAL TIME, persistent startedAt/endsAt, duration ≤ Encounter remainder, offline completion → Character↔Master pending reward → claim через ту же Master identity. QA duration/base reward пока не финальный баланс.
+- Принято и реализовано `UGD-0027`: один Event Spot одновременно имеет ровно одного active owner. Master и generic Event не могут делить один `spotId`; при Master reservation существующий Chest/Portal безопасно переносится на другой свободный spot.
 
 ## Активные рабочие гипотезы
 
@@ -81,13 +82,14 @@
 - `v0.0.65–v0.0.72` реализуют persistent Location Intel + Stone Master prototype: LT/D/P/bonus в Header/Footer, 4 Stone master identity, 30m Encounter allocator, T2/T3/T4 caps, independent rotation, visible master NPC, character relationships, active 83xx QA, DEV World Analyzer и persistent module availability.
 - `v0.0.73–v0.0.79` реализуют Master UX/DEV series: live timer, biome 40/40, Spawn Zone Debug + controls, humanoid shell, slow facing и wandering.
 - `v0.0.85–v0.0.88` реализуют первый vertical Process loop: module action menu → persistent Stone Extraction → offline pending reward → claim.
+- `v0.0.90–v0.0.92` исправляют EventSpot↔WorldSpawn integration и закрепляют hard occupancy invariant `1 spotId = 1 occupant` с safe relocation generic Event.
 - `v0.0.81–v0.0.83` убирают внешний legacy Resource Event, вводят отдельный candidate-QA Chest/Portal mix и включают Spawn Zone Debug по умолчанию на время разработки.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.89: предыдущие Spawn/Master проверки + module buttons + Extraction start/F5/offline completion/pending/claim/container failure.
+- Выполнить ручной desktop QA v0.0.93: сначала Event Spot exclusivity (`8298`, визуально один occupant на circle, capacity через `8299`), затем продолжить module buttons + Extraction start/F5/offline completion/pending/claim/container failure.
 - Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier/Master Encounter остаются REAL TIME до отдельного решения.
 - После успешного QA первый Extraction loop считается вертикально проверенным; следующие Dialogue/Analytics/Quest/Training/Event подключать отдельными маленькими патчами, не объявляя placeholders готовой механикой.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.

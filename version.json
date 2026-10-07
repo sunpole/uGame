@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.92",
-  "stage": "eventspot-safe-relocation",
+  "version": "0.0.93",
+  "stage": "eventspot-exclusivity-audit",
   "updated": "2026-10-07",
-  "summary": "When a Master reserves an occupied Event Spot, the existing generic Event is relocated to a free spot with its id/timer/offer preserved instead of being discarded"
+  "summary": "Document and audit hard Event Spot exclusive occupancy after WorldSpawn integration repair"
 }

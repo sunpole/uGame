@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.89**
+Current implementation: **v0.0.93**
 
 ## Scope
 
@@ -107,7 +107,7 @@ generic Dynamic Events target = 4
 total Event/NPC = 5
 ```
 
-The master spot is excluded from generic Resource/Chest/Portal placement.
+The master spot is excluded from generic Dynamic Event placement. Since v0.0.90–v0.0.92 this is a hard shared-occupancy invariant: one `spotId` has one active owner. If Master reservation displaces an existing Chest/Portal, the generic Event is relocated without losing its timer/offer.
 
 ## Module availability
 

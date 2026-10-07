@@ -235,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.89: Stone runtime + Spawn Zone + module action menu + persistent Extraction + offline pending reward + claim.
+1. Провести ручной QA v0.0.93: Event Spot exclusivity + Stone runtime + Spawn Zone + module action menu + persistent Extraction + offline pending reward + claim.
 2. После успешного QA считать первый Process vertical slice подтверждённым.
 3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.

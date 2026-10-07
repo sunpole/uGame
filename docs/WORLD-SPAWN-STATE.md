@@ -1,6 +1,6 @@
 # WorldSpawnState / Location Tier runtime
 
-Current implementation: **v0.0.83**
+Current implementation: **v0.0.93**
 
 ## Scope
 
@@ -76,6 +76,10 @@ External zones now expose six eligible Event/NPC spots and derive desired active
 - a longer Tier-state can contain several encounter refresh cycles.
 
 The safe-city prototype keeps its old event-quality behavior for now because Location Tier applies to external zones.
+
+### Event Spot exclusivity
+
+Since v0.0.90–v0.0.92 the runtime enforces `1 spotId = 1 active occupant`. A Master occupies one shared Event/NPC slot and reserves its `spotId`; generic Dynamic Events use only remaining spots. If a Master takes a spot that already held a Chest/Portal, that Event is relocated to another free spot with id/timer/offer preserved. DEV `8298` checks conflicts in the current zone.
 
 ## Stone Master registry since v0.0.66
 
