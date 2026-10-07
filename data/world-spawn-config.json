@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-07",
+  "status": "candidate-balance",
+  "note": "Location Tier runtime starts from Simulation Lab v0.2 candidate distance tables. These values are not final gameplay balance.",
+  "locationTiers": {
+    "T1": {
+      "level": 1,
+      "label": "T1",
+      "spawnMin": 2,
+      "spawnMax": 4,
+      "lifetimeMinutesMin": 120,
+      "lifetimeMinutesMax": 180,
+      "locationBonus": 0
+    },
+    "T2": {
+      "level": 2,
+      "label": "T2",
+      "spawnMin": 2,
+      "spawnMax": 5,
+      "lifetimeMinutesMin": 90,
+      "lifetimeMinutesMax": 150,
+      "locationBonus": 0.2
+    },
+    "T3": {
+      "level": 3,
+      "label": "T3",
+      "spawnMin": 3,
+      "spawnMax": 6,
+      "lifetimeMinutesMin": 60,
+      "lifetimeMinutesMax": 120,
+      "locationBonus": 0.4
+    },
+    "T4": {
+      "level": 4,
+      "label": "T4",
+      "spawnMin": 5,
+      "spawnMax": 6,
+      "lifetimeMinutesMin": 60,
+      "lifetimeMinutesMax": 90,
+      "locationBonus": 0.6
+    }
+  },
+  "distanceBands": [
+    {
+      "min": 1,
+      "max": 1,
+      "weights": {
+        "T1": 98.5,
+        "T2": 1.2,
+        "T3": 0.25,
+        "T4": 0.05
+      }
+    },
+    {
+      "min": 2,
+      "max": 2,
+      "weights": {
+        "T1": 92,
+        "T2": 6,
+        "T3": 1.5,
+        "T4": 0.5
+      }
+    },
+    {
+      "min": 3,
+      "max": 3,
+      "weights": {
+        "T1": 80,
+        "T2": 14,
+        "T3": 4.5,
+        "T4": 1.5
+      }
+    },
+    {
+      "min": 4,
+      "max": 4,
+      "weights": {
+        "T1": 65,
+        "T2": 20,
+        "T3": 10,
+        "T4": 5
+      }
+    },
+    {
+      "min": 5,
+      "max": 6,
+      "weights": {
+        "T1": 48,
+        "T2": 25,
+        "T3": 17,
+        "T4": 10
+      }
+    },
+    {
+      "min": 7,
+      "max": 999,
+      "weights": {
+        "T1": 35,
+        "T2": 28,
+        "T3": 22,
+        "T4": 15
+      }
+    }
+  ]
+}

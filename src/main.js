@@ -413,7 +413,7 @@ class ZoneScene extends Phaser.Scene {
       });
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
-      worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
+      await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
       this.persistGameState();
 
@@ -575,6 +575,7 @@ class ZoneScene extends Phaser.Scene {
     }
 
     this.characterView.update(state, delta);
+    worldSpawnStateSystem?.update(Date.now());
     this.eventSpotSystem?.update(Date.now());
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update();

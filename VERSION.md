@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.61**
+Current version: **0.0.62**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.62 | Location Tier runtime: persistent T1–T4 state, real-time lifetime и candidate distance bands |
 | 0.0.61 | Safe-city distance + Stone eligibility: WorldGraph знает расстояние и доступное resourceDirection |
 | 0.0.60 | Persistent WorldSpawnState shell: локальная serializable истина будущих Tier/NPC |
 | 0.0.59 | Biome texture defaults: утверждённый визуальный baseline 40% |
@@ -67,6 +68,9 @@ Current version: **0.0.61**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.62
+WorldSpawnState теперь реально создаёт и хранит Location Tier-state для каждой внешней зоны: T1–T4, lifetime 2–3h / 1.5–2.5h / 1–2h / 1–1.5h, spawn capacity 2–4 / 2–5 / 3–6 / 5–6 и location bonus 0/20/40/60%. Distance bands взяты как явно помеченный `candidate-balance` из Simulation Lab v0.2: это starting candidate, не финальный баланс. Tier-state живёт по REAL TIME и сохраняется, поэтому F5 не переролливает активное состояние.
 
 ## 0.0.61
 WorldGraph получил undirected shortest-distance по связям, поиск ближайшего `isSafeCity` и data-driven `resourceDirectionsFor(zone)`. Перекрёсток отмечен safe city; три внешние зоны — текущий Stone-only prototype согласно плану UGD-0015/0016. Это не вводит новые resource probability weights и не затрагивает финальный баланс.
