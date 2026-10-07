@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.75**
+Current version: **0.0.76**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.76 | Spawn Zone DEV Controls: Project Hub toggle, center markers and 10–500 px radius control |
 | 0.0.75 | Spawn Zone Debug Visual: thin DEV radius circles around existing Event Spot centers |
 | 0.0.74 | Biome Texture Baseline 40/40: all current floor defaults use 40% scale and 40% opacity |
 | 0.0.73 | Master Live Timer Sync: interaction dialog and world label use the same real-time Encounter expiresAt |
@@ -81,6 +82,9 @@ Current version: **0.0.75**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.76
+Project Hub → Инструменты получил `Spawn Zone Debug · DEV`. Можно независимо включать/выключать окружности, показывать центры Event Spot и задавать radius 10–500 px; настройки сохраняются локально. Default остаётся OFF / center ON / 150 px. DEV-контур не меняет реальный spawn, probability, capacity или rotation.
 
 ## 0.0.75
 Добавлен отдельный `SpawnZoneDebugSystem`. Он умеет рисовать тонкие DEV-окружности вокруг существующих `eventSpots`, отмечать их центры и хранит локальные настройки `enabled/showCenters/radiusPx`. Базовый радиус — 150 world-px, допустимый диапазон 10–500. По умолчанию слой выключен и никак не меняет фактический allocator/spawn logic; это только QA-визуализация перед будущим wandering NPC.

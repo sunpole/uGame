@@ -1,6 +1,6 @@
 # WorldSpawnState / Location Tier runtime
 
-Current implementation: **v0.0.75**
+Current implementation: **v0.0.76**
 
 ## Scope
 
@@ -130,4 +130,4 @@ The next accepted content-first step is a real **Stone Extraction / Process** mo
 
 ## Spawn-zone DEV visualization
 
-Since v0.0.75 the existing Event Spot centers can be visualized as thin DEV circles through `SpawnZoneDebugSystem`. The default radius is 150 world-px and the layer is OFF by default. This visualization does **not** change spawn allocation yet; it prepares a visible roaming/spawn boundary for later NPC movement QA.
+Since v0.0.75 the existing Event Spot centers can be visualized as thin DEV circles through `SpawnZoneDebugSystem`. The default radius is 150 world-px and the layer is OFF by default. Since v0.0.76 Project Hub → Tools → `Spawn Zone Debug · DEV` controls visibility, center markers and radius 10–500 px. This visualization does **not** change spawn allocation yet; it prepares a visible roaming/spawn boundary for later NPC movement QA.

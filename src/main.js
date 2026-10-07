@@ -747,6 +747,11 @@ projectHubSystem = new ProjectHubSystem({
   onOpenChange: () => syncPlayerInputState(),
   interfaceSettings: interfaceSettingsSystem,
   biomeTextureSettings: biomeTextureSettingsSystem,
+  spawnZoneDebug: {
+    getSettings: () => spawnZoneDebugSystem?.getSettings?.() || null,
+    updateSettings: (patch) => spawnZoneDebugSystem?.updateSettings?.(patch) || null,
+    resetSettings: () => spawnZoneDebugSystem?.resetSettings?.() || null
+  },
   worldAnalyzer: {
     getData: () => {
       const snapshot = worldSpawnStateSystem?.snapshot?.() || {};

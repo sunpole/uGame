@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.75",
-  "stage": "spawn-zone-debug-visual",
+  "version": "0.0.76",
+  "stage": "spawn-zone-debug-controls",
   "updated": "2026-10-07",
-  "summary": "DEV Event Spot zones can be rendered as thin radius circles around existing spawn centers"
+  "summary": "Project Hub DEV controls can toggle Event Spot zones, centers and radius"
 }

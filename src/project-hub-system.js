@@ -166,7 +166,8 @@ export class ProjectHubSystem {
     onOpenChange,
     interfaceSettings,
     biomeTextureSettings,
-    worldAnalyzer
+    worldAnalyzer,
+    spawnZoneDebug
   }) {
     this.openButton = openButton;
     this.overlay = overlay;
@@ -180,6 +181,7 @@ export class ProjectHubSystem {
     this.interfaceSettings = interfaceSettings;
     this.biomeTextureSettings = biomeTextureSettings;
     this.worldAnalyzer = worldAnalyzer;
+    this.spawnZoneDebug = spawnZoneDebug;
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
@@ -269,6 +271,11 @@ export class ProjectHubSystem {
 
     if (view.type === 'world-analyzer') {
       this.renderWorldAnalyzer(view);
+      return;
+    }
+
+    if (view.type === 'spawn-zone-debug') {
+      this.renderSpawnZoneDebug(view);
       return;
     }
 
@@ -366,7 +373,66 @@ export class ProjectHubSystem {
     if (item.type === 'world-analyzer') {
       this.stack.push({ type: 'world-analyzer', label: item.label, tier: 'ALL', resource: 'stone', selectedIndex: 0 });
       this.renderCurrent();
+      return;
     }
+
+    if (item.type === 'spawn-zone-debug') {
+      this.stack.push({ type: 'spawn-zone-debug', label: item.label });
+      this.renderCurrent();
+    }
+  }
+
+  renderSpawnZoneDebug(view) {
+    this.setSubViewHeader(view.label || 'Spawn Zone Debug', 'uGame / DEV / Spawn Zone Debug');
+    const settings = this.spawnZoneDebug?.getSettings?.();
+    if (!settings) {
+      this.contentElement.innerHTML = '<div class="project-hub-error">Spawn Zone Debug runtime ещё не готов.</div>';
+      return;
+    }
+
+    this.contentElement.innerHTML = [
+      '<div class="project-hub-settings">',
+      '<div class="project-hub-setting-row">',
+      '<div><strong>Показывать spawn-зоны</strong><span>Тонкие окружности вокруг существующих Event Spot. Это только DEV-визуализация и не меняет allocator.</span></div>',
+      '<button id="spawn-zone-enabled" type="button" data-state="' + (settings.enabled ? 'on' : 'off') + '">' + (settings.enabled ? 'ВКЛ' : 'ВЫКЛ') + '</button>',
+      '</div>',
+      '<div class="biome-lab-controls">',
+      '<label class="biome-lab-field"><span>Радиус от центра · 10–500 px</span><input id="spawn-zone-radius" type="number" min="10" max="500" step="1" value="' + escapeHtml(settings.radiusPx) + '"></label>',
+      '<label class="biome-lab-enabled"><input id="spawn-zone-centers" type="checkbox"' + (settings.showCenters ? ' checked' : '') + '><span>Показывать точку центра</span></label>',
+      '<div class="biome-lab-actions"><button id="spawn-zone-reset" type="button">Сбросить</button><button id="spawn-zone-apply" class="primary" type="button">Применить</button><span id="spawn-zone-status"></span></div>',
+      '</div>',
+      '<p class="world-analyzer-zones">Базовый радиус: 150 px. Настройка сохраняется локально в браузере. Позже тот же radius сможет использоваться wandering NPC как граница медленного перемещения.</p>',
+      '</div>'
+    ].join('');
+
+    const enabled = this.contentElement.querySelector('#spawn-zone-enabled');
+    const radius = this.contentElement.querySelector('#spawn-zone-radius');
+    const centers = this.contentElement.querySelector('#spawn-zone-centers');
+    const status = this.contentElement.querySelector('#spawn-zone-status');
+    const clamp = (value) => Math.max(10, Math.min(500, Number(value) || 150));
+
+    enabled?.addEventListener('click', () => {
+      const next = this.spawnZoneDebug?.updateSettings?.({ enabled: !this.spawnZoneDebug?.getSettings?.()?.enabled });
+      const state = Boolean(next?.enabled);
+      enabled.dataset.state = state ? 'on' : 'off';
+      enabled.textContent = state ? 'ВКЛ' : 'ВЫКЛ';
+      if (status) status.textContent = state ? 'Зоны показаны' : 'Зоны скрыты';
+    });
+
+    this.contentElement.querySelector('#spawn-zone-apply')?.addEventListener('click', () => {
+      const next = this.spawnZoneDebug?.updateSettings?.({
+        radiusPx: clamp(radius?.value),
+        showCenters: Boolean(centers?.checked)
+      });
+      if (radius && next) radius.value = String(next.radiusPx);
+      if (status) status.textContent = next ? 'Применено · сохранено локально' : 'Не удалось применить';
+    });
+
+    this.contentElement.querySelector('#spawn-zone-reset')?.addEventListener('click', () => {
+      this.spawnZoneDebug?.resetSettings?.();
+      this.renderSpawnZoneDebug(view);
+    });
+    this.contentElement.scrollTop = 0;
   }
 
   renderWorldAnalyzer(view) {

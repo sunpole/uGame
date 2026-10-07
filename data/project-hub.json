@@ -126,6 +126,12 @@
           "type": "world-analyzer"
         },
         {
+          "id": "spawn-zone-debug",
+          "label": "Spawn Zone Debug · DEV",
+          "description": "Показ/скрытие Event Spot окружностей, центров и настройка радиуса 10–500 px.",
+          "type": "spawn-zone-debug"
+        },
+        {
           "id": "simulation-doc",
           "label": "Simulation Lab",
           "description": "Техническое описание headless-симулятора и отчётов.",
