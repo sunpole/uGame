@@ -10,12 +10,14 @@ export class MasterProcessSystem {
     url = './data/master-processes.json',
     relationshipSystem,
     interactionPanel,
-    worldSpawnStateSystem
+    worldSpawnStateSystem,
+    grantResource
   } = {}) {
     this.url = url;
     this.relationshipSystem = relationshipSystem;
     this.interactionPanel = interactionPanel;
     this.worldSpawnStateSystem = worldSpawnStateSystem;
+    this.grantResource = grantResource;
     this.profiles = new Map();
     this.loaded = false;
     this.nextSyncAt = 0;
@@ -54,11 +56,7 @@ export class MasterProcessSystem {
     this.update(now, true);
     const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
     if (pending.length) {
-      this.interactionPanel?.showMessage({
-        title: 'Добыча / Process',
-        text: 'Завершённый результат сохранён у этого Master как pending reward. Получение награды подключается следующим патчем.',
-        meta: 'Готовых результатов: ' + pending.length
-      });
+      this.showPendingRewards(spawn.masterId, pending);
       return true;
     }
 
@@ -100,6 +98,50 @@ export class MasterProcessSystem {
     if (!started) return false;
     this.showActive(started);
     return true;
+  }
+
+  rewardAmount(pending) {
+    const baseAmount = Math.max(1, Number(pending?.baseReward?.amount) || 1);
+    const additive = Math.max(0, Number(pending?.locationBonus) || 0);
+    const masterMultiplier = Math.max(0, Number(pending?.efficiencyMultiplier) || 1);
+    return Math.max(1, Math.round(baseAmount * (1 + additive) * masterMultiplier));
+  }
+
+  showPendingRewards(masterId, pendingRewards = []) {
+    const actions = pendingRewards.map((pending, index) => {
+      const resourceId = pending?.baseReward?.resourceId || 'stone';
+      const amount = this.rewardAmount(pending);
+      const resourceLabel = resourceId === 'stone' ? 'Камень' : resourceId;
+      return {
+        id: pending.rewardId,
+        label: 'Забрать: ' + resourceLabel + ' ×' + amount,
+        onSelect: () => {
+          const granted = this.grantResource?.(resourceId, amount);
+          if (granted === false) {
+            this.interactionPanel?.showMessage({
+              title: 'Награда не помещается',
+              text: 'Результат Process не потерян и остаётся pending reward у этого Master.',
+              meta: resourceLabel + ' ×' + amount
+            });
+            return false;
+          }
+          this.relationshipSystem?.consumePendingReward?.(masterId, pending.rewardId);
+          this.interactionPanel?.showMessage({
+            title: 'Результат получен',
+            text: 'Завершённый Process выдал ресурс. Pending reward удалён только после успешного помещения награды.',
+            meta: resourceLabel + ' ×' + amount
+          });
+          return true;
+        }
+      };
+    });
+
+    this.interactionPanel?.showActions({
+      title: 'Добыча / готовый результат',
+      text: 'Результат Process сохраняется у конкретного Master до получения.',
+      actions,
+      meta: 'Готовых результатов: ' + pendingRewards.length
+    });
   }
 
   showActive(process) {

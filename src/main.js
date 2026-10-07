@@ -302,7 +302,8 @@ class ZoneScene extends Phaser.Scene {
     masterProcessSystem = new MasterProcessSystem({
       relationshipSystem: masterRelationshipSystem,
       interactionPanel: this.interactionPanel,
-      worldSpawnStateSystem
+      worldSpawnStateSystem,
+      grantResource: (id, amount) => this.grantResource(id, amount)
     });
     this.masterProcessSystem = masterProcessSystem;
 

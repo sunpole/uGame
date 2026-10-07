@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.87",
-  "stage": "offline-process-pending-reward",
+  "version": "0.0.88",
+  "stage": "stone-process-reward-claim",
   "updated": "2026-10-07",
-  "summary": "Completed Master Processes resolve from real timestamps after reload/offline and persist as pending rewards"
+  "summary": "Pending Stone Extraction rewards can be claimed at the same Master using Location additive bonus then Master multiplier"
 }

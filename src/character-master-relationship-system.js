@@ -73,6 +73,16 @@ export class CharacterMasterRelationshipSystem {
     return Array.isArray(current?.pendingRewards) ? clone(current.pendingRewards) : [];
   }
 
+  consumePendingReward(masterId, rewardId) {
+    const current = this.state.masters?.[masterId];
+    if (!current || !Array.isArray(current.pendingRewards)) return null;
+    const index = current.pendingRewards.findIndex((reward) => reward.rewardId === rewardId);
+    if (index < 0) return null;
+    const [removed] = current.pendingRewards.splice(index, 1);
+    this.publish();
+    return clone(removed);
+  }
+
   syncProcesses(now = Date.now()) {
     let changed = false;
     for (const current of Object.values(this.state.masters || {})) {

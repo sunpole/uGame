@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.87**
+Current version: **0.0.88**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.88 | Stone Process Reward Claim: pending result can be collected; QA formula applies Location additive bonus then Master multiplier |
 | 0.0.87 | Offline Process Completion: real timestamp completion moves finished Extraction into persistent pendingRewards |
 | 0.0.86 | Persistent Stone Extraction Process: start a REAL TIME QA process from Master; startedAt/endsAt persist in Character↔Master state |
 | 0.0.85 | Master Module Action Menu: active Encounter modules are explicit InteractionPanel actions; unfinished modules are disabled |
@@ -93,6 +94,9 @@ Current version: **0.0.87**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.88
+Завершённый Stone Extraction теперь можно забрать через того же Master. Prototype formula следует принятому порядку: `base × (1 + LocationBonus) × MasterMultiplier`, затем округление до ближайшего целого. Текущий QA base = `Stone ×10`; это `candidate-QA`, не финальная экономика. Pending reward удаляется **только после успешной выдачи**: если контейнер/вес не позволяют принять Stone, результат остаётся у Master.
 
 ## 0.0.87
 Persistent Process теперь завершается по REAL TIME даже после reload/offline. `CharacterMasterRelationshipSystem.syncProcesses()` переводит завершённый `activeProcess` в `pendingRewards`; если Process теоретически вышел за сохранённый Encounter expiry, он отменяется вместо выдачи результата. Pending reward хранит base reward и modifier inputs, но фактическая выдача ресурса подключается следующим патчем.
