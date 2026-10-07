@@ -149,20 +149,19 @@ export class WorldSpawnStateSystem {
     ) || this.config?.distanceBands?.[0] || null;
   }
 
-  rollLocationTier(zone, now = Date.now()) {
+  buildLocationTierState(zone, tierId, now = Date.now(), source = 'runtime-roll') {
     const distance = this.worldGraph?.distanceFromSafeCity?.(zone.id);
-    const band = this.distanceBand(distance);
-    const tierId = weightedTier(band?.weights || { T1: 100 });
     const tier = this.config?.locationTiers?.[tierId] || this.config?.locationTiers?.T1;
+    const resolvedTierId = this.config?.locationTiers?.[tierId] ? tierId : 'T1';
     const lifetimeMinutes = randomInt(tier?.lifetimeMinutesMin, tier?.lifetimeMinutesMax);
     const spawnCapacity = randomInt(tier?.spawnMin, tier?.spawnMax);
 
     return {
       stateId: `${zone.id}-${now}-${Math.random().toString(36).slice(2, 8)}`,
       zoneId: zone.id,
-      tier: tierId,
+      tier: resolvedTierId,
       tierLevel: Number(tier?.level) || 1,
-      tierLabel: tier?.label || tierId,
+      tierLabel: tier?.label || resolvedTierId,
       spawnedAt: now,
       expiresAt: now + lifetimeMinutes * 60_000,
       lifetimeMinutes,
@@ -171,8 +170,35 @@ export class WorldSpawnStateSystem {
       distanceFromSafeCity: Number.isFinite(Number(distance)) ? Number(distance) : null,
       biome: zone.biome || null,
       resourceDirections: this.worldGraph?.resourceDirectionsFor?.(zone.id) || [],
-      balanceStatus: this.config?.status || 'candidate-balance'
+      balanceStatus: this.config?.status || 'candidate-balance',
+      source
     };
+  }
+
+  rollLocationTier(zone, now = Date.now()) {
+    const distance = this.worldGraph?.distanceFromSafeCity?.(zone.id);
+    const band = this.distanceBand(distance);
+    const tierId = weightedTier(band?.weights || { T1: 100 });
+    return this.buildLocationTierState(zone, tierId, now, 'runtime-roll');
+  }
+
+  applyLocationState(zone, state, { publish = true } = {}) {
+    if (!zone?.id || !state) return null;
+    this.setZoneState(zone.id, state, { publish: false });
+    if (publish) this.publish();
+    this.eventSystem?.emit('location-tier:changed', { zone, state: clone(state) });
+    return clone(state);
+  }
+
+  forceLocationTier(zone, tierId, now = Date.now()) {
+    if (!zone?.id || zone.isSafeCity === true || !this.config?.locationTiers?.[tierId]) return null;
+    const state = this.buildLocationTierState(zone, tierId, now, 'dev-force');
+    return this.applyLocationState(zone, state);
+  }
+
+  rerollLocationTier(zone, now = Date.now()) {
+    if (!zone?.id || zone.isSafeCity === true) return null;
+    return this.applyLocationState(zone, this.rollLocationTier(zone, now));
   }
 
   ensureLocationTier(zone, now = Date.now(), publish = true) {
@@ -186,9 +212,7 @@ export class WorldSpawnStateSystem {
     if (valid) return false;
 
     const next = this.rollLocationTier(zone, now);
-    this.setZoneState(zone.id, next, { publish: false });
-    if (publish) this.publish();
-    this.eventSystem?.emit('location-tier:changed', { zone, state: clone(next) });
+    this.applyLocationState(zone, next, { publish });
     return true;
   }
 
@@ -203,6 +227,45 @@ export class WorldSpawnStateSystem {
     }
     if (changed) this.publish();
     return changed;
+  }
+
+  executeDevCode(code) {
+    if (!['8400', '8401', '8402', '8403', '8404', '8499'].includes(code)) {
+      return { handled: false };
+    }
+
+    const zone = this.currentZoneId ? this.worldGraph?.getZone(this.currentZoneId) : null;
+    if (!zone) return { handled: true, message: `${code} · Нет текущей зоны`, state: 'error' };
+    if (zone.isSafeCity === true) {
+      return { handled: true, message: `${code} · ${zone.name}: safe city, Location Tier не используется`, state: 'reserved' };
+    }
+
+    if (code === '8400') {
+      const state = this.rerollLocationTier(zone, Date.now());
+      return {
+        handled: true,
+        message: `8400 · ${zone.name}: ${state.tier}, spawn ${state.spawnCapacity}, ${state.lifetimeMinutes} мин`,
+        state: 'ok'
+      };
+    }
+
+    if (['8401', '8402', '8403', '8404'].includes(code)) {
+      const tierId = `T${code.at(-1)}`;
+      const state = this.forceLocationTier(zone, tierId, Date.now());
+      return {
+        handled: true,
+        message: `${code} · ${zone.name}: DEV ${state.tier}, spawn ${state.spawnCapacity}, бонус +${Math.round(state.locationBonus * 100)}%`,
+        state: 'ok'
+      };
+    }
+
+    const state = this.getLocationTier(zone.id);
+    const remainingMin = Math.max(0, Math.ceil((Number(state?.expiresAt) - Date.now()) / 60_000));
+    return {
+      handled: true,
+      message: `8499 · ${zone.name}: ${state?.tier || '?'} · distance ${state?.distanceFromSafeCity ?? '?'} · spawn ${state?.spawnCapacity ?? '?'} · осталось ~${remainingMin}м`,
+      state: 'ok'
+    };
   }
 
   publish() {

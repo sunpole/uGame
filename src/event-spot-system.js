@@ -500,6 +500,13 @@ export class EventSpotSystem {
     }
 
     if (code === '8202') {
+      if (this.isExternalTierZone(zone)) {
+        return {
+          handled: true,
+          message: '8202 · Внешняя зона использует Location Tier; DEV reroll = 8400',
+          state: 'reserved'
+        };
+      }
       const state = this.rerollQuality(zone, Date.now(), true);
       this.updateZoneStatus(Date.now());
       return {
@@ -510,6 +517,13 @@ export class EventSpotSystem {
     }
 
     if (['8211', '8212', '8213', '8214'].includes(code)) {
+      if (this.isExternalTierZone(zone)) {
+        return {
+          handled: true,
+          message: `${code} · Внешняя зона использует Location Tier; force = 8401–8404`,
+          state: 'reserved'
+        };
+      }
       const level = Number(code.at(-1));
       const state = this.forceQuality(zone, level, Date.now());
       return {
@@ -521,9 +535,16 @@ export class EventSpotSystem {
 
     if (code === '8299') {
       const state = this.getCurrentZoneState();
+      if (this.isExternalTierZone(zone)) {
+        return {
+          handled: true,
+          message: `8299 · LT ${state?.locationTier || '?'} · событий ${(state?.events || []).filter((event) => !event.consumed).length}/${this.desiredSlots(zone, state)}`,
+          state: 'ok'
+        };
+      }
       return {
         handled: true,
-        message: `8299 · Q${state?.qualityLevel || '?'} · событий ${(state?.events || []).filter((event) => !event.consumed).length}`,
+        message: `8299 · город · событий ${(state?.events || []).filter((event) => !event.consumed).length}`,
         state: 'ok'
       };
     }

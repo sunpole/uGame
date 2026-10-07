@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.63",
-  "stage": "location-tier-spawn-capacity",
+  "version": "0.0.64",
+  "stage": "location-tier-qa",
   "updated": "2026-10-07",
-  "summary": "External Dynamic Event capacity now follows persistent Location Tier state up to six slots"
+  "summary": "Persistent Location Tier DEV force/reroll/status controls and legacy quality guardrails"
 }

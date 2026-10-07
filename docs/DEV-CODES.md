@@ -80,6 +80,21 @@ Normal controls: WASD or arrows to move, `E` / Space / Enter to interact, Shift 
 | `8214` | Force current zone to Q4 for QA |
 | `8299` | Show Dynamic Event Spot status |
 
+## Location Tier QA
+
+| Code | Action |
+|---|---|
+| `8400` | Reroll current external zone Location Tier using the candidate distance band |
+| `8401` | Force current external zone to T1 |
+| `8402` | Force current external zone to T2 |
+| `8403` | Force current external zone to T3 |
+| `8404` | Force current external zone to T4 |
+| `8499` | Show current Location Tier, safe-city distance, spawn capacity and remaining lifetime |
+
+These codes change the persisted `WorldSpawnState`, so reload keeps the forced/rerolled Tier until its real-time lifetime expires. They are QA controls, not player-facing mechanics.
+
+The old `8202/8211–8214` quality controls now apply only to the safe-city prototype. In external zones the console points to the 84xx Location Tier controls.
+
 ## Master NPC QA — reserved for future WorldSpawnState
 
 These codes are reserved now so the future implementation has stable developer hooks. They do **not** become active until master NPC world state exists in gameplay.

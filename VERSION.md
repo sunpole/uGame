@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.63**
+Current version: **0.0.64**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.64 | Location Tier QA: 8400/8401–8404/8499 и защита от старых Quality-кодов |
 | 0.0.63 | Location Tier spawn capacity: внешние зоны перешли на 2–6 активных Event/NPC slots |
 | 0.0.62 | Location Tier runtime: persistent T1–T4 state, real-time lifetime и candidate distance bands |
 | 0.0.61 | Safe-city distance + Stone eligibility: WorldGraph знает расстояние и доступное resourceDirection |
@@ -69,6 +70,9 @@ Current version: **0.0.63**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.64
+Добавлены persistent QA hooks для новой модели: 8400 reroll Location Tier, 8401–8404 force T1–T4, 8499 status. Старые 8202/8211–8214 больше не создают второй конфликтующий quality-state во внешних зонах и направляют тестировщика к 84xx. Forced/rerolled Tier сохраняется через WorldSpawnState и живёт по REAL TIME.
 
 ## 0.0.63
 External Dynamic Event слой теперь берёт desired active slots из persistent Location Tier-state, а не из старых QA `1/2/3/5`. Во все три внешние зоны добавлен шестой eligible Event Spot. При смене Tier-state события сохраняют собственный ~30-минутный lifetime, а система расширяет/сокращает число активных slots до текущей capacity. Городской Перекрёсток пока сохраняет старый prototype event behavior.
