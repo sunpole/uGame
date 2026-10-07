@@ -208,24 +208,44 @@ export class EventSpotSystem {
 
     const externalTierZone = this.isExternalTierZone(zone);
     const beforeFiltered = zoneState.events;
-    const seenSpotIds = new Set();
-    const filteredEvents = beforeFiltered
-      .filter((event) => {
-        if (!event?.id || !spotIds.has(event.spotId)) return false;
-        if (externalTierZone && event.kind === 'resource') return false;
-        if (seenSpotIds.has(event.spotId)) return false;
-        seenSpotIds.add(event.spotId);
-        return true;
-      })
-      .slice(0, desired);
+    const preservedEvents = [];
+    const usedSpotIds = new Set();
 
-    if (
-      filteredEvents.length !== beforeFiltered.length
-      || filteredEvents.some((event, index) => event !== beforeFiltered[index])
-    ) {
-      changed = true;
+    for (const event of beforeFiltered) {
+      if (!event?.id) {
+        changed = true;
+        continue;
+      }
+      if (externalTierZone && event.kind === 'resource') {
+        changed = true;
+        continue;
+      }
+      if (preservedEvents.length >= desired) {
+        changed = true;
+        continue;
+      }
+
+      let targetSpotId = event.spotId;
+      const targetUnavailable = !spotIds.has(targetSpotId) || usedSpotIds.has(targetSpotId);
+      if (targetUnavailable) {
+        const replacement = shuffled(spots.filter((spot) => !usedSpotIds.has(spot.id)))[0] || null;
+        if (!replacement) {
+          changed = true;
+          continue;
+        }
+        targetSpotId = replacement.id;
+        if (event.spotId !== targetSpotId) {
+          event.spotId = targetSpotId;
+          changed = true;
+        }
+      }
+
+      usedSpotIds.add(targetSpotId);
+      preservedEvents.push(event);
     }
-    zoneState.events = filteredEvents;
+
+    if (preservedEvents.length !== beforeFiltered.length) changed = true;
+    zoneState.events = preservedEvents;
 
     for (let index = 0; index < zoneState.events.length; index += 1) {
       const event = zoneState.events[index];

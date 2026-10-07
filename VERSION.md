@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.91**
+Current version: **0.0.92**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.92 | Safe Event Relocation: Master reservation moves an existing generic Event to a free spot without losing id/timer/offer |
 | 0.0.91 | Event Spot Exclusive Occupancy: dedupe state, skip Master spots at render, remove duplicate fallback, DEV 8298 conflict check |
 | 0.0.90 | EventSpot ↔ WorldSpawn integration fix: EventSpotSystem now sees Location Tier capacity and Master-reserved spots |
 | 0.0.89 | First Stone Process Audit: document module menu → persistent REAL TIME Extraction → offline pending reward → claim |
@@ -97,6 +98,9 @@ Current version: **0.0.91**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.92
+Закрыт связанный риск потери generic Event при появлении Master. Если Master резервирует уже занятый generic spot, существующий Chest/Portal теперь переносится на свободный разрешённый `spotId` с сохранением `event.id`, `spawnedAt/expiresAt`, `kind`, `offer` и consumed-state. Legacy external `resource` по-прежнему удаляется намеренно. Если свободного spot действительно нет из-за capacity, лишний Event удаляется как превышающий допустимую вместимость.
 
 ## 0.0.91
 Закреплён жёсткий runtime-инвариант: один `Event Spot / spotId` одновременно имеет только одного активного владельца. `refreshEvents()` удаляет generic Event с Master-reserved spot и дубликаты generic spot, expiration больше не имеет fallback на уже занятый `spots[0]`, а `renderCurrentZone()` дополнительно не рисует stale-конфликт даже до следующего persist-refresh. Добавлен DEV `8298`: проверка конфликтов occupancy текущей зоны.

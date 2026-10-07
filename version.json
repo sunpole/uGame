@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.91",
-  "stage": "eventspot-exclusive-occupancy",
+  "version": "0.0.92",
+  "stage": "eventspot-safe-relocation",
   "updated": "2026-10-07",
-  "summary": "Hard Event Spot exclusivity: one spotId can render/store at most one active generic Event or Master; DEV 8298 checks conflicts"
+  "summary": "When a Master reserves an occupied Event Spot, the existing generic Event is relocated to a free spot with its id/timer/offer preserved instead of being discarded"
 }
