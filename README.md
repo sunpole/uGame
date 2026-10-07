@@ -34,7 +34,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.64 — WorldSpawnState + Location Tier runtime + gameplay prototype
+## Game prototype v0.0.72 — Stone Master runtime + DEV World Analyzer + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -94,7 +94,14 @@ The current prototype includes:
 - a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides;
 - local serializable `WorldSpawnState` persisted inside Game State so reload/zone travel cannot freely reroll Location Tier;
 - WorldGraph shortest-distance to `isSafeCity` plus Stone-only resource eligibility for the current external-zone prototype;
-- Location Tier QA codes `8400`, `8401–8404`, `8499` for controlled testing without waiting hours.
+- Location Tier QA codes `8400`, `8401–8404`, `8499` for controlled testing without waiting hours;
+- persistent Header/Footer location intelligence: current Location Tier, graph distance, current-tier probability and location bonus are always visible;
+- four neutral Stone Master identities T1–T4 with persistent ~30-minute Encounter instances, `×1.00/1.20/1.40/1.60` multipliers, world caps and independent rotation coverage;
+- master encounters occupy the same Location Tier Event/NPC capacity as generic events and render as Tier-colored NPCs;
+- character-scoped persistent Master relationship history: first/last meeting and unique Encounter count without click-spam growth;
+- active Master QA codes `8300`, `8302–8304`, `8312–8314`, `8399` for registry/filter/rotation/teleport testing;
+- Project Hub `DEV World Analyzer` for active masters, Location context, candidate pools, rotation coverage and one-click teleport;
+- persistent per-Encounter module availability: Extraction is guaranteed; T1 2–3, T2 3–4, T3 4–6, T4 all six modules.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
@@ -109,7 +116,7 @@ caps, produce analysis reports and run either from GitHub Actions or locally thr
 not alter the current gameplay rules. v0.0.41–v0.0.48 then rebuild the permanent application chrome:
 Header/Footer remain outside every Workspace overlay, current build/session/location/clocks are always
 visible, the old duplicate HUD is migrated only after replacement data exists, and keyboard/mouse
-actions share one contextual route. v0.0.49–v0.0.53 add bounded scale-first windows and visible Game Clock seconds/phase. v0.0.54–v0.0.58 then keep Bank/Inventory at normal slot size, expand the game to the full Workspace, add a non-stretch responsive camera and introduce biome floor textures plus the temporary Biome Visual Lab. v0.0.59 fixes the approved 40% texture baseline; v0.0.60–v0.0.64 implement Stage C WorldSpawnState/Location Tier runtime, including persistent Tier-state, graph distance, Stone eligibility, 2–6 external spawn capacity and QA controls. Event Portal
+actions share one contextual route. v0.0.49–v0.0.53 add bounded scale-first windows and visible Game Clock seconds/phase. v0.0.54–v0.0.58 then keep Bank/Inventory at normal slot size, expand the game to the full Workspace, add a non-stretch responsive camera and introduce biome floor textures plus the temporary Biome Visual Lab. v0.0.59 fixes the approved 40% texture baseline; v0.0.60–v0.0.64 implement Stage C WorldSpawnState/Location Tier runtime, including persistent Tier-state, graph distance, Stone eligibility, 2–6 external spawn capacity and QA controls. v0.0.65–v0.0.72 expose Location intelligence in persistent chrome, implement the first Stone Master runtime with caps/rotation/relationships, activate 83xx QA, add DEV World Analyzer and persist the Tier-driven module availability set. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
@@ -154,7 +161,7 @@ Events/Quests `8xxx` and Save/Service `9xxx`. `2xxx` Player and `4xxx` Combat re
 
 Save verification codes: `9001` save now, `9002` clear the local save and pause autosave
 until reload, `9099` show save status. `8001` restarts the current first quest for testing.
-Dynamic Event QA: `8201` recreates current-zone events and `8299` shows status. In the safe-city prototype, `8202` and `8211–8214` still control the legacy city quality layer. External zones now use Location Tier QA: `8400` rerolls the current Tier, `8401–8404` force T1–T4, and `8499` shows distance/capacity/lifetime.
+Dynamic Event QA: `8201` recreates current-zone events and `8299` shows status. In the safe-city prototype, `8202` and `8211–8214` still control the legacy city quality layer. External zones use Location Tier QA: `8400` rerolls the current Tier, `8401–8404` force T1–T4, and `8499` shows distance/capacity/lifetime. Stone Master QA: `8300` registry, `8302–8304` Tier lists, `8312–8314` teleport/cycle, `8399` candidate/rotation summary.
 
 After a DEV command, focus is released from the DEV field so keyboard movement works
 immediately again. For remote-desktop testing, the footer duplicates movement, Action and Dash

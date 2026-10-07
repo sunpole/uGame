@@ -275,11 +275,11 @@ quality duration: 150–180 / 120–160 / 75–120 / 60–90 min
 - candidate distance bands вынесены в `data/world-spawn-config.json` и явно помечены не финальным балансом;
 - DEV `8400 / 8401–8404 / 8499` дают контролируемый QA редких Tier.
 
-Master NPC definitions/caps/rotation ещё не реализованы — это следующий Stage D.
+Stage D Stone Master definitions/allocator/caps/rotation реализован prototype в v0.0.66–v0.0.70; live balance остаётся candidate и требует QA.
 
 ## Статус
 
-Архитектурное направление **принято**. Stage C Location Tier runtime реализован как prototype и требует ручного QA. Probability tables остаются candidate balance; следующий принятый этап — Stone Master NPC runtime, world caps и independent rotation coverage.
+Архитектурное направление **принято**. Stage C Location Tier и Stage D Stone allocator/caps/rotation реализованы как prototype; Stage E World Analyzer реализован. Probability tables остаются candidate balance и требуют ручного/будущего simulation QA перед финальным закреплением.
 
 ## Связи
 

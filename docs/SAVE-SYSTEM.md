@@ -20,7 +20,9 @@ Schema v1 stores:
 - completed quests;
 - already seen quest signals;
 - last completed quest title;
-- Dynamic Event Spot state: zone quality, quality expiry, active slots, event expiry/consumed state and pending reward choices.
+- Dynamic Event Spot state: zone quality, quality expiry, active slots, event expiry/consumed state and pending reward choices;
+- `WorldSpawnState`: persistent Location Tier-state, active Stone Master spawns, world counts, candidate pools, allocation audit and independent rotation coverage;
+- character-scoped Master relationship state: first/last meeting, unique Encounter count, relationship placeholders, flags and pending reward slots.
 
 Exact player coordinates, stamina, animation phase, temporary dialogue UI state and other transient scene details are intentionally not saved.
 
@@ -46,7 +48,9 @@ The prototype saves after significant state changes:
 - container change / item transfer / equipment change;
 - quest-state change;
 - use of a one-time interactable;
-- Dynamic Event Spot reroll, reward-offer generation and reward-choice progress.
+- Dynamic Event Spot reroll, reward-offer generation and reward-choice progress;
+- Location Tier/master allocation changes;
+- first interaction with a new persistent Master Encounter / relationship-state update.
 
 Movement by itself does not trigger saves.
 
@@ -74,6 +78,9 @@ Movement by itself does not trigger saves.
 14. Confirm zone quality/event timers continue from their saved timestamps.
 15. Move an item Backpack → Bank, reload, and confirm placement remains.
 16. Equip a DEV item, reload, and confirm the equipment slot remains.
+17. In an external zone use `8499`, reload, and confirm the same unexpired Location Tier remains.
+18. Use `8300`, note active master/Tier, reload, and confirm the unexpired Encounter does not freely reroll.
+19. Interact with the master, reload, and confirm its unique Encounter count/module set remains persistent.
 
 ## Current limitations
 
@@ -84,6 +91,6 @@ This is deliberately a prototype persistence adapter, not an account/cloud save 
 - Game State still uses schema v1; v0.0.35 performs an additive runtime migration from the old flat inventory/resource placement into ContainerSystem when no container snapshot exists.
 - No conflict resolution.
 - No trusted/authoritative anti-cheat storage.
-- Dynamic Event Spots use real timestamps, but there is still no general Process/Offline Idle progression system.
+- Dynamic Event Spots, Location Tier and Master Encounter use real timestamps, but there is still no general Process/Offline Idle progression system.
 
 Future systems should depend on the serializable Game State rather than writing their own unrelated localStorage records.

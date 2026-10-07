@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: Stage C WorldSpawnState / Location Tier runtime реализован в v0.0.60–v0.0.64 после подтверждения пользователя; текущая точка — ручной QA v0.0.64, затем Stage D Stone Master NPC runtime.
+Статус: Stage C реализован v0.0.60–v0.0.64; Stage D Stone Master runtime реализован prototype v0.0.66–v0.0.70; Stage E DEV World Analyzer реализован v0.0.71; Stage F module availability начат v0.0.72. Текущая точка — ручной QA v0.0.72, затем функциональная Добыча/Process.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.64:
+Состояние после v0.0.72:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -43,6 +43,10 @@
 - Workspace Window Policy v0.0.49–v0.0.53: bounded runtime windows, scale-first fallback, formal layers and visible Game Clock seconds/phase;
 - Responsive Workspace + Biome Visual Layer v0.0.54–v0.0.58: normal-size Bank/Inventory, full Workspace game viewport, responsive non-stretch camera, six biome/city floor slots and temporary Biome Visual Lab;
 - WorldSpawnState / Location Tier Stage C v0.0.60–v0.0.64: persistent local world state, safe-city graph distance, Stone eligibility, external T1–T4 real-time Tier-state, 2–6 capacity and 84xx QA;
+- Persistent Location Intel v0.0.65: LT / distance / current-tier chance / location bonus always visible in Header/Footer;
+- Stone Master Stage D v0.0.66–v0.0.70: four identities, persistent 30m Encounter, candidate allocator, caps/rotation, visible Tier NPC, character relationship history and active 83xx QA;
+- DEV World Analyzer Stage E v0.0.71;
+- Stage F availability v0.0.72: Extraction guaranteed, Tier-driven module set persisted per Encounter;
 - combat по-прежнему отложен.
 
 Никакой новой большой механики на этом этапе не добавлять.
@@ -82,6 +86,8 @@
 
 ## Этап D — Master NPC runtime
 
+**Prototype implemented: v0.0.66–v0.0.70. Manual QA pending.**
+
 После WorldSpawnState:
 
 - master definition;
@@ -99,6 +105,8 @@
 Начать с одного resourceDirection — Stone.
 
 ## Этап E — DEV World Analyzer
+
+**Implemented: v0.0.71. Manual QA pending.**
 
 Сделать до массового контента, чтобы мир можно было проверять без ручного бега.
 
@@ -119,6 +127,8 @@ Project Hub → DEV World Analyzer:
 Это обязательный QA-инструмент перед расширением количества зон/NPC.
 
 ## Этап F — Resource master modules
+
+**Availability layer implemented in v0.0.72; functional module actions are still pending.**
 
 После стабильного WorldSpawnState:
 
@@ -224,6 +234,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.64: F5 persistence, 8400/8401–8404/8499, 2–6 external slots и Tier-state lifetime/status.
-2. После успешного QA перейти к уже принятому Stage D: Stone Master definitions/encounters/relationship/caps/rotation.
-3. После Stage D реализовать Stage E DEV World Analyzer до массового контента.
+1. Провести ручной QA v0.0.72: persistent Location Intel, Stone Master spawn/caps/rotation/relationships, 83xx, World Analyzer и module persistence.
+2. После QA реализовать первый функциональный Stage F модуль — **Extraction / Добыча / Process** для Stone Master, ограниченный оставшимся Encounter lifetime.
+3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.

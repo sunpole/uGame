@@ -80,6 +80,13 @@
           "target": "./docs/WORLD-SPAWN-STATE.md"
         },
         {
+          "id": "master-runtime-doc",
+          "label": "Stone Master Runtime",
+          "description": "Identity, Encounter, caps/rotation, relationship persistence, module availability и QA.",
+          "type": "document",
+          "target": "./docs/MASTER-NPC-RUNTIME.md"
+        },
+        {
           "id": "next-plan",
           "label": "Следующий план реализации",
           "description": "Предварительная очередь после Simulation Lab; будет объединена с пользовательским пакетом патчей.",

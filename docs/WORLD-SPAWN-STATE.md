@@ -1,6 +1,6 @@
 # WorldSpawnState / Location Tier runtime
 
-Current implementation: **v0.0.64**
+Current implementation: **v0.0.72**
 
 ## Scope
 
@@ -64,7 +64,7 @@ The next master prototype intentionally starts with one resourceDirection: `ston
 
 They are explicitly marked `candidate-balance`. They come from the Simulation Lab v0.2 candidate baseline and are **not final balance**.
 
-No new TEST/MATRIX/DEEP run was started for v0.0.64.
+No new TEST/MATRIX/DEEP run was started for v0.0.64–v0.0.72. Candidate Location/Master tier tables remain prototype inputs, not final balance.
 
 ## Dynamic Event capacity migration
 
@@ -77,6 +77,31 @@ External zones now expose six eligible Event/NPC spots and derive desired active
 
 The safe-city prototype keeps its old event-quality behavior for now because Location Tier applies to external zones.
 
+## Stone Master registry since v0.0.66
+
+Current Stone prototype defines four persistent master identities:
+
+- Stone Master T1 → ×1.00;
+- Stone Master T2 → ×1.20;
+- Stone Master T3 → ×1.40;
+- Stone Master T4 → ×1.60.
+
+Every external Stone-eligible zone can hold one current Stone Master Encounter inside the same total Event/NPC capacity. Encounter lifetime is ~30 real minutes and is independent from the longer Location Tier-state.
+
+High-tier allocator rules:
+
+- T4 ≤ 1 active Stone instance world-wide;
+- T3 ≤ 2;
+- T2 ≤ 3;
+- caps are maxima, not target counts;
+- failed high-tier allocation falls back instead of leaving the encounter slot empty;
+- each `stone:T2/T3/T4` has independent rotation round/visited coverage;
+- spawn instance, spot, requested/final Tier, active modules and allocation audit are persisted.
+
+## Persistent location intelligence
+
+Since v0.0.65 Game Chrome always exposes the current zone's Location Tier, graph distance from safe city, probability of the currently rolled Location Tier and location bonus. Full T1–T4 distance-band weights remain available as tooltip/DEV data.
+
 ## DEV QA
 
 - `8400` — reroll current external Location Tier using candidate distance weights;
@@ -88,8 +113,17 @@ The safe-city prototype keeps its old event-quality behavior for now because Loc
 
 These commands modify/persist WorldSpawnState.
 
-## Next accepted stage
+## Master QA
 
-Stage C is implemented as a prototype and now requires browser QA.
+- `8300` — Stone Master registry/counts;
+- `8302/8303/8304` — active T2/T3/T4 zone lists;
+- `8312/8313/8314` — teleport/cycle to active T2/T3/T4;
+- `8399` — candidate pools and rotation coverage.
 
-The next accepted implementation stage is **Stage D — Stone Master NPC runtime** from UGD-0015/UGD-0016. It must not silently invent final NPC probability balance: the current candidate tables remain candidate inputs.
+`Project Hub → Инструменты → DEV World Analyzer` exposes the same runtime registry with filters, Location context, candidate pools, rotation and one-click teleport.
+
+## Current next stage
+
+Stages C, D and E now have live prototypes. v0.0.72 also persists Tier-driven module availability (`Extraction` guaranteed; 2–3 / 3–4 / 4–6 / all).
+
+The next accepted content-first step is a real **Stone Extraction / Process** module. Module availability is not the same as functional implementation.

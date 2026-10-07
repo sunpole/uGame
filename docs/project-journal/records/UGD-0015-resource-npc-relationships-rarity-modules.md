@@ -330,13 +330,28 @@ character-owned skill progression
 10. Respec по умолчанию отсутствует; в будущем возможен специальный редкий quest/механика.
 11. На один resourceDirection существует четыре master identity — T1/T2/T3/T4; runtime появления являются spawn-instance/копиями этих master.
 
+## Реализация prototype — v0.0.66–v0.0.72
+
+После явного подтверждения пользователя реализован первый Stone-only слой:
+
+- четыре neutral master identity T1–T4 в data-driven catalog;
+- persistent ~30m Encounter instances в WorldSpawnState;
+- master multiplier ×1.00 / ×1.20 / ×1.40 / ×1.60;
+- visible Tier-colored master NPC на Event Spot;
+- character-scoped persistent relationship history;
+- Encounter count растёт один раз на уникальный Encounter, а не от spam-click;
+- persistent `activeModules`: Extraction гарантирован, T1 2–3 / T2 3–4 / T3 4–6 / T4 all;
+- module set показывается в Interaction и DEV World Analyzer.
+
+Пока **не реализованы как функциональные действия**: реальный Extraction Process, Quest, Training/Skill Tree, Analytics и special Event. v0.0.72 фиксирует только availability layer.
+
 ## Audit
 
 Подробный consistency-audit: `docs/project-journal/audits/2026-10-06-resource-npc-progression-audit.md`.
 
 ## Статус
 
-Ключевые правила NPC/Relationship/Character Progression **приняты**. Spawn/balance часть, зависящая от Location Tier, distance, biome и world caps, продолжает обсуждаться отдельно в `UGD-0016`.
+Ключевые правила NPC/Relationship/Character Progression **приняты**. Stone identity/Encounter/relationship/module-availability prototype реализован; функциональный Process/Quest/Training и character resource progression остаются следующими слоями. Spawn/balance остаётся candidate и отслеживается в `UGD-0016`.
 
 ## Связи
 

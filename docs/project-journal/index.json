@@ -736,6 +736,38 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0024",
+      "title": "Persistent Location Intel + Stone Master Runtime + DEV World Analyzer",
+      "date": "2026-10-07",
+      "type": "system",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "location-tier",
+        "chrome",
+        "worldspawn",
+        "npc",
+        "master",
+        "relationship",
+        "modules",
+        "rotation",
+        "tooling",
+        "world-analyzer"
+      ],
+      "path": "records/UGD-0024-location-intel-stone-master-world-analyzer.md",
+      "related": [
+        "UGD-0015",
+        "UGD-0016",
+        "UGD-0018",
+        "UGD-0021",
+        "UGD-0023"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

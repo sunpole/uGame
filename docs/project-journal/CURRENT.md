@@ -32,6 +32,7 @@
 - Принято и реализовано `UGD-0021`: persistent Game Chrome. Header/Footer находятся вне Workspace overlay, Game Clock display-only, real-time gameplay timers не изменены, E/Space/Enter идут через Action Router, mouse/AnyDesk — равноправный input, text selection default OFF.
 - Принято и реализовано `UGD-0022`: runtime-окна обязаны оставаться внутри Workspace; при нехватке места используется scale-first до читаемого минимума 82%, затем scroll fallback; окна одного game-modal уровня не перекрываются случайно; Game Clock показывает фазу суток, секунды и ×12.
 - Принято и реализовано `UGD-0023`: Inventory/Bank сохраняют нормальный размер ячеек; игровой viewport занимает весь Workspace; responsive camera показывает дополнительную ширину мира без растяжения объектов; floor выбирается по `biome + isCity`; Biome Visual Lab является временным DEV/admin UI и отделён от runtime GroundTextureSystem.
+- Принято и реализовано как prototype `UGD-0024`: Location Tier/distance/chance/bonus всегда видны в Game Chrome; Stone Master T1–T4 имеют persistent Encounter, caps/rotation и character-scoped relationship history; DEV World Analyzer читает тот же WorldSpawnState; module availability persistent per Encounter.
 
 ## Активные рабочие гипотезы
 
@@ -75,14 +76,15 @@
 - `v0.0.49–v0.0.53` реализуют Workspace Window Policy: общий Window Manager, scale-first fit с scroll fallback, формальную layer/Z policy и Game Clock UX с 🌙/🌅/☀️/🌆, секундами и ×12.
 - `v0.0.54–v0.0.58` реализуют Responsive Workspace + Biome Visual Layer: Bank/Inventory без лишнего scale, full-Workspace viewport, responsive world camera без искажений, шесть biome/city floor slots и временный Biome Visual Lab с scale 1–10 000% / opacity 0–100%.
 - `v0.0.59–v0.0.64` реализуют Stage C WorldSpawnState / Location Tier runtime: texture baseline 40%, persistent local WorldSpawnState, shortest distance to safe city, Stone-only eligibility для текущих внешних зон, persistent T1–T4 real-time Tier-state, external spawn capacity 2–6 и DEV 84xx QA.
+- `v0.0.65–v0.0.72` реализуют persistent Location Intel + Stone Master prototype: LT/D/P/bonus в Header/Footer, 4 Stone master identity, 30m Encounter allocator, T2/T3/T4 caps, independent rotation, visible master NPC, character relationships, active 83xx QA, DEV World Analyzer и persistent module availability.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - **Ещё не реализованы как система:** настоящий Process/Offline Idle, Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.64: проверить сохранение Tier после F5, `8499`, force `8401–8404`, количество external Event slots 2–6, шестой spot, смену status/footer и отсутствие влияния Game Clock.
-- Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier остаются REAL TIME до отдельного решения.
-- После QA следующий уже принятый этап — Stage D Stone Master NPC runtime (UGD-0015/0016), затем DEV World Analyzer.
+- Выполнить ручной desktop QA v0.0.72: проверить Header/Footer LT/D/P/bonus; master persistence после F5; `8300`, `8312–8314`, `8399`; отсутствие overlap master/generic Event Spot; relationship encounter count; DEV World Analyzer filters/Next/Previous/TP; persistent module set после reload.
+- Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier/Master Encounter остаются REAL TIME до отдельного решения.
+- Следующий принятый content-first шаг после QA — Stage F функциональная **Добыча/Process** у Stone Master; остальные Dialogue/Quest/Analytics/Training/Event подключать отдельными патчами, не объявляя placeholders готовой механикой.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.
 
 ## Связанные записи
@@ -101,8 +103,8 @@
 - `UGD-0012` — КПД времени, закрепление и ослабление активного бонуса.
 - `UGD-0013` — Interaction UI, генерация наград и динамические Event Spots; прототип начат в `v0.0.32`, правило слепого ограниченного выбора уточнено в `v0.0.34`.
 - `UGD-0014` — ContainerSystem: рюкзак, Банк, экипировка, ресурсный пояс, вес, stack и будущие progression hooks; реализовано как прототип `v0.0.35`.
-- `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; принято.
-- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; Stage C Location Tier runtime реализован v0.0.60–v0.0.64, candidate balance остаётся не финальным; Master NPC allocator/caps/rotation — следующий Stage D.
+- `UGD-0015` — ресурсные master NPC, отношения и character-owned progression; Stone Master identity/Encounter/relationship/module-availability prototype реализован v0.0.66–v0.0.72; реальный Process/Quest/Training и resource progression ещё впереди.
+- `UGD-0016` — Location Tier, биомы, distance pressure и world caps master NPC; Stage C реализован v0.0.60–v0.0.64, Stone allocator/caps/rotation prototype реализован v0.0.67+, candidate balance остаётся не финальным.
 - `UGD-0017` — Simulation Lab: headless расчёты, отчёты, графики и сравнение run; v0.2 baseline #20 зафиксирован, большие ручные прогоны поставлены на паузу.
 - `UGD-0018` — Project Hub: in-game навигация, документация и dev-инструменты через единый overlay; MVP реализован в `v0.0.36`.
 - `UGD-0019` — Player Effort: клики, поиск master, Attention-equivalent и QA-навигация; принято, baseline #20 зафиксирован.
@@ -110,3 +112,4 @@
 - `UGD-0021` — Persistent Game Chrome / clocks / input UX; реализовано v0.0.41–v0.0.48.
 - `UGD-0022` — Workspace Window Policy + Game Clock UX; реализовано v0.0.49–v0.0.53; визуальная desktop-проверка пройдена, а выявленное уменьшение Bank/Inventory исправлено в v0.0.54.
 - `UGD-0023` — Responsive Workspace + Biome Ground Texture / Visual Lab; реализовано v0.0.54–v0.0.58; визуально подтверждён текущий texture scale baseline 40% и закреплён в v0.0.59.
+- `UGD-0024` — Persistent Location Intel + Stone Master Runtime + DEV World Analyzer; реализовано prototype v0.0.65–v0.0.72, требуется ручной gameplay QA.
