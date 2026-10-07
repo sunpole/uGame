@@ -2049,3 +2049,22 @@ html.ugame-text-selection-enabled .chrome-logo-block {
     position: static;
   }
 }
+
+/* v0.0.65 — persistent Location Tier visibility */
+.header-location-summary {
+  min-width: 0;
+  overflow: hidden;
+  color: #79c0ff;
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-resource-meta {
+  display: grid;
+  grid-template-columns: auto minmax(150px, auto) minmax(0, 1fr);
+}
+
+#location-primary { font-weight: 700; }
+#location-secondary[title] { cursor: help; }

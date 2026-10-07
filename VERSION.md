@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.64**
+Current version: **0.0.65**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.65 | Persistent Location Tier HUD: LT, distance, chance и bonus всегда видны в Header/Footer |
 | 0.0.64 | Location Tier QA: 8400/8401–8404/8499 и защита от старых Quality-кодов |
 | 0.0.63 | Location Tier spawn capacity: внешние зоны перешли на 2–6 активных Event/NPC slots |
 | 0.0.62 | Location Tier runtime: persistent T1–T4 state, real-time lifetime и candidate distance bands |
@@ -70,6 +71,9 @@ Current version: **0.0.64**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.65
+Ключевая информация UGD-0016 вынесена из DEV-кодов в постоянный Game Chrome. Во внешней зоне Header показывает `LT Tn · Dn · P n% · +bonus%`; Footer показывает Location Tier, distance, вероятность именно текущего Tier, location bonus, capacity и biome. Tooltip Footer/Header содержит полный T1–T4 probability profile текущего distance band. В safe city явно показывается `Город · D0`.
 
 ## 0.0.64
 Добавлены persistent QA hooks для новой модели: 8400 reroll Location Tier, 8401–8404 force T1–T4, 8499 status. Старые 8202/8211–8214 больше не создают второй конфликтующий quality-state во внешних зонах и направляют тестировщика к 84xx. Forced/rerolled Tier сохраняется через WorldSpawnState и живёт по REAL TIME.

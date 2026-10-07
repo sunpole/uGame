@@ -43,8 +43,15 @@ function timezoneLabel(date = new Date()) {
   return `${zone} · ${offset}`;
 }
 
+function percentLabel(value, digits = 2) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '—';
+  const fixed = number >= 10 ? number.toFixed(Math.min(1, digits)) : number.toFixed(digits);
+  return fixed.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
+}
+
 function zoneDetails(zone) {
-  const parts = ['T—', 'Биом —'];
+  const parts = ['LT —', 'Биом —'];
   const speed = Number(zone?.rules?.speedMultiplier);
   const darkness = Number(zone?.rules?.vision?.darkness);
   if (Number.isFinite(speed)) parts.push(`скорость ×${speed.toFixed(2)}`);
@@ -62,7 +69,8 @@ export class ChromeContextSystem {
     locationSecondaryElement,
     realDateElement,
     realClockElement,
-    realTimezoneElement
+    realTimezoneElement,
+    headerLocationElement
   } = {}) {
     this.versionElement = versionElement;
     this.buildElement = buildElement;
@@ -73,10 +81,12 @@ export class ChromeContextSystem {
     this.realDateElement = realDateElement;
     this.realClockElement = realClockElement;
     this.realTimezoneElement = realTimezoneElement;
+    this.headerLocationElement = headerLocationElement;
     this.storage = safeSessionStorage();
     this.sessionStartedAt = this.restoreSessionStart();
     this.currentZone = null;
     this.zoneRuntimeStatus = '';
+    this.locationTierContext = null;
     this.zoneEnteredAt = this.restoreZoneState()?.enteredAt || Date.now();
     this.timer = null;
     this.version = '';
@@ -171,6 +181,11 @@ export class ChromeContextSystem {
     this.renderLocation(Date.now());
   }
 
+  setLocationTierContext(context = null) {
+    this.locationTierContext = context && typeof context === 'object' ? { ...context } : null;
+    this.renderLocation(Date.now());
+  }
+
   start() {
     this.stop();
     this.tick();
@@ -207,15 +222,71 @@ export class ChromeContextSystem {
 
   renderLocation(now = Date.now()) {
     const zone = this.currentZone;
+    const context = this.locationTierContext;
+
     if (this.locationPrimaryElement) {
-      this.locationPrimaryElement.textContent = zone
-        ? `${zone.name || zone.id} · ${zone.id}`
-        : 'Локация —';
+      if (!zone) {
+        this.locationPrimaryElement.textContent = 'Локация —';
+      } else if (context?.isSafeCity) {
+        this.locationPrimaryElement.textContent = (zone.name || zone.id) + ' · ' + zone.id + ' · ГОРОД · D0';
+      } else if (context?.tier) {
+        this.locationPrimaryElement.textContent = (zone.name || zone.id) + ' · ' + zone.id + ' · LT ' + context.tier + ' · D' + (context.distanceFromSafeCity ?? '—');
+      } else {
+        this.locationPrimaryElement.textContent = (zone.name || zone.id) + ' · ' + zone.id;
+      }
     }
+
+    if (this.headerLocationElement) {
+      if (!zone) {
+        this.headerLocationElement.textContent = 'Локация: —';
+        this.headerLocationElement.title = '';
+      } else if (context?.isSafeCity) {
+        this.headerLocationElement.textContent = 'Город · D0';
+        this.headerLocationElement.title = (zone.name || zone.id) + ': безопасный город';
+      } else if (context?.tier) {
+        const chance = percentLabel(context.currentTierChance);
+        const bonus = Math.round((Number(context.locationBonus) || 0) * 100);
+        this.headerLocationElement.textContent = 'LT ' + context.tier + ' · D' + (context.distanceFromSafeCity ?? '—') + ' · P ' + chance + '% · +' + bonus + '%';
+        if (context?.probabilityProfile) {
+          const p = context.probabilityProfile;
+          this.headerLocationElement.title = (zone.name || zone.id) + ': T1 ' + percentLabel(p.T1) + '% · T2 ' + percentLabel(p.T2) + '% · T3 ' + percentLabel(p.T3) + '% · T4 ' + percentLabel(p.T4) + '%';
+        }
+      } else {
+        this.headerLocationElement.textContent = 'LT —';
+        this.headerLocationElement.title = '';
+      }
+    }
+
     if (this.locationSecondaryElement) {
-      const details = zone ? zoneDetails(zone) : ['T—', 'Биом —'];
+      const details = [];
+      if (context?.isSafeCity) {
+        details.push('Safe City');
+      } else if (context?.tier) {
+        const chance = percentLabel(context.currentTierChance);
+        const bonus = Math.round((Number(context.locationBonus) || 0) * 100);
+        details.push('P(' + context.tier + ') ' + chance + '%');
+        details.push('бонус +' + bonus + '%');
+        details.push('capacity ' + (context.spawnCapacity ?? '—'));
+      } else if (zone) {
+        details.push(...zoneDetails(zone));
+      } else {
+        details.push('LT —', 'Биом —');
+      }
+
+      if (zone?.biome) details.push('биом ' + zone.biome);
+      const speed = Number(zone?.rules?.speedMultiplier);
+      const darkness = Number(zone?.rules?.vision?.darkness);
+      if (Number.isFinite(speed)) details.push('скорость ×' + speed.toFixed(2));
+      if (Number.isFinite(darkness)) details.push('темнота ' + Math.round(darkness * 100) + '%');
       if (this.zoneRuntimeStatus && !details.includes(this.zoneRuntimeStatus)) details.push(this.zoneRuntimeStatus);
-      this.locationSecondaryElement.textContent = `${details.join(' · ')} · в зоне ${durationLabel(now - this.zoneEnteredAt)}`;
+
+      this.locationSecondaryElement.textContent = details.join(' · ') + ' · в зоне ' + durationLabel(now - this.zoneEnteredAt);
+      if (context?.probabilityProfile) {
+        const p = context.probabilityProfile;
+        this.locationSecondaryElement.title = 'Шансы Location Tier при D' + (context.distanceFromSafeCity ?? '—') + ': T1 ' + percentLabel(p.T1) + '% · T2 ' + percentLabel(p.T2) + '% · T3 ' + percentLabel(p.T3) + '% · T4 ' + percentLabel(p.T4) + '%';
+      } else {
+        this.locationSecondaryElement.title = '';
+      }
     }
   }
 }

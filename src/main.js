@@ -344,6 +344,7 @@ class ZoneScene extends Phaser.Scene {
         this.zoneRulesSystem.apply(zone.rules);
         groundTextureSystem?.applyZone(zone);
         chromeContextSystem?.setZone(zone);
+        chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null);
       },
       isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
     });
@@ -364,6 +365,16 @@ class ZoneScene extends Phaser.Scene {
       onZoneStatus: (text) => this.setStatus(text)
     });
     this.eventSpotSystem = eventSpotSystem;
+
+    this.eventSystem.on('world-spawn:state', () => {
+      const zoneId = this.zoneSystem?.currentZoneId || worldSpawnStateSystem?.currentZoneId;
+      if (zoneId) chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem?.getLocationSummary?.(zoneId) || null);
+    });
+    this.eventSystem.on('location-tier:changed', ({ zone }) => {
+      if (!zone?.id) return;
+      const zoneId = this.zoneSystem?.currentZoneId || worldSpawnStateSystem?.currentZoneId;
+      if (zone.id === zoneId) chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null);
+    });
 
     this.bindGameEvents();
     this.bindPersistenceEvents();
@@ -415,6 +426,8 @@ class ZoneScene extends Phaser.Scene {
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
+      const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
+      chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem.getLocationSummary(restoredZoneId));
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
       this.persistGameState();
 
@@ -624,7 +637,8 @@ chromeContextSystem = new ChromeContextSystem({
   locationSecondaryElement: document.querySelector('#location-secondary'),
   realDateElement: document.querySelector('#real-date'),
   realClockElement: document.querySelector('#real-clock'),
-  realTimezoneElement: document.querySelector('#real-timezone')
+  realTimezoneElement: document.querySelector('#real-timezone'),
+  headerLocationElement: document.querySelector('#header-location-summary')
 });
 chromeContextSystem.loadBuildContext();
 chromeContextSystem.start();

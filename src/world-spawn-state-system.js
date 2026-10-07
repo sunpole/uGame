@@ -124,6 +124,54 @@ export class WorldSpawnStateSystem {
     return Math.max(0, Number(this.getZoneState(zoneId)?.spawnCapacity) || 0);
   }
 
+  getLocationTierProbability(zoneId, tierId = null) {
+    const state = this.getLocationTier(zoneId);
+    const zone = this.worldGraph?.getZone?.(zoneId);
+    if (!zone || zone.isSafeCity === true) return null;
+
+    const distance = Number.isFinite(Number(state?.distanceFromSafeCity))
+      ? Number(state.distanceFromSafeCity)
+      : this.worldGraph?.distanceFromSafeCity?.(zone.id);
+    const band = this.distanceBand(distance);
+    const resolvedTier = tierId || state?.tier;
+    const chance = Number(band?.weights?.[resolvedTier]);
+    return Number.isFinite(chance) ? chance : null;
+  }
+
+  getLocationSummary(zoneId) {
+    const zone = this.worldGraph?.getZone?.(zoneId);
+    if (!zone) return null;
+
+    if (zone.isSafeCity === true) {
+      return {
+        zoneId: zone.id,
+        isSafeCity: true,
+        tier: null,
+        distanceFromSafeCity: 0,
+        currentTierChance: null,
+        locationBonus: 0,
+        spawnCapacity: 0,
+        probabilityProfile: null
+      };
+    }
+
+    const state = this.getLocationTier(zone.id);
+    const distance = Number.isFinite(Number(state?.distanceFromSafeCity))
+      ? Number(state.distanceFromSafeCity)
+      : this.worldGraph?.distanceFromSafeCity?.(zone.id);
+    const band = this.distanceBand(distance);
+    return {
+      zoneId: zone.id,
+      isSafeCity: false,
+      tier: state?.tier || null,
+      distanceFromSafeCity: Number.isFinite(Number(distance)) ? Number(distance) : null,
+      currentTierChance: this.getLocationTierProbability(zone.id, state?.tier),
+      locationBonus: Number(state?.locationBonus) || 0,
+      spawnCapacity: Math.max(0, Number(state?.spawnCapacity) || 0),
+      probabilityProfile: band?.weights ? clone(band.weights) : null
+    };
+  }
+
   setZoneState(zoneId, value, { publish = true } = {}) {
     const id = this.worldGraph?.resolveZoneId?.(zoneId) || String(zoneId || '');
     if (!id) return null;

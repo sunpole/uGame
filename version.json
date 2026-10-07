@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.64",
-  "stage": "location-tier-qa",
+  "version": "0.0.65",
+  "stage": "location-tier-chrome",
   "updated": "2026-10-07",
-  "summary": "Persistent Location Tier DEV force/reroll/status controls and legacy quality guardrails"
+  "summary": "Location Tier, distance, current-tier probability and location bonus visible in persistent Header/Footer"
 }
