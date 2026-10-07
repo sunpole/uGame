@@ -4,18 +4,24 @@ export class ResponsiveViewportSystem {
     host,
     baseWidth = 960,
     baseHeight = 540,
+    worldWidth = baseWidth,
+    worldHeight = baseHeight,
     onChange = null
   } = {}) {
     this.scene = scene;
     this.host = host;
     this.baseWidth = Math.max(1, Number(baseWidth) || 960);
     this.baseHeight = Math.max(1, Number(baseHeight) || 540);
+    this.worldWidth = Math.max(this.baseWidth, Number(worldWidth) || this.baseWidth);
+    this.worldHeight = Math.max(this.baseHeight, Number(worldHeight) || this.baseHeight);
     this.onChange = onChange;
     this.metrics = {
       renderWidth: this.baseWidth,
       renderHeight: this.baseHeight,
-      worldWidth: this.baseWidth,
-      worldHeight: this.baseHeight,
+      worldWidth: this.worldWidth,
+      worldHeight: this.worldHeight,
+      viewWidth: this.baseWidth,
+      viewHeight: this.baseHeight,
       zoom: 1,
       offsetX: 0
     };
@@ -27,14 +33,17 @@ export class ResponsiveViewportSystem {
     const renderWidth = Math.max(1, Number(this.host?.clientWidth) || this.baseWidth);
     const renderHeight = Math.max(1, Number(this.host?.clientHeight) || this.baseHeight);
     const zoom = Math.max(0.01, renderHeight / this.baseHeight);
-    const worldWidth = Math.max(this.baseWidth, renderWidth / zoom);
+    const viewWidth = Math.max(this.baseWidth, renderWidth / zoom);
+    const viewHeight = this.baseHeight;
     return {
       renderWidth,
       renderHeight,
-      worldWidth,
-      worldHeight: this.baseHeight,
+      worldWidth: this.worldWidth,
+      worldHeight: this.worldHeight,
+      viewWidth,
+      viewHeight,
       zoom,
-      offsetX: Math.max(0, (worldWidth - this.baseWidth) / 2)
+      offsetX: 0
     };
   }
 
@@ -47,7 +56,6 @@ export class ResponsiveViewportSystem {
     if (camera) {
       camera.setZoom(next.zoom);
       camera.setBounds(0, 0, next.worldWidth, next.worldHeight);
-      camera.setScroll(0, 0);
     }
 
     this.onChange?.(next, previous);

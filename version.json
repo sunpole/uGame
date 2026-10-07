@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.98",
-  "stage": "clickable-dev-code-reference",
-  "updated": "2026-10-07",
-  "summary": "Project Hub DEV code reference adds one-click Execute buttons that route through the existing footer DEV console"
+  "version": "0.0.99",
+  "stage": "four-screen-local-world",
+  "updated": "2026-10-08",
+  "summary": "Local zones are now 1920x1080 worlds (2x width x 2x height) with a following camera showing roughly one legacy screen at a time"
 }

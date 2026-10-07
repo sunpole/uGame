@@ -9,12 +9,13 @@ function clamp(value, min, max) {
 }
 
 export class VisionSystem {
-  constructor({ host, canvas, worldWidth, worldHeight, player, radius = 165 }) {
+  constructor({ host, canvas, worldWidth, worldHeight, player, camera = null, radius = 165 }) {
     this.host = host;
     this.canvas = canvas;
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
     this.player = player;
+    this.camera = camera;
 
     this.defaultRadius = radius;
     this.radius = radius;
@@ -186,6 +187,10 @@ export class VisionSystem {
     if (!this.svg || !this.darknessRect || !this.player || !this.host) return;
 
     const effective = this.getEffectiveProfile();
+    const worldView = this.camera?.worldView;
+    if (worldView && Number.isFinite(worldView.x) && Number.isFinite(worldView.width)) {
+      this.svg.setAttribute('viewBox', [worldView.x, worldView.y, worldView.width, worldView.height].join(' '));
+    }
     const x = this.player.x;
     const y = this.player.y;
     const radius = effective.radius;

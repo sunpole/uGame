@@ -38,6 +38,8 @@ import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
+const WORLD_WIDTH = WIDTH * 2;
+const WORLD_HEIGHT = HEIGHT * 2;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
 const VISIBILITY_RADIUS = 165;
@@ -192,9 +194,10 @@ class ZoneScene extends Phaser.Scene {
     visionSystem = new VisionSystem({
       host: this.gameElement,
       canvas: this.game.canvas,
-      worldWidth: WIDTH,
-      worldHeight: HEIGHT,
+      worldWidth: WORLD_WIDTH,
+      worldHeight: WORLD_HEIGHT,
       player: this.player,
+      camera: this.cameras.main,
       radius: VISIBILITY_RADIUS
     });
 
@@ -203,9 +206,12 @@ class ZoneScene extends Phaser.Scene {
       host: this.gameElement,
       baseWidth: WIDTH,
       baseHeight: HEIGHT,
+      worldWidth: WORLD_WIDTH,
+      worldHeight: WORLD_HEIGHT,
       onChange: (metrics, previous) => this.handleViewportChange(metrics, previous)
     });
     const initialViewport = this.viewportSystem.start();
+    this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
 
     groundTextureSystem = new GroundTextureSystem({
       scene: this,
@@ -359,10 +365,10 @@ class ZoneScene extends Phaser.Scene {
 
     this.zoneSystem = new ZoneSystem({
       scene: this,
-      width: initialViewport.worldWidth,
-      height: initialViewport.worldHeight,
-      baseWidth: WIDTH,
-      baseHeight: HEIGHT,
+      width: WORLD_WIDTH,
+      height: WORLD_HEIGHT,
+      baseWidth: WORLD_WIDTH,
+      baseHeight: WORLD_HEIGHT,
       player: this.player,
       worldGraph: this.worldGraph,
       interactableSystem: this.interactableSystem,
@@ -445,19 +451,10 @@ class ZoneScene extends Phaser.Scene {
     });
   }
 
-  handleViewportChange(metrics, previous = {}) {
-    visionSystem?.setWorldSize(metrics.worldWidth, metrics.worldHeight);
-    groundTextureSystem?.resize(metrics.worldWidth, metrics.worldHeight);
-    if (!this.zoneSystem) return;
-
-    const oldWidth = Number(this.zoneSystem.width) || WIDTH;
-    this.zoneSystem.setViewport(metrics.worldWidth, metrics.worldHeight);
-
-    if (this.worldReady && Math.abs(metrics.worldWidth - oldWidth) > 0.5) {
-      const previousOffset = Math.max(0, (oldWidth - WIDTH) / 2);
-      const nextOffset = Math.max(0, (metrics.worldWidth - WIDTH) / 2);
-      this.zoneSystem.relayout({ shiftX: nextOffset - previousOffset });
-    }
+  handleViewportChange(metrics) {
+    visionSystem?.setWorldSize(WORLD_WIDTH, WORLD_HEIGHT);
+    groundTextureSystem?.resize(WORLD_WIDTH, WORLD_HEIGHT);
+    this.cameras.main?.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
   }
 
   async initializeWorld(restoredState) {

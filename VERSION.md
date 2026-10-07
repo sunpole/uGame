@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.98**
+Current version: **0.0.99**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.99 | Four-screen Local World: each zone is 1920×1080 with camera follow while the visible screen remains roughly 960×540 |
 | 0.0.98 | Clickable DEV Code Reference: every documented 4-digit code row in Project Hub gets a one-click Execute button |
 | 0.0.97 | Event Spot Variety Audit: document 12 candidate spots and weighted anti-repeat placement |
 | 0.0.96 | Master Spot Anti-Repeat: persistent weighted random placement reduces recent spot repetition |
@@ -104,6 +105,9 @@ Current version: **0.0.98**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.99
+Локальная карта увеличена по площади ×4: world bounds теперь `1920×1080` (2× ширина и 2× высота), а камера показывает примерно один прежний экран `960×540` и следует за игроком. Вход с left/right/top/bottom начинает игрока у соответствующей границы, поэтому первое видимое пространство естественно зависит от стороны входа. Vision overlay переведён на camera worldView; старые 4 тестовые зоны временно масштабированы ×2, чтобы этот фундамент оставался запускаемым до замены WorldGraph.
 
 ## 0.0.98
 В Project Hub → `DEV-коды` рядом с каждой строкой, где первый столбец содержит конкретный четырёхзначный код, автоматически появляется кнопка **«Выполнить»** и локальный статус результата. Кнопка не дублирует routing: она подставляет код в существующий footer DEV input и отправляет ту же форму, поэтому используется прежний `executeDevCode()`/DEV-console handler. Ручной ввод кодов сохранён. Справочник также дополнен активными `8297` и `8298`.
