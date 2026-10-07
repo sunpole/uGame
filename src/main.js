@@ -354,6 +354,7 @@ class ZoneScene extends Phaser.Scene {
       interactableSystem: this.interactableSystem,
       eventSystem: this.eventSystem,
       rewardGenerator: this.rewardGenerator,
+      worldSpawnStateSystem,
       interactionPanel: this.interactionPanel,
       grantResource: (id, amount) => this.grantResource(id, amount),
       onStateChange: (snapshot) => {

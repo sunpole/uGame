@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.62",
-  "stage": "location-tier-runtime",
+  "version": "0.0.63",
+  "stage": "location-tier-spawn-capacity",
   "updated": "2026-10-07",
-  "summary": "Persistent real-time Location Tier state for external zones using candidate distance bands"
+  "summary": "External Dynamic Event capacity now follows persistent Location Tier state up to six slots"
 }
