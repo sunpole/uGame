@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.95**
+Current version: **0.0.96**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.96 | Master Spot Anti-Repeat: persistent weighted random placement reduces recent spot repetition |
 | 0.0.95 | Generic Event Spot Anti-Repeat: weighted random selection penalizes recently used candidate spots |
 | 0.0.94 | 12 Candidate Event Spots per current map: larger placement pool without increasing active capacity |
 | 0.0.93 | Event Spot Exclusivity Audit: document root cause, hard `1 spotId = 1 occupant` rule and QA |
@@ -101,6 +102,9 @@ Current version: **0.0.95**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.96
+Master allocator получил ту же anti-repeat идею: для каждой зоны хранится история последних 6 Master spots, переживающая reload в `WorldSpawnState`. Последняя точка имеет около `15%` обычного веса, затем `30% / 50% / 70% / 85%`; старые точки снова имеют полный вес. Повтор **разрешён**, но статистически менее вероятен. Active occupancy по-прежнему жёстко исключает уже занятые spots.
 
 ## 0.0.95
 Generic Dynamic Events теперь выбирают свободный candidate spot не равномерно, а weighted-random с памятью последних 6 использованных точек. Самый последний spot имеет около `15%` обычного веса, затем `30% / 50% / 70% / 85%`, более старые снова имеют полный вес. Это **не запрет повтора**: повтор остаётся возможным, но вероятность заметно ниже. История хранится в zone Dynamic Event state и переживает reload. DEV `8297` показывает recent generic spot history.

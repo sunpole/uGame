@@ -27,6 +27,28 @@ function weightedTier(weights = {}) {
   return entries[entries.length - 1][0];
 }
 
+function recentSpotWeight(recentSpotIds, spotId) {
+  const recent = Array.isArray(recentSpotIds) ? recentSpotIds : [];
+  const reverseIndex = [...recent].reverse().indexOf(spotId);
+  if (reverseIndex < 0) return 1;
+  return [0.15, 0.3, 0.5, 0.7, 0.85][reverseIndex] ?? 1;
+}
+
+function weightedSpotPick(spots, recentSpotIds) {
+  const candidates = (spots || []).map((spot) => ({
+    spot,
+    weight: recentSpotWeight(recentSpotIds, spot?.id)
+  })).filter((entry) => entry.spot?.id && entry.weight > 0);
+  const total = candidates.reduce((sum, entry) => sum + entry.weight, 0);
+  if (!candidates.length || total <= 0) return null;
+  let roll = Math.random() * total;
+  for (const entry of candidates) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.spot;
+  }
+  return candidates[candidates.length - 1].spot;
+}
+
 function normalizeSnapshot(value) {
   const fallback = {
     schemaVersion: 1,
@@ -35,6 +57,7 @@ function normalizeSnapshot(value) {
     activeCountsByResourceAndTier: {},
     rotations: {},
     candidatePools: {},
+    recentMasterSpotIdsByZone: {},
     allocationAudit: [],
     updatedAt: 0
   };
@@ -62,6 +85,11 @@ function normalizeSnapshot(value) {
       candidatePools: source.candidatePools && typeof source.candidatePools === 'object' && !Array.isArray(source.candidatePools)
         ? source.candidatePools
         : {},
+      recentMasterSpotIdsByZone: source.recentMasterSpotIdsByZone
+        && typeof source.recentMasterSpotIdsByZone === 'object'
+        && !Array.isArray(source.recentMasterSpotIdsByZone)
+          ? source.recentMasterSpotIdsByZone
+          : {},
       allocationAudit: Array.isArray(source.allocationAudit) ? source.allocationAudit.slice(-100) : [],
       updatedAt: Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
     };
@@ -337,10 +365,26 @@ export class WorldSpawnStateSystem {
     return picked;
   }
 
+  rememberMasterSpot(zoneId, spotId) {
+    if (!zoneId || !spotId) return;
+    if (!this.state.recentMasterSpotIdsByZone || typeof this.state.recentMasterSpotIdsByZone !== 'object') {
+      this.state.recentMasterSpotIdsByZone = {};
+    }
+    const current = Array.isArray(this.state.recentMasterSpotIdsByZone[zoneId])
+      ? this.state.recentMasterSpotIdsByZone[zoneId].filter((id) => id !== spotId)
+      : [];
+    current.push(spotId);
+    this.state.recentMasterSpotIdsByZone[zoneId] = current.slice(-6);
+  }
+
   chooseMasterSpot(zone, occupiedSpotIds = new Set()) {
     const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots.filter((spot) => !occupiedSpotIds.has(spot.id)) : [];
     if (!spots.length) return null;
-    return spots[Math.floor(Math.random() * spots.length)]?.id || spots[0]?.id || null;
+    const recent = this.state.recentMasterSpotIdsByZone?.[zone.id] || [];
+    const picked = weightedSpotPick(spots, recent);
+    if (!picked?.id) return null;
+    this.rememberMasterSpot(zone.id, picked.id);
+    return picked.id;
   }
 
   createMasterSpawn(zone, resourceDirectionId, tier, requestedTier, now, occupiedSpotIds) {

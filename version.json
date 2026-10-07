@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.95",
-  "stage": "generic-event-spot-antirepeat",
+  "version": "0.0.96",
+  "stage": "master-spot-antirepeat",
   "updated": "2026-10-07",
-  "summary": "Generic Event placement uses weighted anti-repeat memory across the 12 candidate spots"
+  "summary": "Master allocator uses persistent weighted anti-repeat history across the 12 candidate Event Spots"
 }

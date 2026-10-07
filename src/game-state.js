@@ -47,6 +47,7 @@ function cleanWorldSpawnState(value) {
     activeCountsByResourceAndTier: {},
     rotations: {},
     candidatePools: {},
+    recentMasterSpotIdsByZone: {},
     allocationAudit: [],
     updatedAt: 0
   };
@@ -70,6 +71,11 @@ function cleanWorldSpawnState(value) {
       candidatePools: copy.candidatePools && typeof copy.candidatePools === 'object' && !Array.isArray(copy.candidatePools)
         ? copy.candidatePools
         : {},
+      recentMasterSpotIdsByZone: copy.recentMasterSpotIdsByZone
+        && typeof copy.recentMasterSpotIdsByZone === 'object'
+        && !Array.isArray(copy.recentMasterSpotIdsByZone)
+          ? copy.recentMasterSpotIdsByZone
+          : {},
       allocationAudit: Array.isArray(copy.allocationAudit) ? copy.allocationAudit.slice(-100) : [],
       updatedAt: Number.isFinite(Number(copy.updatedAt)) ? Number(copy.updatedAt) : 0
     };
