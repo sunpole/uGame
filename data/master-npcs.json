@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-07",
+  "status": "prototype-neutral-lore",
+  "note": "Neutral placeholder identities. Tier/resource rules are accepted; final names, titles, portraits and lore are intentionally not final.",
+  "modules": [
+    {
+      "id": "extraction",
+      "label": "Добыча",
+      "kind": "process",
+      "implemented": false
+    },
+    {
+      "id": "dialogue",
+      "label": "Разговор",
+      "kind": "dialogue",
+      "implemented": false
+    },
+    {
+      "id": "quest",
+      "label": "Квест",
+      "kind": "quest",
+      "implemented": false
+    },
+    {
+      "id": "analytics",
+      "label": "Аналитика",
+      "kind": "analytics",
+      "implemented": false
+    },
+    {
+      "id": "training",
+      "label": "Развитие",
+      "kind": "training",
+      "implemented": false
+    },
+    {
+      "id": "special-event",
+      "label": "Особое событие",
+      "kind": "event",
+      "implemented": false
+    }
+  ],
+  "masters": [
+    {
+      "id": "stone-master-t1",
+      "displayName": "Мастер камня T1",
+      "resourceDirectionId": "stone",
+      "tier": "T1",
+      "efficiencyMultiplier": 1,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 2,
+      "moduleCountMax": 3,
+      "enabled": true
+    },
+    {
+      "id": "stone-master-t2",
+      "displayName": "Мастер камня T2",
+      "resourceDirectionId": "stone",
+      "tier": "T2",
+      "efficiencyMultiplier": 1.2,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 3,
+      "moduleCountMax": 4,
+      "enabled": true
+    },
+    {
+      "id": "stone-master-t3",
+      "displayName": "Мастер камня T3",
+      "resourceDirectionId": "stone",
+      "tier": "T3",
+      "efficiencyMultiplier": 1.4,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 4,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "stone-master-t4",
+      "displayName": "Мастер камня T4",
+      "resourceDirectionId": "stone",
+      "tier": "T4",
+      "efficiencyMultiplier": 1.6,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 6,
+      "moduleCountMax": 6,
+      "enabled": true
+    }
+  ]
+}

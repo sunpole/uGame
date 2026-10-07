@@ -30,6 +30,7 @@ import { UIWindowManager } from './ui-window-manager.js';
 import { ResponsiveViewportSystem } from './responsive-viewport-system.js';
 import { BiomeTextureSettingsSystem, GroundTextureSystem, preloadGroundTextures } from './ground-texture-system.js';
 import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
+import { MasterCatalog } from './master-catalog.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -56,6 +57,7 @@ let uiWindowManager = null;
 let biomeTextureSettingsSystem = new BiomeTextureSettingsSystem();
 let groundTextureSystem = null;
 let worldSpawnStateSystem = null;
+let masterCatalog = new MasterCatalog();
 
 
 function syncPlayerInputState() {
@@ -413,6 +415,7 @@ class ZoneScene extends Phaser.Scene {
     try {
       await Promise.all([
         biomeTextureSettingsSystem.load(),
+        masterCatalog.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()

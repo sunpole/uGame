@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.65**
+Current version: **0.0.66**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.66 | Stone Master Registry: четыре постоянные identity T1–T4 + data-driven module metadata |
 | 0.0.65 | Persistent Location Tier HUD: LT, distance, chance и bonus всегда видны в Header/Footer |
 | 0.0.64 | Location Tier QA: 8400/8401–8404/8499 и защита от старых Quality-кодов |
 | 0.0.63 | Location Tier spawn capacity: внешние зоны перешли на 2–6 активных Event/NPC slots |
@@ -71,6 +72,9 @@ Current version: **0.0.65**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.66
+Добавлен `data/master-npcs.json` и `MasterCatalog`. Для Stone существуют четыре постоянные master identity `T1/T2/T3/T4` с multiplier `×1.00/1.20/1.40/1.60`, гарантированной Добычей и data-driven module pool. Имена специально нейтральные placeholders до Lore. В world-spawn config добавлены candidate `P(masterTier | LocationTier)`, caps `T2=3/T3=2/T4=1`, максимум один T2+ Stone в зоне и 30-минутный Encounter lifetime; всё это остаётся candidate/prototype balance.
 
 ## 0.0.65
 Ключевая информация UGD-0016 вынесена из DEV-кодов в постоянный Game Chrome. Во внешней зоне Header показывает `LT Tn · Dn · P n% · +bonus%`; Footer показывает Location Tier, distance, вероятность именно текущего Tier, location bonus, capacity и biome. Tooltip Footer/Header содержит полный T1–T4 probability profile текущего distance band. В safe city явно показывается `Город · D0`.
