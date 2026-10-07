@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.93**
+Current version: **0.0.94**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.94 | 12 Candidate Event Spots per current map: larger placement pool without increasing active capacity |
 | 0.0.93 | Event Spot Exclusivity Audit: document root cause, hard `1 spotId = 1 occupant` rule and QA |
 | 0.0.92 | Safe Event Relocation: Master reservation moves an existing generic Event to a free spot without losing id/timer/offer |
 | 0.0.91 | Event Spot Exclusive Occupancy: dedupe state, skip Master spots at render, remove duplicate fallback, DEV 8298 conflict check |
@@ -99,6 +100,9 @@ Current version: **0.0.93**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.94
+Все четыре текущие карты получили по **12 candidate Event Spot**. Это расширяет набор возможных мест появления, но **не увеличивает одновременно активную capacity**: Location Tier по-прежнему задаёт 2–6 active Event/NPC во внешних зонах, а город сохраняет свою legacy active-slot модель. `spot-1…spot-6` сохранены по id, чтобы существующие save/Encounter ссылки не ломались; добавлены `spot-7…spot-12`.
 
 ## 0.0.93
 Добавлен `UGD-0027` и отдельный аудит Event Spot exclusivity. Явно зафиксировано правило `1 spotId = 1 active occupant`, причина бага v0.0.89, приоритет Master reservation, safe relocation Chest/Portal и DEV `8298`. Gameplay/balance в этом патче не менялись.

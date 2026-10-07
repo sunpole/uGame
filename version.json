@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.93",
-  "stage": "eventspot-exclusivity-audit",
+  "version": "0.0.94",
+  "stage": "twelve-candidate-event-spots",
   "updated": "2026-10-07",
-  "summary": "Document and audit hard Event Spot exclusive occupancy after WorldSpawn integration repair"
+  "summary": "All current maps expose 12 candidate Event Spots while active capacity remains unchanged"
 }
