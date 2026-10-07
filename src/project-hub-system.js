@@ -167,7 +167,8 @@ export class ProjectHubSystem {
     interfaceSettings,
     biomeTextureSettings,
     worldAnalyzer,
-    spawnZoneDebug
+    spawnZoneDebug,
+    devCodeRunner
   }) {
     this.openButton = openButton;
     this.overlay = overlay;
@@ -182,6 +183,7 @@ export class ProjectHubSystem {
     this.biomeTextureSettings = biomeTextureSettings;
     this.worldAnalyzer = worldAnalyzer;
     this.spawnZoneDebug = spawnZoneDebug;
+    this.devCodeRunner = devCodeRunner;
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
@@ -711,9 +713,59 @@ export class ProjectHubSystem {
       if (this.stack[this.stack.length - 1] !== view) return;
       this.currentDocumentBase = resolvedTarget.href;
       this.contentElement.innerHTML = '<article class="project-hub-markdown">' + renderMarkdown(markdown) + '</article>';
+      if (resolvedTarget.pathname.endsWith('/DEV-CODES.md')) this.enhanceDevCodeReference();
       this.contentElement.scrollTop = 0;
     } catch (error) {
       this.contentElement.innerHTML = '<div class="project-hub-error">Не удалось загрузить документ: ' + escapeHtml(error.message) + '</div>';
+    }
+  }
+
+  enhanceDevCodeReference() {
+    const article = this.contentElement?.querySelector('.project-hub-markdown');
+    if (!article) return;
+
+    for (const table of article.querySelectorAll('table')) {
+      const rows = [...table.querySelectorAll('tbody tr')];
+      const runnableRows = rows.map((row) => {
+        const firstCell = row.querySelector('td');
+        const codeElement = firstCell?.querySelector('code');
+        const code = codeElement?.textContent?.trim() || '';
+        return /^\d{4}$/.test(code) ? { row, code } : null;
+      }).filter(Boolean);
+
+      if (!runnableRows.length) continue;
+
+      const headerRow = table.querySelector('thead tr');
+      if (headerRow && !headerRow.querySelector('[data-dev-run-header]')) {
+        const th = document.createElement('th');
+        th.dataset.devRunHeader = 'true';
+        th.textContent = 'DEV';
+        headerRow.append(th);
+      }
+
+      for (const { row, code } of runnableRows) {
+        if (row.querySelector('[data-dev-run-code]')) continue;
+        const cell = document.createElement('td');
+        cell.className = 'project-hub-dev-code-cell';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'project-hub-dev-code-run';
+        button.dataset.devRunCode = code;
+        button.textContent = 'Выполнить';
+
+        const status = document.createElement('small');
+        status.className = 'project-hub-dev-code-status';
+
+        button.addEventListener('click', () => {
+          const result = this.devCodeRunner?.(code);
+          status.textContent = result?.message || (result ? code + ' · выполнено' : 'DEV console недоступна');
+          status.dataset.state = result?.state || (result ? 'ok' : 'error');
+        });
+
+        cell.append(button, status);
+        row.append(cell);
+      }
     }
   }
 

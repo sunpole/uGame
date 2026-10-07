@@ -769,6 +769,19 @@ projectHubSystem = new ProjectHubSystem({
     updateSettings: (patch) => spawnZoneDebugSystem?.updateSettings?.(patch) || null,
     resetSettings: () => spawnZoneDebugSystem?.resetSettings?.() || null
   },
+  devCodeRunner: (code) => {
+    const form = document.querySelector('#dev-console');
+    const input = document.querySelector('#dev-code-input');
+    const status = document.querySelector('#dev-code-status');
+    if (!form || !input) return null;
+    input.value = String(code || '').replace(/\D/g, '').slice(0, 4);
+    form.requestSubmit?.();
+    return {
+      code: input.value,
+      message: status?.textContent || '',
+      state: status?.dataset?.state || ''
+    };
+  },
   worldAnalyzer: {
     getData: () => {
       const snapshot = worldSpawnStateSystem?.snapshot?.() || {};

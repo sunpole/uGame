@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.97",
-  "stage": "eventspot-placement-variety-audit",
+  "version": "0.0.98",
+  "stage": "clickable-dev-code-reference",
   "updated": "2026-10-07",
-  "summary": "Document and audit 12 candidate Event Spots plus weighted anti-repeat placement"
+  "summary": "Project Hub DEV code reference adds one-click Execute buttons that route through the existing footer DEV console"
 }

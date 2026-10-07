@@ -86,6 +86,7 @@
 - `v0.0.94–v0.0.96` расширяют каждую текущую карту до 12 candidate Event Spot и добавляют weighted anti-repeat для generic Event и Master placement.
 - `v0.0.81–v0.0.83` убирают внешний legacy Resource Event, вводят отдельный candidate-QA Chest/Portal mix и включают Spawn Zone Debug по умолчанию на время разработки.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
+- Project Hub → DEV-коды теперь добавляет рядом с каждой документированной 4-значной командой кнопку «Выполнить», которая использует тот же footer DEV-console handler; ручной ввод сохранён.
 - Первый Stone Extraction / Offline Process vertical slice уже реализован как prototype; ещё не реализованы полноценные Event Router/Actions, Resource Profile/Resonance, ранги добычи, комбинации ресурсов, Mastery/Active Resonance, дневной КПД и стабилизация.
 
 ## Текущий приоритет

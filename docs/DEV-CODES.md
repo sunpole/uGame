@@ -2,6 +2,8 @@
 
 DEV codes are four-digit test commands entered in the footer console. They are for development/testing only and are not part of normal gameplay.
 
+Inside Project Hub → DEV-коды, every active four-digit code row also has a **Выполнить** button. The button submits the code through the same footer DEV console handler; manual entry remains available as a keyboard fallback.
+
 ## Ranges
 
 | Range | System |
@@ -78,6 +80,8 @@ Normal controls: WASD or arrows to move, `E` / Space / Enter to interact, Shift 
 | `8212` | Force current zone to Q2 for QA |
 | `8213` | Force current zone to Q3 for QA |
 | `8214` | Force current zone to Q4 for QA |
+| `8297` | Show recent generic Event Spot placement history |
+| `8298` | Check current-zone Event Spot occupancy conflicts |
 | `8299` | Show Dynamic Event Spot status |
 
 ## Location Tier QA
