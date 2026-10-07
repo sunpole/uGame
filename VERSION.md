@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.01**
+Current version: **0.1.02**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.02 | Five-city Service NPC Cast: shared Banker/Teleporter personas plus 5 unique biome city guards with prototype silhouettes |
 | 0.1.01 | Safe City Hard Rules: 5 cities force full vision and cannot host Dynamic Events or Master encounters |
 | 0.1.00 | 25-location Diamond WorldGraph: logical 5×5 grid, 5 safe cities, 20 fields, 80 directed links and temporary names/IDs |
 | 0.0.99 | Four-screen Local World: each zone is 1920×1080 with camera follow while the visible screen remains roughly 960×540 |
@@ -107,6 +108,9 @@ Current version: **0.1.01**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.02
+Во всех 5 safe cities добавлены три статичных сервисных NPC. **Борис Хранильщик** — одна banker-persona с копиями в каждом городе; **Астэр Звездочёт** — одна teleporter-persona с копиями; третий NPC уникален для города: Северин Белый Щит (snow knight), Рейнар Дубовый Страж (forest ranger), Маршал Гранит (start/stone marshal), Хасим Песчаный Венец (sand pharaoh), Аврелий Белый Легат (south/marble). `InteractableSystem` получил отдельные prototype silhouettes для banker, mage/astrologer teleporter и пяти guide styles. Перемещение городских NPC пока намеренно не реализовано.
 
 ## 0.1.01
 Safe-city правило стало системным, а не только data-настройкой: `EventSpotSystem.desiredSlots()` для города всегда возвращает 0, city event-state очищается, status явно показывает `dynamic events OFF`, а WorldSpawnState по-прежнему пропускает safe cities для Master allocation. Все 5 city-зон в `world.json` имеют `vision.mode = full`, поэтому тень/ограниченная видимость в городе отключены.

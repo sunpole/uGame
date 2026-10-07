@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.01",
-  "stage": "safe-city-hard-rules",
+  "version": "0.1.02",
+  "stage": "five-city-service-npcs",
   "updated": "2026-10-08",
-  "summary": "All five safe cities hard-disable Dynamic Events/Masters and use full vision"
+  "summary": "All five safe cities now contain the shared banker Boris, shared teleporter Aster, and one biome-specific unique city guide/guard with distinct prototype silhouettes"
 }

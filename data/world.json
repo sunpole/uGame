@@ -55,7 +55,43 @@
         }
       },
       "walls": [],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "loc-00001-banker",
+          "personaId": "banker-boris",
+          "type": "city-banker",
+          "x": 720,
+          "y": 540,
+          "label": "Борис Хранильщик",
+          "roleLabel": "Банкир",
+          "prompt": "Открыть банк",
+          "interactionRadius": 76
+        },
+        {
+          "id": "loc-00001-teleporter",
+          "personaId": "teleporter-aster",
+          "type": "city-teleporter",
+          "x": 1200,
+          "y": 540,
+          "label": "Астэр Звездочёт",
+          "roleLabel": "Телепортер",
+          "prompt": "Открыть телепорт",
+          "interactionRadius": 82
+        },
+        {
+          "id": "loc-00001-guide",
+          "personaId": "guide-north",
+          "type": "city-guide",
+          "cityGuideStyle": "snow-knight",
+          "x": 960,
+          "y": 360,
+          "label": "Северин Белый Щит",
+          "roleLabel": "Страж города",
+          "prompt": "Спросить о городе",
+          "dialogueId": "city_guide_north",
+          "interactionRadius": 72
+        }
+      ],
       "eventSpots": [],
       "biome": "snow",
       "isCity": true,
@@ -514,7 +550,43 @@
         }
       },
       "walls": [],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "loc-00005-banker",
+          "personaId": "banker-boris",
+          "type": "city-banker",
+          "x": 720,
+          "y": 540,
+          "label": "Борис Хранильщик",
+          "roleLabel": "Банкир",
+          "prompt": "Открыть банк",
+          "interactionRadius": 76
+        },
+        {
+          "id": "loc-00005-teleporter",
+          "personaId": "teleporter-aster",
+          "type": "city-teleporter",
+          "x": 1200,
+          "y": 540,
+          "label": "Астэр Звездочёт",
+          "roleLabel": "Телепортер",
+          "prompt": "Открыть телепорт",
+          "interactionRadius": 82
+        },
+        {
+          "id": "loc-00005-guide",
+          "personaId": "guide-east",
+          "type": "city-guide",
+          "cityGuideStyle": "forest-ranger",
+          "x": 960,
+          "y": 360,
+          "label": "Рейнар Дубовый Страж",
+          "roleLabel": "Страж города",
+          "prompt": "Спросить о городе",
+          "dialogueId": "city_guide_east",
+          "interactionRadius": 72
+        }
+      ],
       "eventSpots": [],
       "biome": "forest",
       "isCity": true,
@@ -1517,7 +1589,43 @@
         }
       },
       "walls": [],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "loc-00013-banker",
+          "personaId": "banker-boris",
+          "type": "city-banker",
+          "x": 720,
+          "y": 540,
+          "label": "Борис Хранильщик",
+          "roleLabel": "Банкир",
+          "prompt": "Открыть банк",
+          "interactionRadius": 76
+        },
+        {
+          "id": "loc-00013-teleporter",
+          "personaId": "teleporter-aster",
+          "type": "city-teleporter",
+          "x": 1200,
+          "y": 540,
+          "label": "Астэр Звездочёт",
+          "roleLabel": "Телепортер",
+          "prompt": "Открыть телепорт",
+          "interactionRadius": 82
+        },
+        {
+          "id": "loc-00013-guide",
+          "personaId": "guide-start",
+          "type": "city-guide",
+          "cityGuideStyle": "stone-marshal",
+          "x": 960,
+          "y": 360,
+          "label": "Маршал Гранит",
+          "roleLabel": "Страж города",
+          "prompt": "Спросить о городе",
+          "dialogueId": "city_guide_start",
+          "interactionRadius": 72
+        }
+      ],
       "eventSpots": [],
       "biome": "stone",
       "isCity": true,
@@ -2528,7 +2636,43 @@
         }
       },
       "walls": [],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "loc-00021-banker",
+          "personaId": "banker-boris",
+          "type": "city-banker",
+          "x": 720,
+          "y": 540,
+          "label": "Борис Хранильщик",
+          "roleLabel": "Банкир",
+          "prompt": "Открыть банк",
+          "interactionRadius": 76
+        },
+        {
+          "id": "loc-00021-teleporter",
+          "personaId": "teleporter-aster",
+          "type": "city-teleporter",
+          "x": 1200,
+          "y": 540,
+          "label": "Астэр Звездочёт",
+          "roleLabel": "Телепортер",
+          "prompt": "Открыть телепорт",
+          "interactionRadius": 82
+        },
+        {
+          "id": "loc-00021-guide",
+          "personaId": "guide-west",
+          "type": "city-guide",
+          "cityGuideStyle": "sand-pharaoh",
+          "x": 960,
+          "y": 360,
+          "label": "Хасим Песчаный Венец",
+          "roleLabel": "Страж города",
+          "prompt": "Спросить о городе",
+          "dialogueId": "city_guide_west",
+          "interactionRadius": 72
+        }
+      ],
       "eventSpots": [],
       "biome": "sand",
       "isCity": true,
@@ -2987,7 +3131,43 @@
         }
       },
       "walls": [],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "loc-00025-banker",
+          "personaId": "banker-boris",
+          "type": "city-banker",
+          "x": 720,
+          "y": 540,
+          "label": "Борис Хранильщик",
+          "roleLabel": "Банкир",
+          "prompt": "Открыть банк",
+          "interactionRadius": 76
+        },
+        {
+          "id": "loc-00025-teleporter",
+          "personaId": "teleporter-aster",
+          "type": "city-teleporter",
+          "x": 1200,
+          "y": 540,
+          "label": "Астэр Звездочёт",
+          "roleLabel": "Телепортер",
+          "prompt": "Открыть телепорт",
+          "interactionRadius": 82
+        },
+        {
+          "id": "loc-00025-guide",
+          "personaId": "guide-south",
+          "type": "city-guide",
+          "cityGuideStyle": "marble-legatus",
+          "x": 960,
+          "y": 360,
+          "label": "Аврелий Белый Легат",
+          "roleLabel": "Страж города",
+          "prompt": "Спросить о городе",
+          "dialogueId": "city_guide_south",
+          "interactionRadius": 72
+        }
+      ],
       "eventSpots": [],
       "biome": "south",
       "isCity": true,
