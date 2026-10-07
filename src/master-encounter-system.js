@@ -113,9 +113,11 @@ export class MasterEncounterSystem {
     const master = this.masterCatalog?.get?.(spawn.masterId);
     const relationship = this.relationshipSystem?.meet?.(spawn.masterId, spawn.encounterId, Date.now());
     const multiplier = Number(spawn.efficiencyMultiplier || master?.efficiencyMultiplier || 1).toFixed(2);
+    const moduleIds = Array.isArray(spawn.activeModules) ? spawn.activeModules : [];
+    const moduleLabels = moduleIds.map((id) => this.masterCatalog?.moduleLabel?.(id) || id);
     this.interactionPanel?.showMessage({
       title: (master?.displayName || spawn.displayName || 'Мастер') + ' · ' + spawn.tier,
-      text: 'Странствующий мастер направления «Камень». Это persistent Encounter из WorldSpawnState; функциональные модули будут подключаться отдельными слоями.',
+      text: 'Странствующий мастер направления «Камень». Доступно в этой встрече: ' + (moduleLabels.join(' · ') || 'Добыча') + '. Добыча гарантирована; остальные модули выбираются по Tier. Функциональность Process/Quest/Training подключается следующими патчами.',
       meta: 'Эффективность ×' + multiplier + ' · встреч: ' + (relationship?.encountersCount || 0) + ' · осталось ' + formatRemaining(Number(spawn.expiresAt) - Date.now())
     });
     return true;

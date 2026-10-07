@@ -38,6 +38,26 @@ export class MasterCatalog {
     return value ? clone(value) : null;
   }
 
+  moduleLabel(id) {
+    return this.modules.get(String(id || ''))?.label || String(id || '');
+  }
+
+  rollModules(masterId) {
+    const master = this.get(masterId);
+    if (!master) return [];
+    const guaranteed = [...new Set(master.guaranteedModules || [])];
+    const pool = [...new Set(master.modulePool || [])].filter((id) => !guaranteed.includes(id));
+    const min = Math.max(guaranteed.length, Number(master.moduleCountMin) || guaranteed.length);
+    const max = Math.max(min, Number(master.moduleCountMax) || min);
+    const target = master.tier === 'T4' ? max : Math.floor(Math.random() * (max - min + 1)) + min;
+
+    for (let index = pool.length - 1; index > 0; index -= 1) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [pool[index], pool[swap]] = [pool[swap], pool[index]];
+    }
+    return [...guaranteed, ...pool.slice(0, Math.max(0, target - guaranteed.length))];
+  }
+
   find(resourceDirectionId, tier) {
     return [...this.masters.values()].find((master) =>
       master.resourceDirectionId === resourceDirectionId && master.tier === tier

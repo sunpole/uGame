@@ -350,6 +350,7 @@ export class WorldSpawnStateSystem {
     const spotId = this.chooseMasterSpot(zone, occupiedSpotIds);
     if (!spotId) return null;
     occupiedSpotIds.add(spotId);
+    const activeModules = this.masterCatalog?.rollModules?.(master.id) || [];
     return {
       encounterId: 'master-' + resourceDirectionId + '-' + tier + '-' + zone.id + '-' + now + '-' + Math.random().toString(36).slice(2, 7),
       masterId: master.id,
@@ -362,7 +363,8 @@ export class WorldSpawnStateSystem {
       spawnedAt: now,
       expiresAt: now + lifetimeMinutes * 60_000,
       efficiencyMultiplier: Number(master.efficiencyMultiplier) || 1,
-      activeModules: [],
+      activeModules,
+      moduleCount: activeModules.length,
       source: 'candidate-allocator'
     };
   }
@@ -375,6 +377,12 @@ export class WorldSpawnStateSystem {
     const active = (this.state.activeMasterSpawns || []).filter((spawn) =>
       spawn?.encounterId && Number.isFinite(Number(spawn.expiresAt)) && Number(spawn.expiresAt) > now
     );
+    for (const spawn of active) {
+      if (!Array.isArray(spawn.activeModules) || !spawn.activeModules.length) {
+        spawn.activeModules = this.masterCatalog?.rollModules?.(spawn.masterId) || [];
+      }
+      spawn.moduleCount = spawn.activeModules.length;
+    }
     this.state.activeMasterSpawns = active;
     const counts = this.rebuildMasterCounts();
 

@@ -426,6 +426,7 @@ export class ProjectHubSystem {
         '<span>Multiplier <b>×' + Number(selected.efficiencyMultiplier || 1).toFixed(2) + '</b></span>',
         '<span>Requested <b>' + escapeHtml(selected.requestedTier || selected.tier) + '</b></span>',
         '</div>',
+        '<p>Modules: <b>' + escapeHtml((selected.activeModules || []).join(' · ') || '—') + '</b></p>',
         '<p>Candidate pool: <b>' + pool.length + '</b> · Rotation round: <b>' + escapeHtml(rotation.round || 1) + '</b> · visited: <b>' + escapeHtml(rotation.visitedZoneIds?.length || 0) + '</b></p>',
         '<p class="world-analyzer-zones">Pool: ' + escapeHtml(pool.join(', ') || '—') + '<br>Visited: ' + escapeHtml((rotation.visitedZoneIds || []).join(', ') || '—') + '</p>',
         '<button id="world-analyzer-teleport" type="button">Телепорт к Master</button>',

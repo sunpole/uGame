@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.71",
-  "stage": "dev-world-analyzer",
+  "version": "0.0.72",
+  "stage": "master-module-availability",
   "updated": "2026-10-07",
-  "summary": "Project Hub DEV World Analyzer for live master registry, Location Tier, candidate pools, rotation coverage and teleport"
+  "summary": "Persistent Tier-driven master module availability with guaranteed Extraction"
 }

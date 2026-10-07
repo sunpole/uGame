@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.71**
+Current version: **0.0.72**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.72 | Master Module Availability: Extraction guaranteed, Tier-driven persistent module set per Encounter |
 | 0.0.71 | DEV World Analyzer: active masters, Location Tier context, candidate pools, rotation и one-click TP |
 | 0.0.70 | Master NPC QA 83xx: registry, Tier filters, rotation summary и teleport/cycle |
 | 0.0.69 | Character↔Master Relationship State: встречи persistent и принадлежат персонажу |
@@ -77,6 +78,9 @@ Current version: **0.0.71**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.72
+Каждый новый Stone Master Encounter теперь получает persistent `activeModules`. `Добыча` гарантирована всегда; T1 показывает 2–3 модуля, T2 3–4, T3 4–6, T4 все 6. Набор генерируется один раз на Encounter и сохраняется, поэтому reload не меняет доступные возможности. Interaction и World Analyzer показывают текущий набор. Это именно availability layer: Process/Quest/Training/Analytics ещё не объявлены функционально реализованными.
 
 ## 0.0.71
 Project Hub → Инструменты получил принятый Stage E `DEV World Analyzer`. Он показывает список active Stone master, фильтр Tier, zone/biome/Location Tier/distance/current Location chance/bonus, Encounter lifetime, requested/final Tier, multiplier, candidate pool, rotation round и visited coverage. Есть Previous/Next/Refresh и Teleport к выбранному Encounter; UI читает live WorldSpawnState и не дублирует allocator logic.
