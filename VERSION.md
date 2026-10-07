@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.86**
+Current version: **0.0.87**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.87 | Offline Process Completion: real timestamp completion moves finished Extraction into persistent pendingRewards |
 | 0.0.86 | Persistent Stone Extraction Process: start a REAL TIME QA process from Master; startedAt/endsAt persist in Character↔Master state |
 | 0.0.85 | Master Module Action Menu: active Encounter modules are explicit InteractionPanel actions; unfinished modules are disabled |
 | 0.0.84 | Spawn Zone Render Fix: use ZoneSystem.currentId so enabled DEV circles actually render |
@@ -92,6 +93,9 @@ Current version: **0.0.86**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.87
+Persistent Process теперь завершается по REAL TIME даже после reload/offline. `CharacterMasterRelationshipSystem.syncProcesses()` переводит завершённый `activeProcess` в `pendingRewards`; если Process теоретически вышел за сохранённый Encounter expiry, он отменяется вместо выдачи результата. Pending reward хранит base reward и modifier inputs, но фактическая выдача ресурса подключается следующим патчем.
 
 ## 0.0.86
 Добавлен первый functional `Добыча / Process`: Master module `extraction` включён, а `MasterProcessSystem` запускает persistent REAL TIME process через Character↔Master state. QA profile пока один: Stone, до 60 секунд, при этом duration автоматически не превышает оставшееся время Encounter. `startedAt`, `endsAt`, Encounter expiry и reward inputs сохраняются. Числа процесса помечены `candidate-QA`, не финальный баланс.

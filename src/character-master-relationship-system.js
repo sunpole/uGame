@@ -68,6 +68,49 @@ export class CharacterMasterRelationshipSystem {
     return clone(current.activeProcess);
   }
 
+  getPendingRewards(masterId) {
+    const current = this.state.masters?.[masterId];
+    return Array.isArray(current?.pendingRewards) ? clone(current.pendingRewards) : [];
+  }
+
+  syncProcesses(now = Date.now()) {
+    let changed = false;
+    for (const current of Object.values(this.state.masters || {})) {
+      const process = current?.activeProcess;
+      if (!process?.processId) continue;
+      const endsAt = Number(process.endsAt) || 0;
+      const encounterExpiresAt = Number(process.encounterExpiresAt) || 0;
+      if (endsAt > now) continue;
+
+      current.activeProcess = null;
+      changed = true;
+
+      if (encounterExpiresAt && endsAt > encounterExpiresAt) {
+        current.cancelledProcessesCount = Math.max(0, Number(current.cancelledProcessesCount) || 0) + 1;
+        continue;
+      }
+
+      if (!Array.isArray(current.pendingRewards)) current.pendingRewards = [];
+      const rewardId = 'pending:' + process.processId;
+      if (!current.pendingRewards.some((reward) => reward.rewardId === rewardId)) {
+        current.pendingRewards.push({
+          rewardId,
+          source: 'master-process',
+          processId: process.processId,
+          profileId: process.profileId,
+          moduleId: process.moduleId,
+          resourceDirectionId: process.resourceDirectionId,
+          completedAt: endsAt || now,
+          baseReward: clone(process.candidateBaseReward || { resourceId: 'stone', amount: 1 }),
+          locationBonus: Number(process.locationBonus) || 0,
+          efficiencyMultiplier: Number(process.efficiencyMultiplier) || 1
+        });
+      }
+    }
+    if (changed) this.publish();
+    return changed;
+  }
+
   meet(masterId, encounterId, now = Date.now()) {
     if (!masterId) return null;
     const current = this.ensureMaster(masterId);

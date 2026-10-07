@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.86",
-  "stage": "persistent-stone-extraction-process",
+  "version": "0.0.87",
+  "stage": "offline-process-pending-reward",
   "updated": "2026-10-07",
-  "summary": "First Stone Extraction Process can be started from Master and persists startedAt/endsAt in Character-Master state"
+  "summary": "Completed Master Processes resolve from real timestamps after reload/offline and persist as pending rewards"
 }

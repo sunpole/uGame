@@ -18,6 +18,7 @@ export class MasterProcessSystem {
     this.worldSpawnStateSystem = worldSpawnStateSystem;
     this.profiles = new Map();
     this.loaded = false;
+    this.nextSyncAt = 0;
   }
 
   async load() {
@@ -39,10 +40,27 @@ export class MasterProcessSystem {
     ) || null;
   }
 
+  update(now = Date.now(), force = false) {
+    if (!force && now < this.nextSyncAt) return false;
+    this.nextSyncAt = now + 1000;
+    return Boolean(this.relationshipSystem?.syncProcesses?.(now));
+  }
+
   openExtraction(spawn, now = Date.now()) {
     if (!spawn?.masterId || !spawn?.encounterId) return false;
     const profile = this.getProfile(spawn.resourceDirectionId || 'stone');
     if (!profile) return false;
+
+    this.update(now, true);
+    const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
+    if (pending.length) {
+      this.interactionPanel?.showMessage({
+        title: 'Добыча / Process',
+        text: 'Завершённый результат сохранён у этого Master как pending reward. Получение награды подключается следующим патчем.',
+        meta: 'Готовых результатов: ' + pending.length
+      });
+      return true;
+    }
 
     const active = this.relationshipSystem?.getActiveProcess?.(spawn.masterId);
     if (active) {
@@ -86,10 +104,15 @@ export class MasterProcessSystem {
 
   showActive(process) {
     const metaProvider = (now = Date.now()) => {
+      this.update(now, true);
       const current = this.relationshipSystem?.getActiveProcess?.(process.masterId);
-      if (!current || current.processId !== process.processId) return 'Process больше не активен';
+      if (!current || current.processId !== process.processId) {
+        const pending = this.relationshipSystem?.getPendingRewards?.(process.masterId) || [];
+        return pending.some((reward) => reward.processId === process.processId)
+          ? 'Process завершён · результат сохранён как pending reward'
+          : 'Process больше не активен';
+      }
       const left = Number(current.endsAt) - now;
-      if (left <= 0) return 'Process завершён · результат ожидает обработки';
       return 'До завершения ' + formatRemaining(left) + ' · REAL TIME';
     };
 

@@ -478,6 +478,7 @@ class ZoneScene extends Phaser.Scene {
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
+      masterProcessSystem?.update(Date.now(), true);
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
       chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem.getLocationSummary(restoredZoneId));
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
@@ -648,6 +649,7 @@ class ZoneScene extends Phaser.Scene {
     this.characterView.update(state, delta);
     worldSpawnStateSystem?.update(Date.now());
     this.eventSpotSystem?.update(Date.now());
+    masterProcessSystem?.update(Date.now());
     masterEncounterSystem?.update(Date.now(), delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update();
