@@ -207,6 +207,28 @@ export class InteractableSystem {
     }
   }
 
+  getItem(id) {
+    return this.items.find((item) => item.id === id) || null;
+  }
+
+  setItemTransform(id, { x, y, rotation } = {}) {
+    const item = typeof id === 'object' ? id : this.getItem(id);
+    if (!item) return false;
+
+    if (Number.isFinite(Number(x))) item.x = Number(x);
+    if (Number.isFinite(Number(y))) item.y = Number(y);
+
+    if (item.display?.setPosition) item.display.setPosition(item.x, item.y);
+    if (Number.isFinite(Number(rotation)) && item.display?.setRotation) item.display.setRotation(Number(rotation));
+
+    if (item.type === 'master-npc') {
+      item._glow?.setPosition?.(item.x, item.y + 7);
+      item._label?.setPosition?.(item.x, item.y - 38);
+      item._timerLabel?.setPosition?.(item.x, item.y + 30);
+    }
+    return true;
+  }
+
   activate(item) {
     if (!item || (item.used && item.once)) return;
     if (item.once) item.used = true;

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.77",
-  "stage": "master-npc-visual-shell",
+  "version": "0.0.78",
+  "stage": "master-slow-facing",
   "updated": "2026-10-07",
-  "summary": "Stone Master marker replaced by a lightweight top-down humanoid vector shell"
+  "summary": "Stone Masters slowly rotate their top-down facing while idle"
 }

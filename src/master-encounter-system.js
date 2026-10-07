@@ -18,12 +18,17 @@ export class MasterEncounterSystem {
     this.currentZoneId = null;
     this.renderedIds = new Set();
     this.devCycleIndexByTier = { T2: -1, T3: -1, T4: -1 };
+    this.motionState = new Map();
+    this.turnSpeedRadPerSec = 0.22;
 
     this.eventSystem?.on('zone:enter', ({ zone }) => {
       this.currentZoneId = zone?.id || null;
       this.renderCurrentZone();
     });
-    this.eventSystem?.on('zone:leave', () => this.clearRendered());
+    this.eventSystem?.on('zone:leave', () => {
+      this.clearRendered();
+      this.motionState.clear();
+    });
     this.eventSystem?.on('zone:relayout', () => this.renderCurrentZone());
     this.eventSystem?.on('master-spawns:changed', () => this.renderCurrentZone());
   }
@@ -63,6 +68,41 @@ export class MasterEncounterSystem {
         sound: 'interact'
       });
       this.renderedIds.add(id);
+    }
+  }
+
+  update(now = Date.now(), deltaMs = 16.67) {
+    if (!this.currentZoneId) return;
+    const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: this.currentZoneId }) || [];
+    const alive = new Set(spawns.map((spawn) => spawn.encounterId));
+    for (const encounterId of this.motionState.keys()) {
+      if (!alive.has(encounterId)) this.motionState.delete(encounterId);
+    }
+
+    const dt = Math.max(0, Math.min(0.1, Number(deltaMs) / 1000 || 0));
+    for (const spawn of spawns) {
+      const id = 'master-interactable:' + spawn.encounterId;
+      let state = this.motionState.get(spawn.encounterId);
+      if (!state) {
+        state = {
+          angle: 0,
+          targetAngle: 0,
+          nextTurnAt: now + 3000 + Math.random() * 7000
+        };
+        this.motionState.set(spawn.encounterId, state);
+      }
+
+      if (now >= state.nextTurnAt) {
+        state.targetAngle = Math.random() * Math.PI * 2 - Math.PI;
+        state.nextTurnAt = now + 8000 + Math.random() * 12000;
+      }
+
+      let diff = state.targetAngle - state.angle;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      const maxTurn = this.turnSpeedRadPerSec * dt;
+      state.angle += Math.max(-maxTurn, Math.min(maxTurn, diff));
+      this.interactableSystem?.setItemTransform?.(id, { rotation: state.angle });
     }
   }
 

@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.77**
+Current implementation: **v0.0.78**
 
 ## Scope
 
@@ -157,3 +157,5 @@ No TEST/MATRIX/DEEP run was added in v0.0.65–v0.0.72. The runtime implementati
 ## Visual shell
 
 Since v0.0.77 Stone Masters render as a lightweight top-down humanoid vector shell instead of a single circle. Tier colors, label, glow and the real-time Encounter countdown remain independent presentation layers; final NPC art is still deferred.
+
+Since v0.0.78 the temporary vector shell has a slow idle-facing controller. Rotation is presentation-only and is not persisted in Game State.

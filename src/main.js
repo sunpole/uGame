@@ -635,6 +635,7 @@ class ZoneScene extends Phaser.Scene {
     this.characterView.update(state, delta);
     worldSpawnStateSystem?.update(Date.now());
     this.eventSpotSystem?.update(Date.now());
+    masterEncounterSystem?.update(Date.now(), delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update();
   }

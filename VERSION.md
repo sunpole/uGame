@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.77**
+Current version: **0.0.78**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.78 | Master Slow Facing: very slow idle rotation with long pauses and smooth turn speed |
 | 0.0.77 | Master NPC Visual Shell: Tier-colored top-down humanoid model replaces the circular marker |
 | 0.0.76 | Spawn Zone DEV Controls: Project Hub toggle, center markers and 10–500 px radius control |
 | 0.0.75 | Spawn Zone Debug Visual: thin DEV radius circles around existing Event Spot centers |
@@ -83,6 +84,9 @@ Current version: **0.0.77**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.78
+Stone Master получил лёгкое idle-поведение направления взгляда. Мастер выбирает новый угол с длинными случайными паузами и очень медленно доворачивается к нему (`~0.22 rad/s`), без резких snap-поворотов. Движения по карте в этом патче ещё нет; изменяется только ориентация временной top-down модели.
 
 ## 0.0.77
 Stone Master больше не отображается одним круглым маркером. В `InteractableSystem` добавлена лёгкая top-down humanoid модель из простых Phaser shapes: тень, ноги, корпус, плечи, голова и маркер направления. Tier-цвет, label, glow и Encounter countdown сохранены. Это всё ещё временный procedural/vector shell без финального арта и ЛОР-портрета.
