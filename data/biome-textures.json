@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-07",
+  "storageKey": "ugame.biome-textures.v1",
+  "textures": [
+    {
+      "id": "grass",
+      "biome": "grass",
+      "city": false,
+      "textureName": "Трава",
+      "textureFile": "./assets/textures/biomes/grass_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    },
+    {
+      "id": "sand",
+      "biome": "sand",
+      "city": false,
+      "textureName": "Песок",
+      "textureFile": "./assets/textures/biomes/sand_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    },
+    {
+      "id": "snow",
+      "biome": "snow",
+      "city": false,
+      "textureName": "Снег",
+      "textureFile": "./assets/textures/biomes/snow_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    },
+    {
+      "id": "city-grass",
+      "biome": "grass",
+      "city": true,
+      "textureName": "Город · трава",
+      "textureFile": "./assets/textures/biomes/city_grass_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    },
+    {
+      "id": "city-sand",
+      "biome": "sand",
+      "city": true,
+      "textureName": "Город · песок",
+      "textureFile": "./assets/textures/biomes/city_sand_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    },
+    {
+      "id": "city-snow",
+      "biome": "snow",
+      "city": true,
+      "textureName": "Город · снег",
+      "textureFile": "./assets/textures/biomes/city_snow_1024.png",
+      "enabled": true,
+      "scalePercent": 100,
+      "opacityPercent": 100
+    }
+  ]
+}

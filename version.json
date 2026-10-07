@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.56",
-  "stage": "responsive-world-camera",
+  "version": "0.0.57",
+  "stage": "biome-ground-texture-system",
   "updated": "2026-10-07",
-  "summary": "Responsive full-workspace camera expands visible world without stretching gameplay graphics"
+  "summary": "Biome/city ground texture runtime with per-texture scale and opacity settings"
 }

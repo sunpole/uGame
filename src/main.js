@@ -28,6 +28,7 @@ import { ActionRouter } from './action-router.js';
 import { InterfaceSettingsSystem } from './interface-settings.js';
 import { UIWindowManager } from './ui-window-manager.js';
 import { ResponsiveViewportSystem } from './responsive-viewport-system.js';
+import { BiomeTextureSettingsSystem, GroundTextureSystem, preloadGroundTextures } from './ground-texture-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -51,6 +52,8 @@ let chromeHeaderSystem = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
 let uiWindowManager = null;
+let biomeTextureSettingsSystem = new BiomeTextureSettingsSystem();
+let groundTextureSystem = null;
 
 
 function syncPlayerInputState() {
@@ -123,6 +126,10 @@ class ZoneScene extends Phaser.Scene {
     this.viewportSystem = null;
   }
 
+  preload() {
+    preloadGroundTextures(this);
+  }
+
   create() {
     this.cameras.main.setBackgroundColor('#0b0d10');
     this.statusElement = document.querySelector('#zone-status');
@@ -166,6 +173,13 @@ class ZoneScene extends Phaser.Scene {
       onChange: (metrics, previous) => this.handleViewportChange(metrics, previous)
     });
     const initialViewport = this.viewportSystem.start();
+
+    groundTextureSystem = new GroundTextureSystem({
+      scene: this,
+      settings: biomeTextureSettingsSystem,
+      worldWidth: initialViewport.worldWidth,
+      worldHeight: initialViewport.worldHeight
+    });
 
     classSystem = new ClassSystem({ visionSystem, eventSystem: this.eventSystem });
 
@@ -315,6 +329,7 @@ class ZoneScene extends Phaser.Scene {
       onStatus: (text) => this.setStatus(text),
       onZoneChange: (zone) => {
         this.zoneRulesSystem.apply(zone.rules);
+        groundTextureSystem?.applyZone(zone);
         chromeContextSystem?.setZone(zone);
       },
       isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
@@ -356,6 +371,7 @@ class ZoneScene extends Phaser.Scene {
 
   handleViewportChange(metrics, previous = {}) {
     visionSystem?.setWorldSize(metrics.worldWidth, metrics.worldHeight);
+    groundTextureSystem?.resize(metrics.worldWidth, metrics.worldHeight);
     if (!this.zoneSystem) return;
 
     const oldWidth = Number(this.zoneSystem.width) || WIDTH;
@@ -371,6 +387,7 @@ class ZoneScene extends Phaser.Scene {
   async initializeWorld(restoredState) {
     try {
       await Promise.all([
+        biomeTextureSettingsSystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()

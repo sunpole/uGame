@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('menu','status','sync','report','run','github','rollback','resume','simulate')][string]$Command = 'menu')
+param([ValidateSet('menu','status','sync','report','run','github','rollback','resume','simulate','textures')][string]$Command = 'menu')
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:Root = [IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
@@ -105,6 +105,56 @@ function New-Report {
     Write-Host 'Copy to ChatGPT. Reports are never uploaded or placed in the repository.'
     Start-Process -FilePath (Join-Path $env:WINDIR 'System32\notepad.exe') -ArgumentList ('"' + $path + '"') | Out-Null
 }
+
+function Import-BiomeTextures {
+    $sourceRoot = Join-Path $env:USERPROFILE 'Desktop'
+    $targetRoot = Join-Path $script:Root 'assets\textures\biomes'
+    [void][IO.Directory]::CreateDirectory($targetRoot)
+
+    $names = @(
+        'sand_1024.png',
+        'city_sand_1024.png',
+        'city_snow_1024.png',
+        'city_grass_1024.png',
+        'grass_1024.png',
+        'snow_1024.png'
+    )
+
+    $copied = 0
+    $present = 0
+    $missing = @()
+
+    foreach ($name in $names) {
+        $source = Join-Path $sourceRoot $name
+        $target = Join-Path $targetRoot $name
+
+        if (Test-Path -LiteralPath $source -PathType Leaf) {
+            $needsCopy = -not (Test-Path -LiteralPath $target -PathType Leaf)
+            if (-not $needsCopy) {
+                $sourceHash = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
+                $targetHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+                $needsCopy = $sourceHash -ne $targetHash
+            }
+            if ($needsCopy) {
+                [IO.File]::Copy($source,$target,$true)
+                $copied++
+            }
+            $present++
+        } elseif (Test-Path -LiteralPath $target -PathType Leaf) {
+            $present++
+        } else {
+            $missing += $name
+        }
+    }
+
+    if ($missing.Count -gt 0) {
+        Write-Host ('Biome textures missing: ' + ($missing -join ', '))
+        Write-Host ('Expected sources in: ' + $sourceRoot)
+    }
+
+    Write-Log ("Biome textures: $present/6 available, $copied copied/updated.")
+}
+
 function Run-Project {
     Assert-Repository
     $manifest = Join-Path $script:Root 'package.json'
@@ -114,6 +164,7 @@ function Run-Project {
     Write-Host ('Local npm dev script: ' + [string]$package.scripts.dev)
     Write-Host 'RUN executes local project code. Dependencies are not installed automatically.'
     if ((Read-Host 'Type RUN to run this checked-out project') -cne 'RUN') { return }
+    Import-BiomeTextures
     $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
     Push-Location -LiteralPath $script:Root
     try { & $npm --ignore-scripts run dev; if ($LASTEXITCODE -ne 0) { throw 'Project launch failed. Dependencies may not be installed.' } }
@@ -211,6 +262,7 @@ function Invoke-Action([string]$Action) {
         'rollback' { Rollback-Project }
         'resume' { Resume-Project }
         'simulate' { Run-Simulation }
+        'textures' { Import-BiomeTextures }
     }
 }
 function Main {
@@ -235,7 +287,7 @@ function Main {
         if ($Command -ne 'menu') { Invoke-Action $Command; return }
         while (-not $script:StopMenu) {
             Write-Host "=== uGame ==="
-            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n0. Exit".Replace('\n',[Environment]::NewLine)
+            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n10. Import biome textures\n0. Exit".Replace('\n',[Environment]::NewLine)
             $choice = Read-Host 'Number'
             try {
                 switch ($choice) {
@@ -249,7 +301,8 @@ function Main {
                     '7' { Invoke-Action rollback }
                     '8' { Invoke-Action resume }
                     '9' { Invoke-Action simulate }
-                    default { Write-Host 'Choose a number from 0 to 9.' }
+                    '10' { Invoke-Action textures }
+                    default { Write-Host 'Choose a number from 0 to 10.' }
                 }
             } catch { Write-Log ('STOP: ' + $_.Exception.Message) }
         }

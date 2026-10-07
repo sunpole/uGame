@@ -3,3 +3,4 @@ dist/
 uGame_report_*.txt
 updater.log
 simulation-reports/
+assets/textures/biomes/*.png

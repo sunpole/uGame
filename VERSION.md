@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.56**
+Current version: **0.0.57**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.57 | Biome Ground Texture System: grass/sand/snow + city variants, scale/opacity-ready |
 | 0.0.56 | Responsive World Camera: широкий экран показывает больше мира без искажения |
 | 0.0.55 | Full Workspace Game Viewport: игровое поле занимает всю центральную область |
 | 0.0.54 | Inventory/Bank Normal Size: одинаковые ячейки, без лишнего desktop scale |
@@ -62,6 +63,9 @@ Current version: **0.0.56**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.57
+Добавлен отдельный GroundTextureSystem и централизованный `data/biome-textures.json` для шести 1024×1024 floor textures. Выбор выполняется по `zone.biome + zone.isCity`; текстура тайлится как world floor, 100% означает исходный 1024-unit масштаб, допустимы 1–10000% scale и 0–100% opacity. Для локального прототипа updater автоматически копирует точные PNG с Desktop в `assets/textures/biomes/`; они игнорируются Git, поэтому не мешают Update/Rollback. При отсутствии локального файла игра сохраняет тёмный fallback вместо падения.
 
 ## 0.0.56
 Phaser переведён с FIT на RESIZE, а ResponsiveViewportSystem сохраняет базовую высоту мира 540 units и рассчитывает единый camera zoom по высоте. Дополнительная ширина превращается в дополнительные world units слева/справа, а не в растяжение. Старый 960-wide layout центрируется внутри расширенного мира; boundaries/portals следуют краям viewport, Vision SVG получает тот же world size, dynamic Event Spots корректно remap-ятся при relayout.
