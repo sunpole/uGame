@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.00**
+Current version: **0.1.01**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.01 | Safe City Hard Rules: 5 cities force full vision and cannot host Dynamic Events or Master encounters |
 | 0.1.00 | 25-location Diamond WorldGraph: logical 5×5 grid, 5 safe cities, 20 fields, 80 directed links and temporary names/IDs |
 | 0.0.99 | Four-screen Local World: each zone is 1920×1080 with camera follow while the visible screen remains roughly 960×540 |
 | 0.0.98 | Clickable DEV Code Reference: every documented 4-digit code row in Project Hub gets a one-click Execute button |
@@ -106,6 +107,9 @@ Current version: **0.1.00**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.01
+Safe-city правило стало системным, а не только data-настройкой: `EventSpotSystem.desiredSlots()` для города всегда возвращает 0, city event-state очищается, status явно показывает `dynamic events OFF`, а WorldSpawnState по-прежнему пропускает safe cities для Master allocation. Все 5 city-зон в `world.json` имеют `vision.mode = full`, поэтому тень/ограниченная видимость в городе отключены.
 
 ## 0.1.00
 WorldGraph заменён новой сеткой **25 локаций**: логический `5×5` квадрат, который на мировой карте предназначен для отображения ромбом с поворотом 45°. Пять safe city: север `loc-00001`, восток `loc-00005`, стартовый центр `loc-00013`, запад `loc-00021`, юг `loc-00025`; остальные 20 — field zones. Всем выданы порядковые ID `loc-00001…loc-00025` и временные названия. Старые `zone-001…004` сохранены как legacy aliases к новым зонам для миграции save. В каждой field zone уже 12 candidate spots, распределённых по всей площади 1920×1080; в city zones Event Spot отсутствуют.

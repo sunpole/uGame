@@ -155,6 +155,7 @@ export class EventSpotSystem {
   }
 
   desiredSlots(zone, zoneState) {
+    if (zone?.isSafeCity === true) return 0;
     const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots : [];
     if (this.isExternalTierZone(zone)) {
       const capacity = Math.min(
@@ -169,6 +170,19 @@ export class EventSpotSystem {
 
   ensureZone(zone, now = Date.now()) {
     if (!zone?.id) return null;
+
+    if (zone.isSafeCity === true) {
+      const existing = this.state.zones?.[zone.id] || {};
+      const zoneState = {
+        ...existing,
+        safeCity: true,
+        events: [],
+        recentSpotIds: []
+      };
+      if (!this.state.zones) this.state.zones = {};
+      this.state.zones[zone.id] = zoneState;
+      return zoneState;
+    }
 
     if (this.isExternalTierZone(zone)) {
       const locationState = this.worldSpawnStateSystem.getLocationTier(zone.id);
@@ -535,6 +549,10 @@ export class EventSpotSystem {
 
     let changedAny = false;
     for (const zone of this.worldGraph?.zones?.values?.() || []) {
+      if (zone?.isSafeCity === true) {
+        this.ensureZone(zone, now);
+        continue;
+      }
       if (this.isExternalTierZone(zone)) {
         const beforeId = this.state.zones?.[zone.id]?.locationTierStateId || null;
         const zoneState = this.ensureZone(zone, now);
@@ -563,6 +581,10 @@ export class EventSpotSystem {
 
     const slots = this.desiredSlots(zone, state);
     const genericActive = (state.events || []).filter((event) => !event.consumed).length;
+    if (zone.isSafeCity === true) {
+      this.onZoneStatus?.(zone.name + ' · мирный город · dynamic events OFF · vision FULL');
+      return;
+    }
     if (this.isExternalTierZone(zone)) {
       const masterActive = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id })?.length || 0;
       const active = genericActive + masterActive;
