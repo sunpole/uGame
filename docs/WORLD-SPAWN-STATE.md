@@ -1,6 +1,6 @@
 # WorldSpawnState / Location Tier runtime
 
-Current implementation: **v0.0.72**
+Current implementation: **v0.0.75**
 
 ## Scope
 
@@ -127,3 +127,7 @@ These commands modify/persist WorldSpawnState.
 Stages C, D and E now have live prototypes. v0.0.72 also persists Tier-driven module availability (`Extraction` guaranteed; 2–3 / 3–4 / 4–6 / all).
 
 The next accepted content-first step is a real **Stone Extraction / Process** module. Module availability is not the same as functional implementation.
+
+## Spawn-zone DEV visualization
+
+Since v0.0.75 the existing Event Spot centers can be visualized as thin DEV circles through `SpawnZoneDebugSystem`. The default radius is 150 world-px and the layer is OFF by default. This visualization does **not** change spawn allocation yet; it prepares a visible roaming/spawn boundary for later NPC movement QA.

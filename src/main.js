@@ -33,6 +33,7 @@ import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
 import { MasterCatalog } from './master-catalog.js';
 import { MasterEncounterSystem } from './master-encounter-system.js';
 import { CharacterMasterRelationshipSystem } from './character-master-relationship-system.js';
+import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -62,6 +63,7 @@ let worldSpawnStateSystem = null;
 let masterCatalog = new MasterCatalog();
 let masterEncounterSystem = null;
 let masterRelationshipSystem = null;
+let spawnZoneDebugSystem = null;
 
 
 function syncPlayerInputState() {
@@ -364,6 +366,14 @@ class ZoneScene extends Phaser.Scene {
       },
       isInteractableUsed: (id) => this.gameState.isInteractableUsed(id)
     });
+
+    spawnZoneDebugSystem = new SpawnZoneDebugSystem({
+      scene: this,
+      worldGraph: this.worldGraph,
+      zoneSystem: this.zoneSystem,
+      eventSystem: this.eventSystem
+    });
+    this.spawnZoneDebugSystem = spawnZoneDebugSystem;
 
     eventSpotSystem = new EventSpotSystem({
       worldGraph: this.worldGraph,

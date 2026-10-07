@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.74",
-  "stage": "biome-texture-baseline-40-40",
+  "version": "0.0.75",
+  "stage": "spawn-zone-debug-visual",
   "updated": "2026-10-07",
-  "summary": "All current biome/city ground textures default to 40% scale and 40% opacity"
+  "summary": "DEV Event Spot zones can be rendered as thin radius circles around existing spawn centers"
 }
