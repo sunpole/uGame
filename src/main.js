@@ -114,6 +114,7 @@ function executeDevCode(code) {
     resourceSystem,
     questSystem,
     eventSpotSystem,
+    masterEncounterSystem,
     worldSpawnStateSystem,
     saveSystem
   ];

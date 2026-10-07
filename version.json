@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.69",
-  "stage": "character-master-relationships",
+  "version": "0.0.70",
+  "stage": "master-npc-qa-83xx",
   "updated": "2026-10-07",
-  "summary": "Persistent character-scoped master relationship state and encounter history"
+  "summary": "Active master registry, filters, rotation summary and teleport/cycle DEV codes"
 }

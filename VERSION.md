@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.69**
+Current version: **0.0.70**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.70 | Master NPC QA 83xx: registry, Tier filters, rotation summary и teleport/cycle |
 | 0.0.69 | Character↔Master Relationship State: встречи persistent и принадлежат персонажу |
 | 0.0.68 | Visible Stone Master Encounters: master занимает Event/NPC slot и появляется как Tier-colored NPC |
 | 0.0.67 | Stone Master Allocator: 30m persistent encounters, world caps и independent rotation coverage |
@@ -75,6 +76,9 @@ Current version: **0.0.69**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.70
+Ранее зарезервированные 83xx активированы. `8300` показывает Stone master registry/counts, `8302/03/04` — зоны active T2/T3/T4, `8399` — candidate pool/rotation coverage. `8312/13/14` циклически телепортируют QA-персонажа к следующему active master соответствующего Tier и ставят рядом с его Event Spot. DEV teleport не меняет master allocation и не делает reroll.
 
 ## 0.0.69
 Добавлен отдельный character-scoped Relationship System. Для каждой постоянной master identity сохраняются first/last met, encountersCount, relationship XP/level placeholders, flags, pendingRewards и seen Encounter ids. Повторное нажатие на одного и того же Encounter не увеличивает encountersCount; новый 30-минутный spawn той же identity считается новой встречей. Это персональное состояние персонажа, а не состояние общего NPC/аккаунта.

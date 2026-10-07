@@ -473,6 +473,33 @@ export class WorldSpawnStateSystem {
   }
 
   executeDevCode(code) {
+    if (['8300', '8302', '8303', '8304', '8399'].includes(code)) {
+      if (code === '8300') {
+        const all = this.getActiveMasters();
+        const counts = this.state.activeCountsByResourceAndTier?.stone || {};
+        return {
+          handled: true,
+          message: '8300 · Stone master: ' + all.length + ' · T1 ' + (counts.T1 || 0) + ' · T2 ' + (counts.T2 || 0) + ' · T3 ' + (counts.T3 || 0) + ' · T4 ' + (counts.T4 || 0),
+          state: 'ok'
+        };
+      }
+
+      if (['8302', '8303', '8304'].includes(code)) {
+        const tier = 'T' + code.at(-1);
+        const list = this.getActiveMasters({ resourceDirectionId: 'stone', tier });
+        const zones = list.map((spawn) => spawn.zoneId).join(', ') || 'нет';
+        return { handled: true, message: code + ' · ' + tier + ': ' + list.length + ' · ' + zones, state: 'ok' };
+      }
+
+      const poolParts = Object.entries(this.state.candidatePools || {}).map(([key, zoneIds]) => key + '=' + (zoneIds?.length || 0));
+      const rotationParts = Object.entries(this.state.rotations || {}).map(([key, state]) => key + '#R' + (state.round || 1) + ':' + (state.visitedZoneIds?.length || 0));
+      return {
+        handled: true,
+        message: '8399 · pools ' + (poolParts.join(' ') || '—') + ' · rotation ' + (rotationParts.join(' ') || '—'),
+        state: 'ok'
+      };
+    }
+
     if (!['8400', '8401', '8402', '8403', '8404', '8499'].includes(code)) {
       return { handled: false };
     }

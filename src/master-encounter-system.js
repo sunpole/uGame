@@ -17,6 +17,7 @@ export class MasterEncounterSystem {
     this.interactionPanel = interactionPanel;
     this.currentZoneId = null;
     this.renderedIds = new Set();
+    this.devCycleIndexByTier = { T2: -1, T3: -1, T4: -1 };
 
     this.eventSystem?.on('zone:enter', ({ zone }) => {
       this.currentZoneId = zone?.id || null;
@@ -63,6 +64,34 @@ export class MasterEncounterSystem {
       });
       this.renderedIds.add(id);
     }
+  }
+
+  executeDevCode(code) {
+    if (!['8312', '8313', '8314'].includes(code)) return { handled: false };
+    const tier = 'T' + code.at(-1);
+    const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ resourceDirectionId: 'stone', tier }) || [];
+    if (!spawns.length) return { handled: true, message: code + ' · active ' + tier + ' master нет', state: 'reserved' };
+
+    const nextIndex = ((this.devCycleIndexByTier[tier] ?? -1) + 1) % spawns.length;
+    this.devCycleIndexByTier[tier] = nextIndex;
+    const spawn = spawns[nextIndex];
+    const zone = this.worldGraph?.getZone?.(spawn.zoneId);
+    if (!zone) return { handled: true, message: code + ' · zone не найдена', state: 'error' };
+
+    this.zoneSystem?.build?.(zone.id, zone.defaultEntry || null);
+    const spot = (zone.eventSpots || []).find((item) => item.id === spawn.spotId);
+    if (spot && this.zoneSystem?.player) {
+      const point = this.zoneSystem.mapPoint?.(spot) || spot;
+      const x = Math.max(20, Math.min((this.zoneSystem.width || 960) - 20, Number(point.x) + 44));
+      const y = Math.max(20, Math.min((this.zoneSystem.height || 540) - 20, Number(point.y)));
+      this.zoneSystem.player.setPosition(x, y);
+    }
+
+    return {
+      handled: true,
+      message: code + ' · TP ' + tier + ' → ' + zone.name + ' · ' + spawn.spotId,
+      state: 'ok'
+    };
   }
 
   activate(item) {

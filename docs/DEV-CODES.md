@@ -95,20 +95,20 @@ These codes change the persisted `WorldSpawnState`, so reload keeps the forced/r
 
 The old `8202/8211–8214` quality controls now apply only to the safe-city prototype. In external zones the console points to the 84xx Location Tier controls.
 
-## Master NPC QA — reserved for future WorldSpawnState
+## Master NPC QA — active
 
-These codes are reserved now so the future implementation has stable developer hooks. They do **not** become active until master NPC world state exists in gameplay.
+These codes are active against the persistent Stone Master runtime.
 
-| Code | Planned action |
+| Code | Action |
 |---|---|
-| `8300` | Open/show Master NPC world registry summary |
-| `8302` | List/filter active T2 master instances |
-| `8303` | List/filter active T3 master instances |
-| `8304` | List/filter active T4 master instances |
-| `8312` | Teleport/cycle to next active T2 master |
-| `8313` | Teleport/cycle to next active T3 master |
-| `8314` | Teleport/cycle to next active T4 master |
-| `8399` | Show master candidate pools, caps and rotation coverage summary |
+| `8300` | Show active Stone Master registry/counts |
+| `8302` | List active T2 Stone master zones |
+| `8303` | List active T3 Stone master zones |
+| `8304` | List active T4 Stone master zones |
+| `8312` | Teleport/cycle to next active T2 Stone master |
+| `8313` | Teleport/cycle to next active T3 Stone master |
+| `8314` | Teleport/cycle to next active T4 Stone master |
+| `8399` | Show candidate pool sizes and independent rotation round/coverage summary |
 
 The preferred UX later is a clickable **DEV World Analyzer** inside Project Hub with a list of active masters and TP buttons. Console codes remain a fast keyboard fallback.
 
