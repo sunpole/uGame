@@ -66,6 +66,13 @@
           "target": "./docs/project-journal/ACTIVE-IDLE-CORE.md"
         },
         {
+          "id": "biome-ground-doc",
+          "label": "Biome Ground Textures",
+          "description": "Runtime пола, шесть biome/city slots, локальный импорт PNG и DEV Visual Lab.",
+          "type": "document",
+          "target": "./docs/BIOME-GROUND-TEXTURES.md"
+        },
+        {
           "id": "next-plan",
           "label": "Следующий план реализации",
           "description": "Предварительная очередь после Simulation Lab; будет объединена с пользовательским пакетом патчей.",

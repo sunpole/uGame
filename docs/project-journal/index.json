@@ -705,6 +705,38 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0023",
+      "title": "Responsive Workspace + Biome Ground Texture / Visual Lab",
+      "date": "2026-10-07",
+      "type": "ui-ux",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "viewport",
+        "responsive",
+        "camera",
+        "inventory",
+        "bank",
+        "biome",
+        "texture",
+        "ground",
+        "admin",
+        "tooling"
+      ],
+      "path": "records/UGD-0023-responsive-workspace-biome-ground-visual-lab.md",
+      "related": [
+        "UGD-0014",
+        "UGD-0016",
+        "UGD-0018",
+        "UGD-0021",
+        "UGD-0022"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

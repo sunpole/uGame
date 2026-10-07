@@ -1,4 +1,4 @@
-/* v0.0.53 — shared always-visible chrome for non-game HTML pages */
+/* shared always-visible chrome (introduced v0.0.48; current v0.0.58) — for non-game HTML pages */
 html.ugc-page body {
   padding-top: 74px !important;
   padding-bottom: 36px !important;
@@ -141,7 +141,7 @@ html.ugc-page body {
 }
 
 
-/* v0.0.53 — room for seconds, phase icon and visible ×12 clock speed */
+/* Game Clock seconds/phase layout (introduced v0.0.53; current v0.0.58) */
 .ugc-page-footer {
   grid-template-columns: auto auto auto minmax(220px, 1fr) minmax(285px, auto) minmax(300px, auto);
 }

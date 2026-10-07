@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: рабочий план после завершённой UI/Game Chrome серии v0.0.41–v0.0.48; следующий gameplay-пакет начинается только после ручного QA v0.0.48 и нового подтверждения пользователя.
+Статус: рабочий план после UI/Workspace/biome серии v0.0.41–v0.0.58; следующий gameplay-пакет начинается только после ручного QA v0.0.58 и нового подтверждения пользователя.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.48:
+Состояние после v0.0.58:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -40,6 +40,8 @@
 - Attention cadence guardrail;
 - текущий gameplay v0.0.35–0.0.39 foundation;
 - Persistent Game Chrome v0.0.41–v0.0.48: Header/Workspace/Footer, build/session/location/real/game clocks, live character/resources header, Action Router, AnyDesk controls, text-selection settings, shared Journal/Simulation chrome;
+- Workspace Window Policy v0.0.49–v0.0.53: bounded runtime windows, scale-first fallback, formal layers and visible Game Clock seconds/phase;
+- Responsive Workspace + Biome Visual Layer v0.0.54–v0.0.58: normal-size Bank/Inventory, full Workspace game viewport, responsive non-stretch camera, six biome/city floor slots and temporary Biome Visual Lab;
 - combat по-прежнему отложен.
 
 Никакой новой большой механики на этом этапе не добавлять.
@@ -219,6 +221,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-Не начинать Этап C автоматически.
-
-Сначала пользователь передаёт свой пакет правок/большого патча. После анализа пакет объединяется с этим планом и формируется конкретная очередь версий.
+1. Провести ручной desktop QA v0.0.58, включая local texture import и Biome Visual Lab.
+2. Не начинать Этап C автоматически.
+3. После QA получить новое подтверждение пользователя и только затем формировать следующий content-first gameplay пакет на базе этого плана.

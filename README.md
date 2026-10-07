@@ -15,6 +15,7 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 7 | Restore pre-update files after typing ROLLBACK |
 | 8 | Return from rollback to main |
 | 9 | Simulation Lab: TRACE / TEST / DEEP / MATRIX |
+| 10 | Import/update six local biome texture PNGs from Desktop |
 | 0 | Exit |
 
 ## Project Journal
@@ -33,7 +34,7 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.48 — Persistent Game Chrome + Project Hub + gameplay prototype
+## Game prototype v0.0.58 — Responsive Workspace + Biome Visual Lab + gameplay prototype
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
@@ -85,7 +86,12 @@ The current prototype includes:
 - live character class/Stamina/resources/material wealth/storage summary in the header;
 - unified contextual E/Space/Enter action routing plus mouse/AnyDesk parity;
 - text selection disabled by default with a Project Hub setting to re-enable it;
-- shared project chrome on Journal / Active–Idle / Simulation Results HTML pages.
+- shared project chrome on Journal / Active–Idle / Simulation Results HTML pages;
+- scale-first bounded runtime windows with fixed-size Inventory/Bank slots and scroll fallback;
+- a full-Workspace responsive Phaser viewport: wide screens reveal more world instead of stretching sprites or vision;
+- biome/city ground textures for grass, sand and snow through a dedicated GroundTextureSystem;
+- per-texture enabled, name/file, scale 1–10,000% and opacity 0–100% settings;
+- a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides.
 
 The original First Playable quest remains available: speak with the Guide, explore the connected
 zones, find the blue, amber and violet fragments, then activate the extinguished core.
@@ -100,7 +106,7 @@ caps, produce analysis reports and run either from GitHub Actions or locally thr
 not alter the current gameplay rules. v0.0.41–v0.0.48 then rebuild the permanent application chrome:
 Header/Footer remain outside every Workspace overlay, current build/session/location/clocks are always
 visible, the old duplicate HUD is migrated only after replacement data exists, and keyboard/mouse
-actions share one contextual route. Event Portal
+actions share one contextual route. v0.0.49–v0.0.53 add bounded scale-first windows and visible Game Clock seconds/phase. v0.0.54–v0.0.58 then keep Bank/Inventory at normal slot size, expand the game to the full Workspace, add a non-stretch responsive camera and introduce biome floor textures plus the temporary Biome Visual Lab. Event Portal
 encounters are placeholders only; they do not travel anywhere yet.
 
 World identity and connections live in `data/world.json`. `src/world-graph.js`
@@ -153,6 +159,22 @@ After a DEV command, focus is released from the DEV field so keyboard movement w
 immediately again. For remote-desktop testing, the footer duplicates movement, Action and Dash
 as clickable buttons; mouse Dash is a short pulse so it can be clicked just before a direction.
 
+
+## Biome floor textures
+
+The v0.0.57 runtime selects a floor by `biome + isCity` and repeats a 1024×1024 source texture in world space. Defaults and file mappings are stored in `data/biome-textures.json`; admin overrides are browser-local.
+
+Current development slots:
+
+- grass / sand / snow;
+- city-grass / city-sand / city-snow.
+
+The exact six PNG binaries are local development assets. `Update-uGame.cmd → 10` imports them from the developer Desktop, and option 4 performs the same check before RUN. The copied PNGs are intentionally Git-ignored so updater safety is preserved. The runtime falls back to the existing dark floor if a texture is missing.
+
+`Project Hub → Игра → Biome Visual Lab · DEV` is temporary admin tooling. It can change the texture name/file, enable state, scale from 1% to 10,000%, opacity from 0% to 100%, and preview the same tiled behavior used in gameplay. Later the admin UI can be hidden without removing the runtime GroundTextureSystem.
+
+See `docs/BIOME-GROUND-TEXTURES.md`.
+
 ## First update
 
 Run `C:\!CODE_CLUB\new 2026\011_uGame\Update-uGame.cmd`, choose **1** to update,
@@ -177,7 +199,7 @@ changing update and must be explicitly restarted. The next launch trusts the
 checked-out updater and repository maintainers. This is not a sandbox for a
 compromised repository or local Git/Node installation. Option 4 explicitly runs
 local project code; no dependency installation or automatic npm pre/post scripts.
-Simulation option 9 also requires explicit `SIMULATE`, never installs Python/pip packages automatically, and runs only the checked-out `tools/simulation/ugame_sim.py`. If Python is unavailable it prints the GitHub Actions no-install route instead.
+Simulation option 9 also requires explicit `SIMULATE`, never installs Python/pip packages automatically, and runs only the checked-out `tools/simulation/ugame_sim.py`. If Python is unavailable it prints the GitHub Actions no-install route instead. Option 10 only copies the six specifically named biome PNG files from `%USERPROFILE%\Desktop` into ignored local `assets\textures\biomes`; it does not download, execute or scan arbitrary Desktop files. Local RUN performs the same texture check before starting the dev server.
 
 The in-game DEV console accepts only four decimal digits. It does not execute shell
 commands or updater commands. Active game commands are explicitly implemented by
@@ -219,7 +241,7 @@ Session counter and operational log are local `.git` metadata, never committed.
 Implementation: Update-uGame.ps1; launcher: Update-uGame.cmd. Run
 `powershell.exe -NoProfile -File tests\Test-Updater.ps1` for isolated Git checks.
 Direct commands: `powershell.exe -NoProfile -File .\Update-uGame.ps1 -Command status`
-(also sync, report, run, github, rollback, resume, simulate).
+(also sync, report, run, github, rollback, resume, simulate, textures).
 
 Reference: sunpole/uMontage release/v1.0.0 commit
 7b785744a374745c8fce390cf21381debfc85454, tools/uMontage-Control.ps1,
