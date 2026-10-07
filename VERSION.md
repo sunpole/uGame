@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.68**
+Current version: **0.0.69**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.69 | Character↔Master Relationship State: встречи persistent и принадлежат персонажу |
 | 0.0.68 | Visible Stone Master Encounters: master занимает Event/NPC slot и появляется как Tier-colored NPC |
 | 0.0.67 | Stone Master Allocator: 30m persistent encounters, world caps и independent rotation coverage |
 | 0.0.66 | Stone Master Registry: четыре постоянные identity T1–T4 + data-driven module metadata |
@@ -74,6 +75,9 @@ Current version: **0.0.68**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.69
+Добавлен отдельный character-scoped Relationship System. Для каждой постоянной master identity сохраняются first/last met, encountersCount, relationship XP/level placeholders, flags, pendingRewards и seen Encounter ids. Повторное нажатие на одного и того же Encounter не увеличивает encountersCount; новый 30-минутный spawn той же identity считается новой встречей. Это персональное состояние персонажа, а не состояние общего NPC/аккаунта.
 
 ## 0.0.68
 Persistent master spawn-instance теперь реально отображается в своей external zone на выбранном Event Spot. Мастер занимает один slot общей Location Tier capacity, поэтому generic Resource/Chest/Portal не наслаивается на ту же точку и суммарный Event/NPC count не превышает capacity. T1/T2/T3/T4 имеют нейтральную серую/синюю/фиолетовую/золотую визуальную кодировку, 30-минутный countdown и базовое Interaction окно с multiplier.

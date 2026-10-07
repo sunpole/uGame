@@ -78,6 +78,17 @@ function cleanWorldSpawnState(value) {
   }
 }
 
+function cleanMasterRelationships(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return { schemaVersion: 1, masters: {} };
+  const masters = value.masters;
+  if (!masters || typeof masters !== 'object' || Array.isArray(masters)) return { schemaVersion: 1, masters: {} };
+  try {
+    return JSON.parse(JSON.stringify({ schemaVersion: 1, masters }));
+  } catch {
+    return { schemaVersion: 1, masters: {} };
+  }
+}
+
 function cleanContainers(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return { schemaVersion: 1, containers: {} };
@@ -120,7 +131,8 @@ export function createDefaultGameState() {
     dynamicEvents: {
       zones: {}
     },
-    worldSpawnState: cleanWorldSpawnState(null)
+    worldSpawnState: cleanWorldSpawnState(null),
+    characterMasterRelationships: cleanMasterRelationships(null)
   };
 }
 
@@ -151,7 +163,8 @@ export function normalizeGameState(input) {
     containers: cleanContainers(input.containers),
     quests: cleanQuestState(input.quests),
     dynamicEvents: cleanDynamicEvents(input.dynamicEvents),
-    worldSpawnState: cleanWorldSpawnState(input.worldSpawnState)
+    worldSpawnState: cleanWorldSpawnState(input.worldSpawnState),
+    characterMasterRelationships: cleanMasterRelationships(input.characterMasterRelationships)
   };
 }
 
@@ -209,5 +222,9 @@ export class GameState {
 
   setWorldSpawnState(snapshot) {
     this.state.worldSpawnState = cleanWorldSpawnState(snapshot);
+  }
+
+  setCharacterMasterRelationships(snapshot) {
+    this.state.characterMasterRelationships = cleanMasterRelationships(snapshot);
   }
 }

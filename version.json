@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.68",
-  "stage": "visible-stone-master-encounters",
+  "version": "0.0.69",
+  "stage": "character-master-relationships",
   "updated": "2026-10-07",
-  "summary": "Persistent Stone master encounters render as Tier-colored NPCs and share Location Tier capacity with generic events"
+  "summary": "Persistent character-scoped master relationship state and encounter history"
 }

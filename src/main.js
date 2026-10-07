@@ -32,6 +32,7 @@ import { BiomeTextureSettingsSystem, GroundTextureSystem, preloadGroundTextures 
 import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
 import { MasterCatalog } from './master-catalog.js';
 import { MasterEncounterSystem } from './master-encounter-system.js';
+import { CharacterMasterRelationshipSystem } from './character-master-relationship-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -60,6 +61,7 @@ let groundTextureSystem = null;
 let worldSpawnStateSystem = null;
 let masterCatalog = new MasterCatalog();
 let masterEncounterSystem = null;
+let masterRelationshipSystem = null;
 
 
 function syncPlayerInputState() {
@@ -157,6 +159,14 @@ class ZoneScene extends Phaser.Scene {
 
     this.eventSystem = new EventSystem();
     this.audioSystem = new AudioSystem();
+    masterRelationshipSystem = new CharacterMasterRelationshipSystem({
+      onStateChange: (snapshot) => {
+        this.gameState.setCharacterMasterRelationships(snapshot);
+        this.persistGameState();
+      }
+    });
+    masterRelationshipSystem.initialize(restoredState.characterMasterRelationships);
+    this.masterRelationshipSystem = masterRelationshipSystem;
     this.worldGraph = new WorldGraph();
 
     worldSpawnStateSystem = new WorldSpawnStateSystem({
@@ -378,6 +388,7 @@ class ZoneScene extends Phaser.Scene {
       eventSystem: this.eventSystem,
       worldSpawnStateSystem,
       masterCatalog,
+      relationshipSystem: masterRelationshipSystem,
       interactionPanel: this.interactionPanel
     });
     this.masterEncounterSystem = masterEncounterSystem;

@@ -6,13 +6,14 @@ function formatRemaining(ms) {
 }
 
 export class MasterEncounterSystem {
-  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, interactionPanel } = {}) {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel } = {}) {
     this.worldGraph = worldGraph;
     this.zoneSystem = zoneSystem;
     this.interactableSystem = interactableSystem;
     this.eventSystem = eventSystem;
     this.worldSpawnStateSystem = worldSpawnStateSystem;
     this.masterCatalog = masterCatalog;
+    this.relationshipSystem = relationshipSystem;
     this.interactionPanel = interactionPanel;
     this.currentZoneId = null;
     this.renderedIds = new Set();
@@ -70,11 +71,12 @@ export class MasterEncounterSystem {
     const spawn = this.worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
     if (!spawn || Number(spawn.expiresAt) <= Date.now()) return false;
     const master = this.masterCatalog?.get?.(spawn.masterId);
+    const relationship = this.relationshipSystem?.meet?.(spawn.masterId, spawn.encounterId, Date.now());
     const multiplier = Number(spawn.efficiencyMultiplier || master?.efficiencyMultiplier || 1).toFixed(2);
     this.interactionPanel?.showMessage({
       title: (master?.displayName || spawn.displayName || 'Мастер') + ' · ' + spawn.tier,
       text: 'Странствующий мастер направления «Камень». Это persistent Encounter из WorldSpawnState; функциональные модули будут подключаться отдельными слоями.',
-      meta: 'Эффективность ×' + multiplier + ' · осталось ' + formatRemaining(Number(spawn.expiresAt) - Date.now())
+      meta: 'Эффективность ×' + multiplier + ' · встреч: ' + (relationship?.encountersCount || 0) + ' · осталось ' + formatRemaining(Number(spawn.expiresAt) - Date.now())
     });
     return true;
   }
