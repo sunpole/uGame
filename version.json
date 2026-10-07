@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.90",
-  "stage": "eventspot-worldspawn-integration-fix",
+  "version": "0.0.91",
+  "stage": "eventspot-exclusive-occupancy",
   "updated": "2026-10-07",
-  "summary": "EventSpotSystem now actually stores the injected WorldSpawnStateSystem, restoring external Location Tier capacity and Master spot reservations"
+  "summary": "Hard Event Spot exclusivity: one spotId can render/store at most one active generic Event or Master; DEV 8298 checks conflicts"
 }

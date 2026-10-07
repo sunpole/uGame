@@ -207,13 +207,25 @@ export class EventSpotSystem {
     }
 
     const externalTierZone = this.isExternalTierZone(zone);
-    zoneState.events = zoneState.events
-      .filter((event) =>
-        event?.id
-        && spotIds.has(event.spotId)
-        && (!externalTierZone || event.kind !== 'resource')
-      )
+    const beforeFiltered = zoneState.events;
+    const seenSpotIds = new Set();
+    const filteredEvents = beforeFiltered
+      .filter((event) => {
+        if (!event?.id || !spotIds.has(event.spotId)) return false;
+        if (externalTierZone && event.kind === 'resource') return false;
+        if (seenSpotIds.has(event.spotId)) return false;
+        seenSpotIds.add(event.spotId);
+        return true;
+      })
       .slice(0, desired);
+
+    if (
+      filteredEvents.length !== beforeFiltered.length
+      || filteredEvents.some((event, index) => event !== beforeFiltered[index])
+    ) {
+      changed = true;
+    }
+    zoneState.events = filteredEvents;
 
     for (let index = 0; index < zoneState.events.length; index += 1) {
       const event = zoneState.events[index];
@@ -222,7 +234,12 @@ export class EventSpotSystem {
           .filter((_item, otherIndex) => otherIndex !== index)
           .map((item) => item.spotId));
         const available = shuffled(spots.filter((spot) => !usedSpots.has(spot.id)));
-        zoneState.events[index] = this.createEvent(zone, available[0] || spots[0], now);
+        if (available.length) {
+          zoneState.events[index] = this.createEvent(zone, available[0], now);
+        } else {
+          zoneState.events.splice(index, 1);
+          index -= 1;
+        }
         changed = true;
       }
     }
@@ -328,15 +345,39 @@ export class EventSpotSystem {
 
     this.clearRendered();
     const spotsById = new Map((zone.eventSpots || []).map((spot) => [spot.id, spot]));
+    const masterSpots = this.masterSpotIds(zone.id);
+    const renderedSpots = new Set();
 
     for (const event of zoneState.events || []) {
       if (event.consumed) continue;
+      if (masterSpots.has(event.spotId) || renderedSpots.has(event.spotId)) continue;
       const spot = spotsById.get(event.spotId);
       if (!spot) continue;
       const definition = this.eventDefinition(event, spot);
       this.interactableSystem?.add(definition);
       this.renderedIds.add(event.id);
+      renderedSpots.add(event.spotId);
     }
+  }
+
+  spotOccupancyConflicts(zoneId = this.currentZoneId) {
+    const owners = new Map();
+    const conflicts = [];
+    for (const spawn of this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId }) || []) {
+      if (!spawn?.spotId) continue;
+      const owner = 'master:' + spawn.encounterId;
+      if (owners.has(spawn.spotId)) conflicts.push({ spotId: spawn.spotId, first: owners.get(spawn.spotId), second: owner });
+      else owners.set(spawn.spotId, owner);
+    }
+
+    const state = this.state.zones?.[zoneId];
+    for (const event of state?.events || []) {
+      if (!event?.spotId || event.consumed) continue;
+      const owner = 'event:' + event.id;
+      if (owners.has(event.spotId)) conflicts.push({ spotId: event.spotId, first: owners.get(event.spotId), second: owner });
+      else owners.set(event.spotId, owner);
+    }
+    return conflicts;
   }
 
   clearRendered() {
@@ -560,6 +601,17 @@ export class EventSpotSystem {
         handled: true,
         message: `${code} · DEV качество зоны: ${state.qualityLevel}/4 · событий ${state.events.length}`,
         state: 'ok'
+      };
+    }
+
+    if (code === '8298') {
+      const conflicts = this.spotOccupancyConflicts(zone.id);
+      return {
+        handled: true,
+        message: conflicts.length
+          ? '8298 · КОНФЛИКТ SPOT: ' + conflicts.map((item) => item.spotId).join(', ')
+          : '8298 · Event Spot exclusivity OK · конфликтов 0',
+        state: conflicts.length ? 'error' : 'ok'
       };
     }
 
