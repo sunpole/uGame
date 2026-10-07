@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.84",
-  "stage": "spawn-zone-render-fix",
+  "version": "0.0.85",
+  "stage": "master-module-action-menu",
   "updated": "2026-10-07",
-  "summary": "Fix Spawn Zone Debug rendering by reading ZoneSystem currentId instead of nonexistent currentZoneId"
+  "summary": "Master interaction now renders active Encounter modules as explicit action buttons; unimplemented modules stay disabled"
 }

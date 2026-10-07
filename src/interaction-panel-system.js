@@ -143,6 +143,56 @@ export class InteractionPanelSystem {
     }
   }
 
+  showActions({
+    title = 'Действия',
+    text = '',
+    meta = '',
+    metaProvider = null,
+    actions = [],
+    updateIntervalMs = 250
+  } = {}) {
+    this.clear();
+    if (this.titleElement) this.titleElement.textContent = title;
+    if (this.textElement) this.textElement.textContent = text;
+    if (this.closeButton) this.closeButton.textContent = 'Закрыть';
+
+    for (const action of actions) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'interaction-option';
+      button.textContent = action.label || action.id || 'Действие';
+      button.disabled = action.disabled === true;
+      if (action.hint) button.title = action.hint;
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        const result = await action.onSelect?.(action);
+        if (result === false) return;
+      });
+      this.optionsElement?.append(button);
+    }
+
+    if (this.metaElement) this.metaElement.textContent = meta;
+    this.open();
+    this.focusButton(this.navigableButtons()[0] || null);
+
+    if (typeof metaProvider !== 'function') return true;
+    const token = ++this.liveUpdateToken;
+    const refresh = () => {
+      if (token !== this.liveUpdateToken || !this.isOpen()) return;
+      const nextMeta = metaProvider(Date.now());
+      if (nextMeta === null || nextMeta === false) {
+        this.close();
+        return;
+      }
+      if (this.metaElement) this.metaElement.textContent = String(nextMeta ?? '');
+    };
+    refresh();
+    if (token === this.liveUpdateToken && this.isOpen()) {
+      this.liveUpdateTimer = window.setInterval(refresh, Math.max(100, Number(updateIntervalMs) || 250));
+    }
+    return true;
+  }
+
   showRewardOffer({
     title = 'Выбор награды',
     text = '',

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.84**
+Current version: **0.0.85**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.85 | Master Module Action Menu: active Encounter modules are explicit InteractionPanel actions; unfinished modules are disabled |
 | 0.0.84 | Spawn Zone Render Fix: use ZoneSystem.currentId so enabled DEV circles actually render |
 | 0.0.83 | Spawn Zone DEV Default ON: Event Spot radius visualization is visible by default during development |
 | 0.0.82 | External Event Capacity Mix: explicit candidate-QA 50/50 Chest/Portal mix after Resource Event retirement |
@@ -90,6 +91,9 @@ Current version: **0.0.84**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.85
+InteractionPanel получил reusable `showActions()`. Встреча с Master теперь показывает фактические `activeModules` отдельными кнопками вместо одного текстового списка. Пока модуль не имеет functional implementation, кнопка явно disabled и подписана `· позже`. Это UI/API-подготовка к первому Extraction Process; gameplay balance не менялся.
 
 ## 0.0.84
 Исправлен баг DEV-визуализации: `SpawnZoneDebugSystem` обращался к несуществующему `ZoneSystem.currentZoneId`, поэтому при `ВКЛ` и любом radius ничего не рисовалось. Теперь используется реальный `ZoneSystem.currentId` (с fallback через `current.id`). Механики spawn/allocator/wandering не менялись.

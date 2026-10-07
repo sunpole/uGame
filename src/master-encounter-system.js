@@ -238,9 +238,20 @@ export class MasterEncounterSystem {
       if (!current || Number(current.expiresAt) <= now) return null;
       return 'Эффективность ×' + multiplier + ' · встреч: ' + (relationship?.encountersCount || 0) + ' · осталось ' + formatRemaining(Number(current.expiresAt) - now);
     };
-    this.interactionPanel?.showMessage({
+    const actions = moduleIds.map((moduleId) => {
+      const module = this.masterCatalog?.getModule?.(moduleId);
+      const implemented = module?.implemented === true;
+      return {
+        id: moduleId,
+        label: (module?.label || moduleId) + (implemented ? '' : ' · позже'),
+        disabled: !implemented,
+        hint: implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.'
+      };
+    });
+    this.interactionPanel?.showActions({
       title: (master?.displayName || spawn.displayName || 'Мастер') + ' · ' + spawn.tier,
-      text: 'Странствующий мастер направления «Камень». Доступно в этой встрече: ' + (moduleLabels.join(' · ') || 'Добыча') + '. Добыча гарантирована; остальные модули выбираются по Tier. Функциональность Process/Quest/Training подключается следующими патчами.',
+      text: 'Доступные модули этой встречи: ' + (moduleLabels.join(' · ') || 'Добыча') + '. Добыча гарантирована; остальные выбираются по Tier.',
+      actions,
       meta: encounterMeta(Date.now()) || 'Встреча завершена',
       metaProvider: encounterMeta,
       updateIntervalMs: 250
