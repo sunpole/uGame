@@ -248,8 +248,8 @@ quality duration: 150–180 / 120–160 / 75–120 / 60–90 min
 7. `max one T2+ per location` действует отдельно на каждый resourceDirection.
 8. Wandering Event/NPC живёт по собственному таймеру (текущий ориентир 30 минут), независимо от более длинного Location Tier-state.
 9. Backend сейчас не нужен: prototype использует локальный serializable WorldSpawnState; позже модель переносится на backend.
-10. В baseline T4 master каждого resourceDirection постоянно существует где-то в мире как один уникальный странствующий master; обязательного global cooldown после despawn нет.
-11. World/Event layer в будущем может временно override baseline: убрать T4, заблокировать его или разрешить несколько T4 одновременно.
+10. В baseline T4 **не обязан постоянно существовать**. Сначала должен появиться допустимый случайный T4 candidate; cap `T4=1` означает максимум одного одновременного instance, а не targetCount. После despawn отдельного обязательного global cooldown сейчас нет.
+11. World/Event layer в будущем может временно override baseline: дополнительно запретить T4, изменить cap или разрешить несколько T4 одновременно.
 
 ## Осталось подобрать расчётом
 

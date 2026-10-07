@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.79**
+Current version: **0.0.80**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.80 | Master UX Series Audit: document v0.0.73–v0.0.79 and resolve stale T4-always-present contradiction |
 | 0.0.79 | Master Slow Wandering: ~5 px/s movement around Event Spot center using the configured radius |
 | 0.0.78 | Master Slow Facing: very slow idle rotation with long pauses and smooth turn speed |
 | 0.0.77 | Master NPC Visual Shell: Tier-colored top-down humanoid model replaces the circular marker |
@@ -85,6 +86,9 @@ Current version: **0.0.79**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.80
+Документирована серия v0.0.73–v0.0.79, добавлены UGD-0025 и QA-аудит. Устаревшее правило «T4 всегда существует где-то» удалено: актуально random candidate → cap, поэтому T4 может отсутствовать. Нового gameplay/balance в v0.0.80 нет.
 
 ## 0.0.79
 Stone Master теперь очень медленно блуждает вокруг своего Event Spot: паузы между короткими маршрутами, скорость около `5 px/s`, плавный предварительный разворот и граница по radius из `Spawn Zone Debug` (default 150 px). Перед шагом используется текущая world collision-проверка; при препятствии маршрут отменяется и выбирается позже. Пока открыт InteractionPanel, перемещение NPC приостанавливается, но REAL TIME Encounter countdown продолжает идти. DEV teleport по возможности ставит игрока рядом с текущей позицией NPC, а не только рядом с исходным центром.

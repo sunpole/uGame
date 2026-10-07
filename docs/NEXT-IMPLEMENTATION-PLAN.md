@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: Stage C реализован v0.0.60–v0.0.64; Stage D Stone Master runtime реализован prototype v0.0.66–v0.0.70; Stage E DEV World Analyzer реализован v0.0.71; Stage F module availability начат v0.0.72. Текущая точка — ручной QA v0.0.72, затем функциональная Добыча/Process.
+Статус: Stage C–E и module availability реализованы до v0.0.72; v0.0.73–v0.0.79 закрывают Master UX/DEV presentation series. Текущая точка — ручной QA v0.0.80, затем функциональная Добыча/Process.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.72:
+Состояние после v0.0.80:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -47,6 +47,7 @@
 - Stone Master Stage D v0.0.66–v0.0.70: four identities, persistent 30m Encounter, candidate allocator, caps/rotation, visible Tier NPC, character relationship history and active 83xx QA;
 - DEV World Analyzer Stage E v0.0.71;
 - Stage F availability v0.0.72: Extraction guaranteed, Tier-driven module set persisted per Encounter;
+- Master UX/DEV v0.0.73–v0.0.79: live Encounter timer, biome 40/40, Spawn Zone Debug controls, temporary humanoid shell, slow facing/wandering;
 - combat по-прежнему отложен.
 
 Никакой новой большой механики на этом этапе не добавлять.
@@ -234,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.72: persistent Location Intel, Stone Master spawn/caps/rotation/relationships, 83xx, World Analyzer и module persistence.
+1. Провести ручной QA v0.0.80: прежний Stone runtime + live timer + 40/40 textures + Spawn Zone DEV + slow facing/wandering.
 2. После QA реализовать первый функциональный Stage F модуль — **Extraction / Добыча / Process** для Stone Master, ограниченный оставшимся Encounter lifetime.
 3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.

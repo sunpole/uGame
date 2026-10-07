@@ -768,6 +768,36 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0025",
+      "title": "Master presentation, live timer and Spawn Zone DEV",
+      "date": "2026-10-07",
+      "type": "ui-ux",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "master",
+        "npc",
+        "timer",
+        "movement",
+        "roaming",
+        "event-spots",
+        "spawn-zone",
+        "dev-tooling",
+        "biome-texture"
+      ],
+      "path": "records/UGD-0025-master-presentation-spawn-zone-debug.md",
+      "related": [
+        "UGD-0015",
+        "UGD-0016",
+        "UGD-0023",
+        "UGD-0024"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }
