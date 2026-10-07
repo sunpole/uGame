@@ -91,3 +91,7 @@ PNG в этой папке Git-ignored, чтобы локальные бинар
 ## Временной инвариант
 
 Эта серия не меняет систему времени. Game Clock остаётся display-only; Event/Location/NPC/Process/cooldown/session/location timers продолжают использовать REAL TIME.
+
+## Документационный аудит
+
+После реализации выполнен отдельный аудит текущих source-of-truth документов и version markers. Результат: `docs/project-journal/audits/2026-10-07-v0058-documentation-version-audit.md`.

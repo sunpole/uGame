@@ -58,6 +58,8 @@ The Bank object is on `zone-001` (Перекрёсток). The Bank tab is disab
 
 While Bank access is active, stacks can be transferred to/from Bank.
 
+Since **v0.0.54**, Bank and Backpack use the same slot geometry in the shared Inventory panel. The Inventory/Bank window opts out of adaptive UI scaling on normal desktop layouts: slot size remains 100%, and overflow uses internal scrolling instead of shrinking Bank cells.
+
 ## Persistence / migration
 
 Container state is stored inside Game State schema 1 as an additive field.

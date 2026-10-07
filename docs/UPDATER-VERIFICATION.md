@@ -2,8 +2,9 @@
 
 Baseline: 5656bcf75e39dc94ed74ba758faa095510148e0e.
 Reviewed updater Git blob: 7393b7e16cda9ec8729ba59505d6087833ddc08f.
-Method: Codex engineering code-verification, read-only inspection of final
-production source plus existing tests in isolated disposable repositories.
+Method: Codex engineering code-verification, read-only inspection of the updater source at that historical baseline plus existing tests in isolated disposable repositories.
+
+> **Historical scope notice (added 2026-10-07):** this report proves the reviewed 2026-09-14 updater baseline, not every later addition. The current updater also contains Simulation Lab integration and the v0.0.57 local biome-texture import command. Those later paths are documented in `README.md` and `docs/BIOME-GROUND-TEXTURES.md`; the original security findings below should not be misread as a fresh execution audit of the current blob.
 
 ## Confirmed
 

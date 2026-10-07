@@ -37,7 +37,10 @@
 - `data/world.json` — источник определений текущих зон, стабильных zone id, entry id и transition id.
 - `src/world-graph.js` — загрузка, проверка и разрешение стабильных/legacy id.
 - `src/zone-system.js` — runtime-построение Phaser-зоны по данным WorldGraph; он не должен снова становиться источником списка зон и связей между ними.
-- `docs/WORLD-GRAPH.md` — текущая техническая документация WorldGraph и миграции сохранений.
+- `docs/WORLD-GRAPH.md` — текущая техническая документация WorldGraph, responsive coordinate model и миграции сохранений.
+- `data/biome-textures.json` — source config для шести biome/city floor slots; browser-local DEV overrides не заменяют этот файл как default source.
+- `src/ground-texture-system.js` — runtime пола и настройки; `docs/BIOME-GROUND-TEXTURES.md` — техническая документация.
+- `Biome Visual Lab · DEV` — временный admin UI. Его можно позже скрыть, но нельзя связывать жизнеспособность runtime GroundTextureSystem с наличием этой кнопки.
 - `docs/SIMULATION-LAB.md` — источник правил для headless-симулятора баланса, форматов отчётов и запуска. Если задача касается Location Tier, distance pressure, world caps, rotation или probability balance, сначала сверить этот документ и `UGD-0017`.
 - Не переименовывать уже используемый стабильный id только ради более красивого имени. Отображаемое название и техническая идентичность — разные вещи.
 - При необходимости заменить id использовать явную миграцию/alias, а не молча ломать старые сохранения.
@@ -158,3 +161,6 @@
 - Mouse/AnyDesk controls должны вызывать тот же action path, что keyboard.
 - Text selection default OFF; input/textarea/select/contenteditable selectable always; toggle доступен в Project Hub.
 - Standalone Journal/Simulation HTML pages должны подключать shared project chrome для самодостаточных скриншотов.
+- Workspace viewport должен занимать всю центральную область. Не возвращать 16:9 letterbox ради удобства реализации.
+- Responsive camera не должна растягивать персонажа/NPC/Vision: дополнительная ширина экрана означает больше world-space, а не неравномерный CSS/Phaser scale.
+- Inventory/Bank slots не уменьшать ради fit; на desktop сохранять нормальный размер и использовать внутренний scroll при переполнении.
