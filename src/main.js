@@ -27,6 +27,7 @@ import { ChromeHeaderSystem } from './chrome-header-system.js';
 import { ActionRouter } from './action-router.js';
 import { InterfaceSettingsSystem } from './interface-settings.js';
 import { UIWindowManager } from './ui-window-manager.js';
+import { ResponsiveViewportSystem } from './responsive-viewport-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -119,6 +120,7 @@ class ZoneScene extends Phaser.Scene {
     this.transitionLockUntil = 0;
     this.wasDashing = false;
     this.worldReady = false;
+    this.viewportSystem = null;
   }
 
   create() {
@@ -155,6 +157,15 @@ class ZoneScene extends Phaser.Scene {
       player: this.player,
       radius: VISIBILITY_RADIUS
     });
+
+    this.viewportSystem = new ResponsiveViewportSystem({
+      scene: this,
+      host: this.gameElement,
+      baseWidth: WIDTH,
+      baseHeight: HEIGHT,
+      onChange: (metrics, previous) => this.handleViewportChange(metrics, previous)
+    });
+    const initialViewport = this.viewportSystem.start();
 
     classSystem = new ClassSystem({ visionSystem, eventSystem: this.eventSystem });
 
@@ -293,8 +304,10 @@ class ZoneScene extends Phaser.Scene {
 
     this.zoneSystem = new ZoneSystem({
       scene: this,
-      width: WIDTH,
-      height: HEIGHT,
+      width: initialViewport.worldWidth,
+      height: initialViewport.worldHeight,
+      baseWidth: WIDTH,
+      baseHeight: HEIGHT,
       player: this.player,
       worldGraph: this.worldGraph,
       interactableSystem: this.interactableSystem,
@@ -331,8 +344,7 @@ class ZoneScene extends Phaser.Scene {
     chromeHeaderSystem?.setResources(resourceSystem.snapshot());
     this.initializeWorld(restoredState);
 
-    this.scale.on('resize', () => visionSystem?.update());
-    window.addEventListener('resize', () => visionSystem?.update());
+    this.scale.on('resize', () => this.viewportSystem?.schedule());
 
     this.dialogueSystem.load().catch(() => {
       if (this.questStatusElement) this.questStatusElement.textContent = 'Диалоги не загрузились';
@@ -340,6 +352,20 @@ class ZoneScene extends Phaser.Scene {
     questSystem.load('./data/quests.json', { restoreState: restoredState.quests }).catch(() => {
       if (this.questStatusElement) this.questStatusElement.textContent = 'Квесты не загрузились';
     });
+  }
+
+  handleViewportChange(metrics, previous = {}) {
+    visionSystem?.setWorldSize(metrics.worldWidth, metrics.worldHeight);
+    if (!this.zoneSystem) return;
+
+    const oldWidth = Number(this.zoneSystem.width) || WIDTH;
+    this.zoneSystem.setViewport(metrics.worldWidth, metrics.worldHeight);
+
+    if (this.worldReady && Math.abs(metrics.worldWidth - oldWidth) > 0.5) {
+      const previousOffset = Math.max(0, (oldWidth - WIDTH) / 2);
+      const nextOffset = Math.max(0, (metrics.worldWidth - WIDTH) / 2);
+      this.zoneSystem.relayout({ shiftX: nextOffset - previousOffset });
+    }
   }
 
   async initializeWorld(restoredState) {
@@ -525,7 +551,9 @@ class ZoneScene extends Phaser.Scene {
 
   canMoveTo(x, y) {
     const bounds = this.playerBounds(x, y);
-    if (bounds.left < 0 || bounds.right > WIDTH || bounds.top < 0 || bounds.bottom > HEIGHT) return false;
+    const worldWidth = this.zoneSystem?.width || WIDTH;
+    const worldHeight = this.zoneSystem?.height || HEIGHT;
+    if (bounds.left < 0 || bounds.right > worldWidth || bounds.top < 0 || bounds.bottom > worldHeight) return false;
     if (this.zoneSystem?.walls?.some((wall) => this.overlaps(bounds, this.objectBounds(wall)))) return false;
     return true;
   }
@@ -609,8 +637,8 @@ new Phaser.Game({
   backgroundColor: '#0b0d10',
   scene: [ZoneScene],
   scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.NO_CENTER
   }
 });
 

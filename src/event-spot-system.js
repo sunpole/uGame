@@ -64,6 +64,11 @@ export class EventSpotSystem {
     this.eventSystem?.on('zone:leave', () => {
       this.clearRendered();
     });
+
+    this.eventSystem?.on('zone:relayout', () => {
+      if (!this.initialized) return;
+      this.renderCurrentZone();
+    });
   }
 
   initialize(snapshot = null) {
@@ -199,12 +204,13 @@ export class EventSpotSystem {
   }
 
   eventDefinition(event, spot) {
+    const mappedSpot = this.zoneSystem?.mapPoint?.(spot) || spot;
     const common = {
       id: event.id,
       dynamicEventId: event.id,
       dynamicKind: event.kind,
-      x: spot.x,
-      y: spot.y,
+      x: mappedSpot.x,
+      y: mappedSpot.y,
       expiresAt: Number(event.expiresAt),
       trigger: 'action',
       interactionRadius: 62,

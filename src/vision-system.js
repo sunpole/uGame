@@ -83,6 +83,22 @@ export class VisionSystem {
     this.host.appendChild(this.svg);
   }
 
+  setWorldSize(width, height = this.worldHeight) {
+    const nextWidth = Math.max(1, Number(width) || this.worldWidth);
+    const nextHeight = Math.max(1, Number(height) || this.worldHeight);
+    this.worldWidth = nextWidth;
+    this.worldHeight = nextHeight;
+
+    this.svg?.setAttribute('viewBox', `0 0 ${nextWidth} ${nextHeight}`);
+    this.mask?.setAttribute('width', String(nextWidth));
+    this.mask?.setAttribute('height', String(nextHeight));
+    this.maskBase?.setAttribute('width', String(nextWidth));
+    this.maskBase?.setAttribute('height', String(nextHeight));
+    this.darknessRect?.setAttribute('width', String(nextWidth));
+    this.darknessRect?.setAttribute('height', String(nextHeight));
+    this.update();
+  }
+
   setDirection(dx, dy) {
     const length = Math.hypot(dx, dy);
     if (!length) return;

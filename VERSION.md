@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.55**
+Current version: **0.0.56**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.56 | Responsive World Camera: широкий экран показывает больше мира без искажения |
 | 0.0.55 | Full Workspace Game Viewport: игровое поле занимает всю центральную область |
 | 0.0.54 | Inventory/Bank Normal Size: одинаковые ячейки, без лишнего desktop scale |
 | 0.0.53 | Game Clock seconds + visible ×12 speed; UI bounds series complete |
@@ -61,6 +62,9 @@ Current version: **0.0.55**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.56
+Phaser переведён с FIT на RESIZE, а ResponsiveViewportSystem сохраняет базовую высоту мира 540 units и рассчитывает единый camera zoom по высоте. Дополнительная ширина превращается в дополнительные world units слева/справа, а не в растяжение. Старый 960-wide layout центрируется внутри расширенного мира; boundaries/portals следуют краям viewport, Vision SVG получает тот же world size, dynamic Event Spots корректно remap-ятся при relayout.
 
 ## 0.0.55
 Удалено прежнее 16:9 letterbox-вписывание DOM-контейнера. `#game` теперь занимает всю доступную площадь Workspace между постоянными Header/Footer; боковые пустые поля больше не резервируются. Геометрическое сохранение пропорций мира выполняется следующим патчем камерой, а не CSS-stretch.

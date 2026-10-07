@@ -3,6 +3,8 @@ export class ZoneSystem {
     scene,
     width,
     height,
+    baseWidth = width,
+    baseHeight = height,
     player,
     worldGraph,
     interactableSystem,
@@ -14,6 +16,8 @@ export class ZoneSystem {
     this.scene = scene;
     this.width = width;
     this.height = height;
+    this.baseWidth = baseWidth;
+    this.baseHeight = baseHeight;
     this.player = player;
     this.worldGraph = worldGraph;
     this.interactableSystem = interactableSystem;
@@ -31,17 +35,39 @@ export class ZoneSystem {
     return this.currentId ? this.worldGraph?.getZone(this.currentId) : null;
   }
 
-  build(zoneValue = this.currentId || this.worldGraph?.start?.zoneId, entryId = null) {
-    const previous = this.current;
-    if (this.objects.length || this.interactableSystem?.items?.length) {
-      this.eventSystem?.emit('zone:leave', { zone: previous });
-    }
+  get offsetX() {
+    return Math.max(0, (this.width - this.baseWidth) / 2);
+  }
 
-    const zone = this.worldGraph?.getZone(zoneValue) || this.worldGraph?.getZone(this.worldGraph?.start?.zoneId);
-    if (!zone) throw new Error(`Unknown zone: ${String(zoneValue)}`);
+  setViewport(width, height = this.baseHeight) {
+    this.width = Math.max(this.baseWidth, Number(width) || this.baseWidth);
+    this.height = Math.max(1, Number(height) || this.baseHeight);
+  }
 
+  mapX(value) {
+    return Number(value || 0) + this.offsetX;
+  }
+
+  mapPoint(point = {}) {
+    return {
+      ...point,
+      x: this.mapX(point.x),
+      y: Number(point.y || 0)
+    };
+  }
+
+  mapDefinition(definition = {}) {
+    return {
+      ...definition,
+      x: this.mapX(definition.x),
+      y: Number(definition.y || 0),
+      labelX: Number.isFinite(Number(definition.labelX)) ? this.mapX(definition.labelX) : definition.labelX,
+      labelY: definition.labelY
+    };
+  }
+
+  layoutZone(zone) {
     this.clear();
-    this.currentId = zone.id;
     this.walls = [];
 
     const transitions = this.worldGraph.getTransitionsFrom(zone.id);
@@ -53,27 +79,62 @@ export class ZoneSystem {
     this.makeBoundary('right', openSides.has('right'));
 
     for (const wall of zone.walls || []) {
-      this.makeWall(wall.x, wall.y, wall.width, wall.height);
+      this.makeWall(this.mapX(wall.x), wall.y, wall.width, wall.height);
     }
 
     const interactables = (zone.interactables || []).map((definition) => ({
-      ...definition,
+      ...this.mapDefinition(definition),
       used: Boolean(definition.once && this.isInteractableUsed?.(definition.id))
     }));
     const portals = transitions.map((transition) => this.portalDefinition(transition));
     this.interactableSystem?.load([...interactables, ...portals]);
+  }
+
+  build(zoneValue = this.currentId || this.worldGraph?.start?.zoneId, entryId = null) {
+    const previous = this.current;
+    if (this.objects.length || this.interactableSystem?.items?.length) {
+      this.eventSystem?.emit('zone:leave', { zone: previous });
+    }
+
+    const zone = this.worldGraph?.getZone(zoneValue) || this.worldGraph?.getZone(this.worldGraph?.start?.zoneId);
+    if (!zone) throw new Error(`Unknown zone: ${String(zoneValue)}`);
+
+    this.currentId = zone.id;
+    this.layoutZone(zone);
 
     const resolvedEntry = this.worldGraph.resolveEntryId(zone.id, entryId);
-    const spawn = this.worldGraph.getEntry(zone.id, resolvedEntry) || { x: 96, y: this.height / 2 };
+    const rawSpawn = this.worldGraph.getEntry(zone.id, resolvedEntry) || { x: 96, y: this.height / 2 };
+    const spawn = this.resolveSpawn(rawSpawn, resolvedEntry);
     this.entryId = resolvedEntry;
     this.player.setPosition(spawn.x, spawn.y);
 
+    const transitions = this.worldGraph.getTransitionsFrom(zone.id);
     const entryLabel = this.sideLabel(resolvedEntry);
     const exits = [...new Set(transitions.map((transition) => this.sideLabel(transition.from?.side)))];
     const exitLabel = exits.length ? exits.join(', ') : 'нет';
     this.onStatus?.(`${zone.name} · ${zone.id} · вход ${entryLabel} · выход ${exitLabel}`);
     this.onZoneChange?.(zone);
     this.eventSystem?.emit('zone:enter', { zone, entry: resolvedEntry });
+    return zone;
+  }
+
+  resolveSpawn(spawn, entryId) {
+    if (entryId === 'left') return { x: 96, y: spawn.y };
+    if (entryId === 'right') return { x: this.width - 96, y: spawn.y };
+    if (entryId === 'top' || entryId === 'bottom') return { x: this.width / 2, y: spawn.y };
+    return this.mapPoint(spawn);
+  }
+
+  relayout({ shiftX = 0 } = {}) {
+    const zone = this.current;
+    if (!zone) return null;
+    if (this.player && Number.isFinite(Number(shiftX)) && shiftX !== 0) {
+      const half = 14;
+      const nextX = Math.max(half, Math.min(this.width - half, this.player.x + shiftX));
+      this.player.setPosition(nextX, this.player.y);
+    }
+    this.layoutZone(zone);
+    this.eventSystem?.emit('zone:relayout', { zone, shiftX });
     return zone;
   }
 
