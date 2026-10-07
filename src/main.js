@@ -33,6 +33,7 @@ import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
 import { MasterCatalog } from './master-catalog.js';
 import { MasterEncounterSystem } from './master-encounter-system.js';
 import { CharacterMasterRelationshipSystem } from './character-master-relationship-system.js';
+import { MasterProcessSystem } from './master-process-system.js';
 import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
 const WIDTH = 960;
@@ -63,6 +64,7 @@ let worldSpawnStateSystem = null;
 let masterCatalog = new MasterCatalog();
 let masterEncounterSystem = null;
 let masterRelationshipSystem = null;
+let masterProcessSystem = null;
 let spawnZoneDebugSystem = null;
 
 
@@ -297,6 +299,13 @@ class ZoneScene extends Phaser.Scene {
       windowManager: uiWindowManager
     });
 
+    masterProcessSystem = new MasterProcessSystem({
+      relationshipSystem: masterRelationshipSystem,
+      interactionPanel: this.interactionPanel,
+      worldSpawnStateSystem
+    });
+    this.masterProcessSystem = masterProcessSystem;
+
     this.inventoryPanel = new InventoryPanelSystem({
       eventSystem: this.eventSystem,
       containerSystem,
@@ -401,6 +410,7 @@ class ZoneScene extends Phaser.Scene {
       masterCatalog,
       relationshipSystem: masterRelationshipSystem,
       interactionPanel: this.interactionPanel,
+      processSystem: masterProcessSystem,
       canMoveTo: (x, y) => this.canMoveTo(x, y),
       getWanderRadius: () => spawnZoneDebugSystem?.getSettings?.().radiusPx || 150
     });
@@ -454,6 +464,7 @@ class ZoneScene extends Phaser.Scene {
       await Promise.all([
         biomeTextureSettingsSystem.load(),
         masterCatalog.load(),
+        masterProcessSystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()

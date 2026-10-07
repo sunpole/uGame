@@ -8,7 +8,7 @@
       "id": "extraction",
       "label": "Добыча",
       "kind": "process",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "dialogue",

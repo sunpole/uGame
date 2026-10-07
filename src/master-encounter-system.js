@@ -6,7 +6,7 @@ function formatRemaining(ms) {
 }
 
 export class MasterEncounterSystem {
-  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, canMoveTo, getWanderRadius } = {}) {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, processSystem, canMoveTo, getWanderRadius } = {}) {
     this.worldGraph = worldGraph;
     this.zoneSystem = zoneSystem;
     this.interactableSystem = interactableSystem;
@@ -15,6 +15,7 @@ export class MasterEncounterSystem {
     this.masterCatalog = masterCatalog;
     this.relationshipSystem = relationshipSystem;
     this.interactionPanel = interactionPanel;
+    this.processSystem = processSystem;
     this.canMoveTo = canMoveTo;
     this.getWanderRadius = getWanderRadius;
     this.currentZoneId = null;
@@ -245,7 +246,10 @@ export class MasterEncounterSystem {
         id: moduleId,
         label: (module?.label || moduleId) + (implemented ? '' : ' · позже'),
         disabled: !implemented,
-        hint: implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.'
+        hint: implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.',
+        onSelect: moduleId === 'extraction' && implemented
+          ? () => this.processSystem?.openExtraction?.(spawn)
+          : null
       };
     });
     this.interactionPanel?.showActions({

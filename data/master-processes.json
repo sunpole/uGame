@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-07",
+  "status": "candidate-qa",
+  "note": "QA-only values for validating the first persistent Extraction Process. Not final economy.",
+  "profiles": [
+    {
+      "id": "stone-extraction-basic",
+      "moduleId": "extraction",
+      "resourceDirectionId": "stone",
+      "label": "Добыча камня",
+      "durationSeconds": 60,
+      "baseReward": {
+        "resourceId": "stone",
+        "amount": 10
+      }
+    }
+  ]
+}

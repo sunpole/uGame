@@ -29,22 +29,48 @@ export class CharacterMasterRelationshipSystem {
     return value ? clone(value) : null;
   }
 
-  meet(masterId, encounterId, now = Date.now()) {
+  ensureMaster(masterId) {
     if (!masterId) return null;
     if (!this.state.masters) this.state.masters = {};
-    const current = this.state.masters[masterId] || {
-      masterId,
-      relationshipXp: 0,
-      relationshipLevel: 0,
-      encountersCount: 0,
-      completedNpcQuestIds: [],
-      dialogueFlags: [],
-      firstMetAt: null,
-      lastMetAt: null,
-      specialFlags: [],
-      pendingRewards: [],
-      seenEncounterIds: []
-    };
+    if (!this.state.masters[masterId]) {
+      this.state.masters[masterId] = {
+        masterId,
+        relationshipXp: 0,
+        relationshipLevel: 0,
+        encountersCount: 0,
+        completedNpcQuestIds: [],
+        dialogueFlags: [],
+        firstMetAt: null,
+        lastMetAt: null,
+        specialFlags: [],
+        pendingRewards: [],
+        seenEncounterIds: [],
+        activeProcess: null
+      };
+    }
+    const current = this.state.masters[masterId];
+    if (!Array.isArray(current.pendingRewards)) current.pendingRewards = [];
+    if (!Array.isArray(current.seenEncounterIds)) current.seenEncounterIds = [];
+    if (!Object.prototype.hasOwnProperty.call(current, 'activeProcess')) current.activeProcess = null;
+    return current;
+  }
+
+  getActiveProcess(masterId) {
+    const current = this.state.masters?.[masterId];
+    return current?.activeProcess ? clone(current.activeProcess) : null;
+  }
+
+  startProcess(masterId, process) {
+    const current = this.ensureMaster(masterId);
+    if (!current || current.activeProcess || !process?.processId) return null;
+    current.activeProcess = clone(process);
+    this.publish();
+    return clone(current.activeProcess);
+  }
+
+  meet(masterId, encounterId, now = Date.now()) {
+    if (!masterId) return null;
+    const current = this.ensureMaster(masterId);
 
     const seen = Array.isArray(current.seenEncounterIds) ? current.seenEncounterIds : [];
     const firstEncounter = encounterId && !seen.includes(encounterId);

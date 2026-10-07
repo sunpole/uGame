@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.85**
+Current version: **0.0.86**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.86 | Persistent Stone Extraction Process: start a REAL TIME QA process from Master; startedAt/endsAt persist in Character↔Master state |
 | 0.0.85 | Master Module Action Menu: active Encounter modules are explicit InteractionPanel actions; unfinished modules are disabled |
 | 0.0.84 | Spawn Zone Render Fix: use ZoneSystem.currentId so enabled DEV circles actually render |
 | 0.0.83 | Spawn Zone DEV Default ON: Event Spot radius visualization is visible by default during development |
@@ -91,6 +92,9 @@ Current version: **0.0.85**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.86
+Добавлен первый functional `Добыча / Process`: Master module `extraction` включён, а `MasterProcessSystem` запускает persistent REAL TIME process через Character↔Master state. QA profile пока один: Stone, до 60 секунд, при этом duration автоматически не превышает оставшееся время Encounter. `startedAt`, `endsAt`, Encounter expiry и reward inputs сохраняются. Числа процесса помечены `candidate-QA`, не финальный баланс.
 
 ## 0.0.85
 InteractionPanel получил reusable `showActions()`. Встреча с Master теперь показывает фактические `activeModules` отдельными кнопками вместо одного текстового списка. Пока модуль не имеет functional implementation, кнопка явно disabled и подписана `· позже`. Это UI/API-подготовка к первому Extraction Process; gameplay balance не менялся.

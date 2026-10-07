@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.85",
-  "stage": "master-module-action-menu",
+  "version": "0.0.86",
+  "stage": "persistent-stone-extraction-process",
   "updated": "2026-10-07",
-  "summary": "Master interaction now renders active Encounter modules as explicit action buttons; unimplemented modules stay disabled"
+  "summary": "First Stone Extraction Process can be started from Master and persists startedAt/endsAt in Character-Master state"
 }
