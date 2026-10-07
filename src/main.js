@@ -29,6 +29,7 @@ import { InterfaceSettingsSystem } from './interface-settings.js';
 import { UIWindowManager } from './ui-window-manager.js';
 import { ResponsiveViewportSystem } from './responsive-viewport-system.js';
 import { BiomeTextureSettingsSystem, GroundTextureSystem, preloadGroundTextures } from './ground-texture-system.js';
+import { WorldSpawnStateSystem } from './world-spawn-state-system.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -54,6 +55,7 @@ let interfaceSettingsSystem = null;
 let uiWindowManager = null;
 let biomeTextureSettingsSystem = new BiomeTextureSettingsSystem();
 let groundTextureSystem = null;
+let worldSpawnStateSystem = null;
 
 
 function syncPlayerInputState() {
@@ -106,6 +108,7 @@ function executeDevCode(code) {
     resourceSystem,
     questSystem,
     eventSpotSystem,
+    worldSpawnStateSystem,
     saveSystem
   ];
 
@@ -151,6 +154,16 @@ class ZoneScene extends Phaser.Scene {
     this.eventSystem = new EventSystem();
     this.audioSystem = new AudioSystem();
     this.worldGraph = new WorldGraph();
+
+    worldSpawnStateSystem = new WorldSpawnStateSystem({
+      worldGraph: this.worldGraph,
+      eventSystem: this.eventSystem,
+      onStateChange: (snapshot) => {
+        this.gameState.setWorldSpawnState(snapshot);
+        this.persistGameState();
+      }
+    });
+    this.worldSpawnStateSystem = worldSpawnStateSystem;
 
     this.player = this.add
       .rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7)
@@ -400,6 +413,7 @@ class ZoneScene extends Phaser.Scene {
       });
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
+      worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
       this.persistGameState();
 

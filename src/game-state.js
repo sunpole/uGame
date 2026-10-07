@@ -39,6 +39,39 @@ function cleanDynamicEvents(value) {
   }
 }
 
+function cleanWorldSpawnState(value) {
+  const fallback = {
+    schemaVersion: 1,
+    zones: {},
+    activeMasterSpawns: [],
+    activeCountsByResourceAndTier: {},
+    rotations: {},
+    updatedAt: 0
+  };
+
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return fallback;
+
+  try {
+    const copy = JSON.parse(JSON.stringify(value));
+    return {
+      schemaVersion: 1,
+      zones: copy.zones && typeof copy.zones === 'object' && !Array.isArray(copy.zones) ? copy.zones : {},
+      activeMasterSpawns: Array.isArray(copy.activeMasterSpawns) ? copy.activeMasterSpawns : [],
+      activeCountsByResourceAndTier: copy.activeCountsByResourceAndTier
+        && typeof copy.activeCountsByResourceAndTier === 'object'
+        && !Array.isArray(copy.activeCountsByResourceAndTier)
+          ? copy.activeCountsByResourceAndTier
+          : {},
+      rotations: copy.rotations && typeof copy.rotations === 'object' && !Array.isArray(copy.rotations)
+        ? copy.rotations
+        : {},
+      updatedAt: Number.isFinite(Number(copy.updatedAt)) ? Number(copy.updatedAt) : 0
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 function cleanContainers(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return { schemaVersion: 1, containers: {} };
@@ -80,7 +113,8 @@ export function createDefaultGameState() {
     quests: null,
     dynamicEvents: {
       zones: {}
-    }
+    },
+    worldSpawnState: cleanWorldSpawnState(null)
   };
 }
 
@@ -110,7 +144,8 @@ export function normalizeGameState(input) {
     inventory: cleanCounts(input.inventory),
     containers: cleanContainers(input.containers),
     quests: cleanQuestState(input.quests),
-    dynamicEvents: cleanDynamicEvents(input.dynamicEvents)
+    dynamicEvents: cleanDynamicEvents(input.dynamicEvents),
+    worldSpawnState: cleanWorldSpawnState(input.worldSpawnState)
   };
 }
 
@@ -164,5 +199,9 @@ export class GameState {
 
   setDynamicEvents(snapshot) {
     this.state.dynamicEvents = cleanDynamicEvents(snapshot);
+  }
+
+  setWorldSpawnState(snapshot) {
+    this.state.worldSpawnState = cleanWorldSpawnState(snapshot);
   }
 }

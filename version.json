@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.59",
-  "stage": "biome-texture-defaults-40",
+  "version": "0.0.60",
+  "stage": "persistent-world-spawn-state",
   "updated": "2026-10-07",
-  "summary": "All six biome texture defaults synchronized to user-approved 40 percent scale"
+  "summary": "Serializable local WorldSpawnState foundation persisted in Game State"
 }
