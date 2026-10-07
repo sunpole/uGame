@@ -87,7 +87,7 @@ export class SpawnZoneDebugSystem {
     this.clear();
     if (!this.settings.enabled || !this.graphics) return;
 
-    const zoneId = this.zoneSystem?.currentZoneId;
+    const zoneId = this.zoneSystem?.currentId || this.zoneSystem?.current?.id || null;
     const zone = zoneId ? this.worldGraph?.getZone?.(zoneId) : null;
     if (!zone) return;
 

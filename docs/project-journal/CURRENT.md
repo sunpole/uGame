@@ -85,7 +85,7 @@
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.83: проверить отсутствие «Неизвестного ресурса» во внешних зонах, заполнение generic slots только Chest/Portal, видимые по умолчанию Spawn Zone circles, а также прежние live timer / NPC wandering / collision / teleport проверки.
+- Выполнить ручной desktop QA v0.0.84: проверить отсутствие «Неизвестного ресурса» во внешних зонах, Chest/Portal generic slots, фактическую отрисовку Spawn Zone circles после исправления `currentId`, а также прежние live timer / NPC wandering / collision / teleport проверки.
 - Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier/Master Encounter остаются REAL TIME до отдельного решения.
 - Следующий принятый content-first шаг после QA — Stage F функциональная **Добыча/Process** у Stone Master; остальные Dialogue/Quest/Analytics/Training/Event подключать отдельными патчами, не объявляя placeholders готовой механикой.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.

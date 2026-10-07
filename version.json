@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.83",
-  "stage": "spawn-zone-dev-default-on",
+  "version": "0.0.84",
+  "stage": "spawn-zone-render-fix",
   "updated": "2026-10-07",
-  "summary": "Spawn Zone Debug is enabled by default during active development after external Resource Event cleanup"
+  "summary": "Fix Spawn Zone Debug rendering by reading ZoneSystem currentId instead of nonexistent currentZoneId"
 }

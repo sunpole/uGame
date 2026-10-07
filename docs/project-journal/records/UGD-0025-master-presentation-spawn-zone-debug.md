@@ -47,3 +47,7 @@ Flags: needs-test
 ## v0.0.83 — development DEV baseline
 
 На этапе активной разработки `Spawn Zone Debug` теперь default **ON**, center markers ON, radius 150 px. Это временная DEV-норма для визуальной проверки Event Spot и wandering NPC; перед production слой можно снова сделать OFF. Явная browser-local настройка пользователя сохраняет приоритет.
+
+## v0.0.84 — Spawn Zone render bugfix
+
+Исправлена интеграционная ошибка имени свойства: DEV renderer теперь получает текущую зону через `ZoneSystem.currentId` / `current.id`. До исправления настройки UI работали и сохранялись, но renderer всегда видел `zoneId = undefined`, поэтому окружности не появлялись.

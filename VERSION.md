@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.83**
+Current version: **0.0.84**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.84 | Spawn Zone Render Fix: use ZoneSystem.currentId so enabled DEV circles actually render |
 | 0.0.83 | Spawn Zone DEV Default ON: Event Spot radius visualization is visible by default during development |
 | 0.0.82 | External Event Capacity Mix: explicit candidate-QA 50/50 Chest/Portal mix after Resource Event retirement |
 | 0.0.81 | Retire legacy external Resource Events: external Location Tier resource interaction goes through Master NPC |
@@ -89,6 +90,9 @@ Current version: **0.0.83**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.84
+Исправлен баг DEV-визуализации: `SpawnZoneDebugSystem` обращался к несуществующему `ZoneSystem.currentZoneId`, поэтому при `ВКЛ` и любом radius ничего не рисовалось. Теперь используется реальный `ZoneSystem.currentId` (с fallback через `current.id`). Механики spawn/allocator/wandering не менялись.
 
 ## 0.0.83
 `Spawn Zone Debug` теперь включён по умолчанию на этапе активной разработки: center markers ON, radius 150 px. Это делает Event Spot / wandering boundary сразу видимыми после чистого запуска. Явная сохранённая browser-local настройка остаётся сильнее default. Перед production слой можно вернуть в default OFF.
