@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.82",
-  "stage": "external-event-capacity-mix",
+  "version": "0.0.83",
+  "stage": "spawn-zone-dev-default-on",
   "updated": "2026-10-07",
-  "summary": "External generic Event slots use an explicit 50/50 chest/portal QA mix so removing Resource Events does not create empty slots or a 75% chest bias"
+  "summary": "Spawn Zone Debug is enabled by default during active development after external Resource Event cleanup"
 }

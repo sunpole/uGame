@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-07  
-Статус: Stage C–E и module availability реализованы до v0.0.72; v0.0.73–v0.0.79 закрывают Master UX/DEV presentation series. Текущая точка — ручной QA v0.0.80, затем функциональная Добыча/Process.
+Статус: Stage C–E и module availability реализованы до v0.0.72; v0.0.73–v0.0.79 закрывают Master UX/DEV presentation series; v0.0.81–v0.0.83 убирают parallel Resource Event и усиливают DEV spawn-zone QA. Текущая точка — ручной QA v0.0.83, затем функциональная Добыча/Process.
 
 ## Цель
 
@@ -235,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.80: прежний Stone runtime + live timer + 40/40 textures + Spawn Zone DEV + slow facing/wandering.
+1. Провести ручной QA v0.0.83: прежний Stone runtime + live timer + 40/40 textures + Spawn Zone DEV + slow facing/wandering + отсутствие external legacy Resource Event.
 2. После QA реализовать первый функциональный Stage F модуль — **Extraction / Добыча / Process** для Stone Master, ограниченный оставшимся Encounter lifetime.
 3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.

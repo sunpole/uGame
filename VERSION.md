@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.82**
+Current version: **0.0.83**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.83 | Spawn Zone DEV Default ON: Event Spot radius visualization is visible by default during development |
 | 0.0.82 | External Event Capacity Mix: explicit candidate-QA 50/50 Chest/Portal mix after Resource Event retirement |
 | 0.0.81 | Retire legacy external Resource Events: external Location Tier resource interaction goes through Master NPC |
 | 0.0.80 | Master UX Series Audit: document v0.0.73–v0.0.79 and resolve stale T4-always-present contradiction |
@@ -88,6 +89,9 @@ Current version: **0.0.82**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.83
+`Spawn Zone Debug` теперь включён по умолчанию на этапе активной разработки: center markers ON, radius 150 px. Это делает Event Spot / wandering boundary сразу видимыми после чистого запуска. Явная сохранённая browser-local настройка остаётся сильнее default. Перед production слой можно вернуть в default OFF.
 
 ## 0.0.82
 После удаления external Resource Event оставшиеся generic slots больше не наследуют старое соотношение 30:10 как скрытый перекос 75% сундуков. Для внешних Location Tier-зон введён явный **candidate-QA** mix `Chest 50% / Event Portal 50%`. Capacity по-прежнему заполняется до `Location capacity - active masters`, пока хватает Event Spot; это не финальный баланс и не меняет Master probability/caps/rotation.

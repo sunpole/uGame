@@ -1,7 +1,7 @@
 const DEFAULT_STORAGE_KEY = 'ugame.spawn-zone-debug.v1';
 
 const DEFAULT_SETTINGS = Object.freeze({
-  enabled: false,
+  enabled: true,
   showCenters: true,
   radiusPx: 150
 });

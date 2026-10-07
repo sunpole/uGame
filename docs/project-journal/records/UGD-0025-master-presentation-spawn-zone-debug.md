@@ -34,7 +34,7 @@ Flags: needs-test
 
 ## Следующий шаг
 
-Ручной browser QA v0.0.80, затем функциональная Stone Extraction / Process.
+Ручной browser QA v0.0.83, затем функциональная Stone Extraction / Process.
 
 ## v0.0.81 — legacy external Resource Event retired
 
@@ -43,3 +43,7 @@ Flags: needs-test
 ## v0.0.82 — external generic capacity / mix
 
 После retirement resource-event внешний generic pool задан отдельно как candidate-QA `Chest 50% / Event Portal 50%`. Это устраняет систематический 75% chest bias, который получился бы при простой нормализации старых 30/10 weights, и сохраняет заполнение capacity. Значения не считаются финальным балансом.
+
+## v0.0.83 — development DEV baseline
+
+На этапе активной разработки `Spawn Zone Debug` теперь default **ON**, center markers ON, radius 150 px. Это временная DEV-норма для визуальной проверки Event Spot и wandering NPC; перед production слой можно снова сделать OFF. Явная browser-local настройка пользователя сохраняет приоритет.
