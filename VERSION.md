@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.60**
+Current version: **0.0.61**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.61 | Safe-city distance + Stone eligibility: WorldGraph знает расстояние и доступное resourceDirection |
 | 0.0.60 | Persistent WorldSpawnState shell: локальная serializable истина будущих Tier/NPC |
 | 0.0.59 | Biome texture defaults: утверждённый визуальный baseline 40% |
 | 0.0.58 | Biome Visual Lab: DEV/admin редактор texture name/file, scale, opacity и preview |
@@ -66,6 +67,9 @@ Current version: **0.0.60**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.61
+WorldGraph получил undirected shortest-distance по связям, поиск ближайшего `isSafeCity` и data-driven `resourceDirectionsFor(zone)`. Перекрёсток отмечен safe city; три внешние зоны — текущий Stone-only prototype согласно плану UGD-0015/0016. Это не вводит новые resource probability weights и не затрагивает финальный баланс.
 
 ## 0.0.60
 Добавлен отдельный WorldSpawnStateSystem и additive поле `worldSpawnState` в Game State schema v1. Состояние зон, будущих master spawn/count/rotation сохраняется через тот же SaveSystem. Это foundation для UGD-0016: reload/F5 не должен становиться бесплатным reroll мира, а backend пока не вводится.

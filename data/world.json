@@ -98,7 +98,9 @@
         }
       ],
       "biome": "grass",
-      "isCity": true
+      "isCity": true,
+      "isSafeCity": true,
+      "resourceDirections": []
     },
     {
       "id": "zone-002",
@@ -186,7 +188,11 @@
         }
       ],
       "biome": "sand",
-      "isCity": false
+      "isCity": false,
+      "isSafeCity": false,
+      "resourceDirections": [
+        "stone"
+      ]
     },
     {
       "id": "zone-003",
@@ -282,7 +288,11 @@
         }
       ],
       "biome": "grass",
-      "isCity": false
+      "isCity": false,
+      "isSafeCity": false,
+      "resourceDirections": [
+        "stone"
+      ]
     },
     {
       "id": "zone-004",
@@ -385,7 +395,11 @@
         }
       ],
       "biome": "sand",
-      "isCity": false
+      "isCity": false,
+      "isSafeCity": false,
+      "resourceDirections": [
+        "stone"
+      ]
     }
   ],
   "transitions": [

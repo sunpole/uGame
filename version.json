@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.60",
-  "stage": "persistent-world-spawn-state",
+  "version": "0.0.61",
+  "stage": "safe-city-distance-stone-eligibility",
   "updated": "2026-10-07",
-  "summary": "Serializable local WorldSpawnState foundation persisted in Game State"
+  "summary": "WorldGraph safe-city distance and data-driven Stone eligibility for external zones"
 }

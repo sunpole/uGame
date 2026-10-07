@@ -109,4 +109,64 @@ export class WorldGraph {
     if (!zoneId) return [];
     return [...(this.transitionsByZone.get(zoneId) || [])];
   }
+
+  getNeighborZoneIds(zoneValue) {
+    const zoneId = this.resolveZoneId(zoneValue);
+    if (!zoneId) return [];
+    const result = new Set();
+
+    for (const transition of this.transitions.values()) {
+      if (transition.from?.zoneId === zoneId && transition.to?.zoneId) result.add(transition.to.zoneId);
+      if (transition.to?.zoneId === zoneId && transition.from?.zoneId) result.add(transition.from.zoneId);
+    }
+
+    return [...result];
+  }
+
+  shortestDistance(fromValue, toValue) {
+    const from = this.resolveZoneId(fromValue);
+    const to = this.resolveZoneId(toValue);
+    if (!from || !to) return Infinity;
+    if (from === to) return 0;
+
+    const visited = new Set([from]);
+    const queue = [{ id: from, distance: 0 }];
+
+    while (queue.length) {
+      const current = queue.shift();
+      for (const neighbor of this.getNeighborZoneIds(current.id)) {
+        if (visited.has(neighbor)) continue;
+        if (neighbor === to) return current.distance + 1;
+        visited.add(neighbor);
+        queue.push({ id: neighbor, distance: current.distance + 1 });
+      }
+    }
+
+    return Infinity;
+  }
+
+  getSafeCityZones() {
+    return [...this.zones.values()].filter((zone) => zone?.isSafeCity === true);
+  }
+
+  distanceFromSafeCity(zoneValue) {
+    const zoneId = this.resolveZoneId(zoneValue);
+    if (!zoneId) return Infinity;
+    const zone = this.getZone(zoneId);
+    if (zone?.isSafeCity === true) return 0;
+
+    let best = Infinity;
+    for (const city of this.getSafeCityZones()) {
+      best = Math.min(best, this.shortestDistance(zoneId, city.id));
+    }
+    return best;
+  }
+
+  resourceDirectionsFor(zoneValue) {
+    const zone = this.getZone(zoneValue);
+    if (!zone) return [];
+    return Array.isArray(zone.resourceDirections)
+      ? [...new Set(zone.resourceDirections.filter((id) => typeof id === 'string' && id))]
+      : [];
+  }
 }
