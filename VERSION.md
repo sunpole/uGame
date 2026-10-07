@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.81**
+Current version: **0.0.82**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.82 | External Event Capacity Mix: explicit candidate-QA 50/50 Chest/Portal mix after Resource Event retirement |
 | 0.0.81 | Retire legacy external Resource Events: external Location Tier resource interaction goes through Master NPC |
 | 0.0.80 | Master UX Series Audit: document v0.0.73–v0.0.79 and resolve stale T4-always-present contradiction |
 | 0.0.79 | Master Slow Wandering: ~5 px/s movement around Event Spot center using the configured radius |
@@ -87,6 +88,9 @@ Current version: **0.0.81**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.82
+После удаления external Resource Event оставшиеся generic slots больше не наследуют старое соотношение 30:10 как скрытый перекос 75% сундуков. Для внешних Location Tier-зон введён явный **candidate-QA** mix `Chest 50% / Event Portal 50%`. Capacity по-прежнему заполняется до `Location capacity - active masters`, пока хватает Event Spot; это не финальный баланс и не меняет Master probability/caps/rotation.
 
 ## 0.0.81
 Во внешних Location Tier-зонах больше не создаётся legacy generic `resource` Event («Неизвестный ресурс»). Сохранённые resource-events таких зон удаляются при refresh и свободные Event Spot снова заполняются допустимыми generic Event. Ресурсное направление внешнего мира теперь представлено Master NPC; chest/portal остаются отдельными world Event. Safe-city legacy layer этим патчем не меняется.

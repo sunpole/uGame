@@ -39,3 +39,7 @@ Flags: needs-test
 ## v0.0.81 — legacy external Resource Event retired
 
 Во внешних Location Tier-зонах generic `resource` больше не является параллельным источником ресурсного взаимодействия. Existing saved external resource-events удаляются при refresh; новые generic slots используют только non-resource world events. Wandering Master остаётся входной точкой resourceDirection.
+
+## v0.0.82 — external generic capacity / mix
+
+После retirement resource-event внешний generic pool задан отдельно как candidate-QA `Chest 50% / Event Portal 50%`. Это устраняет систематический 75% chest bias, который получился бы при простой нормализации старых 30/10 weights, и сохраняет заполнение capacity. Значения не считаются финальным балансом.

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.81",
-  "stage": "external-resource-event-retirement",
+  "version": "0.0.82",
+  "stage": "external-event-capacity-mix",
   "updated": "2026-10-07",
-  "summary": "External Location Tier zones no longer spawn legacy generic resource events; resource gameplay is routed through Master NPC"
+  "summary": "External generic Event slots use an explicit 50/50 chest/portal QA mix so removing Resource Events does not create empty slots or a 75% chest bias"
 }

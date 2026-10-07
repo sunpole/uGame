@@ -65,6 +65,17 @@
         "id": "event-portal",
         "chance": 10
       }
+    ],
+    "externalEventTypesStatus": "candidate-qa",
+    "externalEventTypes": [
+      {
+        "id": "chest",
+        "chance": 50
+      },
+      {
+        "id": "event-portal",
+        "chance": 50
+      }
     ]
   },
   "resourceEvent": {
