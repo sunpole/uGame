@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.89",
-  "stage": "first-stone-process-audit",
+  "version": "0.0.90",
+  "stage": "eventspot-worldspawn-integration-fix",
   "updated": "2026-10-07",
-  "summary": "Document and audit the first functional Stone Extraction real-time/offline/pending-reward vertical loop"
+  "summary": "EventSpotSystem now actually stores the injected WorldSpawnStateSystem, restoring external Location Tier capacity and Master spot reservations"
 }

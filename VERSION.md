@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.89**
+Current version: **0.0.90**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.90 | EventSpot ↔ WorldSpawn integration fix: EventSpotSystem now sees Location Tier capacity and Master-reserved spots |
 | 0.0.89 | First Stone Process Audit: document module menu → persistent REAL TIME Extraction → offline pending reward → claim |
 | 0.0.88 | Stone Process Reward Claim: pending result can be collected; QA formula applies Location additive bonus then Master multiplier |
 | 0.0.87 | Offline Process Completion: real timestamp completion moves finished Extraction into persistent pendingRewards |
@@ -95,6 +96,9 @@ Current version: **0.0.89**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.90
+Исправлена корневая интеграционная ошибка: `main.js` передавал `worldSpawnStateSystem` в `EventSpotSystem`, но конструктор его не принимал и не сохранял. Из-за этого generic Event не видел Location Tier, Master-reserved `spotId` и external-event rules. Теперь `EventSpotSystem` использует реальный WorldSpawnState: external capacity, запрет legacy Resource Event и исключение Master spots снова работают по задуманной архитектуре.
 
 ## 0.0.89
 Закрыта документационная серия первого функционального Stone Process: добавлен `UGD-0026`, обновлены CURRENT / Stage F / Master runtime и QA audit. Текущие 60 секунд, Stone ×10 и округление явно закреплены как `candidate-QA`, а не финальный баланс. Relationship XP/Mastery намеренно не начисляются до отдельного решения.

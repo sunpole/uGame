@@ -31,6 +31,7 @@ export class EventSpotSystem {
     interactableSystem,
     eventSystem,
     rewardGenerator,
+    worldSpawnStateSystem,
     interactionPanel,
     grantResource,
     onStateChange,
@@ -41,6 +42,7 @@ export class EventSpotSystem {
     this.interactableSystem = interactableSystem;
     this.eventSystem = eventSystem;
     this.rewardGenerator = rewardGenerator;
+    this.worldSpawnStateSystem = worldSpawnStateSystem;
     this.interactionPanel = interactionPanel;
     this.grantResource = grantResource;
     this.onStateChange = onStateChange;
