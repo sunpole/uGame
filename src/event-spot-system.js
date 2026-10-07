@@ -24,6 +24,29 @@ function shuffled(items) {
   return result;
 }
 
+function recentSpotWeight(recentSpotIds, spotId) {
+  const recent = Array.isArray(recentSpotIds) ? recentSpotIds : [];
+  const reverseIndex = [...recent].reverse().indexOf(spotId);
+  if (reverseIndex < 0) return 1;
+  return [0.15, 0.3, 0.5, 0.7, 0.85][reverseIndex] ?? 1;
+}
+
+function weightedSpotPick(spots, recentSpotIds) {
+  const candidates = (spots || []).map((spot) => ({
+    spot,
+    weight: recentSpotWeight(recentSpotIds, spot?.id)
+  })).filter((entry) => entry.spot?.id && entry.weight > 0);
+  const total = candidates.reduce((sum, entry) => sum + entry.weight, 0);
+  if (!candidates.length || total <= 0) return null;
+
+  let roll = Math.random() * total;
+  for (const entry of candidates) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.spot;
+  }
+  return candidates[candidates.length - 1].spot;
+}
+
 export class EventSpotSystem {
   constructor({
     worldGraph,
@@ -118,6 +141,19 @@ export class EventSpotSystem {
     return new Set((this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId }) || []).map((spawn) => spawn.spotId));
   }
 
+  rememberSpot(zoneState, spotId) {
+    if (!zoneState || !spotId) return;
+    const recent = Array.isArray(zoneState.recentSpotIds) ? zoneState.recentSpotIds.filter((id) => id !== spotId) : [];
+    recent.push(spotId);
+    zoneState.recentSpotIds = recent.slice(-6);
+  }
+
+  pickSpot(zoneState, spots) {
+    const spot = weightedSpotPick(spots, zoneState?.recentSpotIds);
+    if (spot?.id) this.rememberSpot(zoneState, spot.id);
+    return spot;
+  }
+
   desiredSlots(zone, zoneState) {
     const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots : [];
     if (this.isExternalTierZone(zone)) {
@@ -148,7 +184,8 @@ export class EventSpotSystem {
         locationTier: locationState.tier,
         locationBonus: Number(locationState.locationBonus) || 0,
         spawnCapacity: Number(locationState.spawnCapacity) || 0,
-        events: Array.isArray(existing.events) ? existing.events : []
+        events: Array.isArray(existing.events) ? existing.events : [],
+        recentSpotIds: Array.isArray(existing.recentSpotIds) ? existing.recentSpotIds.slice(-6) : []
       };
 
       if (!this.state.zones) this.state.zones = {};
@@ -174,12 +211,14 @@ export class EventSpotSystem {
 
   rerollQuality(zone, now = Date.now(), shouldPublish = true) {
     const quality = this.rewardGenerator.rollLocationQuality();
+    const previous = this.state.zones?.[zone.id] || {};
     const zoneState = {
       qualityLevel: quality.level,
       qualityRarityId: quality.rarityId,
       qualityLabel: quality.rarityLabel,
       qualityExpiresAt: now + this.rewardGenerator.locationDurationMs(quality.level),
-      events: []
+      events: [],
+      recentSpotIds: Array.isArray(previous.recentSpotIds) ? previous.recentSpotIds.slice(-6) : []
     };
 
     if (!this.state.zones) this.state.zones = {};
@@ -228,7 +267,7 @@ export class EventSpotSystem {
       let targetSpotId = event.spotId;
       const targetUnavailable = !spotIds.has(targetSpotId) || usedSpotIds.has(targetSpotId);
       if (targetUnavailable) {
-        const replacement = shuffled(spots.filter((spot) => !usedSpotIds.has(spot.id)))[0] || null;
+        const replacement = this.pickSpot(zoneState, spots.filter((spot) => !usedSpotIds.has(spot.id)));
         if (!replacement) {
           changed = true;
           continue;
@@ -253,9 +292,9 @@ export class EventSpotSystem {
         const usedSpots = new Set(zoneState.events
           .filter((_item, otherIndex) => otherIndex !== index)
           .map((item) => item.spotId));
-        const available = shuffled(spots.filter((spot) => !usedSpots.has(spot.id)));
-        if (available.length) {
-          zoneState.events[index] = this.createEvent(zone, available[0], now);
+        const replacement = this.pickSpot(zoneState, spots.filter((spot) => !usedSpots.has(spot.id)));
+        if (replacement) {
+          zoneState.events[index] = this.createEvent(zone, replacement, now);
         } else {
           zoneState.events.splice(index, 1);
           index -= 1;
@@ -286,10 +325,12 @@ export class EventSpotSystem {
 
     const desired = this.desiredSlots(zone, zoneState);
     const usedSpots = new Set((zoneState.events || []).map((event) => event.spotId));
-    const available = shuffled(spots.filter((spot) => !usedSpots.has(spot.id)));
 
-    while (zoneState.events.length < desired && available.length) {
-      const spot = available.shift();
+    while (zoneState.events.length < desired) {
+      const available = spots.filter((spot) => !usedSpots.has(spot.id));
+      const spot = this.pickSpot(zoneState, available);
+      if (!spot) break;
+      usedSpots.add(spot.id);
       zoneState.events.push(this.createEvent(zone, spot, now));
     }
   }
@@ -620,6 +661,15 @@ export class EventSpotSystem {
       return {
         handled: true,
         message: `${code} · DEV качество зоны: ${state.qualityLevel}/4 · событий ${state.events.length}`,
+        state: 'ok'
+      };
+    }
+
+    if (code === '8297') {
+      const recent = this.getCurrentZoneState()?.recentSpotIds || [];
+      return {
+        handled: true,
+        message: '8297 · recent generic spots: ' + (recent.length ? recent.join(' → ') : 'нет истории'),
         state: 'ok'
       };
     }

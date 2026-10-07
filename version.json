@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.94",
-  "stage": "twelve-candidate-event-spots",
+  "version": "0.0.95",
+  "stage": "generic-event-spot-antirepeat",
   "updated": "2026-10-07",
-  "summary": "All current maps expose 12 candidate Event Spots while active capacity remains unchanged"
+  "summary": "Generic Event placement uses weighted anti-repeat memory across the 12 candidate spots"
 }

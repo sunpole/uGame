@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.94**
+Current version: **0.0.95**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.95 | Generic Event Spot Anti-Repeat: weighted random selection penalizes recently used candidate spots |
 | 0.0.94 | 12 Candidate Event Spots per current map: larger placement pool without increasing active capacity |
 | 0.0.93 | Event Spot Exclusivity Audit: document root cause, hard `1 spotId = 1 occupant` rule and QA |
 | 0.0.92 | Safe Event Relocation: Master reservation moves an existing generic Event to a free spot without losing id/timer/offer |
@@ -100,6 +101,9 @@ Current version: **0.0.94**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.95
+Generic Dynamic Events теперь выбирают свободный candidate spot не равномерно, а weighted-random с памятью последних 6 использованных точек. Самый последний spot имеет около `15%` обычного веса, затем `30% / 50% / 70% / 85%`, более старые снова имеют полный вес. Это **не запрет повтора**: повтор остаётся возможным, но вероятность заметно ниже. История хранится в zone Dynamic Event state и переживает reload. DEV `8297` показывает recent generic spot history.
 
 ## 0.0.94
 Все четыре текущие карты получили по **12 candidate Event Spot**. Это расширяет набор возможных мест появления, но **не увеличивает одновременно активную capacity**: Location Tier по-прежнему задаёт 2–6 active Event/NPC во внешних зонах, а город сохраняет свою legacy active-slot модель. `spot-1…spot-6` сохранены по id, чтобы существующие save/Encounter ссылки не ломались; добавлены `spot-7…spot-12`.
