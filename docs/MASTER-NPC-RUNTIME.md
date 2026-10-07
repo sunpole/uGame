@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.73**
+Current implementation: **v0.0.77**
 
 ## Scope
 
@@ -153,3 +153,7 @@ Since v0.0.73 the visible countdown above a master and the InteractionPanel coun
 Distance→Location Tier and Location Tier→Master Tier values remain `candidate-balance`.
 
 No TEST/MATRIX/DEEP run was added in v0.0.65–v0.0.72. The runtime implementation must not be interpreted as final probability approval.
+
+## Visual shell
+
+Since v0.0.77 Stone Masters render as a lightweight top-down humanoid vector shell instead of a single circle. Tier colors, label, glow and the real-time Encounter countdown remain independent presentation layers; final NPC art is still deferred.

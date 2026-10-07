@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.76**
+Current version: **0.0.77**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.77 | Master NPC Visual Shell: Tier-colored top-down humanoid model replaces the circular marker |
 | 0.0.76 | Spawn Zone DEV Controls: Project Hub toggle, center markers and 10–500 px radius control |
 | 0.0.75 | Spawn Zone Debug Visual: thin DEV radius circles around existing Event Spot centers |
 | 0.0.74 | Biome Texture Baseline 40/40: all current floor defaults use 40% scale and 40% opacity |
@@ -82,6 +83,9 @@ Current version: **0.0.76**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.77
+Stone Master больше не отображается одним круглым маркером. В `InteractableSystem` добавлена лёгкая top-down humanoid модель из простых Phaser shapes: тень, ноги, корпус, плечи, голова и маркер направления. Tier-цвет, label, glow и Encounter countdown сохранены. Это всё ещё временный procedural/vector shell без финального арта и ЛОР-портрета.
 
 ## 0.0.76
 Project Hub → Инструменты получил `Spawn Zone Debug · DEV`. Можно независимо включать/выключать окружности, показывать центры Event Spot и задавать radius 10–500 px; настройки сохраняются локально. Default остаётся OFF / center ON / 150 px. DEV-контур не меняет реальный spawn, probability, capacity или rotation.

@@ -106,12 +106,31 @@ export class InteractableSystem {
         T4: { fill: 0xc9963b, stroke: 0xf0c66a, text: '#f0c66a' }
       };
       const colors = palette[item.masterTier] || palette.T1;
-      glow = scene.add.circle(item.x, item.y, 24, colors.fill, 0.22);
-      body = scene.add.circle(item.x, item.y, item.radius || 17, colors.fill, 1).setStrokeStyle(3, colors.stroke);
-      body.width = (item.radius || 17) * 2;
-      body.height = (item.radius || 17) * 2;
-      label = scene.add.text(item.x, item.y - 36, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
-      scene.tweens.add({ targets: glow, alpha: { from: 0.18, to: 0.48 }, scale: { from: 0.92, to: 1.12 }, duration: 1200, yoyo: true, repeat: -1 });
+      glow = scene.add.ellipse(item.x, item.y + 7, 34, 24, colors.fill, 0.18);
+
+      const shadow = scene.add.ellipse(0, 11, 26, 10, 0x000000, 0.34);
+      const legLeft = scene.add.ellipse(-5, 9, 7, 15, 0x20242a, 1);
+      const legRight = scene.add.ellipse(5, 9, 7, 15, 0x20242a, 1);
+      const torso = scene.add.ellipse(0, 2, 24, 22, colors.fill, 1).setStrokeStyle(2, colors.stroke);
+      const shoulderLeft = scene.add.circle(-11, 1, 4, colors.fill, 1).setStrokeStyle(1, colors.stroke);
+      const shoulderRight = scene.add.circle(11, 1, 4, colors.fill, 1).setStrokeStyle(1, colors.stroke);
+      const head = scene.add.circle(0, -10, 8, 0xe4b98b, 1).setStrokeStyle(1, 0xf0d0a8);
+      const facingMark = scene.add.ellipse(0, -16, 4, 6, colors.stroke, 1);
+
+      body = scene.add.container(item.x, item.y, [
+        shadow,
+        legLeft,
+        legRight,
+        torso,
+        shoulderLeft,
+        shoulderRight,
+        head,
+        facingMark
+      ]);
+      body.setSize(34, 40);
+      item._masterFacingMark = facingMark;
+      label = scene.add.text(item.x, item.y - 38, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
+      scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
       body.width = (item.radius || 15) * 2;
