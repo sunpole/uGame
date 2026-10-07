@@ -18,6 +18,8 @@ export class InteractionPanelSystem {
     this.onOpenChange = onOpenChange;
     this.windowManager = windowManager;
     this.currentOffer = null;
+    this.liveUpdateTimer = null;
+    this.liveUpdateToken = 0;
     this.unregisterWindow = this.windowManager?.register(this.panel, {
       level: 'game-modal',
       close: () => this.close()
@@ -43,6 +45,7 @@ export class InteractionPanelSystem {
   }
 
   close() {
+    this.stopLiveUpdates();
     this.currentOffer = null;
     this.panel?.setAttribute('hidden', '');
     this.windowManager?.closed(this.panel);
@@ -88,20 +91,56 @@ export class InteractionPanelSystem {
     return true;
   }
 
+  stopLiveUpdates() {
+    if (this.liveUpdateTimer !== null) {
+      window.clearInterval(this.liveUpdateTimer);
+      this.liveUpdateTimer = null;
+    }
+    this.liveUpdateToken += 1;
+  }
+
   clear() {
+    this.stopLiveUpdates();
     if (this.titleElement) this.titleElement.textContent = '';
     if (this.textElement) this.textElement.textContent = '';
     if (this.metaElement) this.metaElement.textContent = '';
     if (this.optionsElement) this.optionsElement.replaceChildren();
   }
 
-  showMessage({ title = 'Событие', text = '', meta = '' } = {}) {
+  showMessage({
+    title = 'Событие',
+    text = '',
+    meta = '',
+    metaProvider = null,
+    onExpired = null,
+    updateIntervalMs = 250
+  } = {}) {
     this.clear();
     if (this.titleElement) this.titleElement.textContent = title;
     if (this.textElement) this.textElement.textContent = text;
     if (this.metaElement) this.metaElement.textContent = meta;
     if (this.closeButton) this.closeButton.textContent = 'Закрыть';
     this.open();
+
+    if (typeof metaProvider !== 'function') return;
+    const token = ++this.liveUpdateToken;
+    const refresh = () => {
+      if (token !== this.liveUpdateToken || !this.isOpen()) return;
+      const nextMeta = metaProvider(Date.now());
+      if (nextMeta === null || nextMeta === false) {
+        this.stopLiveUpdates();
+        onExpired?.();
+        if (this.isOpen()) this.close();
+        return;
+      }
+      if (this.metaElement) this.metaElement.textContent = String(nextMeta ?? '');
+    };
+
+    refresh();
+    if (token === this.liveUpdateToken && this.isOpen()) {
+      const interval = Math.max(100, Number(updateIntervalMs) || 250);
+      this.liveUpdateTimer = window.setInterval(refresh, interval);
+    }
   }
 
   showRewardOffer({

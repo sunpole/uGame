@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.72**
+Current implementation: **v0.0.73**
 
 ## Scope
 
@@ -145,6 +145,8 @@ DEV codes:
 - 8400/8401–8404/8499 Location Tier QA.
 
 Project Hub → Tools → DEV World Analyzer shows the same runtime state with filters, candidate pools, rotation and teleport.
+
+Since v0.0.73 the visible countdown above a master and the InteractionPanel countdown are driven by the same real-time `Encounter.expiresAt`. The panel refreshes while open and closes when the Encounter expires.
 
 ## Balance status
 

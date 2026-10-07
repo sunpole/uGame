@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.72**
+Current version: **0.0.73**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.73 | Master Live Timer Sync: interaction dialog and world label use the same real-time Encounter expiresAt |
 | 0.0.72 | Master Module Availability: Extraction guaranteed, Tier-driven persistent module set per Encounter |
 | 0.0.71 | DEV World Analyzer: active masters, Location Tier context, candidate pools, rotation и one-click TP |
 | 0.0.70 | Master NPC QA 83xx: registry, Tier filters, rotation summary и teleport/cycle |
@@ -78,6 +79,9 @@ Current version: **0.0.72**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.73
+Таймер Stone Master в InteractionPanel теперь обновляется в реальном времени от того же `Encounter.expiresAt`, что и таймер над NPC. Оба представления используют одинаковое округление до секунд; окно автоматически закрывается после истечения Encounter, чтобы устаревшее взаимодействие не оставалось открытым. Game Clock по-прежнему display-only и не влияет на этот таймер.
 
 ## 0.0.72
 Каждый новый Stone Master Encounter теперь получает persistent `activeModules`. `Добыча` гарантирована всегда; T1 показывает 2–3 модуля, T2 3–4, T3 4–6, T4 все 6. Набор генерируется один раз на Encounter и сохраняется, поэтому reload не меняет доступные возможности. Interaction и World Analyzer показывают текущий набор. Это именно availability layer: Process/Quest/Training/Analytics ещё не объявлены функционально реализованными.

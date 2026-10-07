@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.72",
-  "stage": "master-module-availability",
+  "version": "0.0.73",
+  "stage": "master-live-timer",
   "updated": "2026-10-07",
-  "summary": "Persistent Tier-driven master module availability with guaranteed Extraction"
+  "summary": "Stone Master interaction timer now live-syncs to Encounter expiresAt"
 }
