@@ -6,7 +6,7 @@ function formatRemaining(ms) {
 }
 
 export class MasterEncounterSystem {
-  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel } = {}) {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, canMoveTo, getWanderRadius } = {}) {
     this.worldGraph = worldGraph;
     this.zoneSystem = zoneSystem;
     this.interactableSystem = interactableSystem;
@@ -15,11 +15,14 @@ export class MasterEncounterSystem {
     this.masterCatalog = masterCatalog;
     this.relationshipSystem = relationshipSystem;
     this.interactionPanel = interactionPanel;
+    this.canMoveTo = canMoveTo;
+    this.getWanderRadius = getWanderRadius;
     this.currentZoneId = null;
     this.renderedIds = new Set();
     this.devCycleIndexByTier = { T2: -1, T3: -1, T4: -1 };
     this.motionState = new Map();
     this.turnSpeedRadPerSec = 0.22;
+    this.moveSpeedPxPerSec = 5;
 
     this.eventSystem?.on('zone:enter', ({ zone }) => {
       this.currentZoneId = zone?.id || null;
@@ -73,6 +76,9 @@ export class MasterEncounterSystem {
 
   update(now = Date.now(), deltaMs = 16.67) {
     if (!this.currentZoneId) return;
+    const zone = this.worldGraph?.getZone?.(this.currentZoneId);
+    if (!zone) return;
+
     const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: this.currentZoneId }) || [];
     const alive = new Set(spawns.map((spawn) => spawn.encounterId));
     for (const encounterId of this.motionState.keys()) {
@@ -80,19 +86,66 @@ export class MasterEncounterSystem {
     }
 
     const dt = Math.max(0, Math.min(0.1, Number(deltaMs) / 1000 || 0));
+    const pauseTranslation = Boolean(this.interactionPanel?.isOpen?.());
+    const configuredRadius = Number(this.getWanderRadius?.());
+    const wanderRadius = Math.max(10, Math.min(500, Number.isFinite(configuredRadius) ? configuredRadius : 150));
+    const spots = new Map((zone.eventSpots || []).map((spot) => [spot.id, spot]));
+
     for (const spawn of spawns) {
       const id = 'master-interactable:' + spawn.encounterId;
+      const spot = spots.get(spawn.spotId);
+      if (!spot) continue;
+      const anchor = this.zoneSystem?.mapPoint?.(spot) || spot;
+      if (!Number.isFinite(Number(anchor?.x)) || !Number.isFinite(Number(anchor?.y))) continue;
+
       let state = this.motionState.get(spawn.encounterId);
       if (!state) {
         state = {
+          anchorX: Number(anchor.x),
+          anchorY: Number(anchor.y),
+          x: Number(anchor.x),
+          y: Number(anchor.y),
+          targetX: Number(anchor.x),
+          targetY: Number(anchor.y),
           angle: 0,
           targetAngle: 0,
+          moving: false,
+          nextMoveAt: now + 4000 + Math.random() * 8000,
           nextTurnAt: now + 3000 + Math.random() * 7000
         };
         this.motionState.set(spawn.encounterId, state);
       }
 
-      if (now >= state.nextTurnAt) {
+      const anchorDx = Number(anchor.x) - state.anchorX;
+      const anchorDy = Number(anchor.y) - state.anchorY;
+      if (Math.abs(anchorDx) > 0.01 || Math.abs(anchorDy) > 0.01) {
+        state.x += anchorDx;
+        state.y += anchorDy;
+        state.targetX += anchorDx;
+        state.targetY += anchorDy;
+        state.anchorX = Number(anchor.x);
+        state.anchorY = Number(anchor.y);
+      }
+
+      if (!state.moving && now >= state.nextMoveAt && !pauseTranslation) {
+        const targetRadius = Math.sqrt(Math.random()) * wanderRadius * 0.9;
+        const targetTheta = Math.random() * Math.PI * 2;
+        state.targetX = state.anchorX + Math.cos(targetTheta) * targetRadius;
+        state.targetY = state.anchorY + Math.sin(targetTheta) * targetRadius;
+        state.moving = true;
+      }
+
+      const dx = state.targetX - state.x;
+      const dy = state.targetY - state.y;
+      const distance = Math.hypot(dx, dy);
+
+      if (state.moving && distance > 0.5) {
+        state.targetAngle = Math.atan2(dy, dx) + Math.PI / 2;
+      } else if (state.moving) {
+        state.moving = false;
+        state.nextMoveAt = now + 6000 + Math.random() * 12000;
+        state.nextTurnAt = now + 3000 + Math.random() * 7000;
+      } else if (now >= state.nextTurnAt) {
         state.targetAngle = Math.random() * Math.PI * 2 - Math.PI;
         state.nextTurnAt = now + 8000 + Math.random() * 12000;
       }
@@ -102,7 +155,29 @@ export class MasterEncounterSystem {
       while (diff < -Math.PI) diff += Math.PI * 2;
       const maxTurn = this.turnSpeedRadPerSec * dt;
       state.angle += Math.max(-maxTurn, Math.min(maxTurn, diff));
-      this.interactableSystem?.setItemTransform?.(id, { rotation: state.angle });
+
+      if (state.moving && !pauseTranslation && distance > 0.5 && Math.abs(diff) < 0.4) {
+        const step = Math.min(distance, this.moveSpeedPxPerSec * dt);
+        const nextX = state.x + (dx / distance) * step;
+        const nextY = state.y + (dy / distance) * step;
+        const fromAnchor = Math.hypot(nextX - state.anchorX, nextY - state.anchorY);
+        const allowed = fromAnchor <= wanderRadius + 0.01 && (typeof this.canMoveTo !== 'function' || this.canMoveTo(nextX, nextY));
+        if (allowed) {
+          state.x = nextX;
+          state.y = nextY;
+        } else {
+          state.moving = false;
+          state.targetX = state.x;
+          state.targetY = state.y;
+          state.nextMoveAt = now + 3000 + Math.random() * 7000;
+        }
+      }
+
+      this.interactableSystem?.setItemTransform?.(id, {
+        x: state.x,
+        y: state.y,
+        rotation: state.angle
+      });
     }
   }
 
@@ -114,8 +189,11 @@ export class MasterEncounterSystem {
     const spot = (zone.eventSpots || []).find((item) => item.id === spawn.spotId);
     if (spot && this.zoneSystem?.player) {
       const point = this.zoneSystem.mapPoint?.(spot) || spot;
-      const x = Math.max(20, Math.min((this.zoneSystem.width || 960) - 20, Number(point.x) + 44));
-      const y = Math.max(20, Math.min((this.zoneSystem.height || 540) - 20, Number(point.y)));
+      const liveItem = this.interactableSystem?.getItem?.('master-interactable:' + spawn.encounterId);
+      const targetX = Number.isFinite(Number(liveItem?.x)) ? Number(liveItem.x) : Number(point.x);
+      const targetY = Number.isFinite(Number(liveItem?.y)) ? Number(liveItem.y) : Number(point.y);
+      const x = Math.max(20, Math.min((this.zoneSystem.width || 960) - 20, targetX + 44));
+      const y = Math.max(20, Math.min((this.zoneSystem.height || 540) - 20, targetY));
       this.zoneSystem.player.setPosition(x, y);
     }
     return true;

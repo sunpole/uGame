@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.78",
-  "stage": "master-slow-facing",
+  "version": "0.0.79",
+  "stage": "master-slow-wandering",
   "updated": "2026-10-07",
-  "summary": "Stone Masters slowly rotate their top-down facing while idle"
+  "summary": "Stone Masters slowly wander around their Event Spot center within the configured DEV radius"
 }

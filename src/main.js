@@ -400,7 +400,9 @@ class ZoneScene extends Phaser.Scene {
       worldSpawnStateSystem,
       masterCatalog,
       relationshipSystem: masterRelationshipSystem,
-      interactionPanel: this.interactionPanel
+      interactionPanel: this.interactionPanel,
+      canMoveTo: (x, y) => this.canMoveTo(x, y),
+      getWanderRadius: () => spawnZoneDebugSystem?.getSettings?.().radiusPx || 150
     });
     this.masterEncounterSystem = masterEncounterSystem;
 

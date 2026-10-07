@@ -1,6 +1,6 @@
 # Stone Master NPC runtime
 
-Current implementation: **v0.0.78**
+Current implementation: **v0.0.79**
 
 ## Scope
 
@@ -159,3 +159,7 @@ No TEST/MATRIX/DEEP run was added in v0.0.65–v0.0.72. The runtime implementati
 Since v0.0.77 Stone Masters render as a lightweight top-down humanoid vector shell instead of a single circle. Tier colors, label, glow and the real-time Encounter countdown remain independent presentation layers; final NPC art is still deferred.
 
 Since v0.0.78 the temporary vector shell has a slow idle-facing controller. Rotation is presentation-only and is not persisted in Game State.
+
+## Wandering movement
+
+Since v0.0.79 the rendered master has ephemeral local movement around its Event Spot center. Default speed is about 5 world-px/s. The current Spawn Zone Debug radius (150 px by default) is also the wandering boundary; this does not alter allocator probabilities or the persisted Encounter identity. Movement pauses while an InteractionPanel is open, while the real-time Encounter timer continues normally.
