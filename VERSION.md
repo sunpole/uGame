@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.53**
+Current version: **0.0.54**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.54 | Inventory/Bank Normal Size: одинаковые ячейки, без лишнего desktop scale |
 | 0.0.53 | Game Clock seconds + visible ×12 speed; UI bounds series complete |
 | 0.0.52 | Game Clock phase UX: 🌙 Ночь / 🌅 Утро / ☀️ День / 🌆 Вечер |
 | 0.0.51 | Formal Layer/Z Policy: окна одного modal-уровня больше не перекрываются случайно |
@@ -59,6 +60,9 @@ Current version: **0.0.53**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.54
+Inventory и Bank больше не уменьшаются общим scale-first механизмом: для этого окна закреплён масштаб 100%, а при нехватке места используется внутренний scroll. Ширина desktop-окна возвращена к 820px. Backpack и Bank используют одну и ту же сетку и один размер ячеек.
 
 ## 0.0.53
 Game Clock теперь показывает игровые секунды и явную скорость ×12. При принятом правиле 1 игровая минута = 5 реальных секунд время вычисляется непрерывно, а UI обновляется четыре раза в секунду, поэтому движение игровых секунд видно глазами. Серия v0.0.49→v0.0.53 завершает Window Bounds / Scale-first / Layer Policy / Game Clock UX пакет. Все gameplay timers — Dynamic Event, Location, NPC, Process/offline, cooldown, session/location — остаются REAL TIME.

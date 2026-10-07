@@ -51,7 +51,8 @@ export class InventoryPanelSystem {
     this.bankAccess = false;
     this.unregisterWindow = this.windowManager?.register(this.panel, {
       level: 'game-modal',
-      close: () => this.close()
+      close: () => this.close(),
+      allowScale: false
     }) || null;
 
     this.closeButton?.addEventListener('click', () => this.close());
@@ -119,6 +120,8 @@ export class InventoryPanelSystem {
     if (!config || !state) return;
 
     if (this.titleElement) this.titleElement.textContent = config.name;
+    if (this.panel) this.panel.dataset.containerId = config.id;
+    if (this.gridElement) this.gridElement.dataset.containerId = config.id;
     this.renderStats(config);
     this.gridElement?.replaceChildren();
 

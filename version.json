@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.53",
-  "stage": "window-clock-ux-complete",
+  "version": "0.0.54",
+  "stage": "inventory-bank-normal-size",
   "updated": "2026-10-07",
-  "summary": "Workspace-safe scale-first windows, explicit layer policy and visible x12 Game Clock seconds"
+  "summary": "Inventory and Bank stay at 100% desktop scale with identical slot sizing"
 }

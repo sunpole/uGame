@@ -17,12 +17,12 @@ export class UIWindowManager {
     window.addEventListener('resize', this.onWindowResize);
   }
 
-  register(panel, { level = 'game-modal', close = null } = {}) {
+  register(panel, { level = 'game-modal', close = null, allowScale = true } = {}) {
     if (!panel) return () => {};
     panel.classList.add('ui-game-window');
     panel.dataset.uiWindowLevel = level;
     panel.dataset.scrollFallback = 'false';
-    this.registry.set(panel, { level, close });
+    this.registry.set(panel, { level, close, allowScale: allowScale !== false });
     return () => this.registry.delete(panel);
   }
 
@@ -59,6 +59,7 @@ export class UIWindowManager {
     panel.style.overflow = '';
     panel.dataset.scrollFallback = 'false';
 
+    const meta = this.registry.get(panel) || {};
     const style = getComputedStyle(panel);
     const bottomInset = style.bottom === 'auto' ? 0 : Math.max(0, parseFloat(style.bottom) || 0);
     const availableWidth = Math.max(1, this.host.clientWidth - this.margin * 2);
@@ -67,8 +68,18 @@ export class UIWindowManager {
     const naturalWidth = Math.max(1, panel.scrollWidth, panel.offsetWidth);
     const naturalHeight = Math.max(1, panel.scrollHeight, panel.offsetHeight);
     const requiredScale = Math.min(1, availableWidth / naturalWidth, availableHeight / naturalHeight);
-    const scale = Math.max(this.minScale, Number.isFinite(requiredScale) ? requiredScale : 1);
 
+    if (meta.allowScale === false) {
+      panel.style.setProperty('--ui-window-scale', '1');
+      const needsScroll = requiredScale < 1;
+      panel.dataset.scrollFallback = String(needsScroll);
+      panel.style.maxWidth = `${Math.floor(availableWidth)}px`;
+      panel.style.maxHeight = `${Math.floor(availableHeight)}px`;
+      panel.style.overflow = needsScroll ? 'auto' : '';
+      return;
+    }
+
+    const scale = Math.max(this.minScale, Number.isFinite(requiredScale) ? requiredScale : 1);
     panel.style.setProperty('--ui-window-scale', scale.toFixed(3));
 
     if (requiredScale < this.minScale) {

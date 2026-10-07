@@ -1805,3 +1805,24 @@ html.ugame-text-selection-enabled .chrome-logo-block {
     grid-template-columns: auto auto auto minmax(180px, 1fr) minmax(245px, auto) minmax(210px, auto);
   }
 }
+
+
+/* v0.0.54 — Inventory / Bank Normal Size */
+.inventory-panel {
+  width: min(820px, calc(100% - 24px));
+}
+
+.inventory-panel[data-container-id='bank'] {
+  --ui-window-scale: 1 !important;
+}
+
+.inventory-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  align-content: start;
+}
+
+.inventory-grid[data-container-id='bank'] .inventory-slot,
+.inventory-grid[data-container-id='backpack'] .inventory-slot {
+  min-width: 0;
+  min-height: 92px;
+}
