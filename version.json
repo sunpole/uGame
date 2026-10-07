@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.54",
-  "stage": "inventory-bank-normal-size",
+  "version": "0.0.55",
+  "stage": "full-workspace-game-viewport",
   "updated": "2026-10-07",
-  "summary": "Inventory and Bank stay at 100% desktop scale with identical slot sizing"
+  "summary": "Game host fills the entire Workspace without 16:9 side letterboxing"
 }

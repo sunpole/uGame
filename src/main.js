@@ -72,17 +72,9 @@ function fitPlayfield() {
   const verticalPadding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
   const availableWidth = Math.max(1, shell.clientWidth - horizontalPadding);
   const availableHeight = Math.max(1, shell.clientHeight - verticalPadding);
-  const ratio = WIDTH / HEIGHT;
 
-  let width = availableWidth;
-  let height = width / ratio;
-  if (height > availableHeight) {
-    height = availableHeight;
-    width = height * ratio;
-  }
-
-  host.style.width = `${Math.floor(width)}px`;
-  host.style.height = `${Math.floor(height)}px`;
+  host.style.width = `${Math.floor(availableWidth)}px`;
+  host.style.height = `${Math.floor(availableHeight)}px`;
 }
 
 async function loadVersion() {

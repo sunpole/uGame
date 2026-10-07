@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.54**
+Current version: **0.0.55**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.55 | Full Workspace Game Viewport: игровое поле занимает всю центральную область |
 | 0.0.54 | Inventory/Bank Normal Size: одинаковые ячейки, без лишнего desktop scale |
 | 0.0.53 | Game Clock seconds + visible ×12 speed; UI bounds series complete |
 | 0.0.52 | Game Clock phase UX: 🌙 Ночь / 🌅 Утро / ☀️ День / 🌆 Вечер |
@@ -60,6 +61,9 @@ Current version: **0.0.54**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.55
+Удалено прежнее 16:9 letterbox-вписывание DOM-контейнера. `#game` теперь занимает всю доступную площадь Workspace между постоянными Header/Footer; боковые пустые поля больше не резервируются. Геометрическое сохранение пропорций мира выполняется следующим патчем камерой, а не CSS-stretch.
 
 ## 0.0.54
 Inventory и Bank больше не уменьшаются общим scale-first механизмом: для этого окна закреплён масштаб 100%, а при нехватке места используется внутренний scroll. Ширина desktop-окна возвращена к 820px. Backpack и Bank используют одну и ту же сетку и один размер ячеек.
