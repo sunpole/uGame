@@ -2068,3 +2068,23 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 
 #location-primary { font-weight: 700; }
 #location-secondary[title] { cursor: help; }
+
+/* v0.0.71 — DEV World Analyzer */
+.world-analyzer-toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.world-analyzer-toolbar label { display:flex; align-items:center; gap:6px; color:#8b949e; font-size:11px; }
+.world-analyzer-toolbar select, .world-analyzer-toolbar button, #world-analyzer-teleport { min-height:32px; border:1px solid #30363d; border-radius:6px; background:#0b0f14; color:#e6edf3; padding:0 10px; }
+.world-analyzer-layout { display:grid; grid-template-columns:minmax(300px,.9fr) minmax(380px,1.1fr); gap:14px; }
+.world-analyzer-list { display:grid; gap:7px; align-content:start; }
+.world-analyzer-card { display:grid; gap:4px; padding:10px; border:1px solid #252b33; border-radius:8px; background:#10151b; color:#c9d1d9; text-align:left; cursor:pointer; }
+.world-analyzer-card[data-selected='true'] { border-color:#58a6ff; background:#131c27; }
+.world-analyzer-card > span { display:flex; justify-content:space-between; gap:8px; }
+.world-analyzer-card small { color:#8b949e; }
+.world-analyzer-card em { color:#79c0ff; font-style:normal; font-size:10px; }
+.world-analyzer-detail { padding:14px; border:1px solid #252b33; border-radius:8px; background:#10151b; }
+.world-analyzer-detail h3 { margin:0 0 12px; }
+.world-analyzer-kpis { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.world-analyzer-kpis span { padding:7px 8px; border-radius:6px; background:#0b0f14; color:#8b949e; font-size:11px; }
+.world-analyzer-kpis b { color:#e6edf3; }
+.world-analyzer-zones { color:#8b949e; font:10px/1.5 monospace; word-break:break-word; }
+#world-analyzer-teleport { border-color:#238636; color:#7ee787; cursor:pointer; }
+@media (max-width:900px){.world-analyzer-layout{grid-template-columns:1fr;}}

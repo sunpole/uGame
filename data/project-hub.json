@@ -113,6 +113,12 @@
       "label": "Инструменты",
       "items": [
         {
+          "id": "world-analyzer",
+          "label": "DEV World Analyzer",
+          "description": "Active Stone master, Location Tier, biome, distance, chance, lifetime, candidate pool, rotation и teleport.",
+          "type": "world-analyzer"
+        },
+        {
           "id": "simulation-doc",
           "label": "Simulation Lab",
           "description": "Техническое описание headless-симулятора и отчётов.",

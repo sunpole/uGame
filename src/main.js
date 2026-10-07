@@ -736,7 +736,30 @@ projectHubSystem = new ProjectHubSystem({
   closeButton: document.querySelector('#project-hub-close'),
   onOpenChange: () => syncPlayerInputState(),
   interfaceSettings: interfaceSettingsSystem,
-  biomeTextureSettings: biomeTextureSettingsSystem
+  biomeTextureSettings: biomeTextureSettingsSystem,
+  worldAnalyzer: {
+    getData: () => {
+      const snapshot = worldSpawnStateSystem?.snapshot?.() || {};
+      const zones = {};
+      for (const zone of worldSpawnStateSystem?.worldGraph?.zones?.values?.() || []) {
+        zones[zone.id] = {
+          id: zone.id,
+          name: zone.name,
+          biome: zone.biome,
+          isSafeCity: zone.isSafeCity === true,
+          location: worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null
+        };
+      }
+      return {
+        masters: worldSpawnStateSystem?.getActiveMasters?.() || [],
+        zones,
+        candidatePools: snapshot.candidatePools || {},
+        rotations: snapshot.rotations || {},
+        counts: snapshot.activeCountsByResourceAndTier || {}
+      };
+    },
+    teleport: (encounterId) => masterEncounterSystem?.teleportToEncounter?.(encounterId) || false
+  }
 });
 
 projectHubSystem.load().catch((error) => {

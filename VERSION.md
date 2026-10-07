@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.0.70**
+Current version: **0.0.71**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.0.71 | DEV World Analyzer: active masters, Location Tier context, candidate pools, rotation и one-click TP |
 | 0.0.70 | Master NPC QA 83xx: registry, Tier filters, rotation summary и teleport/cycle |
 | 0.0.69 | Character↔Master Relationship State: встречи persistent и принадлежат персонажу |
 | 0.0.68 | Visible Stone Master Encounters: master занимает Event/NPC slot и появляется как Tier-colored NPC |
@@ -76,6 +77,9 @@ Current version: **0.0.70**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.0.71
+Project Hub → Инструменты получил принятый Stage E `DEV World Analyzer`. Он показывает список active Stone master, фильтр Tier, zone/biome/Location Tier/distance/current Location chance/bonus, Encounter lifetime, requested/final Tier, multiplier, candidate pool, rotation round и visited coverage. Есть Previous/Next/Refresh и Teleport к выбранному Encounter; UI читает live WorldSpawnState и не дублирует allocator logic.
 
 ## 0.0.70
 Ранее зарезервированные 83xx активированы. `8300` показывает Stone master registry/counts, `8302/03/04` — зоны active T2/T3/T4, `8399` — candidate pool/rotation coverage. `8312/13/14` циклически телепортируют QA-персонажа к следующему active master соответствующего Tier и ставят рядом с его Event Spot. DEV teleport не меняет master allocation и не делает reroll.

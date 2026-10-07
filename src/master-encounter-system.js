@@ -66,6 +66,26 @@ export class MasterEncounterSystem {
     }
   }
 
+  teleportToSpawn(spawn) {
+    if (!spawn?.zoneId) return false;
+    const zone = this.worldGraph?.getZone?.(spawn.zoneId);
+    if (!zone) return false;
+    this.zoneSystem?.build?.(zone.id, zone.defaultEntry || null);
+    const spot = (zone.eventSpots || []).find((item) => item.id === spawn.spotId);
+    if (spot && this.zoneSystem?.player) {
+      const point = this.zoneSystem.mapPoint?.(spot) || spot;
+      const x = Math.max(20, Math.min((this.zoneSystem.width || 960) - 20, Number(point.x) + 44));
+      const y = Math.max(20, Math.min((this.zoneSystem.height || 540) - 20, Number(point.y)));
+      this.zoneSystem.player.setPosition(x, y);
+    }
+    return true;
+  }
+
+  teleportToEncounter(encounterId) {
+    const spawn = this.worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
+    return spawn ? this.teleportToSpawn(spawn) : false;
+  }
+
   executeDevCode(code) {
     if (!['8312', '8313', '8314'].includes(code)) return { handled: false };
     const tier = 'T' + code.at(-1);
@@ -77,20 +97,11 @@ export class MasterEncounterSystem {
     const spawn = spawns[nextIndex];
     const zone = this.worldGraph?.getZone?.(spawn.zoneId);
     if (!zone) return { handled: true, message: code + ' · zone не найдена', state: 'error' };
-
-    this.zoneSystem?.build?.(zone.id, zone.defaultEntry || null);
-    const spot = (zone.eventSpots || []).find((item) => item.id === spawn.spotId);
-    if (spot && this.zoneSystem?.player) {
-      const point = this.zoneSystem.mapPoint?.(spot) || spot;
-      const x = Math.max(20, Math.min((this.zoneSystem.width || 960) - 20, Number(point.x) + 44));
-      const y = Math.max(20, Math.min((this.zoneSystem.height || 540) - 20, Number(point.y)));
-      this.zoneSystem.player.setPosition(x, y);
-    }
-
+    const ok = this.teleportToSpawn(spawn);
     return {
       handled: true,
-      message: code + ' · TP ' + tier + ' → ' + zone.name + ' · ' + spawn.spotId,
-      state: 'ok'
+      message: ok ? code + ' · TP ' + tier + ' → ' + zone.name + ' · ' + spawn.spotId : code + ' · teleport failed',
+      state: ok ? 'ok' : 'error'
     };
   }
 

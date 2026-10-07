@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.0.70",
-  "stage": "master-npc-qa-83xx",
+  "version": "0.0.71",
+  "stage": "dev-world-analyzer",
   "updated": "2026-10-07",
-  "summary": "Active master registry, filters, rotation summary and teleport/cycle DEV codes"
+  "summary": "Project Hub DEV World Analyzer for live master registry, Location Tier, candidate pools, rotation coverage and teleport"
 }

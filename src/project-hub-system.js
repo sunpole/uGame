@@ -165,7 +165,8 @@ export class ProjectHubSystem {
     closeButton,
     onOpenChange,
     interfaceSettings,
-    biomeTextureSettings
+    biomeTextureSettings,
+    worldAnalyzer
   }) {
     this.openButton = openButton;
     this.overlay = overlay;
@@ -178,6 +179,7 @@ export class ProjectHubSystem {
     this.onOpenChange = onOpenChange;
     this.interfaceSettings = interfaceSettings;
     this.biomeTextureSettings = biomeTextureSettings;
+    this.worldAnalyzer = worldAnalyzer;
     this.config = null;
     this.currentSectionId = null;
     this.stack = [];
@@ -262,6 +264,11 @@ export class ProjectHubSystem {
 
     if (view.type === 'biome-lab') {
       this.renderBiomeLab(view);
+      return;
+    }
+
+    if (view.type === 'world-analyzer') {
+      this.renderWorldAnalyzer(view);
       return;
     }
 
@@ -353,9 +360,114 @@ export class ProjectHubSystem {
     if (item.type === 'biome-lab') {
       this.stack.push({ type: 'biome-lab', label: item.label, selectedId: 'grass' });
       this.renderCurrent();
+      return;
+    }
+
+    if (item.type === 'world-analyzer') {
+      this.stack.push({ type: 'world-analyzer', label: item.label, tier: 'ALL', resource: 'stone', selectedIndex: 0 });
+      this.renderCurrent();
     }
   }
 
+  renderWorldAnalyzer(view) {
+    this.setSubViewHeader(view.label || 'DEV World Analyzer', 'uGame / DEV / World Analyzer');
+    const data = this.worldAnalyzer?.getData?.();
+    if (!data) {
+      this.contentElement.innerHTML = '<div class="project-hub-error">World runtime ещё не готов.</div>';
+      return;
+    }
+
+    const allMasters = Array.isArray(data.masters) ? data.masters : [];
+    const filtered = allMasters.filter((spawn) =>
+      (!view.resource || view.resource === 'ALL' || spawn.resourceDirectionId === view.resource) &&
+      (!view.tier || view.tier === 'ALL' || spawn.tier === view.tier)
+    );
+    if (view.selectedIndex >= filtered.length) view.selectedIndex = Math.max(0, filtered.length - 1);
+    if (view.selectedIndex < 0) view.selectedIndex = 0;
+    const selected = filtered[view.selectedIndex] || null;
+
+    const tierOptions = ['ALL','T1','T2','T3','T4'].map((tier) =>
+      '<option value="' + tier + '"' + (view.tier === tier ? ' selected' : '') + '>' + (tier === 'ALL' ? 'Все Tier' : tier) + '</option>'
+    ).join('');
+
+    const cards = filtered.map((spawn, index) => {
+      const zone = data.zones?.[spawn.zoneId] || {};
+      const location = zone.location || {};
+      const remaining = Math.max(0, Math.ceil((Number(spawn.expiresAt) - Date.now()) / 60000));
+      const selectedAttr = index === view.selectedIndex ? 'true' : 'false';
+      return [
+        '<button type="button" class="world-analyzer-card" data-world-index="' + index + '" data-selected="' + selectedAttr + '">',
+        '<span><strong>' + escapeHtml(spawn.displayName || spawn.masterId) + '</strong><b>' + escapeHtml(spawn.tier) + '</b></span>',
+        '<small>' + escapeHtml((zone.name || spawn.zoneId) + ' · ' + (zone.biome || '—') + ' · LT ' + (location.tier || '—') + ' · D' + (location.distanceFromSafeCity ?? '—')) + '</small>',
+        '<em>×' + escapeHtml(Number(spawn.efficiencyMultiplier || 1).toFixed(2)) + ' · ~' + remaining + ' мин · ' + escapeHtml(spawn.spotId || '') + '</em>',
+        '</button>'
+      ].join('');
+    }).join('') || '<div class="project-hub-empty">Нет active master под текущим фильтром.</div>';
+
+    let detail = '<div class="world-analyzer-empty">Выберите active master.</div>';
+    if (selected) {
+      const zone = data.zones?.[selected.zoneId] || {};
+      const location = zone.location || {};
+      const rotation = data.rotations?.[selected.resourceDirectionId + ':' + selected.tier] || {};
+      const pool = data.candidatePools?.[selected.resourceDirectionId + ':' + selected.tier] || [];
+      const remainingSec = Math.max(0, Math.ceil((Number(selected.expiresAt) - Date.now()) / 1000));
+      const mm = String(Math.floor(remainingSec / 60)).padStart(2, '0');
+      const ss = String(remainingSec % 60).padStart(2, '0');
+      detail = [
+        '<div class="world-analyzer-detail">',
+        '<h3>' + escapeHtml(selected.displayName || selected.masterId) + ' · ' + escapeHtml(selected.tier) + '</h3>',
+        '<div class="world-analyzer-kpis">',
+        '<span>Zone <b>' + escapeHtml(zone.name || selected.zoneId) + '</b></span>',
+        '<span>Biome <b>' + escapeHtml(zone.biome || '—') + '</b></span>',
+        '<span>Location <b>' + escapeHtml(location.tier || '—') + ' / D' + escapeHtml(location.distanceFromSafeCity ?? '—') + '</b></span>',
+        '<span>P(Location) <b>' + escapeHtml(location.currentTierChance ?? '—') + '%</b></span>',
+        '<span>Bonus <b>+' + Math.round((Number(location.locationBonus) || 0) * 100) + '%</b></span>',
+        '<span>Encounter <b>' + mm + ':' + ss + '</b></span>',
+        '<span>Multiplier <b>×' + Number(selected.efficiencyMultiplier || 1).toFixed(2) + '</b></span>',
+        '<span>Requested <b>' + escapeHtml(selected.requestedTier || selected.tier) + '</b></span>',
+        '</div>',
+        '<p>Candidate pool: <b>' + pool.length + '</b> · Rotation round: <b>' + escapeHtml(rotation.round || 1) + '</b> · visited: <b>' + escapeHtml(rotation.visitedZoneIds?.length || 0) + '</b></p>',
+        '<p class="world-analyzer-zones">Pool: ' + escapeHtml(pool.join(', ') || '—') + '<br>Visited: ' + escapeHtml((rotation.visitedZoneIds || []).join(', ') || '—') + '</p>',
+        '<button id="world-analyzer-teleport" type="button">Телепорт к Master</button>',
+        '</div>'
+      ].join('');
+    }
+
+    this.contentElement.innerHTML = [
+      '<div class="world-analyzer-toolbar">',
+      '<label>Ресурс <select id="world-analyzer-resource"><option value="stone">Stone</option></select></label>',
+      '<label>Tier <select id="world-analyzer-tier">' + tierOptions + '</select></label>',
+      '<button id="world-analyzer-prev" type="button">← Previous</button>',
+      '<button id="world-analyzer-next" type="button">Next →</button>',
+      '<button id="world-analyzer-refresh" type="button">Обновить</button>',
+      '<span>Active: <b>' + allMasters.length + '</b> · filtered: <b>' + filtered.length + '</b></span>',
+      '</div>',
+      '<div class="world-analyzer-layout"><div class="world-analyzer-list">' + cards + '</div>' + detail + '</div>'
+    ].join('');
+
+    const tierSelect = this.contentElement.querySelector('#world-analyzer-tier');
+    tierSelect?.addEventListener('change', () => { view.tier = tierSelect.value; view.selectedIndex = 0; this.renderWorldAnalyzer(view); });
+    this.contentElement.querySelector('#world-analyzer-refresh')?.addEventListener('click', () => this.renderWorldAnalyzer(view));
+    this.contentElement.querySelector('#world-analyzer-prev')?.addEventListener('click', () => {
+      if (!filtered.length) return;
+      view.selectedIndex = (view.selectedIndex - 1 + filtered.length) % filtered.length;
+      this.renderWorldAnalyzer(view);
+    });
+    this.contentElement.querySelector('#world-analyzer-next')?.addEventListener('click', () => {
+      if (!filtered.length) return;
+      view.selectedIndex = (view.selectedIndex + 1) % filtered.length;
+      this.renderWorldAnalyzer(view);
+    });
+    for (const button of this.contentElement.querySelectorAll('[data-world-index]')) {
+      button.addEventListener('click', () => { view.selectedIndex = Number(button.dataset.worldIndex) || 0; this.renderWorldAnalyzer(view); });
+    }
+    this.contentElement.querySelector('#world-analyzer-teleport')?.addEventListener('click', () => {
+      if (!selected) return;
+      const ok = this.worldAnalyzer?.teleport?.(selected.encounterId);
+      if (ok) this.close();
+    });
+    this.contentElement.scrollTop = 0;
+  }
   renderSettings(view) {
     this.setSubViewHeader(view.label || 'Настройки интерфейса', 'uGame / Настройки');
     const enabled = Boolean(this.interfaceSettings?.isTextSelectionEnabled?.());
