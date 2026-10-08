@@ -83,6 +83,18 @@
       "weightKg": 0.5,
       "stackLimit": 1,
       "devOnly": true
+    },
+    {
+      "id": "simple-field-tool",
+      "name": "Простой полевой инструмент",
+      "type": "misc",
+      "tags": [
+        "item",
+        "crafted",
+        "tool"
+      ],
+      "weightKg": 0.6,
+      "stackLimit": 1
     }
   ]
 }
