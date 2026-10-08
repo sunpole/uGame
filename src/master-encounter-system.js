@@ -6,7 +6,7 @@ function formatRemaining(ms) {
 }
 
 export class MasterEncounterSystem {
-  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, processSystem, expeditionView, canMoveTo, getWanderRadius } = {}) {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, processSystem, expeditionView, professionView, canMoveTo, getWanderRadius } = {}) {
     this.worldGraph = worldGraph;
     this.zoneSystem = zoneSystem;
     this.interactableSystem = interactableSystem;
@@ -17,6 +17,7 @@ export class MasterEncounterSystem {
     this.interactionPanel = interactionPanel;
     this.processSystem = processSystem;
     this.expeditionView = expeditionView;
+    this.professionView = professionView;
     this.canMoveTo = canMoveTo;
     this.getWanderRadius = getWanderRadius;
     this.currentZoneId = null;
@@ -408,7 +409,11 @@ export class MasterEncounterSystem {
           ? () => this.processSystem?.openExtraction?.(spawn)
           : moduleId === 'expedition' && implemented
             ? () => this.expeditionView?.open?.(spawn)
-            : null
+            : moduleId === 'training' && implemented
+              ? () => this.professionView?.openTraining?.(spawn)
+              : moduleId === 'analytics' && implemented
+                ? () => this.professionView?.openAnalytics?.(spawn)
+                : null
       };
     });
     if (historicalPending.length) {
