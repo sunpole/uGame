@@ -95,6 +95,30 @@
       ],
       "weightKg": 0.6,
       "stackLimit": 1
+    },
+    {
+      "id": "gathering-food",
+      "name": "Походный паёк",
+      "type": "consumable",
+      "tags": [
+        "item",
+        "consumable",
+        "gathering"
+      ],
+      "weightKg": 0.2,
+      "stackLimit": 20
+    },
+    {
+      "id": "gathering-tonic",
+      "name": "Настой добытчика",
+      "type": "consumable",
+      "tags": [
+        "item",
+        "consumable",
+        "gathering"
+      ],
+      "weightKg": 0.1,
+      "stackLimit": 20
     }
   ]
 }
