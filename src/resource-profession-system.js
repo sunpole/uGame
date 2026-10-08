@@ -89,7 +89,7 @@ export class ResourceProfessionSystem {
     raw.xp=Math.min(1_000_000_000,raw.xp+granted);
     raw.harvestedUnits+=nonnegative(units);
     if(kind==='auto')raw.autoCycles+=nonnegative(cycles);
-    else raw.manualAttempts+=1;
+    else if(kind==='manual')raw.manualAttempts+=1;
     this.publish();
     return granted;
   }
