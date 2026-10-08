@@ -16,6 +16,7 @@ Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.
 | 8 | Return from rollback to main |
 | 9 | Simulation Lab: TRACE / TEST / DEEP / MATRIX |
 | 10 | Import/update six local biome texture PNGs from Desktop |
+| 11 | Quick Run local npm dev immediately, without typing RUN (explicit menu choice) |
 | 0 | Exit |
 
 ## Project Journal

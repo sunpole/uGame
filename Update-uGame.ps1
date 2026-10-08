@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('menu','status','sync','report','run','github','rollback','resume','simulate','textures')][string]$Command = 'menu')
+param([ValidateSet('menu','status','sync','report','run','quickrun','github','rollback','resume','simulate','textures')][string]$Command = 'menu')
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:Root = [IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
@@ -156,6 +156,7 @@ function Import-BiomeTextures {
 }
 
 function Run-Project {
+    param([switch]$SkipRunConfirmation)
     Assert-Repository
     $manifest = Join-Path $script:Root 'package.json'
     if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) { throw 'The game is not prepared yet: package.json is missing.' }
@@ -163,7 +164,11 @@ function Run-Project {
     if (-not $package.PSObject.Properties['scripts'] -or -not $package.scripts.PSObject.Properties['dev']) { throw 'The project has no dev command yet.' }
     Write-Host ('Local npm dev script: ' + [string]$package.scripts.dev)
     Write-Host 'RUN executes local project code. Dependencies are not installed automatically.'
-    if ((Read-Host 'Type RUN to run this checked-out project') -cne 'RUN') { return }
+    if (-not $SkipRunConfirmation) {
+        if ((Read-Host 'Type RUN to run this checked-out project') -cne 'RUN') { return }
+    } else {
+        Write-Host 'Quick Run: launching local checkout without another confirmation.'
+    }
     Import-BiomeTextures
     $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
     Push-Location -LiteralPath $script:Root
@@ -258,6 +263,7 @@ function Invoke-Action([string]$Action) {
         'status' { Show-Status }
         'report' { New-Report }
         'run' { Run-Project }
+        'quickrun' { Run-Project -SkipRunConfirmation }
         'github' { Start-Process 'https://github.com/sunpole/uGame' | Out-Null }
         'rollback' { Rollback-Project }
         'resume' { Resume-Project }
@@ -287,7 +293,7 @@ function Main {
         if ($Command -ne 'menu') { Invoke-Action $Command; return }
         while (-not $script:StopMenu) {
             Write-Host "=== uGame ==="
-            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n10. Import biome textures\n0. Exit".Replace('\n',[Environment]::NewLine)
+            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n10. Import biome textures\n11. Quick Run project (no RUN prompt)\n0. Exit".Replace('\n',[Environment]::NewLine)
             $choice = Read-Host 'Number'
             try {
                 switch ($choice) {
@@ -302,7 +308,8 @@ function Main {
                     '8' { Invoke-Action resume }
                     '9' { Invoke-Action simulate }
                     '10' { Invoke-Action textures }
-                    default { Write-Host 'Choose a number from 0 to 10.' }
+                    '11' { Invoke-Action quickrun }
+                    default { Write-Host 'Choose a number from 0 to 11.' }
                 }
             } catch { Write-Log ('STOP: ' + $_.Exception.Message) }
         }

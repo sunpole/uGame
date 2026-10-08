@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.18",
-  "stage": "master-reward-encounter-provenance",
+  "version": "0.2.19",
+  "stage": "updater-quick-run",
   "updated": "2026-10-08",
-  "summary": "Separate past and current Master rewards by Encounter provenance so old pending loot cannot block or claim a new encounter"
+  "summary": "Add uGame updater Quick Run menu option without RUN prompt while preserving the existing confirmed launch path"
 }

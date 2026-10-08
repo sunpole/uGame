@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.18**
+Current version: **0.2.19**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.19 | CMD updater: add option 11 Quick Run (no RUN prompt), preserve protected option 4 and existing launch checks |
 | 0.2.18 | Separate current/historical Master rewards, preserve correct Encounter claim marker and expose legacy loot independently |
 | 0.2.17 | Hard Phaser Master marker lifecycle on claim, sprite PRE-FLIGHT regression, read-only DEV 8388 diagnostic |
 | 0.2.16 | Master reward marker visibility reconciliation on NPC updates + executable PRE-FLIGHT regression test |
@@ -153,6 +154,9 @@ Current version: **0.2.18**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.19
+Updater convenience patch: `Update-uGame.ps1` adds menu item 11 "Quick Run project (no RUN prompt)". Option 4 still requires entering `RUN`. Both use one `Run-Project` implementation and retain repository validation, `package.json` dev-script validation, local biome texture import, `npm --ignore-scripts run dev`, and no automatic dependency install or GitHub update. Only an explicit menu choice can start Quick Run. `tests/Test-Updater.ps1` adds static dispatch/confirmation assertions and a missing-game fast-run refusal. Windows PowerShell 5.1 end-to-end execution remains to be checked on the user's machine.
 
 ## 0.2.18
 Reproduced reward-origin mismatch: a historical pending reward for the same Master was always shown before a current Encounter could start Extraction. Claiming that old reward correctly marked the old Encounter, so the current red marker stayed visible and appeared broken. A second confirmed defect blocked access to historical pending rewards after current Extraction had been claimed. Now Extraction prioritizes only pending results belonging to its own Encounter; historical rewards are a separate accessible action even when current Extraction is disabled. Reward claim origin is resolved exclusively from stored `encounterId` or legacy `processId`; unknown origin does not claim the current Encounter. UI explicitly distinguishes historical/current results and explains the remaining red marker when historical results are taken. Stale/double claim actions cannot grant an already-consumed reward. Existing save and resource schemas, claim economy, and Phaser marker rendering remain unchanged. Automated scenario regression covers these flows; browser QA pending.

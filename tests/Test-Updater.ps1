@@ -98,6 +98,15 @@ Check ($reports.Count -eq 2) 'two distinct report files'
 Check (@($reports | Where-Object { $_.Name -notmatch '^uGame_report_S001_R00[12]_\d{8}_\d{6}\.\d{2}\.txt$' }).Count -eq 0) 'report filename contract'
 Check ((Git @('status','--porcelain')) -eq '') 'reports do not change checkout'
 Refused { Run-Project } 'missing game handled'
+Refused { Run-Project -SkipRunConfirmation } 'missing game also blocks quick run'
+# Regression: both launch routes share the same validated Run-Project.
+$updaterSource = Get-Content -LiteralPath $source -Raw
+Check ($updaterSource.Contains("'4' { Invoke-Action run }")) 'menu 4 retains confirmed launch'
+Check ($updaterSource.Contains("'11' { Invoke-Action quickrun }")) 'menu 11 routes to quick launch'
+Check ($updaterSource.Contains("'quickrun' { Run-Project -SkipRunConfirmation }")) 'quick launch uses same runner'
+Check ($updaterSource.Contains('if (-not $SkipRunConfirmation) {')) 'normal launch still requires RUN unless quick mode'
+Check ($updaterSource.Contains("if ((Read-Host 'Type RUN to run this checked-out project') -cne 'RUN') { return }")) 'RUN confirmation preserved'
+
 # Ignored local data must not be overwritten by a newly tracked upstream file.
 'keep-local' | Set-Content (Join-Path $script:Root 'ignored.txt')
 'remote-data' | Set-Content (Join-Path $upstream 'ignored.txt')
