@@ -170,6 +170,42 @@ function validateWorld(world) {
   }
 }
 
+function validateStepsEconomy(config) {
+  if (Number(config?.reserveTarget) !== 10000) throw new Error('Steps reserveTarget must be 10000');
+  if (Number(config?.pixelsPerStep) !== 1.2) throw new Error('Steps pixelsPerStep must be 1.2');
+  if (Number(config?.cityRegenPercentPerRealMinute) !== 0.01) throw new Error('City regen must be 1%/min');
+  if (Number(config?.dashSpeedMultiplier) !== 2 || Number(config?.dashSpendRateMultiplier) !== 4) {
+    throw new Error('Dash must be ×2 speed / ×4 spend rate');
+  }
+  if (Number(config?.attentionToSteps) !== 10000000 || Number(config?.stepsToAttention) !== 100000000) {
+    throw new Error('Attention exchange rates mismatch');
+  }
+  if (Number(config?.teleportWalkStepsPerTransition) !== 1000 || Number(config?.teleportCostFactor) !== 0.6) {
+    throw new Error('Teleport Steps formula mismatch');
+  }
+}
+
+function validateMassResources(resources, containers) {
+  const expected = {
+    stone: [0.5, 25],
+    wood: [0.2, 10],
+    water: [0.1, 5],
+    clay: [0.3, 15]
+  };
+  for (const [id, range] of Object.entries(expected)) {
+    const item = (resources?.resources || []).find((resource) => resource.id === id);
+    if (!item?.massStorage) throw new Error(id + ': massStorage missing');
+    if (Number(item.unitKg) !== 0.1 || Number(item.slotCapacityKg) !== 50) throw new Error(id + ': expected 0.1kg unit / 50kg cell');
+    if (Number(item.rewardRangeKg?.min) !== range[0] || Number(item.rewardRangeKg?.max) !== range[1]) throw new Error(id + ': reward kg range mismatch');
+    const tiers = Array.isArray(item.tiers) ? item.tiers : [];
+    for (const tier of ['T1','T2','T3','T4']) if (!tiers.includes(tier)) throw new Error(id + ': missing ' + tier);
+  }
+  const equipment = (containers?.containers || []).find((item) => item.id === 'equipment');
+  if (!equipment?.slotKeys?.includes('belt') || !equipment?.slotKeys?.includes('bag')) throw new Error('equipment future belt/bag hooks missing');
+  const pouch = (containers?.containers || []).find((item) => item.id === 'resourcePouch');
+  if (pouch?.enabled !== false) throw new Error('resourcePouch must stay inactive until real belt equipment');
+}
+
 function validateMasters(catalog, processes) {
   for (const resource of ['stone', 'water', 'wood', 'clay']) {
     const tiers = new Set((catalog?.masters || []).filter((m) => m.resourceDirectionId === resource).map((m) => m.tier));
@@ -275,6 +311,21 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     return context.modules.size + ' модулей без синтаксических ошибок';
   });
 
+  await check('steps-economy', 'Экономика Шагов', async () => {
+    const config = await fetchJson('./data/steps-economy.json');
+    validateStepsEconomy(config);
+    return '10 000 reserve · 1.2 px/Step · regen 1%/min · Attention/Teleport rates OK';
+  });
+
+  await check('mass-resources', 'Mass-resources / Tiers', async () => {
+    const [resources, containers] = await Promise.all([
+      fetchJson('./data/resources.json'),
+      fetchJson('./data/containers.json')
+    ]);
+    validateMassResources(resources, containers);
+    return 'Stone / Wood / Water / Clay · T1–T4 · 0.1kg · 50kg/cell';
+  });
+
   await check('world', 'Целостность WorldGraph', async () => {
     context.world = await fetchJson('./data/world.json');
     validateWorld(context.world);
@@ -287,7 +338,7 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
       fetchJson('./data/master-processes.json')
     ]);
     validateMasters(catalog, processes);
-    return 'Stone / Water / Forest T1–T4';
+    return 'Stone / Water / Forest / Clay T1–T4';
   });
 
   await check('textures', 'Конфигурация текстур', async () => {

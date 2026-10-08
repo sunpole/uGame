@@ -133,3 +133,10 @@
 - `UGD-0029` — 25-location diamond world + five safe cities + city services + compass; реализовано v0.0.99–v0.1.10, требуется ручной browser/gameplay QA.
 - `UGD-0030` — local diamond + four diagonal gates + Water/Forest Masters + shared humanoid city NPC; реализовано v0.1.11–v0.1.16, требуется ручной browser/gameplay QA.
 - `UGD-0031` — pre-flight boot + true square diamond + performance/spatial safety; реализовано v0.1.20–v0.1.27, требуется ручной browser/gameplay QA.
+
+
+## Economy v0.2.x — accepted / needs manual QA
+
+- Stable rollback checkpoint before economy: `release/v0.1.28-stable` @ `3b7d112`.
+- `UGD-0032`: Steps/StepDebt, city REAL TIME regen, Attention exchange, paid city teleport, Stone/Wood/Water/Clay kg+Tier storage and Master rewards.
+- Current immediate priority: manual QA v0.2.6 before Trader or random Step rewards.

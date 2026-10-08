@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.5**
+Current version: **0.2.6**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.6 | Steps Economy Audit: accepted source-of-truth docs + Pre-flight validation for Steps formulas and kg/Tier resources |
 | 0.2.5 | Clay Master Line: Clay T1–T4 Masters, sand/south clay direction, clay Process validation and palette |
 | 0.2.4 | Extraction Rewards in kg/Tier: Master Tier fixes resource Tier and persistent random mass uses accepted kg ranges |
 | 0.2.3 | Mass Resource Foundation: Stone/Wood/Water/Clay T1–T4, 0.1kg internal unit, 50kg resource-cell, legacy migration, inactive belt + bag slot |
@@ -140,6 +141,9 @@ Current version: **0.2.5**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.6
+Зафиксирован UGD-0032 и полный Steps/Resource Economy source of truth. Pre-flight получает отдельные зелёные строки для Steps formulas и Mass-resources/Tiers: 10k reserve, 1.2px/Step, 1%/min, dash 2×/4×, Attention rates, teleport 1000×0.60, Stone/Wood/Water/Clay ranges, 0.1kg unit, 50kg cell, T1–T4 и inactive belt pouch + bag slot.
 
 ## 0.2.5
 Глина стала полностью добываемым четвёртым базовым материалом: `Мастер глины T1–T4`, Process profile уже использует accepted 0.3–15.0 кг range. Sand и South field zones получают resourceDirection `clay` вместе с прежними направлениями. Добавлена clay palette и Pre-flight теперь требует T1–T4 + Process для Stone/Water/Wood/Clay.

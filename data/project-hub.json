@@ -44,6 +44,13 @@
       "label": "Проект",
       "items": [
         {
+          "id": "steps-economy-doc",
+          "label": "Steps / Resource Economy",
+          "description": "Шаги, долг, Attention exchange, teleport и kg/Tier материалы.",
+          "type": "document",
+          "target": "./docs/STEPS-ECONOMY.md"
+        },
+        {
           "id": "preflight-boot-doc",
           "label": "Pre-flight Boot Gate",
           "description": "Проверка всех runtime JS/JSON, связей, версий, WorldGraph и READY до показа игры.",

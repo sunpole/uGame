@@ -238,3 +238,11 @@ DEEP 1M не является обязательным ритуалом. Он з
 1. Провести ручной QA v0.1.27: Pre-flight → READY, true-square diamond, movement smoothness, city NPC ×3, diagonal wall/spawn clearances; затем full regression 25-zone/NW-NE-SW-SE/safe-city/12-spots/Stone-Water-Forest/First Playable.
 2. После успешного QA исправить только выявленные regression/UX-долги этой world series.
 3. Затем вернуться к content-first Master modules / progression и отдельной проработке city NPC roaming routes.
+
+
+## After v0.2.6 economy QA
+
+1. Calibrate real Steps-per-location from manual routes around walls.
+2. Only after calibration choose random Step reward range for extraction.
+3. Design Trader NPC and resource→Steps prices; Trader sale is allowed to repay StepDebt.
+4. Do not finalize Belt/Bag bonuses until base carry-weight QA is complete.

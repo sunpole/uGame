@@ -975,6 +975,34 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0032",
+      "title": "Steps, debt and mass-resource economy",
+      "date": "2026-10-08",
+      "type": "economy",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "steps",
+        "debt",
+        "attention",
+        "teleport",
+        "kg",
+        "tiers",
+        "clay",
+        "belt",
+        "bag"
+      ],
+      "path": "records/UGD-0032-steps-debt-mass-resources.md",
+      "related": [
+        "UGD-0030",
+        "UGD-0031"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.5",
-  "stage": "clay-master-line",
+  "version": "0.2.6",
+  "stage": "steps-economy-audit",
   "updated": "2026-10-08",
-  "summary": "Add Clay Master T1-T4 and clay resource direction to sand/south field zones"
+  "summary": "Document and preflight-validate Steps, debt, Attention, teleport and kg/Tier resource economy"
 }
