@@ -43,7 +43,7 @@ export class ResourceExpeditionSystem {
     if (run && (typeof run.encounterId !== 'string' || !run.encounterId || typeof run.masterId !== 'string')) run = null;
     if (run) {
       for (const key of ['stockUnits','initialUnits','cargoUnits','extractedUnits','spentSteps','refundSteps',
-        'lastAutoAt','endsAt','autoCycles','manualAttempts','manualStartedAt','completedAt']) {
+        'lastAutoAt','endsAt','autoCycles','manualAttempts','precisionHits','manualStartedAt','completedAt']) {
         run[key] = positiveInt(run[key]);
       }
       run.mode = run.mode === 'auto' ? 'auto' : 'paused'; // A half-played manual attempt cannot resume after reload.
@@ -115,6 +115,7 @@ export class ResourceExpeditionSystem {
       refundSteps: 0,
       autoCycles: 0,
       manualAttempts: 0,
+      precisionHits: 0,
       manualStartedAt: 0,
       lastAutoAt: now,
       forfeited: false,
@@ -196,6 +197,7 @@ export class ResourceExpeditionSystem {
     this.run.stockUnits -= mined;
     this.run.extractedUnits += mined;
     this.run.cargoUnits += mined;
+    if (mined>0 && result?.name==='точно') this.run.precisionHits+=1;
     if (mined > 0) {
       const xp=Math.max(1,Math.round(Number(result.baseRelationshipXp)*this.run.multiplier*(Number(buffs.xpMultiplier)||1)));
       this.grantRelationshipXp?.(this.run.masterId,xp);
