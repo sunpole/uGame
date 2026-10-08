@@ -1080,6 +1080,48 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0036",
+      "title": "Общие ресурсные экспедиции и совместная Active/Idle-добыча",
+      "date": "2026-10-08",
+      "type": "system",
+      "status": "discussing",
+      "flags": [
+        "needs-prototype",
+        "needs-test",
+        "needs-calculation",
+        "return-later"
+      ],
+      "tags": [
+        "npc",
+        "resources",
+        "idle",
+        "active",
+        "multiplayer",
+        "steps",
+        "anti-abuse",
+        "minigame",
+        "mastery",
+        "relationships",
+        "mining",
+        "economy",
+        "events"
+      ],
+      "path": "records/UGD-0036-resource-expeditions-active-idle.md",
+      "related": [
+        "UGD-0001",
+        "UGD-0010",
+        "UGD-0012",
+        "UGD-0015",
+        "UGD-0016",
+        "UGD-0026",
+        "UGD-0032",
+        "UGD-0034",
+        "UGD-0035"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }
