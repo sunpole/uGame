@@ -58,6 +58,19 @@
       "maxWeightKg": null,
       "allowedTags": [],
       "description": "Большое городское хранилище. В прототипе ограничено ячейками, но не весом."
+    },
+    {
+      "id": "resourceChest",
+      "name": "Ресурсный сундук",
+      "kind": "grid",
+      "access": "local",
+      "slotCount": 48,
+      "maxWeightKg": null,
+      "allowedTags": [
+        "resource"
+      ],
+      "allowedItemIds": [],
+      "description": "Отдельное сортируемое хранилище ресурсов T1–T8. Открывается рядом с банкиром; аккаунтные валюты не хранятся."
     }
   ]
 }

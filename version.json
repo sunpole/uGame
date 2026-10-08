@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.45",
-  "stage": "all-six-local-master-activities-qa",
+  "version": "0.2.46",
+  "stage": "inventory-organizer-qa",
   "updated": "2026-10-09",
-  "summary": "Complete all six Master activities for local encounters: finite gather quests, precision challenges, analytics bonuses with one-time rewards. Server multiplayer still pending."
+  "summary": "Russian inventory search and T1–T8 filtering, sorting/stacking, Resource Chest bank, drag/drop, confirmed partial discard; no live multiplayer yet"
 }

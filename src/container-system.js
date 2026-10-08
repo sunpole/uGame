@@ -1,3 +1,5 @@
+import { compareInventoryStacks } from './inventory-management.js';
+
 function clone(value) {
   return typeof structuredClone === 'function'
     ? structuredClone(value)
@@ -408,6 +410,103 @@ export class ContainerSystem {
     this.removeFrom(fromId, ref, result.added, { silent: true });
     this.emitChange({ reason: 'transfer-auto', fromId, itemId: stack.itemId, amount: result.added });
     return { moved: result.added, remaining: result.remaining };
+  }
+
+  // Sort/merge within one grid. All quantities, weight and contents remain unchanged.
+  organize(containerId, { by = 'name', merge = true } = {}) {
+    const state = this.container(containerId), config = this.config(containerId);
+    if (!this.loaded || !state || !config || config.kind !== 'grid' || !config.enabled) {
+      return { ok: false, reason: 'unavailable' };
+    }
+    const groups = new Map();
+    const stacks = state.slots.filter(Boolean).map(stack => ({ ...stack }));
+    if (merge) {
+      for (const stack of stacks) groups.set(stack.itemId, (groups.get(stack.itemId) || 0) + stack.quantity);
+    } else {
+      for (const [index, stack] of stacks.entries()) groups.set(index + ':' + stack.itemId, stack.quantity);
+    }
+    const assembled = [];
+    for (const [key, quantity] of groups.entries()) {
+      const itemId = merge ? key : key.slice(key.indexOf(':') + 1);
+      const limit = this.stackLimit(containerId, itemId);
+      let remaining = quantity;
+      while (remaining > 0) {
+        const portion = Math.min(limit, remaining);
+        assembled.push({ itemId, quantity: portion });
+        remaining -= portion;
+      }
+    }
+    if (assembled.length > state.slots.length) return { ok: false, reason: 'slot-capacity' };
+    assembled.sort((a,b) => compareInventoryStacks(a,b,this.itemCatalog,by));
+    state.slots = [...assembled,...Array(state.slots.length-assembled.length).fill(null)];
+    this.emitChange({ reason: 'organize', containerId, by, merged: merge });
+    return { ok: true, occupiedSlots: assembled.length, freedSlots: stacks.length-assembled.length };
+  }
+
+  moveWithin(containerId, fromIndex, toIndex) {
+    const state = this.container(containerId), config = this.config(containerId);
+    if (!this.loaded || !state || !config || config.kind !== 'grid' || !config.enabled)
+      return { moved: 0, reason: 'unavailable' };
+    const from = Number(fromIndex), to = Number(toIndex);
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from===to ||
+        from<0 || to<0 || from>=state.slots.length || to>=state.slots.length ||
+        !state.slots[from]) return { moved: 0, reason: 'invalid-slot' };
+    const source = state.slots[from], target = state.slots[to];
+    if (target && target.itemId===source.itemId) {
+      const amount = Math.min(source.quantity, Math.max(0,this.stackLimit(containerId, source.itemId)-target.quantity));
+      if (amount===0) return { moved:0,reason:'stack-full' };
+      target.quantity+=amount;
+      source.quantity-=amount;
+      if (!source.quantity) state.slots[from]=null;
+      this.emitChange({reason:'merge-slots',containerId,from,to,amount});
+      return {moved:amount,merged:true};
+    }
+    if (target && (source.quantity>this.stackLimit(containerId,source.itemId) ||
+      target.quantity>this.stackLimit(containerId,target.itemId))) return {moved:0,reason:'stack-limit'};
+    state.slots[to]=source;
+    state.slots[from]=target||null;
+    this.emitChange({reason:'swap-slots',containerId,from,to});
+    return {moved:source.quantity,swapped:Boolean(target)};
+  }
+
+  // Explicit destination slot for drag/drop; bank access must be checked by UI.
+  moveToSlot(fromId, fromIndex, toId, toIndex, requested = Infinity) {
+    if (fromId===toId) return this.moveWithin(fromId,fromIndex,toIndex);
+    const src=this.container(fromId),dst=this.container(toId),cfg=this.config(toId);
+    const from=Number(fromIndex),to=Number(toIndex);
+    if (!this.loaded || !src || !dst || !cfg || src.kind!=='grid' || cfg.kind!=='grid' ||
+      !Number.isInteger(from) || !Number.isInteger(to) || from<0 || to<0 ||
+      from>=src.slots.length || to>=dst.slots.length) return {moved:0,reason:'invalid-slot'};
+    const stack=src.slots[from],target=dst.slots[to];
+    if (!stack || !this.isAllowed(toId,stack.itemId)) return {moved:0,reason:'not-allowed'};
+    if (target && target.itemId!==stack.itemId) return {moved:0,reason:'occupied'};
+    const item=this.item(stack.itemId);
+    const room=Math.max(0,this.stackLimit(toId,stack.itemId)-(target?.quantity||0));
+    const maxWeight=this.effectiveMaxWeightKg(toId);
+    const availableWeight=Number.isFinite(maxWeight)&&item.weightKg>0
+      ? Math.floor(Math.max(0,maxWeight-this.weightKg(toId)+1e-9)/item.weightKg)
+      : Infinity;
+    const count=Math.min(stack.quantity,Math.max(0,Math.floor(Number(requested)||0))||stack.quantity,room,availableWeight);
+    if (count<=0)return {moved:0,reason:'full'};
+    if (target)target.quantity+=count;
+    else dst.slots[to]={itemId:stack.itemId,quantity:count};
+    stack.quantity-=count;
+    if (!stack.quantity)src.slots[from]=null;
+    this.emitChange({reason:'drag-transfer',fromId,toId,itemId:stack.itemId,amount:count});
+    return {moved:count,remaining:stack.quantity};
+  }
+
+  discardFrom(containerId, index, requested) {
+    const cfg=this.config(containerId),state=this.container(containerId);
+    if (!this.loaded || !cfg || !state || cfg.kind!=='grid' || !cfg.enabled)
+      return {removed:0,reason:'unavailable'};
+    const slot=this.slot(containerId,index);
+    const amount=Number(requested);
+    if (!slot || !Number.isSafeInteger(amount) || amount<=0 || amount>slot.quantity)
+      return {removed:0,reason:'invalid-quantity'};
+    const result=this.removeFrom(containerId,index,amount,{silent:true});
+    if (result.removed>0) this.emitChange({reason:'discard-confirmed',containerId,index,itemId:result.itemId,amount:result.removed});
+    return result;
   }
 
   equipFrom(containerId, ref) {
