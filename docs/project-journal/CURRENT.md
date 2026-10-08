@@ -155,3 +155,10 @@ The Master reward loop is implemented with distinct current/historical pending r
 ## Implementation snapshot v0.2.33
 
 Source-level duplicate Interactable ID/Phaser marker defect prevented; still awaiting browser confirmation for intermittent red-dot reports. Project Journal UGD-0035 records free character development and durable player-crafted gear direction. The approved **4 specialized cities + neutral Crossroads** model has a provisional existing-zone assignment and visible description in Project Hub World Map. Six-material list and simple stone+wood craft are **proposals only**, not gameplay systems or accepted balance. Release and QA: `docs/QA-v0.2.33.md`.
+
+## Обсуждается: общие ресурсные экспедиции (UGD-0036, 08.10.2026)
+
+- Пользователь выбрал интерес к редким Мастерам (A), заказам (B) и гибридной самостоятельной/Idle добыче (D); для работ обозначил предел жизни Encounter и REAL TIME продолжение при закрытом браузере.
+- Новая концепция: вход через Мастера в отдельную лёгкую Resource Event-zone, общий конечный запас материала, таблица добытчиков, автоматический и ручной режим (мини-игра), прокачка отношений и навыков, рейтинг по массе и обсуждаемый возврат части потраченных Шагов.
+- Ранние принятые правила шести модулей / Tier / Character-owned progression из UGD-0015 **не отменены**. Многопользовательская экспедиция, коэффициенты XP, конкуренция, призы, антиабьюз и выдача ресурсов после despawn пока **обсуждаются**; новый режим **не реализован**.
+- Подробные условия, варианты и нерешённые противоречия: `records/UGD-0036-resource-expeditions-active-idle.md`.
