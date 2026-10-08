@@ -1,0 +1,38 @@
+name: uGame QA checkpoint releases
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.25.md'
+      - '.github/workflows/publish-qa-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Master loop regression tests
+        run: node --test tests/master-loop.test.mjs
+      - name: Publish pre-batch baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.19 >/dev/null 2>&1; then
+            gh release create v0.2.19 --target 0cd461958c978ee998ed3240fb9a9b2d31b89b56 --title 'uGame v0.2.19 · QA checkpoint' --notes-file docs/releases/v0.2.19.md --prerelease
+          fi
+      - name: Publish batch checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.25 >/dev/null 2>&1; then
+            gh release create v0.2.25 --target "$GITHUB_SHA" --title 'uGame v0.2.25 · 6-mini-patch QA candidate' --notes-file docs/releases/v0.2.25.md --prerelease
+          fi

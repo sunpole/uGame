@@ -1,5 +1,7 @@
 # uGame
 
+Latest QA checkpoint: **v0.2.25** (mini-patch series v0.2.20–0.2.25). Browser manual QA pending; GitHub tagged source snapshots are documented in [Release Rollback](docs/RELEASE-ROLLBACK.md).
+
 Windows entry point: **Update-uGame.cmd**. Uses its own checkout directory,
 including `C:\!CODE_CLUB\new 2026\011_uGame`, regardless of the terminal's current folder.
 Requires Windows PowerShell 5.1 and Git for Windows. No administrator rights.

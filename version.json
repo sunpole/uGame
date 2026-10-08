@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.24",
-  "stage": "master-loop-regression-suite",
+  "version": "0.2.25",
+  "stage": "master-qa-release-checkpoint",
   "updated": "2026-10-08",
-  "summary": "Add executable Node Master loop regression suite and GitHub Actions checks"
+  "summary": "Document remaining debts and publish versioned Master QA rollback checkpoints through GitHub Actions"
 }

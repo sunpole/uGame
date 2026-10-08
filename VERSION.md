@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.24**
+Current version: **0.2.25**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.25 | QA/release docs, current debt queue, GitHub Release checkpoints v0.2.19 and v0.2.25 |
 | 0.2.24 | Executable Master Process/claim/UI Node tests + GitHub Actions CI |
 | 0.2.23 | Guard duplicate free Master Process at character-state layer (claimed/pending) |
 | 0.2.22 | DEV 8388 now diagnoses last interacted Master, nearest as fallback |
@@ -159,6 +160,9 @@ Current version: **0.2.24**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.25
+Completed six-patch QA batch v0.2.20–v0.2.25 with current Master NPC documentation, user-facing single-pass smoke checklist, prioritized remaining debt queue and documented rollback safety. Added GitHub Actions workflow to publish two tagged prereleases (pre-batch v0.2.19 and final candidate v0.2.25) after the Master Node tests pass. Releases contain source snapshots, not browser saves. Do not report the final browser QA as passed until tested by the user.
 
 ## 0.2.24
 Added `tests/master-loop.test.mjs` with Node built-in `node:test` covering historical/current reward separation, duplicate-Process guards, the real-time completion UI, and live-panel replacement safety. `.github/workflows/master-loop-tests.yml` runs the suite on changes to the associated modules, tests or workflow. No runtime economy/save changes. External CI should be checked before considering the batch QA complete.

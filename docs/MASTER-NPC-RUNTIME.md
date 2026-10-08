@@ -1,6 +1,6 @@
 # Resource Master NPC runtime
 
-Current implementation: **v0.1.16**
+Current implementation: **v0.2.25 QA candidate**
 
 ## Active resource lines
 
@@ -51,3 +51,12 @@ Process startedAt/endsAt remain REAL TIME, reload-safe, offline-completable and 
 - 8300 = summary of active Stone / Water / Forest Masters.
 - 8302/8303/8304 and 8312/8313/8314 remain Stone-specific QA shortcuts.
 - 8399 = candidate pools / rotation summary.
+
+
+## Current Master rewards and Process (v0.2.25)
+
+Four resource lines now exist: Stone, Water, Forest/Wood, Clay, each with T1–T4. `data/master-processes.json` defines a 60-second REAL TIME nominal Extraction Process per resource (capped at Encounter expiry). `Character↔Master` stores `claimedEncounterIds`, `activeProcess`, and `pendingRewards`. Red world-space Phaser dots belong only to unclaimed current Encounters and are destroyed on claim; legacy pending rewards from other Encounters remain separately collectible.
+
+Live Process modal shows REAL TIME countdown, transitioning directly to the matching claim action on completion. Closing the modal never discards the Process/pending result. DEV 8388 targets the last interacted Master, otherwise nearest. The current baseline tests live in `tests/master-loop.test.mjs` (Node built-in test runner; GitHub Actions).
+
+**QA status:** v0.2.19 was the prior user-tested checkpoint; v0.2.20–v0.2.25 require manual browser QA. See `docs/QA-MASTER-LOOP-v0.2.25.md`.

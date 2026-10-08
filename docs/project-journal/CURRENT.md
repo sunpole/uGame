@@ -140,3 +140,8 @@
 - Stable rollback checkpoint before economy: `release/v0.1.28-stable` @ `3b7d112`.
 - `UGD-0032`: Steps/StepDebt, city REAL TIME regen, Attention exchange, paid city teleport, Stone/Wood/Water/Clay kg+Tier storage and Master rewards.
 - Current immediate priority: manual QA v0.2.6 before Trader or random Step rewards.
+
+
+## Implementation snapshot v0.2.25 (2026-10-08)
+
+The Master reward loop is implemented with distinct current/historical pending rewards, an Encounter claim lock, red Phaser markers, REAL TIME Process, automatic claim dialog on completion, and DEV 8388 identification of the last interacted NPC. These implementations are not new economy design decisions. v0.2.20–v0.2.25 are a QA candidate awaiting a single live browser smoke; GitHub source rollback checkpoints are tracked separately from browser saves. See `docs/NEXT-IMPLEMENTATION-PLAN.md` and `docs/RELEASE-ROLLBACK.md`.

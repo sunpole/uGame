@@ -246,3 +246,21 @@ DEEP 1M не является обязательным ритуалом. Он з
 2. Only after calibration choose random Step reward range for extraction.
 3. Design Trader NPC and resource→Steps prices; Trader sale is allowed to repay StepDebt.
 4. Do not finalize Belt/Bag bonuses until base carry-weight QA is complete.
+
+
+## Current debt queue after 2026-10-08 v0.2.25
+
+The historical sections above describe earlier baselines; they do not override newer decisions or the current code.
+
+| Priority | Debt | Status / next gate |
+|---|---|---|
+| P0 | Live Master QA: auto-claim dialog, marker, old/new pending, save/reload, DEV 8388 | Automated coverage exists; single browser smoke still needed |
+| P1 | Measure actual Steps for traversing real 1920×1080 zones around walls | Collect manual route data before changing economy numbers |
+| P2 | Trader NPC / resource → Steps conversion, including debt repayment | Accepted direction, prices/rules not chosen; design before implementation |
+| P3 | Stone-direction progression and shared skill tree | Concept accepted; concrete skills, point awards and Training access not yet designed |
+| P4 | More Master modules: Dialogue/Quest/Analytics/Training/Event | Availability shells exist; gameplay behavior not implemented/approved |
+| P5 | Attention/Impulse, time efficiency and anti-grind | Core philosophy accepted, numeric production rules still hypotheses |
+| P6 | Equipment Tier/socket/set bonuses and inventory carry expansion | Discussed ideas only; require scope agreement before coding |
+| P7 | City NPC walking routes and remaining content-first playable goals | Deferred pending current Master loop QA |
+
+The v0.2.20–v0.2.25 batch focuses on the already accepted Master Process loop and its QA; no new unapproved economy formula is introduced. Release and rollback rules: `docs/RELEASE-ROLLBACK.md`.
