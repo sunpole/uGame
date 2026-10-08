@@ -1,6 +1,6 @@
 # uGame Pre-flight Boot Gate
 
-Current implementation: **v0.1.27**
+Current implementation: **v0.2.9**
 
 ## Goal
 
@@ -28,7 +28,16 @@ The loading screen runs before `main.js` starts the game and reports every check
 16. Game module imports successfully.
 17. Game world reaches `ready` within the boot timeout.
 
-If a critical test is red, gameplay remains blocked and the error stays visible on the loading screen.
+Every check now displays its elapsed time.
+
+After all static/runtime/world checks are green, the loading screen remains visible instead of auto-closing. It exposes:
+
+- **Копировать отладку** — copies version, boot phase, browser and all check results as plain text;
+- **Начать играть** — appears only after the world reaches READY and explicitly reveals gameplay.
+
+This allows the full pre-flight report to be copied into ChatGPT before entering the game.
+
+If a critical test is red, gameplay remains blocked and the error stays visible on the loading screen; the debug copy button remains available.
 
 ## Scope limits
 

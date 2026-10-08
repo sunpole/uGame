@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.8</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.8" />
+    <title>uGame v0.2.9</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.9" />
     <style>
       .preflight-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#080b0f;color:#e6edf3;font:14px/1.35 Arial,sans-serif}
       .preflight-screen[hidden]{display:none}
@@ -14,6 +14,11 @@
       .preflight-row[data-state="ok"] .preflight-dot{color:#3fb950}.preflight-row[data-state="fail"] .preflight-dot{color:#f85149}.preflight-row[data-state="running"] .preflight-dot{color:#d29922}
       .preflight-detail{color:#8b949e;font-size:12px;text-align:right}.preflight-summary{margin-top:14px;padding:10px;border-radius:8px;background:#161b22;font-weight:800}
       .preflight-summary[data-state="ok"]{color:#7ee787}.preflight-summary[data-state="fail"]{color:#ff7b72}
+      .preflight-actions{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+      .preflight-action{height:30px;padding:0 12px;border:1px solid #30363d;border-radius:7px;background:#161b22;color:#c9d1d9;cursor:pointer;font-weight:700}
+      .preflight-action:hover{background:#21262d}.preflight-action.primary{border-color:#238636;background:#1f6f36;color:#fff}
+      .preflight-action.primary:hover{background:#238636}.preflight-action.small{height:26px;padding:0 9px;font-size:12px;font-weight:600}
+      .preflight-copy-status{min-height:18px;color:#8b949e;font-size:12px}
       @media(max-width:640px){.preflight-row{grid-template-columns:18px 1fr}.preflight-detail{grid-column:2;text-align:left}}
     </style>
   </head>
@@ -25,6 +30,11 @@
         <p>Игра запустится только после успешного pre-flight.</p>
         <div id="preflight-list" class="preflight-list"></div>
         <div id="preflight-summary" class="preflight-summary">Подготовка…</div>
+        <div class="preflight-actions">
+          <button id="preflight-copy" class="preflight-action small" type="button">Копировать отладку</button>
+          <button id="preflight-start" class="preflight-action primary" type="button" hidden>Начать играть</button>
+          <span id="preflight-copy-status" class="preflight-copy-status" aria-live="polite"></span>
+        </div>
       </div>
     </section>
     <div id="app" class="selection-disabled" aria-hidden="true" style="visibility:hidden">
@@ -175,7 +185,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.8</strong>
+          <strong id="footer-version">v0.2.9</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -206,20 +216,68 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.8';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.9';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
+      const copyButton = document.querySelector('#preflight-copy');
+      const startButton = document.querySelector('#preflight-start');
+      const copyStatus = document.querySelector('#preflight-copy-status');
+
+      function preflightDebugText() {
+        const rows = [...root.querySelectorAll('.preflight-row')].map((row) => {
+          const state = String(row.dataset.state || 'unknown').toUpperCase();
+          const label = row.querySelector('.preflight-label')?.textContent?.trim() || '—';
+          const detail = row.querySelector('.preflight-detail')?.textContent?.trim() || '—';
+          return '[' + state + '] ' + label + ' — ' + detail;
+        });
+        const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
+        return [
+          'uGame v0.2.9 · PRE-FLIGHT DEBUG',
+          'Дата: ' + new Date().toISOString(),
+          'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
+          'Browser: ' + navigator.userAgent,
+          '',
+          ...rows,
+          '',
+          'SUMMARY: ' + summary
+        ].join('\n');
+      }
+
+      async function copyPreflightDebug() {
+        const text = preflightDebugText();
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.append(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+        }
+        if (copyStatus) {
+          copyStatus.textContent = 'Скопировано';
+          setTimeout(() => { if (copyStatus) copyStatus.textContent = ''; }, 1800);
+        }
+      }
+
+      copyButton?.addEventListener('click', () => copyPreflightDebug());
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.8', root });
+        const result = await runPreflight({ expectedVersion: '0.2.9', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
+        let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.8');
-        result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK');
+        const gameModule = await import('./src/main.js?v=0.2.9');
+        let phaseElapsed = performance.now() - phaseStartedAt;
+        result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
+        phaseStartedAt = performance.now();
         result.report.set('world-boot', 'Запуск игрового мира', 'running', 'инициализация…');
         await gameModule.bootGame();
 
@@ -232,10 +290,16 @@
         }
         if (window.__ugameBoot?.phase !== 'ready') throw new Error('Игровой мир не подтвердил ready за 15 секунд');
 
-        result.report.set('world-boot', 'Запуск игрового мира', 'ok', 'READY');
-        result.report.summary('ВСЕ ПРОВЕРКИ ЗЕЛЁНЫЕ · запуск', 'ok');
-        await new Promise((resolve) => setTimeout(resolve, 350));
+        phaseElapsed = performance.now() - phaseStartedAt;
+        result.report.set('world-boot', 'Запуск игрового мира', 'ok', 'READY · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
+        const totalElapsed = Date.now() - Number(window.__ugameBoot?.startedAt || Date.now());
+        result.report.summary('ВСЕ ПРОВЕРКИ ЗЕЛЁНЫЕ · ' + totalElapsed + ' мс · можно копировать отчёт или начать игру', 'ok');
+        window.__ugameBoot.phase = 'ready-waiting-user';
+        startButton.hidden = false;
+        startButton.focus();
 
+        await new Promise((resolve) => startButton.addEventListener('click', resolve, { once: true }));
+        window.__ugameBoot.phase = 'playing';
         app.style.visibility = 'visible';
         app.setAttribute('aria-hidden', 'false');
         root.hidden = true;

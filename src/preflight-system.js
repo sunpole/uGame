@@ -260,14 +260,17 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
   let failed = false;
 
   const check = async (id, label, fn) => {
+    const startedAt = performance.now();
     report.set(id, label, 'running', 'проверка…');
     try {
       const detail = await fn();
-      report.set(id, label, 'ok', detail || 'OK');
+      const elapsedMs = Math.max(0, performance.now() - startedAt);
+      report.set(id, label, 'ok', (detail || 'OK') + ' · ' + elapsedMs.toFixed(elapsedMs < 100 ? 1 : 0) + ' мс');
       return true;
     } catch (error) {
+      const elapsedMs = Math.max(0, performance.now() - startedAt);
       failed = true;
-      report.set(id, label, 'fail', error?.message || String(error));
+      report.set(id, label, 'fail', (error?.message || String(error)) + ' · ' + elapsedMs.toFixed(elapsedMs < 100 ? 1 : 0) + ' мс');
       return false;
     }
   };

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.8",
-  "stage": "steps-movement-performance",
+  "version": "0.2.9",
+  "stage": "inspectable-preflight",
   "updated": "2026-10-08",
-  "summary": "Remove per-frame Step snapshots/events/DOM writes while preserving exact movement accounting"
+  "summary": "Per-test preflight timing, copy-debug report and explicit Start Game gate after READY"
 }

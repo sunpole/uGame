@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.8**
+Current version: **0.2.9**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.9 | Inspectable Pre-flight: per-test timing, copy-debug text, READY hold screen and explicit Start Game button |
 | 0.2.8 | Steps Movement Performance: remove per-frame snapshots/events/DOM writes; exact movement accounting with HUD throttled to 5 Hz |
 | 0.2.7 | Steps Capacity/Regen: 10k start, 100M max, visible current/max, city +5 Steps/s formula, automatic 100M→1 Attention |
 | 0.2.6 | Steps Economy Audit: accepted source-of-truth docs + Pre-flight validation for Steps formulas and kg/Tier resources |
@@ -143,6 +144,9 @@ Current version: **0.2.8**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.9
+Pre-flight now records elapsed time for every check, including game-module import and world READY. After all checks pass, the screen stays open until the user presses `Начать играть`. A small `Копировать отладку` button copies version, boot phase, browser, every green/red row and summary as plain text for pasting into ChatGPT; it remains usable on failures too.
 
 ## 0.2.8
 Movement cost still accumulates from actual travelled pixels every frame, but ordinary walk/dash no longer clones Step state, emits Step change events or rewrites DOM at frame rate. The Steps HUD is refreshed at most 5 times/sec and save persistence remains throttled to once/sec. This specifically targets the small walking stutters observed after v0.2.x.
