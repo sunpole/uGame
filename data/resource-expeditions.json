@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "status": "prototype-parameters-not-final-balance",
+  "maxParticipants": 12,
+  "resourceTiersByMasterTier": {
+    "T1": [
+      "T1",
+      "T2"
+    ],
+    "T2": [
+      "T3",
+      "T4"
+    ],
+    "T3": [
+      "T5",
+      "T6"
+    ],
+    "T4": [
+      "T7",
+      "T8"
+    ]
+  },
+  "enabledResourceTiers": [
+    "T1"
+  ],
+  "initialStockKg": 10,
+  "automatic": {
+    "cycleSeconds": 10,
+    "massKgPerCycle": 0.2,
+    "stepsPerCycle": 2,
+    "baseRelationshipXp": 1
+  },
+  "manual": {
+    "meterPeriodMs": 2000,
+    "maxAttemptMs": 8000,
+    "stepsPerAttempt": 2,
+    "results": [
+      {
+        "name": "точно",
+        "minAccuracy": 0.42,
+        "massKg": 0.5,
+        "baseRelationshipXp": 20
+      },
+      {
+        "name": "хорошо",
+        "minAccuracy": 0.22,
+        "massKg": 0.3,
+        "baseRelationshipXp": 10
+      },
+      {
+        "name": "обычно",
+        "minAccuracy": 0,
+        "massKg": 0.1,
+        "baseRelationshipXp": 2
+      }
+    ]
+  },
+  "soloStepRefundPercent": {
+    "min": 10,
+    "max": 40
+  }
+}
