@@ -239,6 +239,35 @@ export class MasterEncounterSystem {
     return spawn ? this.teleportToSpawn(spawn) : false;
   }
 
+  getRewardMarkerDiagnostic(spawn) {
+    if (!spawn?.encounterId) return null;
+    const id = 'master-interactable:' + spawn.encounterId;
+    const items = (this.interactableSystem?.items || []).filter((item) => item.id === id);
+    const item = items[0] || null;
+    const marker = item?._masterRewardMarker;
+    const sceneObjects = this.interactableSystem?.scene?.children?.list || [];
+    const namedMarkers = sceneObjects.filter((object) => object?.active !== false
+      && object?.name === 'ugame-master-reward:' + spawn.encounterId);
+    const relationship = this.relationshipSystem?.get?.(spawn.masterId);
+    const pending = relationship?.pendingRewards || [];
+    const sourceEncounter = (reward) => this.relationshipSystem?.pendingRewardEncounterId?.(reward);
+    return {
+      masterId: spawn.masterId,
+      encounterId: spawn.encounterId,
+      claimed: this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId) === true,
+      currentPending: pending.filter((reward) => sourceEncounter(reward) === spawn.encounterId).length,
+      historicalPending: pending.filter((reward) => sourceEncounter(reward) !== spawn.encounterId).length,
+      activeProcessEncounterId: relationship?.activeProcess?.encounterId || null,
+      interactableCount: items.length,
+      namedMarkerCount: namedMarkers.length,
+      cachedAvailable: item?.masterRewardAvailable ?? null,
+      markerExists: Boolean(marker),
+      markerVisible: marker?.visible ?? null,
+      markerActive: marker?.active ?? null,
+      source: 'live character/master and Phaser scene; read-only'
+    };
+  }
+
   executeDevCode(code) {
     if (code === '8388') {
       // Read-only real-scene diagnostics for the nearest rendered Master.
@@ -276,7 +305,8 @@ export class MasterEncounterSystem {
         redDotCountInScene: redDots.length,
         renderedMasterItems: candidates.length
       };
-      console.info('[uGame DEV 8388] Master marker diagnosis', info);
+      const fullDiagnostic = this.getRewardMarkerDiagnostic(spawn);
+      console.info('[uGame DEV 8388] Master marker diagnosis', { ...info, ...fullDiagnostic });
       this.interactionPanel?.showMessage?.({
         title: 'DEV 8388 · красная точка Master',
         text: 'Источник: ' + targetMode + ' · NPC: ' + info.masterId + ' · Encounter: ' + info.encounterId
@@ -285,7 +315,13 @@ export class MasterEncounterSystem {
           + ' · markerExists=' + info.markerExists
           + ' · markerVisible=' + info.markerVisible
           + ' · markerActive=' + info.markerActive,
-        meta: 'redDotCountInScene=' + info.redDotCountInScene + ' · renderedMasters=' + info.renderedMasterItems
+        meta: 'claimed=' + info.claimed
+          + ' · pendingCurrent=' + fullDiagnostic?.currentPending
+          + ' · pendingOlder=' + fullDiagnostic?.historicalPending
+          + ' · activeProcessEncounter=' + (fullDiagnostic?.activeProcessEncounterId || 'нет')
+          + ' · itemsSameID=' + fullDiagnostic?.interactableCount
+          + ' · spritesSameEncounter=' + fullDiagnostic?.namedMarkerCount
+          + ' · redDotsScene=' + info.redDotCountInScene
       });
       return { handled: true, message: '8388 · диагностика Master открыта', state: 'ok' };
     }

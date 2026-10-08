@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.25**
+Current version: **0.2.26**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.26 | Master red marker origin/duplicate diagnostics per Encounter; no state changes |
 | 0.2.25 | QA/release docs, current debt queue, GitHub Release checkpoints v0.2.19 and v0.2.25 |
 | 0.2.24 | Executable Master Process/claim/UI Node tests + GitHub Actions CI |
 | 0.2.23 | Guard duplicate free Master Process at character-state layer (claimed/pending) |
@@ -160,6 +161,9 @@ Current version: **0.2.25**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.26
+Expanded read-only DEV 8388. It reports live claimed state, pending rewards for current/previous Encounters, active Process Encounter, count of interactables with the same id and count of Phaser markers bearing the same Encounter id. Identified a reproducible source-level hazard: InteractableSystem.add permits duplicate ids and getItem returns only the first match; a second red marker could remain visually unmanaged. This is a **possible**, not yet browser-confirmed, explanation for intermittent dots; the next patch enforces uniqueness and tests the exact scenario. No gameplay/save mutation from diagnostics.
 
 ## 0.2.25
 Completed six-patch QA batch v0.2.20–v0.2.25 with current Master NPC documentation, user-facing single-pass smoke checklist, prioritized remaining debt queue and documented rollback safety. Added GitHub Actions workflow to publish two tagged prereleases (pre-batch v0.2.19 and final candidate v0.2.25) after the Master Node tests pass. Releases contain source snapshots, not browser saves. Do not report the final browser QA as passed until tested by the user.

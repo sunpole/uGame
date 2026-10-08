@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.25",
-  "stage": "master-qa-release-checkpoint",
+  "version": "0.2.26",
+  "stage": "master-marker-identity-audit",
   "updated": "2026-10-08",
-  "summary": "Document remaining debts and publish versioned Master QA rollback checkpoints through GitHub Actions"
+  "summary": "Read-only Encounter marker diagnostics including duplicate Phaser objects and reward provenance"
 }
