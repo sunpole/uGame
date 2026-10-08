@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.10",
-  "stage": "diamond-world-series-audit",
+  "version": "0.1.11",
+  "stage": "local-diamond-four-diagonal-gates",
   "updated": "2026-10-08",
-  "summary": "Document and audit the 25-location diamond world, five safe cities, city services, textures, compass and migrated First Playable"
+  "summary": "Local locations become diamond playable areas with only four real gates: NW, NE, SW, SE; N/E/S/W are orientation markers only"
 }

@@ -69,14 +69,18 @@ export class InteractableSystem {
     let glow = null;
 
     if (item.type === 'portal') {
-      glow = scene.add.rectangle(item.x, item.y, 44, 126, 0x56d364, 0.18);
-      body = scene.add.rectangle(item.x, item.y, item.width || 28, item.height || 110, 0x2ea043, 1);
-      label = scene.add.text(item.labelX ?? item.x, item.labelY ?? item.y, item.label || 'ПОРТАЛ', {
+      const rotation = Number(item.rotation) || 0;
+      glow = scene.add.rectangle(item.x, item.y, (item.width || 104) + 24, (item.height || 22) + 20, 0x56d364, 0.16).setRotation(rotation);
+      body = scene.add.rectangle(item.x, item.y, item.width || 104, item.height || 22, 0x2ea043, 0.92)
+        .setStrokeStyle(2, 0x9ff0ad)
+        .setRotation(rotation);
+      label = scene.add.text(item.labelX ?? item.x, item.labelY ?? item.y, item.label || 'ПЕРЕХОД', {
         ...labelStyle,
-        fontSize: '16px',
-        color: '#9ff0ad'
+        fontSize: '15px',
+        color: '#9ff0ad',
+        backgroundColor: '#08110b'
       }).setOrigin(0.5);
-      scene.tweens.add({ targets: glow, alpha: { from: 0.22, to: 0.62 }, duration: 900, yoyo: true, repeat: -1 });
+      scene.tweens.add({ targets: glow, alpha: { from: 0.12, to: 0.48 }, duration: 900, yoyo: true, repeat: -1 });
     } else if (item.type === 'event-portal') {
       glow = scene.add.circle(item.x, item.y, 24, 0xa371f7, 0.2);
       body = scene.add.circle(item.x, item.y, 17, 0x8957e5, 1).setStrokeStyle(2, 0xd2a8ff);

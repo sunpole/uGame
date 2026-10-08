@@ -66,17 +66,81 @@ export class ZoneSystem {
     };
   }
 
+  diamondGeometry() {
+    return {
+      centerX: this.width / 2,
+      centerY: this.height / 2,
+      radiusX: this.width / 2,
+      radiusY: this.height / 2
+    };
+  }
+
+  isInsidePlayable(x, y, margin = 18) {
+    const { centerX, centerY, radiusX, radiusY } = this.diamondGeometry();
+    const safeX = Math.max(1, radiusX - margin);
+    const safeY = Math.max(1, radiusY - margin);
+    return Math.abs(Number(x) - centerX) / safeX + Math.abs(Number(y) - centerY) / safeY <= 1;
+  }
+
+  makeDiamondFrame() {
+    const { centerX, centerY } = this.diamondGeometry();
+    const g = this.scene.add.graphics().setDepth(1);
+    g.fillStyle(0x030507, 0.965);
+
+    const fill = (points) => {
+      g.beginPath();
+      g.moveTo(points[0][0], points[0][1]);
+      for (let index = 1; index < points.length; index += 1) g.lineTo(points[index][0], points[index][1]);
+      g.closePath();
+      g.fillPath();
+    };
+
+    fill([[0, 0], [centerX, 0], [0, centerY]]);
+    fill([[centerX, 0], [this.width, 0], [this.width, centerY]]);
+    fill([[this.width, centerY], [this.width, this.height], [centerX, this.height]]);
+    fill([[centerX, this.height], [0, this.height], [0, centerY]]);
+
+    g.lineStyle(5, 0x30363d, 1);
+    g.beginPath();
+    g.moveTo(centerX, 0);
+    g.lineTo(this.width, centerY);
+    g.lineTo(centerX, this.height);
+    g.lineTo(0, centerY);
+    g.closePath();
+    g.strokePath();
+
+    this.objects.push(g);
+  }
+
+  makeCompassMarkers() {
+    const { centerX, centerY } = this.diamondGeometry();
+    const style = {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '18px',
+      fontStyle: 'bold',
+      color: '#8b949e',
+      stroke: '#050608',
+      strokeThickness: 4
+    };
+    const markers = [
+      { x: centerX, y: 28, text: 'N ↑' },
+      { x: this.width - 38, y: centerY, text: 'E →' },
+      { x: centerX, y: this.height - 28, text: 'S ↓' },
+      { x: 38, y: centerY, text: '← W' }
+    ];
+    for (const marker of markers) {
+      const label = this.scene.add.text(marker.x, marker.y, marker.text, style).setOrigin(0.5).setDepth(3);
+      this.objects.push(label);
+    }
+  }
+
   layoutZone(zone) {
     this.clear();
     this.walls = [];
 
     const transitions = this.worldGraph.getTransitionsFrom(zone.id);
-    const openSides = new Set(transitions.map((transition) => transition.from?.side).filter(Boolean));
-
-    this.makeBoundary('top', openSides.has('top'));
-    this.makeBoundary('bottom', openSides.has('bottom'));
-    this.makeBoundary('left', openSides.has('left'));
-    this.makeBoundary('right', openSides.has('right'));
+    this.makeDiamondFrame();
+    this.makeCompassMarkers();
 
     for (const wall of zone.walls || []) {
       this.makeWall(this.mapX(wall.x), wall.y, wall.width, wall.height);
@@ -118,10 +182,7 @@ export class ZoneSystem {
     return zone;
   }
 
-  resolveSpawn(spawn, entryId) {
-    if (entryId === 'left') return { x: 96, y: spawn.y };
-    if (entryId === 'right') return { x: this.width - 96, y: spawn.y };
-    if (entryId === 'top' || entryId === 'bottom') return { x: this.width / 2, y: spawn.y };
+  resolveSpawn(spawn) {
     return this.mapPoint(spawn);
   }
 
@@ -160,48 +221,33 @@ export class ZoneSystem {
   }
 
   portalDefinition(transition) {
-    const side = transition.from?.side || 'right';
-    const horizontal = side === 'left' || side === 'right';
-    const isRight = side === 'right';
-    const isBottom = side === 'bottom';
+    const side = transition.from?.side || 'ne';
+    const { centerX, centerY } = this.diamondGeometry();
+    const boundary = {
+      nw: { x: centerX * 0.5, y: centerY * 0.5, rotation: -Math.atan2(centerY, centerX), arrow: '↖ NW' },
+      ne: { x: centerX * 1.5, y: centerY * 0.5, rotation: Math.atan2(centerY, centerX), arrow: 'NE ↗' },
+      sw: { x: centerX * 0.5, y: centerY * 1.5, rotation: Math.atan2(centerY, centerX), arrow: '↙ SW' },
+      se: { x: centerX * 1.5, y: centerY * 1.5, rotation: -Math.atan2(centerY, centerX), arrow: 'SE ↘' }
+    }[side] || { x: centerX, y: centerY, rotation: 0, arrow: 'ВЫХОД' };
 
-    let x = this.width / 2;
-    let y = this.height / 2;
-    let width = 110;
-    let height = 28;
-    let labelX = x;
-    let labelY = y;
-    let defaultLabel = 'ВЫХОД';
-
-    if (horizontal) {
-      x = isRight ? this.width - 22 : 22;
-      y = this.height / 2;
-      width = 28;
-      height = 110;
-      labelX = isRight ? this.width - 82 : 82;
-      labelY = y;
-      defaultLabel = isRight ? 'ВЫХОД →' : '← ВЫХОД';
-    } else {
-      x = this.width / 2;
-      y = isBottom ? this.height - 22 : 22;
-      width = 110;
-      height = 28;
-      labelX = x;
-      labelY = isBottom ? this.height - 58 : 58;
-      defaultLabel = isBottom ? 'ВЫХОД ↓' : '↑ ВЫХОД';
-    }
+    const inward = 0.93;
+    const x = centerX + (boundary.x - centerX) * inward;
+    const y = centerY + (boundary.y - centerY) * inward;
+    const upper = side === 'nw' || side === 'ne';
 
     return {
       id: transition.id,
       type: 'portal',
       trigger: transition.trigger || 'auto',
+      direction: side,
       x,
       y,
-      width,
-      height,
-      labelX,
-      labelY,
-      label: transition.label || defaultLabel,
+      width: 104,
+      height: 22,
+      rotation: boundary.rotation,
+      labelX: x,
+      labelY: y + (upper ? 44 : -44),
+      label: transition.label || boundary.arrow,
       sound: transition.sound || 'portal',
       target: { transitionId: transition.id }
     };
@@ -236,10 +282,10 @@ export class ZoneSystem {
   }
 
   sideLabel(side) {
-    if (side === 'right') return 'справа';
-    if (side === 'left') return 'слева';
-    if (side === 'top') return 'сверху';
-    if (side === 'bottom') return 'снизу';
+    if (side === 'nw') return 'NW';
+    if (side === 'ne') return 'NE';
+    if (side === 'sw') return 'SW';
+    if (side === 'se') return 'SE';
     return side || 'по умолчанию';
   }
 

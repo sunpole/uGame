@@ -692,6 +692,7 @@ class ZoneScene extends Phaser.Scene {
     const worldWidth = this.zoneSystem?.width || WIDTH;
     const worldHeight = this.zoneSystem?.height || HEIGHT;
     if (bounds.left < 0 || bounds.right > worldWidth || bounds.top < 0 || bounds.bottom > worldHeight) return false;
+    if (this.zoneSystem?.isInsidePlayable && !this.zoneSystem.isInsidePlayable(x, y, PLAYER_SIZE / 2 + 6)) return false;
     if (this.zoneSystem?.walls?.some((wall) => this.overlaps(bounds, this.objectBounds(wall)))) return false;
     return true;
   }

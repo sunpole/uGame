@@ -88,7 +88,9 @@ export class WorldGraph {
   resolveEntryId(zoneValue, entryId) {
     const zone = this.getZone(zoneValue);
     if (!zone) return null;
-    if (typeof entryId === 'string' && zone.entries?.[entryId]) return entryId;
+    const aliases = { left: 'nw', right: 'se', top: 'ne', bottom: 'sw' };
+    const requested = typeof entryId === 'string' ? (aliases[entryId] || entryId) : null;
+    if (requested && zone.entries?.[requested]) return requested;
     if (typeof zone.defaultEntry === 'string' && zone.entries?.[zone.defaultEntry]) return zone.defaultEntry;
     return Object.keys(zone.entries || {})[0] || null;
   }

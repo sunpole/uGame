@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.10**
+Current version: **0.1.11**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.11 | Local Diamond Geometry: playable area is a rhombus with exactly four real gates NW/NE/SW/SE; N/E/S/W are orientation-only |
 | 0.1.10 | Diamond World Series Audit: source-of-truth docs for 25 locations, five safe cities, city services, textures, compass and QA |
 | 0.1.09 | First Playable World Migration: Three Fragments/Core content restored in field zones; start-city guide becomes the quest introduction |
 | 0.1.08 | World Map Layout Polish: compass gets clear margins and map gains biome/city/current-location legend |
@@ -116,6 +117,9 @@ Current version: **0.1.10**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.11
+Локальная игровая зона стала ромбической. За пределы ромба игрок выйти не может, внешние углы визуально затемнены. Реальных переходов ровно четыре: `NW / NE / SW / SE`; `N / E / S / W` отображаются только как ориентиры. Existing 5×5 logical adjacency remapped to diagonal gates: old east→SE, west→NW, south→SW, north→NE. Spawn в следующей локации происходит с противоположной диагональной стороны. Все 12 Event Spot каждой field zone перераспределены по всей площади ромба и валидированы как находящиеся внутри playable area.
 
 ## 0.1.10
 Закрыта документационная серия перестройки мира. Добавлены `UGD-0029`, `WORLD-MAP-25-LOCATIONS.md` и отдельный QA audit; обновлены CURRENT / NEXT / README / Biome Ground docs / Project Hub. Статически подтверждены 25 unique zones, 80 directed transitions, 5 safe cities, 20 fields, 12 Event Spots на каждом field, 0 Event Spots в city, 3 service NPC в каждом city, четыре snow-соседа стартового города и отсутствие Event Spot внутри configured walls. Ручной browser/gameplay QA всё ещё обязателен.
