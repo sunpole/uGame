@@ -1,0 +1,35 @@
+name: uGame Master loop tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/master-process-system.js'
+      - 'src/character-master-relationship-system.js'
+      - 'src/master-encounter-system.js'
+      - 'src/interaction-panel-system.js'
+      - 'tests/master-loop.test.mjs'
+      - '.github/workflows/master-loop-tests.yml'
+  pull_request:
+    paths:
+      - 'src/master-process-system.js'
+      - 'src/character-master-relationship-system.js'
+      - 'src/master-encounter-system.js'
+      - 'src/interaction-panel-system.js'
+      - 'tests/master-loop.test.mjs'
+      - '.github/workflows/master-loop-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  master-loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Master reward state, timing and UI
+        run: node --test tests/master-loop.test.mjs

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.23**
+Current version: **0.2.24**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.24 | Executable Master Process/claim/UI Node tests + GitHub Actions CI |
 | 0.2.23 | Guard duplicate free Master Process at character-state layer (claimed/pending) |
 | 0.2.22 | DEV 8388 now diagnoses last interacted Master, nearest as fallback |
 | 0.2.21 | Auto-transition from real-time Master Process timer to claim button |
@@ -158,6 +159,9 @@ Current version: **0.2.23**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.24
+Added `tests/master-loop.test.mjs` with Node built-in `node:test` covering historical/current reward separation, duplicate-Process guards, the real-time completion UI, and live-panel replacement safety. `.github/workflows/master-loop-tests.yml` runs the suite on changes to the associated modules, tests or workflow. No runtime economy/save changes. External CI should be checked before considering the batch QA complete.
 
 ## 0.2.23
 Character↔Master.startProcess now refuses a second free Process for an Encounter that already has pending rewards or was claimed, even if an outdated action reaches the state layer. Previous Encounter pending rewards do not block a fresh Encounter. Added targeted mock tests; no save-schema changes. Browser QA pending.

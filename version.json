@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.23",
-  "stage": "master-process-claim-guard",
+  "version": "0.2.24",
+  "stage": "master-loop-regression-suite",
   "updated": "2026-10-08",
-  "summary": "Prevent duplicate Master Process starts on claimed or pending Encounters at the character-state boundary"
+  "summary": "Add executable Node Master loop regression suite and GitHub Actions checks"
 }
