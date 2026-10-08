@@ -73,6 +73,11 @@ export class CharacterMasterRelationshipSystem {
   startProcess(masterId, process) {
     const current = this.ensureMaster(masterId);
     if (!current || current.activeProcess || !process?.processId) return null;
+    // Defense in depth: never start a second free Extraction for one Encounter,
+    // including when an outdated action bypasses the normal Master UI.
+    const encounterId = process.encounterId || encounterIdFromProcessId(process.processId);
+    if (!encounterId || current.claimedEncounterIds.includes(encounterId)) return null;
+    if (current.pendingRewards.some((reward) => this.pendingRewardEncounterId(reward) === encounterId)) return null;
     current.activeProcess = clone(process);
     this.publish();
     return clone(current.activeProcess);

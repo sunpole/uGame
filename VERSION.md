@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.22**
+Current version: **0.2.23**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.23 | Guard duplicate free Master Process at character-state layer (claimed/pending) |
 | 0.2.22 | DEV 8388 now diagnoses last interacted Master, nearest as fallback |
 | 0.2.21 | Auto-transition from real-time Master Process timer to claim button |
 | 0.2.20 | Live InteractionPanel completion does not accidentally close the next modal |
@@ -157,6 +158,9 @@ Current version: **0.2.22**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.23
+Character↔Master.startProcess now refuses a second free Process for an Encounter that already has pending rewards or was claimed, even if an outdated action reaches the state layer. Previous Encounter pending rewards do not block a fresh Encounter. Added targeted mock tests; no save-schema changes. Browser QA pending.
 
 ## 0.2.22
 Read-only DEV 8388 selects the last interacted Master (if still rendered), otherwise nearest. It displays selection mode to prevent diagnosing a different NPC inadvertently. No reward or save changes. Browser QA pending.

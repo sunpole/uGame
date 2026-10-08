@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.22",
-  "stage": "master-diagnostic-identity",
+  "version": "0.2.23",
+  "stage": "master-process-claim-guard",
   "updated": "2026-10-08",
-  "summary": "Make DEV 8388 diagnose the last interacted Master Encounter before nearest fallback"
+  "summary": "Prevent duplicate Master Process starts on claimed or pending Encounters at the character-state boundary"
 }
