@@ -38,6 +38,8 @@ import { CharacterMasterRelationshipSystem } from './character-master-relationsh
 import { MasterProcessSystem } from './master-process-system.js';
 import { ResourceExpeditionSystem } from './resource-expedition-system.js';
 import { ResourceExpeditionView } from './resource-expedition-view.js';
+import { ResourceProfessionSystem } from './resource-profession-system.js';
+import { ResourceProfessionView } from './resource-profession-view.js';
 import { CraftingSystem } from './crafting-system.js';
 import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
@@ -77,6 +79,8 @@ let masterRelationshipSystem = null;
 let masterProcessSystem = null;
 let resourceExpeditionSystem = null;
 let resourceExpeditionView = null;
+let resourceProfessionSystem = null;
+let resourceProfessionView = null;
 let spawnZoneDebugSystem = null;
 
 
@@ -350,6 +354,23 @@ class ZoneScene extends Phaser.Scene {
     });
     this.masterProcessSystem = masterProcessSystem;
 
+    resourceProfessionSystem = new ResourceProfessionSystem({
+      onChange: (snapshot) => {
+        this.gameState.setResourceProfessions(snapshot);
+        this.persistGameState();
+      }
+    });
+    this.resourceProfessionSystem = resourceProfessionSystem;
+    resourceProfessionView = new ResourceProfessionView({
+      professions: resourceProfessionSystem,
+      relationships: masterRelationshipSystem,
+      interactionPanel: this.interactionPanel,
+      buyItem: (itemId, cost) => this.buyProfessionSupply(itemId, cost),
+      consumeItem: (itemId, resourceId) => this.consumeProfessionSupply(itemId, resourceId),
+      getItemCount: (itemId) => this.backpackItemCount(itemId)
+    });
+    this.resourceProfessionView = resourceProfessionView;
+
     resourceExpeditionSystem = new ResourceExpeditionSystem({
       onChange: (snapshot) => {
         this.gameState.setResourceExpedition(snapshot);
@@ -361,6 +382,13 @@ class ZoneScene extends Phaser.Scene {
       addSteps: (amount) => stepSystem?.add?.(amount, { source: 'expedition-solo-refund' }),
       grantResource: (id, mass, tier) => this.grantResource(id, mass, tier),
       grantRelationshipXp: (masterId, xp) => masterRelationshipSystem?.addRelationshipXp?.(masterId, xp),
+      grantProfessionXp: (resourceId, xp, detail) => resourceProfessionSystem?.addXp(resourceId, xp, detail),
+      getAccess: (spawn, tier) => resourceProfessionSystem?.access(
+        spawn.resourceDirectionId, tier, masterRelationshipSystem?.get?.(spawn.masterId)?.relationshipLevel || 0),
+      getModifiers: (resourceId, now) => resourceProfessionSystem?.modifiers(resourceId,{
+        now,hasTool:this.hasGatheringTool()
+      }),
+      onEntered: (spawn) => resourceProfessionSystem?.recordExpedition(spawn.resourceDirectionId),
       onDepleted: ({ encounterId, completedAt }) => worldSpawnStateSystem?.markExpeditionDepleted?.(encounterId, completedAt, 30_000)
     });
     this.resourceExpeditionSystem = resourceExpeditionSystem;
@@ -369,7 +397,10 @@ class ZoneScene extends Phaser.Scene {
       interactionPanel: this.interactionPanel,
       onOccupancyChange: () => this.syncExpeditionUI(),
       getSteps: () => Math.floor(Number(stepSystem?.balance) || 0),
-      getRelationship: (id) => masterRelationshipSystem?.get?.(id)
+      getRelationship: (id) => masterRelationshipSystem?.get?.(id),
+      getProfession: (id) => resourceProfessionSystem?.get?.(id),
+      getTierAccess: (spawn, tier) => resourceProfessionSystem?.access(
+        spawn.resourceDirectionId, tier, masterRelationshipSystem?.get?.(spawn.masterId)?.relationshipLevel || 0)
     });
     this.resourceExpeditionView = resourceExpeditionView;
     const strip = document.querySelector('#workspace-control-strip .mouse-controls');
@@ -497,6 +528,7 @@ class ZoneScene extends Phaser.Scene {
       interactionPanel: this.interactionPanel,
       processSystem: masterProcessSystem,
       expeditionView: resourceExpeditionView,
+      professionView: resourceProfessionView,
       canMoveTo: (x, y) => this.canMoveTo(x, y),
       getWanderRadius: () => spawnZoneDebugSystem?.getSettings?.().radiusPx || 150
     });
@@ -545,6 +577,7 @@ class ZoneScene extends Phaser.Scene {
         masterCatalog.load(),
         masterProcessSystem.load(),
         resourceExpeditionSystem.load(),
+        resourceProfessionSystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()
@@ -560,6 +593,7 @@ class ZoneScene extends Phaser.Scene {
       await this.craftingSystem.load();
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       masterProcessSystem?.update(Date.now(), true);
+      resourceProfessionSystem.initialize(restoredState.resourceProfessions);
       resourceExpeditionSystem.initialize(restoredState.resourceExpedition);
       resourceExpeditionSystem.update(Date.now(), true);
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
@@ -722,6 +756,44 @@ class ZoneScene extends Phaser.Scene {
     });
 
     this.eventSystem.on('quest:complete', () => this.audioSystem.play('quest'));
+  }
+
+  backpackItemCount(itemId) {
+    const slots=containerSystem?.container?.('backpack')?.slots || [];
+    return slots.reduce((total,slot)=>total+(slot?.itemId===itemId?slot.quantity:0),0);
+  }
+
+  hasGatheringTool() {
+    if (this.backpackItemCount('simple-field-tool')>0) return true;
+    return containerSystem?.container?.('equipment')?.slots?.gloves?.itemId === 'gatherer-gloves';
+  }
+
+  buyProfessionSupply(itemId,costSteps) {
+    if (!containerSystem?.loaded || !stepSystem?.canSpendService?.(costSteps)) return false;
+    if (containerSystem.maxAddable('backpack',itemId)<1) return false;
+    if (!stepSystem.spendService(costSteps,{source:'profession-supply'}).ok) return false;
+    const added=containerSystem.addTo('backpack',itemId,1,{atomic:true});
+    if (added.added!==1) {
+      stepSystem.add(costSteps,{source:'profession-supply-rollback'});
+      return false;
+    }
+    return true;
+  }
+
+  consumeProfessionSupply(itemId,resourceId) {
+    const progress=resourceProfessionSystem?.get(resourceId);
+    if (!progress || Number(progress.buffs?.[itemId]||0)>Date.now())return false;
+    const slots=containerSystem?.container?.('backpack')?.slots||[];
+    const index=slots.findIndex(slot=>slot?.itemId===itemId&&slot.quantity>0);
+    if (index<0)return false;
+    const removed=containerSystem.removeFrom('backpack',index,1);
+    if(removed.removed!==1)return false;
+    const applied=resourceProfessionSystem.activateBuff(resourceId,itemId);
+    if (!applied.ok) {
+      containerSystem.addTo('backpack',itemId,1,{atomic:true});
+      return false;
+    }
+    return true;
   }
 
   openStepsEconomy() {
