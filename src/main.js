@@ -36,6 +36,7 @@ import { MasterCatalog } from './master-catalog.js';
 import { MasterEncounterSystem } from './master-encounter-system.js';
 import { CharacterMasterRelationshipSystem } from './character-master-relationship-system.js';
 import { MasterProcessSystem } from './master-process-system.js';
+import { CraftingSystem } from './crafting-system.js';
 import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
 const WIDTH = 960;
@@ -299,6 +300,9 @@ class ZoneScene extends Phaser.Scene {
       }
     });
     this.containerSystem = containerSystem;
+    this.craftingSystem = new CraftingSystem({ containerSystem, itemCatalog: this.itemCatalog });
+    document.querySelector('#workshop-open')?.addEventListener('click', () => this.openWorkshop());
+    document.querySelector('#workshop-open-touch')?.addEventListener('click', () => this.openWorkshop());
 
     questSystem = new QuestSystem({
       eventSystem: this.eventSystem,
@@ -507,6 +511,7 @@ class ZoneScene extends Phaser.Scene {
       });
       this.gameState.setContainers(containerSystem.snapshot());
       this.gameState.setInventory({});
+      await this.craftingSystem.load();
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       masterProcessSystem?.update(Date.now(), true);
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
@@ -736,6 +741,59 @@ class ZoneScene extends Phaser.Scene {
       text: 'Выберите мирный город. Цена = кратчайший маршрут WorldGraph × 1 000 пеших Шагов × 60%. Телепорт не создаёт долг.',
       actions,
       meta: 'Городская сеть · ' + cities.length + ' городов · ' + stepSystem.statusText()
+    });
+  }
+
+  openWorkshop() {
+    const crafting = this.craftingSystem;
+    const status = crafting?.inspect?.();
+    if (!crafting?.recipe || !status?.materials?.length) {
+      this.interactionPanel?.showMessage?.({
+        title: 'Мастерская', text: 'Рецепт пока не загрузился.'
+      });
+      return;
+    }
+    const labels = status.materials.map((material) => {
+      const name = this.itemCatalog.name(material.id);
+      const unitKg = Number(this.itemCatalog.get(material.id)?.unitKg || 0.1);
+      return name + ': ' + (material.owned * unitKg).toFixed(1)
+        + ' / ' + Number(material.massKg).toFixed(1) + ' кг';
+    });
+    const canPersist = Boolean(this.saveSystem?.storage) && !this.saveSystem?.blocked && !this.saveSystem?.paused;
+    let submitting = false; // Ignore double clicks from the same view.
+    this.interactionPanel?.showActions?.({
+      title: 'Мастерская · первый рецепт',
+      text: (crafting.recipe.name || 'Простой полевой инструмент')
+        + '\n' + labels.join('\n'),
+      meta: 'Один предмет · без привязки к городу · материалы из рюкзака и пояса',
+      actions: [{
+        id: 'craft-first-tool',
+        label: status.ready ? 'Изготовить 1 предмет' : 'Недостаточно материалов',
+        hint: !canPersist ? 'Сохранение недоступно: сначала восстановите Save' : '',
+        disabled: !status.ready || !canPersist,
+        onSelect: () => {
+          if (submitting) return false;
+          submitting = true;
+          const result = crafting.craft();
+          if (!result.ok) {
+            this.interactionPanel?.showMessage?.({
+              title: 'Изготовление не выполнено',
+              text: result.reason === 'inventory-full'
+                ? 'Недостаточно места в рюкзаке. Материалы не потрачены.'
+                : 'Проверьте доступные материалы и повторите.',
+              meta: result.reason
+            });
+            return false;
+          }
+          this.interactionPanel?.showMessage?.({
+            title: 'Предмет изготовлен',
+            text: this.itemCatalog.name(result.itemId) + ' × ' + result.count
+              + ' теперь в инвентаре.',
+            meta: 'Материалы списаны · состояние сохранено локально'
+          });
+          return true;
+        }
+      }]
     });
   }
 
