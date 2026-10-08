@@ -39,7 +39,7 @@ test('four master tiers expose eight resource tiers without prematurely minting 
   assert.equal(f.expedition.run, null);
 });
 
-test('auto harvests fixed 0.1kg units offline until Encounter, spending Steps only for mined cycles', () => {
+test('offline auto harvests finite stock, charges Steps once and restores without duplication', () => {
   const f = fixture();
   assert.equal(f.expedition.enter(spawn(), 1_000).ok, true);
   assert.equal(f.expedition.startAuto(1_000), true);
@@ -54,12 +54,28 @@ test('auto harvests fixed 0.1kg units offline until Encounter, spending Steps on
   restored.expedition.update(121_000, true);
   assert.equal(restored.expedition.run.extractedUnits, 24);
   restored.expedition.update(1_500_000, true);
-  assert.equal(restored.expedition.run.status, 'expired');
+  assert.equal(restored.expedition.run.status, 'depleted');
   assert.equal(restored.expedition.run.extractedUnits, 100);
   assert.equal(restored.expedition.update(1_900_000, true), false);
   assert.equal(restored.expedition.claim(), true);
   assert.deepEqual(restored.grants, [{ id: 'stone', mass: 10, tier: 'T1' }]);
   assert.equal(restored.expedition.claim(), false);
+});
+
+test('Encounter expiry caps offline progress and a missed deadline cannot produce extra resources', () => {
+  const f = fixture({ steps: 6 });
+  f.expedition.enter(spawn(), 1_000);
+  f.expedition.startAuto(1_000);
+  f.expedition.update(1_500_000, true);
+  assert.equal(f.expedition.run.status, 'expired');
+  assert.equal(f.expedition.run.extractedUnits, 6);
+  assert.equal(f.expedition.run.spentSteps, 6);
+  assert.equal(f.expedition.run.cargoUnits, 6);
+  assert.equal(f.expedition.run.refundSteps, 0);
+  assert.equal(f.expedition.update(2_500_000, true), false);
+  assert.equal(f.expedition.run.extractedUnits, 6);
+  assert.equal(f.expedition.claim(), true);
+  assert.deepEqual(f.grants, [{ id: 'stone', mass: 0.6, tier: 'T1' }]);
 });
 
 test('manual accuracy gives improved yield and XP while preserving finite stock', () => {
