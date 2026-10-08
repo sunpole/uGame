@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.14**
+Current version: **0.1.15**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.15 | Diamond Event Spot Clearance: 12 field candidate spots stay evenly spread but now have guaranteed wall clearance |
 | 0.1.14 | City NPC Player-Model Redesign: banker/teleporter/guards reuse the same humanoid base as the player with role-specific proportions/accessories |
 | 0.1.13 | Water + Forest Masters: T1–T4 lines use the same Master/Process runtime as Stone with water/wood rewards and biome directions |
 | 0.1.12 | Interaction Prompt Separation: NPC/object hint occupies a dedicated lane above controls and no longer covers Action |
@@ -120,6 +121,9 @@ Current version: **0.1.14**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.15
+Статический аудит v0.1.14 обнаружил, что часть candidate Event Spot после ромбизации находилась слишком близко к configured walls. Все field zones получили единый проверенный 12-point layout, равномерно использующий верх, середину, левую/правую части и низ ромба. Для каждой точки подтверждены playable-diamond margin и wall clearance ≥55 px. Active placement/anti-repeat/occupancy rules не менялись.
 
 ## 0.1.14
 Городские NPC пересобраны на общей визуальной базе игрового персонажа: те же голова/лицо/тело/руки/ноги теперь создаются через shared `createHumanoidVisual()`, который использует и `CharacterView` игрока. Банкир шире и массивнее, но остаётся тем же типом человека; телепортер выше и тоньше, со звездой/магическим glow; городской страж увеличен и получает простой плащ, меч и щит. Пять стражей сохраняют собственные biome palettes: snow / forest / stone / sand / south.

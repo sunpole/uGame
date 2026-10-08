@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.14",
-  "stage": "city-npc-player-model-redesign",
+  "version": "0.1.15",
+  "stage": "diamond-event-spot-clearance",
   "updated": "2026-10-08",
-  "summary": "City NPCs now reuse the player's humanoid visual base: banker wider, teleporter taller/thinner, guards larger with sword/shield/cape and biome palettes"
+  "summary": "Redistribute all 12 field Event Spots across the diamond with guaranteed clearance from configured walls"
 }
