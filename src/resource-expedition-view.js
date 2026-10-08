@@ -207,6 +207,15 @@ export class ResourceExpeditionView {
 
   tick(now = Date.now()) {
     if (!this.isOpen()) return;
+    const run = this.system.run;
+    if (!run) return;
+    // Keep manual pointer fluid while avoiding dozens of DOM writes each Phaser frame.
+    if (run.mode === 'manual') {
+      const pointer = this.field('pointer');
+      if (pointer) pointer.style.top = (100 * this.system.meterPosition(now)).toFixed(1) + '%';
+    }
+    if (now < this.nextRenderAt && this.lastStatus === run.status && this.lastMode === run.mode) return;
+    this.nextRenderAt = now + 250;
     this.render(now);
   }
 
