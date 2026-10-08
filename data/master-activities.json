@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "status": "local-encounter-playable-qa",
+  "quest": {
+    "title": "Заказ Мастера",
+    "targetUnits": 20,
+    "stepsPerMasterTier": 12,
+    "professionXpPerMasterTier": 25,
+    "reputationXpPerMasterTier": 35
+  },
+  "special": {
+    "title": "Испытание точности",
+    "precisionHits": 3,
+    "stepsPerMasterTier": 15,
+    "professionXpPerMasterTier": 35,
+    "reputationXpPerMasterTier": 45,
+    "itemId": "gathering-tonic"
+  },
+  "analytics": {
+    "title": "Отчёт экспедиции",
+    "minRank": 2,
+    "minExtractedUnits": 30,
+    "stepsPerMasterTier": 8,
+    "professionXpPerMasterTier": 15
+  }
+}
