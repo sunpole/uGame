@@ -1,4 +1,40 @@
-import { createHumanoidVisual } from './character-view.js';
+function createHumanoidVisual(scene, {
+  x = 0,
+  y = 0,
+  depth = 5,
+  bodyColor = 0x5f81ff,
+  legColor = 0x30363d,
+  skinColor = 0xe7c6a5,
+  faceColor = 0x1f2328,
+  bodyWidth = 20,
+  bodyHeight = 24,
+  armOffset = 10,
+  armWidth = 5,
+  armHeight = 14,
+  legOffset = 5,
+  legWidth = 6,
+  legHeight = 12,
+  shadowWidth = 24,
+  shadowHeight = 10,
+  scaleX = 1,
+  scaleY = 1
+} = {}) {
+  const container = scene.add.container(x, y).setDepth(depth);
+  const shadow = scene.add.ellipse(0, 9, shadowWidth, shadowHeight, 0x000000, 0.35);
+  const body = scene.add.ellipse(0, 4, bodyWidth, bodyHeight, bodyColor, 1);
+  const head = scene.add.circle(0, 1, 8, skinColor, 1);
+  const face = scene.add.circle(0, -2, 2.3, faceColor, 1);
+  const armLeft = scene.add.rectangle(-armOffset, 4, armWidth, armHeight, skinColor, 1);
+  const armRight = scene.add.rectangle(armOffset, 4, armWidth, armHeight, skinColor, 1);
+  const legLeft = scene.add.rectangle(-legOffset, 13, legWidth, legHeight, legColor, 1);
+  const legRight = scene.add.rectangle(legOffset, 13, legWidth, legHeight, legColor, 1);
+
+  container.add([shadow, legLeft, legRight, armLeft, armRight, body, head, face]);
+  container.setScale(scaleX, scaleY);
+  container.setSize(Math.max(shadowWidth, bodyWidth + armOffset), 40);
+
+  return { container, shadow, body, head, face, armLeft, armRight, legLeft, legRight };
+}
 
 function distance(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.16**
+Current version: **0.1.17**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.17 | Boot Hotfix: remove fragile cross-module humanoid helper export/import while preserving player-base city NPC visuals |
 | 0.1.16 | Local Diamond / Multi-Resource Master Audit: document four diagonal gates, Water/Forest Masters, prompt separation and shared humanoid city NPC |
 | 0.1.15 | Diamond Event Spot Clearance: 12 field candidate spots stay evenly spread but now have guaranteed wall clearance |
 | 0.1.14 | City NPC Player-Model Redesign: banker/teleporter/guards reuse the same humanoid base as the player with role-specific proportions/accessories |
@@ -122,6 +123,9 @@ Current version: **0.1.16**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.17
+Hotfix после ручного QA: локальная v0.1.16 могла остаться на статическом HTML-экране до запуска Phaser/runtime. Убрана новая межфайловая именованная зависимость `InteractableSystem -> CharacterView.createHumanoidVisual`, появившаяся в v0.1.14. Player CharacterView и city NPC теперь имеют самостоятельный локальный helper с одной и той же геометрией, поэтому смешанный/stale module при обновлении не может остановить весь ES-module graph из-за отсутствующего named export. Визуальные пропорции Banker/Teleporter/Guard и gameplay v0.1.11–v0.1.16 не откатывались.
 
 ## 0.1.16
 Документирована серия `UGD-0030`. Источник истины фиксирует: local playable area = diamond; реальные gates только `NW/NE/SW/SE`; `N/E/S/W` orientation-only; target entry всегда противоположная диагональ. Master runtime расширен до Stone/Water/Forest T1–T4 с общим REAL TIME Process. City NPC используют player humanoid base. Static audit: 80 transitions, 0 non-diagonal gates, 0 bad opposite-entry pairs, 12 spots на каждом field, 0 spots outside diamond, 0 wall-clearance conflicts, 5 cities × 3 service NPC.

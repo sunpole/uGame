@@ -3,7 +3,7 @@ function approach(current, target, delta, response = 80) {
   return current + (target - current) * t;
 }
 
-export function createHumanoidVisual(scene, {
+function createHumanoidVisual(scene, {
   x = 0,
   y = 0,
   depth = 5,
