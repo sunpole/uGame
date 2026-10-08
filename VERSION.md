@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.19**
+Current version: **0.1.20**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.20 | Pre-flight Loading Gate: validate runtime files/modules/syntax/version/world/Masters/textures/Phaser before revealing gameplay |
 | 0.1.19 | Boot Syntax Hotfix: close broken World Map stage string in project-hub-system.js |
 | 0.1.18 | Boot Diagnostics: visible global/module/world-init errors replace silent endless loading |
 | 0.1.17 | Boot Hotfix: remove fragile cross-module humanoid helper export/import while preserving player-base city NPC visuals |
@@ -125,6 +126,9 @@ Current version: **0.1.19**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.20
+Добавлен отдельный blocking Pre-flight screen. До показа игрового экрана проверяются manifest/core files, version consistency, рекурсивный ES-module dependency graph, named imports/exports, best-effort syntax parse, WorldGraph invariants, Stone/Water/Forest Master + Process data, texture assets и Phaser runtime. `main.js` больше не стартует автоматически при import: launcher импортирует модуль только после зелёного pre-flight, вызывает `bootGame()`, ждёт `worldReady`, и только затем открывает gameplay. При красном флаге игра не запускается и причина остаётся на loading screen.
 
 ## 0.1.19
 Исправлена точная причина падения boot по ручному QA: в `src/project-hub-system.js` строка открытия `world-map-stage` была оборвана без закрывающей кавычки, из-за чего браузер выдавал `Invalid or unexpected token` на строке 467 и не запускал весь ES-module graph. Механики не менялись.

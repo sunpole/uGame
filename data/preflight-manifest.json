@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.20",
+  "requiredFiles": [
+    "./src/style.css",
+    "./version.json",
+    "./package.json",
+    "./data/biome-textures.json",
+    "./data/containers.json",
+    "./data/dialogues.json",
+    "./data/items.json",
+    "./data/master-npcs.json",
+    "./data/master-processes.json",
+    "./data/project-hub.json",
+    "./data/quests.json",
+    "./data/resources.json",
+    "./data/reward-rules.json",
+    "./data/simulation/simulation-defaults.json",
+    "./data/world-spawn-config.json",
+    "./data/world.json"
+  ],
+  "moduleEntry": "./src/main.js",
+  "requiredAssets": [
+    "./assets/textures/biomes/south_256.jpg",
+    "./assets/textures/biomes/city_south_512.jpg"
+  ]
+}

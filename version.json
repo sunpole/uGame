@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.19",
-  "stage": "project-hub-syntax-hotfix",
+  "version": "0.1.20",
+  "stage": "preflight-loading-gate",
   "updated": "2026-10-08",
-  "summary": "Fix unterminated World Map HTML string in project-hub-system.js that prevented the entire ES-module graph from booting"
+  "summary": "Add a blocking loading/preflight screen that validates files, module graph, syntax, versions, world data, Master runtime, textures and Phaser before revealing gameplay"
 }

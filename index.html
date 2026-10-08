@@ -3,11 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.1.17</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.1.17" />
+    <title>uGame v0.1.20</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.1.20" />
+    <style>
+      .preflight-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#080b0f;color:#e6edf3;font:14px/1.35 Arial,sans-serif}
+      .preflight-screen[hidden]{display:none}
+      .preflight-card{width:min(720px,calc(100vw - 36px));max-height:calc(100vh - 36px);overflow:auto;background:#0d1117;border:1px solid #30363d;border-radius:14px;padding:22px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+      .preflight-brand{font-size:24px;font-weight:800}.preflight-card h1{margin:6px 0 4px;font-size:18px}.preflight-card p{margin:0 0 16px;color:#8b949e}
+      .preflight-list{display:grid;gap:7px}.preflight-row{display:grid;grid-template-columns:18px minmax(190px,1fr) minmax(180px,1.2fr);gap:8px;align-items:center;padding:8px 10px;border:1px solid #21262d;border-radius:8px;background:#090d12}
+      .preflight-row[data-state="ok"] .preflight-dot{color:#3fb950}.preflight-row[data-state="fail"] .preflight-dot{color:#f85149}.preflight-row[data-state="running"] .preflight-dot{color:#d29922}
+      .preflight-detail{color:#8b949e;font-size:12px;text-align:right}.preflight-summary{margin-top:14px;padding:10px;border-radius:8px;background:#161b22;font-weight:800}
+      .preflight-summary[data-state="ok"]{color:#7ee787}.preflight-summary[data-state="fail"]{color:#ff7b72}
+      @media(max-width:640px){.preflight-row{grid-template-columns:18px 1fr}.preflight-detail{grid-column:2;text-align:left}}
+    </style>
   </head>
   <body>
-    <div id="app" class="selection-disabled">
+    <section id="preflight-screen" class="preflight-screen" aria-live="polite">
+      <div class="preflight-card">
+        <div class="preflight-brand">uGame</div>
+        <h1>Проверка сборки</h1>
+        <p>Игра запустится только после успешного pre-flight.</p>
+        <div id="preflight-list" class="preflight-list"></div>
+        <div id="preflight-summary" class="preflight-summary">Подготовка…</div>
+      </div>
+    </section>
+    <div id="app" class="selection-disabled" aria-hidden="true" style="visibility:hidden">
       <header id="global-header" class="game-chrome-header">
         <button id="project-hub-open" class="chrome-logo-block" type="button" title="Открыть главное меню / Project Hub" aria-haspopup="dialog">
           <strong class="chrome-logo">uGame</strong>
@@ -153,7 +173,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.1.17</strong>
+          <strong id="footer-version">v0.1.20</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -181,28 +201,50 @@
 
     <script>
       window.__ugameBoot = { phase: 'html', startedAt: Date.now(), error: null };
-      const showBootError = (message) => {
-        const text = String(message || 'Неизвестная ошибка запуска');
-        window.__ugameBoot.error = text;
-        const target = document.querySelector('#quest-status');
-        if (target) {
-          target.textContent = 'Ошибка запуска: ' + text;
-          target.style.color = '#ff7b72';
-        }
-      };
-      window.addEventListener('error', (event) => {
-        showBootError(event?.error?.message || event?.message || 'JavaScript error');
-      });
-      window.addEventListener('unhandledrejection', (event) => {
-        showBootError(event?.reason?.message || event?.reason || 'Unhandled promise rejection');
-      });
-      window.setTimeout(() => {
-        if (window.__ugameBoot?.phase === 'html' && !window.__ugameBoot?.error) {
-          showBootError('основной модуль игры не запустился');
-        }
-      }, 8000);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.1.19"></script>
+    <script type="module">
+      import { runPreflight } from './src/preflight-system.js?v=0.1.20';
+
+      const root = document.querySelector('#preflight-screen');
+      const app = document.querySelector('#app');
+
+      try {
+        window.__ugameBoot.phase = 'preflight';
+        const result = await runPreflight({ expectedVersion: '0.1.20', root });
+        if (!result.ok) throw new Error('Pre-flight failed');
+
+        result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
+        const gameModule = await import('./src/main.js?v=0.1.20');
+        result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK');
+
+        result.report.set('world-boot', 'Запуск игрового мира', 'running', 'инициализация…');
+        await gameModule.bootGame();
+
+        const deadline = Date.now() + 15000;
+        while (window.__ugameBoot?.phase !== 'ready' && Date.now() < deadline) {
+          if (window.__ugameBoot?.phase === 'world-error') {
+            throw new Error(window.__ugameBoot?.error || 'World initialization failed');
+          }
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        if (window.__ugameBoot?.phase !== 'ready') throw new Error('Игровой мир не подтвердил ready за 15 секунд');
+
+        result.report.set('world-boot', 'Запуск игрового мира', 'ok', 'READY');
+        result.report.summary('ВСЕ ПРОВЕРКИ ЗЕЛЁНЫЕ · запуск', 'ok');
+        await new Promise((resolve) => setTimeout(resolve, 350));
+
+        app.style.visibility = 'visible';
+        app.setAttribute('aria-hidden', 'false');
+        root.hidden = true;
+      } catch (error) {
+        window.__ugameBoot.error = error?.message || String(error);
+        const summary = root?.querySelector?.('#preflight-summary');
+        if (summary) {
+          summary.dataset.state = 'fail';
+          summary.textContent = 'ЗАПУСК ОСТАНОВЛЕН · ' + window.__ugameBoot.error;
+        }
+      }
+    </script>
   </body>
 </html>

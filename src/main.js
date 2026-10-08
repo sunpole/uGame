@@ -728,142 +728,147 @@ class ZoneScene extends Phaser.Scene {
   }
 }
 
-chromeContextSystem = new ChromeContextSystem({
-  versionElement: document.querySelector('#footer-version'),
-  buildElement: document.querySelector('#footer-build'),
-  environmentElement: document.querySelector('#footer-environment'),
-  sessionElement: document.querySelector('#session-time'),
-  locationPrimaryElement: document.querySelector('#location-primary'),
-  locationSecondaryElement: document.querySelector('#location-secondary'),
-  realDateElement: document.querySelector('#real-date'),
-  realClockElement: document.querySelector('#real-clock'),
-  realTimezoneElement: document.querySelector('#real-timezone'),
-  headerLocationElement: document.querySelector('#header-location-summary')
-});
-chromeContextSystem.loadBuildContext();
-chromeContextSystem.start();
-
-gameClockSystem = new GameClockSystem({
-  element: document.querySelector('#game-clock')
-});
-gameClockSystem.start();
-
-chromeHeaderSystem = new ChromeHeaderSystem({
-  nameElement: document.querySelector('#character-name'),
-  classElement: document.querySelector('#character-class'),
-  professionElement: document.querySelector('#character-profession'),
-  specializationElement: document.querySelector('#character-specialization'),
-  levelElement: document.querySelector('#character-level'),
-  xpElement: document.querySelector('#character-xp'),
-  staminaElement: document.querySelector('#header-stamina'),
-  staminaBarElement: document.querySelector('#header-stamina-bar'),
-  resourcesElement: document.querySelector('#pinned-resources'),
-  wealthElement: document.querySelector('#material-wealth'),
-  storageElement: document.querySelector('#header-storage-summary'),
-  fragmentElement: document.querySelector('#header-fragment-status')
-});
-chromeHeaderSystem.load()
-  .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
-  .catch(() => {});
-
-uiWindowManager = new UIWindowManager({
-  host: document.querySelector('#game'),
-  margin: 12
-});
-
-fitPlayfield();
-window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
-loadVersion();
-initDevConsole({ execute: executeDevCode });
-
-new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: 'game',
-  width: WIDTH,
-  height: HEIGHT,
-  backgroundColor: '#0b0d10',
-  scene: [ZoneScene],
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.NO_CENTER
-  }
-});
-
-interfaceSettingsSystem = new InterfaceSettingsSystem();
-
-projectHubSystem = new ProjectHubSystem({
-  openButton: document.querySelector('#project-hub-open'),
-  overlay: document.querySelector('#project-hub'),
-  titleElement: document.querySelector('#project-hub-title'),
-  breadcrumbElement: document.querySelector('#project-hub-breadcrumb'),
-  navElement: document.querySelector('#project-hub-nav'),
-  contentElement: document.querySelector('#project-hub-content'),
-  backButton: document.querySelector('#project-hub-back'),
-  closeButton: document.querySelector('#project-hub-close'),
-  onOpenChange: () => syncPlayerInputState(),
-  interfaceSettings: interfaceSettingsSystem,
-  biomeTextureSettings: biomeTextureSettingsSystem,
-  worldMap: {
-    getData: () => {
-      const graph = worldSpawnStateSystem?.worldGraph;
-      const currentZoneId = eventSpotSystem?.currentZoneId || masterEncounterSystem?.currentZoneId || null;
-      const zones = [...(graph?.zones?.values?.() || [])].map((zone) => ({
-        id: zone.id,
-        ordinalId: zone.ordinalId,
-        name: zone.name,
-        biome: zone.biome,
-        isSafeCity: zone.isSafeCity === true,
-        cityKey: zone.cityKey || null,
-        worldMap: zone.worldMap || null,
-        locationTier: zone.isSafeCity ? null : (worldSpawnStateSystem?.getLocationSummary?.(zone.id)?.tier || null)
-      }));
-      return { currentZoneId, zones };
+export async function bootGame() {
+  if (window.__ugameBoot) window.__ugameBoot.phase = 'boot-game';
+  chromeContextSystem = new ChromeContextSystem({
+    versionElement: document.querySelector('#footer-version'),
+    buildElement: document.querySelector('#footer-build'),
+    environmentElement: document.querySelector('#footer-environment'),
+    sessionElement: document.querySelector('#session-time'),
+    locationPrimaryElement: document.querySelector('#location-primary'),
+    locationSecondaryElement: document.querySelector('#location-secondary'),
+    realDateElement: document.querySelector('#real-date'),
+    realClockElement: document.querySelector('#real-clock'),
+    realTimezoneElement: document.querySelector('#real-timezone'),
+    headerLocationElement: document.querySelector('#header-location-summary')
+  });
+  chromeContextSystem.loadBuildContext();
+  chromeContextSystem.start();
+  
+  gameClockSystem = new GameClockSystem({
+    element: document.querySelector('#game-clock')
+  });
+  gameClockSystem.start();
+  
+  chromeHeaderSystem = new ChromeHeaderSystem({
+    nameElement: document.querySelector('#character-name'),
+    classElement: document.querySelector('#character-class'),
+    professionElement: document.querySelector('#character-profession'),
+    specializationElement: document.querySelector('#character-specialization'),
+    levelElement: document.querySelector('#character-level'),
+    xpElement: document.querySelector('#character-xp'),
+    staminaElement: document.querySelector('#header-stamina'),
+    staminaBarElement: document.querySelector('#header-stamina-bar'),
+    resourcesElement: document.querySelector('#pinned-resources'),
+    wealthElement: document.querySelector('#material-wealth'),
+    storageElement: document.querySelector('#header-storage-summary'),
+    fragmentElement: document.querySelector('#header-fragment-status')
+  });
+  chromeHeaderSystem.load()
+    .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
+    .catch(() => {});
+  
+  uiWindowManager = new UIWindowManager({
+    host: document.querySelector('#game'),
+    margin: 12
+  });
+  
+  fitPlayfield();
+  window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
+  loadVersion();
+  initDevConsole({ execute: executeDevCode });
+  
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: 'game',
+    width: WIDTH,
+    height: HEIGHT,
+    backgroundColor: '#0b0d10',
+    scene: [ZoneScene],
+    scale: {
+      mode: Phaser.Scale.RESIZE,
+      autoCenter: Phaser.Scale.NO_CENTER
     }
-  },
-  spawnZoneDebug: {
-    getSettings: () => spawnZoneDebugSystem?.getSettings?.() || null,
-    updateSettings: (patch) => spawnZoneDebugSystem?.updateSettings?.(patch) || null,
-    resetSettings: () => spawnZoneDebugSystem?.resetSettings?.() || null
-  },
-  devCodeRunner: (code) => {
-    const form = document.querySelector('#dev-console');
-    const input = document.querySelector('#dev-code-input');
-    const status = document.querySelector('#dev-code-status');
-    if (!form || !input) return null;
-    input.value = String(code || '').replace(/\D/g, '').slice(0, 4);
-    form.requestSubmit?.();
-    return {
-      code: input.value,
-      message: status?.textContent || '',
-      state: status?.dataset?.state || ''
-    };
-  },
-  worldAnalyzer: {
-    getData: () => {
-      const snapshot = worldSpawnStateSystem?.snapshot?.() || {};
-      const zones = {};
-      for (const zone of worldSpawnStateSystem?.worldGraph?.zones?.values?.() || []) {
-        zones[zone.id] = {
+  });
+  
+  interfaceSettingsSystem = new InterfaceSettingsSystem();
+  
+  projectHubSystem = new ProjectHubSystem({
+    openButton: document.querySelector('#project-hub-open'),
+    overlay: document.querySelector('#project-hub'),
+    titleElement: document.querySelector('#project-hub-title'),
+    breadcrumbElement: document.querySelector('#project-hub-breadcrumb'),
+    navElement: document.querySelector('#project-hub-nav'),
+    contentElement: document.querySelector('#project-hub-content'),
+    backButton: document.querySelector('#project-hub-back'),
+    closeButton: document.querySelector('#project-hub-close'),
+    onOpenChange: () => syncPlayerInputState(),
+    interfaceSettings: interfaceSettingsSystem,
+    biomeTextureSettings: biomeTextureSettingsSystem,
+    worldMap: {
+      getData: () => {
+        const graph = worldSpawnStateSystem?.worldGraph;
+        const currentZoneId = eventSpotSystem?.currentZoneId || masterEncounterSystem?.currentZoneId || null;
+        const zones = [...(graph?.zones?.values?.() || [])].map((zone) => ({
           id: zone.id,
+          ordinalId: zone.ordinalId,
           name: zone.name,
           biome: zone.biome,
           isSafeCity: zone.isSafeCity === true,
-          location: worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null
-        };
+          cityKey: zone.cityKey || null,
+          worldMap: zone.worldMap || null,
+          locationTier: zone.isSafeCity ? null : (worldSpawnStateSystem?.getLocationSummary?.(zone.id)?.tier || null)
+        }));
+        return { currentZoneId, zones };
       }
+    },
+    spawnZoneDebug: {
+      getSettings: () => spawnZoneDebugSystem?.getSettings?.() || null,
+      updateSettings: (patch) => spawnZoneDebugSystem?.updateSettings?.(patch) || null,
+      resetSettings: () => spawnZoneDebugSystem?.resetSettings?.() || null
+    },
+    devCodeRunner: (code) => {
+      const form = document.querySelector('#dev-console');
+      const input = document.querySelector('#dev-code-input');
+      const status = document.querySelector('#dev-code-status');
+      if (!form || !input) return null;
+      input.value = String(code || '').replace(/\D/g, '').slice(0, 4);
+      form.requestSubmit?.();
       return {
-        masters: worldSpawnStateSystem?.getActiveMasters?.() || [],
-        zones,
-        candidatePools: snapshot.candidatePools || {},
-        rotations: snapshot.rotations || {},
-        counts: snapshot.activeCountsByResourceAndTier || {}
+        code: input.value,
+        message: status?.textContent || '',
+        state: status?.dataset?.state || ''
       };
     },
-    teleport: (encounterId) => masterEncounterSystem?.teleportToEncounter?.(encounterId) || false
-  }
-});
-
-projectHubSystem.load().catch((error) => {
-  const content = document.querySelector('#project-hub-content');
-  if (content) content.textContent = `Project Hub не загрузился: ${error instanceof Error ? error.message : String(error)}`;
-});
+    worldAnalyzer: {
+      getData: () => {
+        const snapshot = worldSpawnStateSystem?.snapshot?.() || {};
+        const zones = {};
+        for (const zone of worldSpawnStateSystem?.worldGraph?.zones?.values?.() || []) {
+          zones[zone.id] = {
+            id: zone.id,
+            name: zone.name,
+            biome: zone.biome,
+            isSafeCity: zone.isSafeCity === true,
+            location: worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null
+          };
+        }
+        return {
+          masters: worldSpawnStateSystem?.getActiveMasters?.() || [],
+          zones,
+          candidatePools: snapshot.candidatePools || {},
+          rotations: snapshot.rotations || {},
+          counts: snapshot.activeCountsByResourceAndTier || {}
+        };
+      },
+      teleport: (encounterId) => masterEncounterSystem?.teleportToEncounter?.(encounterId) || false
+    }
+  });
+  
+  projectHubSystem.load().catch((error) => {
+    const content = document.querySelector('#project-hub-content');
+    if (content) content.textContent = `Project Hub не загрузился: ${error instanceof Error ? error.message : String(error)}`;
+  });
+  
+  return true;
+}
