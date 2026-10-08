@@ -2388,3 +2388,27 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .expedition-realm-footer{font-size:11px;text-align:center;color:#8c9ba9;border-top:1px solid #34404e;padding-top:15px;}
 @media(max-width:880px){.expedition-realm-content{grid-template-columns:1fr}.expedition-realm-cavern{min-height:300px}.expedition-realm-crystals{opacity:.75}.expedition-realm-deposit{padding:15px}.expedition-realm-column{grid-template-columns:1fr}}
 @media(max-width:530px){.expedition-realm-shell{gap:12px;padding:10px}.expedition-realm-header{gap:10px}.expedition-realm-top-stats{width:100%}.expedition-realm-top-stats>div{flex:1}.expedition-realm-surface{flex:1}.expedition-realm-panel{padding:12px}.expedition-realm-cavern{min-height:250px}.expedition-realm-orb{font-size:110px}.expedition-realm-metrics strong{font-size:17px}.expedition-realm-manual{gap:12px}.expedition-realm-meter{height:165px}}
+
+/* v0.2.46 — inventory search, Tier localization, bank vault and drag/drop. */
+.inventory-panel[data-container-id="resourceChest"] { --ui-window-scale: 1 !important; }
+.inventory-manager { display:flex; flex-wrap:wrap; align-items:end; gap:8px; margin:8px 0 14px; padding:10px;
+  border:1px solid #33404e; border-radius:9px; background:#111923; }
+.inventory-manager > input { flex:1 1 175px; min-width:130px; min-height:38px; box-sizing:border-box; background:#0d141d;
+  color:#e7f0f8; border:1px solid #526476; padding:7px 9px; border-radius:6px; font:inherit; }
+.inventory-manager-field { display:grid; gap:3px; min-width:110px; flex:1 1 114px; }
+.inventory-manager-field span { font-size:11px; color:#b4c6d8; font-weight:700; }
+.inventory-manager-field select { min-height:38px; background:#101b2a; color:#edf4fa; border:1px solid #526476; border-radius:6px; padding:5px 8px; max-width:100%; }
+.inventory-manager button { min-height:38px; border:1px solid #6a8090; padding:6px 10px; background:#203044; border-radius:6px; color:#fff;
+  font-weight:700; cursor:pointer; }
+.inventory-manager button:hover { border-color:#9dccf0; }
+.inventory-no-results { grid-column:1/-1; border:1px dashed #647486; color:#c6d3e0; border-radius:7px; padding:20px; text-align:center; }
+.inventory-slot[draggable="true"] { cursor:grab; }
+.inventory-slot[draggable="true"]:active { cursor:grabbing; }
+.inventory-slot-actions button:last-child { border-color:#694245; color:#ffcfca; }
+.inventory-grid[data-container-id="resourceChest"] .inventory-slot { min-width:0; }
+@media (max-width:600px) {
+  .inventory-manager { gap:7px;padding:8px; }
+  .inventory-manager>input { flex:1 1 100%; }
+  .inventory-manager button { flex:1 1 145px; }
+  .inventory-grid { grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); }
+}
