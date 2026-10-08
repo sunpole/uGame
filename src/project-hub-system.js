@@ -187,6 +187,7 @@ export class ProjectHubSystem {
     this.spawnZoneDebug = spawnZoneDebug;
     this.devCodeRunner = devCodeRunner;
     this.config = null;
+    this.citySpecializations = new Map();
     this.currentSectionId = null;
     this.stack = [];
     this.currentDocumentBase = document.baseURI;
@@ -203,7 +204,12 @@ export class ProjectHubSystem {
   }
 
   async load() {
-    this.config = await fetchJson('./data/project-hub.json');
+    const [hubConfig, cityConfig] = await Promise.all([
+      fetchJson('./data/project-hub.json'),
+      fetchJson('./data/city-specializations.json')
+    ]);
+    this.config = hubConfig;
+    this.citySpecializations = new Map((cityConfig?.cities || []).map((city) => [city.zoneId, city]));
     if (!Array.isArray(this.config?.sections)) throw new Error('project-hub.json: sections must be an array');
     this.currentSectionId = this.config.defaultSection || this.config.sections[0]?.id || null;
     if (this.isOpen) this.renderRoot();
@@ -423,7 +429,10 @@ export class ProjectHubSystem {
         zone.id === currentZoneId ? 'is-current' : '',
         zone.id === view.selectedId ? 'is-selected' : ''
       ].filter(Boolean).join(' ');
-      const typeLabel = zone.isSafeCity ? 'ГОРОД' : (zone.locationTier ? 'LT ' + zone.locationTier : 'ПОЛЕ');
+      const city = zone.isSafeCity ? this.citySpecializations?.get?.(zone.id) : null;
+      const typeLabel = zone.isSafeCity
+        ? ('ГОРОД · ' + (city?.roleName || 'специализация не задана'))
+        : (zone.locationTier ? 'LT ' + zone.locationTier : 'ПОЛЕ');
       return [
         '<button type="button" class="' + classes + '" data-world-map-zone="' + escapeHtml(zone.id) + '"',
         ' data-biome="' + escapeHtml(zone.biome || 'unknown') + '"',
@@ -438,12 +447,16 @@ export class ProjectHubSystem {
       ].join('');
     }).join('');
 
+    const selectedCity = selected?.isSafeCity ? this.citySpecializations?.get?.(selected.id) : null;
     const detail = selected ? [
       '<div class="world-map-detail">',
       '<strong>' + escapeHtml(selected.name || selected.id) + '</strong>',
       '<span>' + escapeHtml(selected.id) + '</span>',
       '<span>' + escapeHtml(selected.isSafeCity ? 'Мирный город' : 'Полевая локация') + '</span>',
       '<span>Биом: <b>' + escapeHtml(selected.biome || '—') + '</b></span>',
+      selectedCity ? '<span>Направление (предварительно): <b>' + escapeHtml(selectedCity.roleName) + '</b></span>' : '',
+      selectedCity ? '<span>' + escapeHtml(selectedCity.focus) + '</span>' : '',
+      selectedCity ? '<span>Освоение других профессий не запрещено</span>' : '',
       selected.locationTier ? '<span>Location Tier: <b>' + escapeHtml(selected.locationTier) + '</b></span>' : '',
       selected.id === currentZoneId ? '<span class="world-map-you-are-here">● Вы здесь</span>' : '',
       '</div>'
@@ -451,7 +464,7 @@ export class ProjectHubSystem {
 
     this.contentElement.innerHTML = [
       '<div class="world-map-toolbar">',
-      '<div><strong>Мир uGame · 25 локаций</strong><span>5 мирных городов · 20 полевых зон · временные названия</span></div>',
+      '<div><strong>Мир uGame · 25 локаций</strong><span>4 направления + нейтральный Перекрёсток · расположение специализаций предварительное</span></div>',
       detail,
       '</div>',
       '<div class="world-map-legend">',

@@ -17,3 +17,29 @@ test('four specialized cities and one neutral Crossroads retain stable 25-zone w
   assert.equal(layout.gameplayEffectsEnabled,false);
   assert.equal(layout.placementStatus,'candidate-requires-owner-review');
 });
+
+test('World Map shows safe city specialization from data and no class lock', async () => {
+  const { ProjectHubSystem } = await import('../src/project-hub-system.js');
+  const world = data('data/world.json');
+  const cities = data('data/city-specializations.json');
+  const city = world.zones.find((zone) => zone.id === 'loc-00013');
+  const ui = Object.create(ProjectHubSystem.prototype);
+  const mk = () => ({ innerHTML: '', textContent: '', hidden: false });
+  ui.backButton = mk();
+  ui.titleElement = mk();
+  ui.breadcrumbElement = mk();
+  ui.navElement = mk();
+  ui.citySpecializations = new Map(cities.cities.map((entry) => [entry.zoneId, entry]));
+  ui.worldMap = { getData: () => ({
+    currentZoneId: city.id,
+    zones: world.zones.map((z) => ({
+      id:z.id, name:z.name, worldMap:z.worldMap, biome:z.biome,
+      cityKey:z.cityKey, isSafeCity:z.isSafeCity
+    }))
+  }) };
+  ui.contentElement = { innerHTML: '', scrollTop: 0, querySelectorAll: () => [] };
+  ui.renderWorldMap({ label: 'Карта мира', selectedId:city.id });
+  assert.match(ui.contentElement.innerHTML, /Направление \(предварительно\)/);
+  assert.match(ui.contentElement.innerHTML, /Перекрёсток/);
+  assert.match(ui.contentElement.innerHTML, /Освоение других профессий не запрещено/);
+});

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.29",
-  "stage": "four-plus-one-city-model",
+  "version": "0.2.30",
+  "stage": "city-specialization-map-preview",
   "updated": "2026-10-08",
-  "summary": "Configure four candidate city specializations and neutral Crossroads using stable existing WorldGraph IDs"
+  "summary": "Show tentative four-plus-one city specializations in Project Hub World Map"
 }

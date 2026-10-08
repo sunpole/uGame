@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.29**
+Current version: **0.2.30**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.30 | World Map shows provisional city role descriptions; Hub documentation |
 | 0.2.29 | Data-driven 4+1 city roles, five stable WorldGraph city IDs; draft placement only |
 | 0.2.28 | Record accepted uGame concept UGD-0035; separate direction from unapproved balance/math |
 | 0.2.27 | Enforce unique Interactable IDs to prevent orphan Phaser reward markers; regression test |
@@ -164,6 +165,9 @@ Current version: **0.2.29**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.30
+The Project Hub World Map loads `data/city-specializations.json` and displays city role, focus and freedom to train any profession. The 4+1 placement remains provisional, no world/save/economy migration. Added Hub document link, manifest file and Node rendering regression. Browser QA pending.
 
 ## 0.2.29
 Created `data/city-specializations.json` and `docs/CITY-SPECIALIZATIONS.md` mapping five existing safe cities to four proposed specializations plus the existing neutral Crossroads. The 4+1 model is accepted; geographic assignment of roles is provisional. No WorldGraph ID/transition changes, player restrictions or numerical bonuses. Added Node validation and CI baseline. v0.2.30 will render these descriptions in the live Project Hub map.
