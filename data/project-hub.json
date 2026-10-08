@@ -107,6 +107,13 @@
           "target": "./docs/CITY-SPECIALIZATIONS.md"
         },
         {
+          "id": "materials-proposal-doc",
+          "label": "Материалы: проект 4 + 2",
+          "description": "Четыре действующих материала и два неутверждённых кандидата: руда и шкура.",
+          "type": "document",
+          "target": "./docs/MATERIALS-PROPOSAL.md"
+        },
+        {
           "id": "world-spawn-state-doc",
           "label": "WorldSpawnState / Location Tier",
           "description": "Stage C runtime: persistent Tier-state, distance from safe city, spawn capacity and DEV QA.",

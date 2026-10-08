@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.30",
-  "stage": "city-specialization-map-preview",
+  "version": "0.2.31",
+  "stage": "six-base-material-candidate",
   "updated": "2026-10-08",
-  "summary": "Show tentative four-plus-one city specializations in Project Hub World Map"
+  "summary": "Document six-material candidate while keeping ore/hide strictly out of live gameplay"
 }

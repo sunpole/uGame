@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.30**
+Current version: **0.2.31**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.31 | Six-material candidate: preserve 4 live resources, propose ore/hide read-only; data contract test |
 | 0.2.30 | World Map shows provisional city role descriptions; Hub documentation |
 | 0.2.29 | Data-driven 4+1 city roles, five stable WorldGraph city IDs; draft placement only |
 | 0.2.28 | Record accepted uGame concept UGD-0035; separate direction from unapproved balance/math |
@@ -165,6 +166,9 @@ Current version: **0.2.30**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.31
+Proposed `data/materials-proposal.json`: four current raw materials (Stone, Wood, Water, Clay) and two explicitly **unapproved/inactive** candidates (Ore, Hide), with processing examples. Live resource/catalog/economy/save data remain unchanged. Added Project Hub documentation entry and Node test that fails if candidate materials slip into active resource catalog without approval.
 
 ## 0.2.30
 The Project Hub World Map loads `data/city-specializations.json` and displays city role, focus and freedom to train any profession. The 4+1 placement remains provisional, no world/save/economy migration. Added Hub document link, manifest file and Node rendering regression. Browser QA pending.

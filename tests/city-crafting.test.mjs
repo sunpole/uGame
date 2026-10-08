@@ -43,3 +43,17 @@ test('World Map shows safe city specialization from data and no class lock', asy
   assert.match(ui.contentElement.innerHTML, /Перекрёсток/);
   assert.match(ui.contentElement.innerHTML, /Освоение других профессий не запрещено/);
 });
+
+test('six-material proposal has four real resources and two strictly inactive candidates', () => {
+  const resourceIds = new Set(data('data/resources.json').resources.map((x) => x.id));
+  const p = data('data/materials-proposal.json');
+  assert.equal(p.status,'candidate-not-gameplay');
+  assert.equal(p.rawMaterials.length,6);
+  assert.deepEqual(new Set(p.rawMaterials.map((m) => m.id)).size,6);
+  assert.equal(p.rawMaterials.filter((m) => m.inCurrentGame).length,4);
+  assert.deepEqual(new Set(p.rawMaterials.filter((m) => m.inCurrentGame).map((m) => m.id)),new Set(['stone','wood','water','clay']));
+  for(const m of p.rawMaterials) {
+    assert.equal(resourceIds.has(m.id),m.inCurrentGame,'candidate must not silently enter live catalog: '+m.id);
+  }
+  assert.ok(p.rawMaterials.filter((m) => !m.inCurrentGame).every((m) => m.requiresOwnerApproval));
+});

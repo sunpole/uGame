@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "status": "candidate-not-gameplay",
+  "updated": "2026-10-08",
+  "baseMaterialCountTarget": 6,
+  "rawMaterials": [
+    {
+      "id": "stone",
+      "label": "Камень",
+      "inCurrentGame": true,
+      "roles": [
+        "строительство",
+        "точные каменные компоненты"
+      ]
+    },
+    {
+      "id": "wood",
+      "label": "Дерево",
+      "inCurrentGame": true,
+      "roles": [
+        "каркасы",
+        "рукояти",
+        "топливо"
+      ]
+    },
+    {
+      "id": "water",
+      "label": "Вода",
+      "inCurrentGame": true,
+      "roles": [
+        "обработка",
+        "составы",
+        "восстановление"
+      ]
+    },
+    {
+      "id": "clay",
+      "label": "Глина",
+      "inCurrentGame": true,
+      "roles": [
+        "формы",
+        "керамика",
+        "строительные компоненты"
+      ]
+    },
+    {
+      "id": "ore",
+      "label": "Руда",
+      "inCurrentGame": false,
+      "roles": [
+        "металлы",
+        "сплавы",
+        "фурнитура"
+      ],
+      "requiresOwnerApproval": true
+    },
+    {
+      "id": "hide",
+      "label": "Шкура",
+      "inCurrentGame": false,
+      "roles": [
+        "кожа",
+        "мягкие материалы",
+        "уплотнители"
+      ],
+      "requiresOwnerApproval": true
+    }
+  ],
+  "designRules": [
+    "Не добавлять сотню базовых ресурсов.",
+    "Обработка порождает свойства и компоненты, а не новые сырьевые деревья.",
+    "Отсутствие числовых цен и формул — осознанное ограничение кандидата.",
+    "Не связывать ресурс навсегда с одним городом.",
+    "Не создавать новые предметы/дроп до игрового QA и утверждения."
+  ],
+  "proposedTransformations": [
+    {
+      "input": "stone",
+      "process": "огранка",
+      "exampleOutput": "обработанный камень",
+      "status": "concept"
+    },
+    {
+      "input": "wood",
+      "process": "строгание",
+      "exampleOutput": "заготовка для рукояти",
+      "status": "concept"
+    },
+    {
+      "input": "clay",
+      "process": "формование",
+      "exampleOutput": "керамическая деталь",
+      "status": "concept"
+    },
+    {
+      "input": "ore",
+      "process": "плавка",
+      "exampleOutput": "металлическая заготовка",
+      "status": "candidate"
+    },
+    {
+      "input": "hide",
+      "process": "выделка",
+      "exampleOutput": "кожаная деталь",
+      "status": "candidate"
+    }
+  ]
+}

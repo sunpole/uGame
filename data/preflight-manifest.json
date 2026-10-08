@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.30",
+  "version": "0.2.31",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -63,7 +63,8 @@
     "./src/step-system.js",
     "./data/daylight-vision.json",
     "./src/daylight-system.js",
-    "./data/city-specializations.json"
+    "./data/city-specializations.json",
+    "./data/materials-proposal.json"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
