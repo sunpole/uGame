@@ -273,14 +273,16 @@ export class ResourceExpeditionView {
       }
       const manual = this.root.querySelector('[data-exp-action="manual"]');
       if (manual) manual.textContent = run.mode === 'manual' ? '🎯 Идёт ручная попытка' : '🎯 Ручная добыча';
-      const claim = this.root.querySelector('[data-exp-action="claim"]');
-      if (claim) claim.disabled = run.claimed;
       this.put('result-text', run.status === 'depleted'
         ? 'Ресурс полностью исчерпан. Мастер исчезнет с поверхности через 30 секунд после завершения добычи. Получи накопленный груз.'
         : run.status === 'expired'
           ? 'Время встречи завершилось. Добытый груз сохранён и доступен к выдаче.'
           : 'Выход выполнен. Добытый груз сохранён, но итоговый бонус за полную экспедицию утрачен.');
-      if (claim) claim.textContent = run.claimed ? 'Груз получен' : 'Забрать ' + mass(run.cargoUnits);
+    }
+    const claim = this.root.querySelector('[data-exp-action="claim"]');
+    if (claim) {
+      claim.disabled = run.claimed;
+      claim.textContent = run.claimed ? 'Груз получен' : 'Забрать ' + mass(run.cargoUnits);
     }
     this.lastMode = run.mode;
     this.lastStatus = run.status;
