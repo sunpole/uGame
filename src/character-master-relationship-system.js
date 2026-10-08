@@ -83,6 +83,17 @@ export class CharacterMasterRelationshipSystem {
     return clone(current.activeProcess);
   }
 
+  addRelationshipXp(masterId, amount) {
+    const value = Math.max(0, Math.floor(Number(amount) || 0));
+    if (!masterId || value <= 0) return 0;
+    const current = this.ensureMaster(masterId);
+    current.relationshipXp = Math.max(0, Math.floor(Number(current.relationshipXp) || 0)) + value;
+    // Prototype threshold; profession tree and training unlocks are intentionally not implemented here.
+    current.relationshipLevel = Math.floor(current.relationshipXp / 100);
+    this.publish();
+    return value;
+  }
+
   getPendingRewards(masterId) {
     const current = this.state.masters?.[masterId];
     return Array.isArray(current?.pendingRewards) ? clone(current.pendingRewards) : [];
