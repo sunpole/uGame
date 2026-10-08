@@ -45,7 +45,7 @@ function namedImports(source) {
 
 function exportedNames(source) {
   const names = new Set();
-  for (const match of source.matchAll(/export\s+(?:class|function|const|let|var)\s+([A-Za-z_$][\w$]*)/g)) names.add(match[1]);
+  for (const match of source.matchAll(/export\s+(?:async\s+)?(?:class|function|const|let|var)\s+([A-Za-z_$][\w$]*)/g)) names.add(match[1]);
   for (const match of source.matchAll(/export\s*\{([^}]+)\}/g)) {
     for (const raw of match[1].split(',')) {
       const parts = raw.trim().split(/\s+as\s+/);
@@ -60,6 +60,7 @@ function stripModuleSyntax(source) {
   return String(source)
     .replace(/^\s*import[^\n;]*(?:;|$)/gm, '')
     .replace(/\bexport\s+default\s+/g, '')
+    .replace(/\bexport\s+async\s+function\s+/g, 'async function ')
     .replace(/\bexport\s+(class|function|const|let|var)\s+/g, '$1 ')
     .replace(/export\s*\{[^}]*\}\s*;?/g, '');
 }
@@ -244,16 +245,26 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     return (context.manifest.requiredFiles.length + context.manifest.requiredAssets.length) + ' файлов доступны';
   });
 
+  await check('json', 'JSON-целостность данных', async () => {
+    const jsonFiles = (context.manifest?.requiredFiles || []).filter((url) => String(url).endsWith('.json'));
+    await Promise.all(jsonFiles.map((url) => fetchJson(url)));
+    return jsonFiles.length + ' JSON-файлов корректны';
+  });
+
   await check('versions', 'Согласованность версий', async () => {
     const [versionJson, packageJson] = await Promise.all([fetchJson('./version.json'), fetchJson('./package.json')]);
     validateVersions(expectedVersion, versionJson, packageJson, context.manifest);
     return 'v' + expectedVersion;
   });
 
-  await check('modules', 'Граф JS-модулей и зависимостей', async () => {
+  await check('modules', 'Все JS-модули и зависимости', async () => {
     context.modules = await collectModuleGraph(context.manifest?.moduleEntry || './src/main.js');
+    for (const file of context.manifest?.moduleFiles || []) {
+      const url = absolute(file);
+      if (!context.modules.has(url)) context.modules.set(url, await fetchText(file));
+    }
     validateNamedDependencies(context.modules);
-    return context.modules.size + ' модулей связаны';
+    return context.modules.size + ' JS-файлов доступны и связаны';
   });
 
   await check('syntax', 'Синтаксис JS-модулей', async () => {

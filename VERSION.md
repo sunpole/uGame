@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.25**
+Current version: **0.1.26**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.26 | Full Runtime Pre-flight: check every src JS module plus all runtime JSON files, JSON parse integrity and dependency/syntax coverage |
 | 0.1.25 | Spawn/Gate Safety Buffer: all 12 field candidate spots are at least 250px from diagonal entries; walls retain ≥100px clearance |
 | 0.1.24 | Diagonal Obstacles + 100px Clearance: field walls become ±45° and spots/walls stay clear of entries/gates |
 | 0.1.23 | City NPC Scale ×3: Banker/Teleporter/Guard become intentionally large landmark characters with larger interaction radius |
@@ -131,6 +132,9 @@ Current version: **0.1.25**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.26
+Pre-flight manifest расширен до всех runtime `src/*.js` модулей и всех runtime JSON data files. Loading screen отдельно подтверждает: доступность файлов, JSON parse integrity, version consistency, named import/export dependencies и syntax parse для всего JS-набора, даже если модуль не попадает в main import graph. Исправлен parser для `export async function`. Gameplay открывается только после зелёных проверок и подтверждения `worldReady`.
 
 ## 0.1.25
 Усилено правило «не спавнить рядом со входом»: Event Spot теперь валидируется минимум на 250 px от любого `NW/NE/SW/SE` entry. 12 candidate spots переразложены по true-square diamond, сохраняя использование верхней/центральной/нижней частей карты. Wall patterns обновлены так, чтобы сохранять ≥100 px geometric clearance от всех entries и Event Spots.

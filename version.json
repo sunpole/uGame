@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.25",
-  "stage": "spawn-gate-safety-buffer",
+  "version": "0.1.26",
+  "stage": "full-runtime-preflight-coverage",
   "updated": "2026-10-08",
-  "summary": "Increase Event Spot distance from diagonal entries to at least 250px while keeping all diagonal walls at least 100px away from protected points"
+  "summary": "Expand loading preflight to all runtime JS modules and all runtime JSON data files, including JSON parse integrity and async export syntax checks"
 }
