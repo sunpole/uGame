@@ -172,7 +172,12 @@ export class ResourceExpeditionView {
     const run = this.system.run;
     if (!run) return;
     if (action === 'surface') {
-      if (run.status === 'active') this.system.leave(now);
+      if (run.status === 'active') {
+        const confirmExit = typeof window === 'undefined' || typeof window.confirm !== 'function'
+          || window.confirm('Прервать экспедицию? Вы сохраните уже добытый груз, но потеряете право на итоговый возврат Шагов.');
+        if (!confirmExit) return;
+        this.system.leave(now);
+      }
       this.hide();
       return;
     }
@@ -231,6 +236,8 @@ export class ResourceExpeditionView {
     this.put('timer', clock(run.endsAt - now));
     this.put('feedback', this.feedback);
     this.put('status', ({ active: 'ДОБЫЧА', depleted: 'РЕСУРС ИСЧЕРПАН', expired: 'ВСТРЕЧА ЗАКОНЧЕНА', left: 'ВЫШЛИ' })[run.status] || '—');
+    const surfaceButton = this.root.querySelector('.expedition-realm-surface');
+    if (surfaceButton) surfaceButton.textContent = isActive ? '↑ Прервать (без бонуса)' : '↑ На поверхность';
     this.put('miner-state', isActive
       ? ({ auto: 'Автоматически', manual: 'Ручной удар', paused: 'Ожидание' })[run.mode]
       : 'Экспедиция окончена');
