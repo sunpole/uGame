@@ -318,6 +318,8 @@ export class MasterEncounterSystem {
       return 'Эффективность ×' + multiplier + ' · встреч: ' + (relationship?.encountersCount || 0) + ' · осталось ' + formatRemaining(Number(current.expiresAt) - now);
     };
     const freeRewardAvailable = this.isFreeRewardAvailable(spawn);
+    const historicalPending = (this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [])
+      .filter((reward) => this.relationshipSystem?.pendingRewardEncounterId?.(reward) !== spawn.encounterId);
     const actions = moduleIds.map((moduleId) => {
       const module = this.masterCatalog?.getModule?.(moduleId);
       const implemented = module?.implemented === true;
@@ -336,6 +338,15 @@ export class MasterEncounterSystem {
           : null
       };
     });
+    if (historicalPending.length) {
+      actions.push({
+        id: 'historical-rewards',
+        label: 'Забрать прежнюю добычу (' + historicalPending.length + ')',
+        disabled: false,
+        hint: 'Это награды предыдущих встреч. Текущая бесплатная добыча учитывается отдельно.',
+        onSelect: () => this.processSystem?.openHistoricalRewards?.(spawn)
+      });
+    }
     this.interactionPanel?.showActions({
       title: (master?.displayName || spawn.displayName || 'Мастер') + ' · ' + spawn.tier,
       text: 'Доступные модули этой встречи: ' + (moduleLabels.join(' · ') || 'Добыча') + '. Добыча гарантирована; остальные выбираются по Tier.',

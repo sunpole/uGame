@@ -260,7 +260,7 @@ function validateMasterRewardState(sources) {
     || !encounter.includes('disabled: !implemented || claimedExtraction')) {
     throw new Error('Encounter reward eligibility UI missing');
   }
-  if (!process.includes('Бесплатная добыча у этого NPC') || !process.includes('fallbackEncounterId')) {
+  if (!process.includes('Бесплатная добыча у этого NPC') || !process.includes('pendingForEncounter') || !process.includes('openHistoricalRewards') || !relationship.includes('pendingRewardEncounterId')) {
     throw new Error('one-free-reward Process guard missing');
   }
 }
@@ -396,6 +396,117 @@ function validateMasterRewardSpriteRuntime(InteractableSystem) {
   if (redCount() !== 0 || claimed._masterRewardMarker) throw new Error('claimed spawn created marker');
   system.clear();
   if (redCount() !== 0) throw new Error('marker leaked on zone clear');
+}
+
+function validateMasterRewardProvenance({ MasterEncounterSystem, MasterProcessSystem, CharacterMasterRelationshipSystem }) {
+  // End-to-end Master Process test: an old pending reward must not masquerade
+  // as the new Encounter's reward or block starting a new Process.
+  const now = Date.now();
+  const masterId = 'preflight-water-t1';
+  const currentId = 'preflight-current';
+  const previousId = 'preflight-previous';
+  const spawn = {
+    masterId, encounterId: currentId, zoneId: 'preflight-zone', tier: 'T1',
+    resourceDirectionId: 'water', activeModules: ['extraction'],
+    efficiencyMultiplier: 1, expiresAt: now + 120000
+  };
+  const world = {
+    getMasterSpawn: () => spawn,
+    getActiveMasters: () => [spawn],
+    getLocationSummary: () => ({ locationBonus: 0 })
+  };
+  const catalog = {
+    get: () => ({ displayName: 'Water Master' }),
+    getModule: () => ({ label: 'Добыча', implemented: true }),
+    moduleLabel: () => 'Добыча'
+  };
+  function setup({ claimed = false, opaque = false, canStore = true } = {}) {
+    const panels = [];
+    const grants = [];
+    const relationship = new CharacterMasterRelationshipSystem();
+    relationship.initialize({
+      schemaVersion: 1,
+      masters: {
+        [masterId]: {
+          masterId,
+          claimedEncounterIds: claimed ? [currentId] : [],
+          pendingRewards: [{
+            rewardId: 'old-result',
+            processId: opaque ? 'opaque-legacy' : 'process:' + previousId + ':1000',
+            baseReward: { resourceId: 'water', tier: 'T1', massKg: 0.5 }
+          }]
+        }
+      }
+    });
+    const panel = {
+      showActions: (value) => panels.push(value),
+      showMessage: (value) => panels.push(value)
+    };
+    const process = new MasterProcessSystem({
+      relationshipSystem: relationship, interactionPanel: panel,
+      worldSpawnStateSystem: world,
+      grantResource: (...args) => { grants.push(args); return canStore; }
+    });
+    process.profiles.set('water-basic', {
+      id: 'water-basic', moduleId: 'extraction',
+      resourceDirectionId: 'water', durationSeconds: 1,
+      rewardRangeKg: { min: 0.1, max: 0.1 }
+    });
+    const encounter = new MasterEncounterSystem({
+      worldSpawnStateSystem: world, relationshipSystem: relationship,
+      masterCatalog: catalog, interactionPanel: panel, processSystem: process
+    });
+    const open = (id) => {
+      encounter.activate({ masterEncounterId: currentId });
+      const action = panels.at(-1)?.actions?.find((candidate) => candidate.id === id);
+      if (!action || action.disabled) throw new Error('missing/disabled ' + id);
+      action.onSelect?.();
+      return panels.at(-1);
+    };
+    const take = (view) => {
+      const action = view?.actions?.[0];
+      if (!action) throw new Error('pending action missing');
+      return action.onSelect?.();
+    };
+    return { relationship, process, encounter, grants, open, take };
+  }
+  const current = setup();
+  current.open('extraction');
+  if (!current.relationship.getActiveProcess(masterId)) throw new Error('old pending blocks new Extraction');
+  current.process.update(now + 3000, true);
+  const currentView = current.open('extraction');
+  if (currentView?.actions?.length !== 1 || !currentView.actions[0].label.includes('этой встречи')) {
+    throw new Error('new result obscured by old pending');
+  }
+  if (current.take(currentView) !== true || !current.relationship.hasClaimedEncounter(masterId, currentId)) {
+    throw new Error('current claim failed');
+  }
+  if (current.relationship.getPendingRewards(masterId).length !== 1) throw new Error('old result lost');
+  const saved = current.relationship.snapshot();
+  const restored = new CharacterMasterRelationshipSystem();
+  restored.initialize(saved);
+  if (!restored.hasClaimedEncounter(masterId, currentId)
+    || restored.getPendingRewards(masterId).length !== 1) throw new Error('claims did not survive reload');
+
+  const oldView = current.open('historical-rewards');
+  if (!oldView?.actions?.[0]?.label.includes('прежней встречи')) throw new Error('old result not identified');
+  if (current.take(oldView) !== true || !current.relationship.hasClaimedEncounter(masterId, previousId)) {
+    throw new Error('historical claim failed');
+  }
+  if (current.take(oldView) !== false || current.grants.length !== 2) throw new Error('double claim granted twice');
+
+  const locked = setup({ claimed: true });
+  if (locked.open('historical-rewards')?.actions?.length !== 1) {
+    throw new Error('old result inaccessible when current Extraction claimed');
+  }
+  const unknown = setup({ opaque: true });
+  unknown.take(unknown.open('historical-rewards'));
+  if (unknown.relationship.hasClaimedEncounter(masterId, currentId)) {
+    throw new Error('unknown legacy reward consumed current Encounter');
+  }
+  const full = setup({ canStore: false });
+  full.take(full.open('historical-rewards'));
+  if (full.relationship.getPendingRewards(masterId).length !== 1) throw new Error('failed grant lost reward');
 }
 
 function validateVersions(expected, versionJson, packageJson, manifest) {
@@ -542,14 +653,16 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
       fetchText('./src/master-process-system.js')
     ]);
     validateMasterRewardState({ relationship, interactable, encounter, process });
-    const [{ MasterEncounterSystem }, { CharacterMasterRelationshipSystem }, { InteractableSystem }] = await Promise.all([
+    const [{ MasterEncounterSystem }, { CharacterMasterRelationshipSystem }, { InteractableSystem }, { MasterProcessSystem }] = await Promise.all([
       import('./master-encounter-system.js'),
       import('./character-master-relationship-system.js'),
-      import('./interactable-system.js')
+      import('./interactable-system.js'),
+      import('./master-process-system.js')
     ]);
     validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRelationshipSystem });
     validateMasterRewardSpriteRuntime(InteractableSystem);
-    return '1 free / Encounter · Phaser sprite create/destroy + claimed lock OK';
+    validateMasterRewardProvenance({ MasterEncounterSystem, MasterProcessSystem, CharacterMasterRelationshipSystem });
+    return 'Phaser marker · 1 free / Encounter · historical/current claim runtime OK';
   });
 
   await check('textures', 'Конфигурация текстур', async () => {

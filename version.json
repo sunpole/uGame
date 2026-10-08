@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.17",
-  "stage": "master-marker-hard-lifecycle",
+  "version": "0.2.18",
+  "stage": "master-reward-encounter-provenance",
   "updated": "2026-10-08",
-  "summary": "Only create Phaser Master reward markers for unclaimed Encounters; destroy object and tween on claim; DEV 8388 diagnostics"
+  "summary": "Separate past and current Master rewards by Encounter provenance so old pending loot cannot block or claim a new encounter"
 }

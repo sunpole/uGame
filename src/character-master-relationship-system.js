@@ -101,15 +101,19 @@ export class CharacterMasterRelationshipSystem {
     return true;
   }
 
-  consumePendingReward(masterId, rewardId, fallbackEncounterId = null) {
+  pendingRewardEncounterId(reward) {
+    // A legacy reward without a stable process origin is deliberately unknown:
+    // claiming it must never consume the current Encounter's free reward.
+    return reward?.encounterId || encounterIdFromProcessId(reward?.processId) || null;
+  }
+
+  consumePendingReward(masterId, rewardId) {
     const current = this.state.masters?.[masterId];
     if (!current || !Array.isArray(current.pendingRewards)) return null;
     const index = current.pendingRewards.findIndex((reward) => reward.rewardId === rewardId);
     if (index < 0) return null;
     const [removed] = current.pendingRewards.splice(index, 1);
-    const encounterId = removed?.encounterId
-      || encounterIdFromProcessId(removed?.processId)
-      || fallbackEncounterId;
+    const encounterId = this.pendingRewardEncounterId(removed);
     if (!Array.isArray(current.claimedEncounterIds)) current.claimedEncounterIds = [];
     if (encounterId && !current.claimedEncounterIds.includes(encounterId)) {
       current.claimedEncounterIds.push(encounterId);

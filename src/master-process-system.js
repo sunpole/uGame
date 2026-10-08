@@ -59,6 +59,23 @@ export class MasterProcessSystem {
     return Boolean(this.relationshipSystem?.syncProcesses?.(now));
   }
 
+  pendingForEncounter(masterId, encounterId, historical = false) {
+    const pending = this.relationshipSystem?.getPendingRewards?.(masterId) || [];
+    return pending.filter((reward) => {
+      const sourceEncounterId = this.relationshipSystem?.pendingRewardEncounterId?.(reward);
+      return historical ? sourceEncounterId !== encounterId : sourceEncounterId === encounterId;
+    });
+  }
+
+  openHistoricalRewards(spawn, now = Date.now()) {
+    if (!spawn?.masterId || !spawn?.encounterId) return false;
+    this.update(now, true);
+    const pending = this.pendingForEncounter(spawn.masterId, spawn.encounterId, true);
+    if (!pending.length) return false;
+    this.showPendingRewards(spawn.masterId, pending, spawn.encounterId);
+    return true;
+  }
+
   openExtraction(spawn, now = Date.now()) {
     if (!spawn?.masterId || !spawn?.encounterId) return false;
     const profile = this.getProfile(spawn.resourceDirectionId || 'stone');
@@ -66,7 +83,9 @@ export class MasterProcessSystem {
 
     this.update(now, true);
 
-    const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
+    // Only a result from this Encounter can replace its Extraction action.
+    // Historical results have a separate action and must not block new work.
+    const pending = this.pendingForEncounter(spawn.masterId, spawn.encounterId);
     if (pending.length) {
       this.showPendingRewards(spawn.masterId, pending, spawn.encounterId);
       return true;
@@ -132,18 +151,24 @@ export class MasterProcessSystem {
     return Math.max(0.1, Math.round((Number.isFinite(legacy) ? legacy : 1) * 10) / 10);
   }
 
-  showPendingRewards(masterId, pendingRewards = [], fallbackEncounterId = null) {
-    const actions = pendingRewards.map((pending, index) => {
+  showPendingRewards(masterId, pendingRewards = [], currentEncounterId = null) {
+    const actions = pendingRewards.map((pending) => {
+      const rewardEncounterId = this.relationshipSystem?.pendingRewardEncounterId?.(pending);
+      const isCurrent = Boolean(currentEncounterId && rewardEncounterId === currentEncounterId);
+      const sourceLabel = isCurrent ? 'этой встречи' : 'прежней встречи';
       const resourceId = pending?.baseReward?.resourceId || 'stone';
       const tier = pending?.baseReward?.tier || 'T1';
       const massKg = this.rewardMassKg(pending);
       const resourceLabel = ({ stone: 'Камень', water: 'Вода', wood: 'Дерево', clay: 'Глина' })[resourceId] || resourceId;
       return {
         id: pending.rewardId,
-        label: 'Забрать: ' + resourceLabel + ' ' + tier + ' · ' + formatMass(massKg),
+        label: 'Забрать (' + sourceLabel + '): ' + resourceLabel + ' ' + tier + ' · ' + formatMass(massKg),
         onSelect: () => {
+          // A stale/double click must not grant a removed reward twice.
+          if (!(this.relationshipSystem?.getPendingRewards?.(masterId) || [])
+            .some((reward) => reward.rewardId === pending.rewardId)) return false;
           const granted = this.grantResource?.(resourceId, massKg, tier);
-          if (granted === false) {
+          if (granted !== true) {
             this.interactionPanel?.showMessage({
               title: 'Награда не помещается',
               text: 'Результат Process не потерян и остаётся pending reward у этого Master.',
@@ -151,10 +176,13 @@ export class MasterProcessSystem {
             });
             return false;
           }
-          this.relationshipSystem?.consumePendingReward?.(masterId, pending.rewardId, pending?.encounterId || fallbackEncounterId);
+          const consumed = this.relationshipSystem?.consumePendingReward?.(masterId, pending.rewardId);
+          if (!consumed) return false;
           this.interactionPanel?.showMessage({
-            title: 'Результат получен',
-            text: 'Завершённый Process выдал ресурс. Pending reward удалён только после успешного помещения награды.',
+            title: isCurrent ? 'Добыча этой встречи получена' : 'Прежняя добыча получена',
+            text: isCurrent
+              ? 'Награда текущей встречи получена. Красная точка у этого Master исчезает.'
+              : 'Получен сохранённый результат другой встречи. Красная точка текущей встречи останется до её собственной награды.',
             meta: resourceLabel + ' ' + tier + ' · ' + formatMass(massKg)
           });
           return true;
@@ -164,7 +192,7 @@ export class MasterProcessSystem {
 
     this.interactionPanel?.showActions({
       title: 'Добыча / готовый результат',
-      text: 'Результат Process сохраняется у конкретного Master до получения.',
+      text: 'Результаты разных встреч сохраняются отдельно. Получение прежней добычи не расходует бесплатную награду нынешней встречи.',
       actions,
       meta: 'Готовых результатов: ' + pendingRewards.length
     });

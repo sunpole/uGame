@@ -53,3 +53,7 @@ A QA report found an already-claimed Master Encounter (`Добыча · полу
 
 ## Implementation QA note v0.2.17
 Repeated real-browser QA in v0.2.16 still showed a red dot after collecting an Encounter's free reward. Instead of another visibility-only fix, the marker now has a strict create/destroy lifecycle: unclaimed Encounters own a Phaser marker; claimed Encounters own none. The infinite pulse tween is killed when the marker is destroyed. DEV 8388 displays nearest-Master live state for diagnosing any remaining inconsistency. The underlying one-reward-per-Encounter economy, claims and saves remain unchanged. Root cause of prior browser behavior has not yet been directly observed.
+
+
+## Implementation fix v0.2.18 — provenance and historical rewards
+Reproduced the root workflow defect: an old pending reward for the same master intercepted current Extraction; claiming it marked its original Encounter but left the current Encounter red marker (correct technically, misleading visually). Historical pending rewards were also unreachable via the encounter menu when current Extraction was claimed. The UI and Process now distinguish historical/current pending by stable Encounter identity and allow independent collection. Legacy reward with no recoverable process Encounter remains collectible but never consumes a newer Encounter's claim. This protects the one-free-reward-per-Encounter invariant without erasing old saves. New regression tests cover the actual Process-to-claim workflow, not only the renderer.

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.17**
+Current version: **0.2.18**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.18 | Separate current/historical Master rewards, preserve correct Encounter claim marker and expose legacy loot independently |
 | 0.2.17 | Hard Phaser Master marker lifecycle on claim, sprite PRE-FLIGHT regression, read-only DEV 8388 diagnostic |
 | 0.2.16 | Master reward marker visibility reconciliation on NPC updates + executable PRE-FLIGHT regression test |
 | 0.2.15 | Fix Master reward PRE-FLIGHT false failure for data-driven claimed label; keep claim guard checks |
@@ -152,6 +153,9 @@ Current version: **0.2.17**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.18
+Reproduced reward-origin mismatch: a historical pending reward for the same Master was always shown before a current Encounter could start Extraction. Claiming that old reward correctly marked the old Encounter, so the current red marker stayed visible and appeared broken. A second confirmed defect blocked access to historical pending rewards after current Extraction had been claimed. Now Extraction prioritizes only pending results belonging to its own Encounter; historical rewards are a separate accessible action even when current Extraction is disabled. Reward claim origin is resolved exclusively from stored `encounterId` or legacy `processId`; unknown origin does not claim the current Encounter. UI explicitly distinguishes historical/current results and explains the remaining red marker when historical results are taken. Stale/double claim actions cannot grant an already-consumed reward. Existing save and resource schemas, claim economy, and Phaser marker rendering remain unchanged. Automated scenario regression covers these flows; browser QA pending.
 
 ## 0.2.17
 Follow-up to repeated real-browser QA: a red dot remained over a Master even after the same Encounter showed "Добыча · получено". The v0.2.16 state-reconciliation fix was insufficient in this environment; exact visual root cause remains unverified. This patch enforces a stricter renderer invariant: only unclaimed Encounters create a red Phaser GameObject, and successful claim destroys its sprite and infinite tween instead of merely setting `visible=false`. Claimed Masters rendered from saves never create the marker. The existing NPC reconciliation can restore it for unclaimed encounters. Added a headless InteractableSystem sprite-lifecycle smoke test in PRE-FLIGHT and read-only DEV code 8388 (nearest Master's live claimed/cached/Phaser marker state). No reward, Process, time, or save schema changes. Browser visual validation remains necessary.
