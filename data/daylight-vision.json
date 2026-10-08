@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-08",
+  "status": "accepted-prototype-colors",
+  "modifierFormula": {
+    "radius": "(base + flatSum) × product(multiplier) × (1 + multiplierBonusSum)",
+    "darkness": "clamp((base + flatSum) × product(multiplier) × (1 + multiplierBonusSum), 0, 1)"
+  },
+  "phases": {
+    "Утро": {
+      "tintLayers": [
+        {
+          "color": "#ffd54a",
+          "opacity": 0.2,
+          "label": "yellow sunrise"
+        },
+        {
+          "color": "#ff6b4a",
+          "opacity": 0.05,
+          "label": "slight red"
+        }
+      ],
+      "city": {
+        "radiusMultiplier": 3,
+        "darknessMultiplier": 0.3
+      },
+      "field": {
+        "radiusMultiplier": 1,
+        "darknessMultiplier": 0.76
+      }
+    },
+    "День": {
+      "tintLayers": [
+        {
+          "color": "#d6a13d",
+          "opacity": 0.1,
+          "label": "yellow ochre"
+        },
+        {
+          "color": "#b95b35",
+          "opacity": 0.05,
+          "label": "warm red"
+        }
+      ],
+      "city": {
+        "radiusMultiplier": 2.5,
+        "darknessMultiplier": 0.5
+      },
+      "field": {
+        "radiusMultiplier": 1.2,
+        "darknessMultiplier": 0.88
+      }
+    },
+    "Вечер": {
+      "tintLayers": [
+        {
+          "color": "#294878",
+          "opacity": 0.1,
+          "label": "blue evening"
+        },
+        {
+          "color": "#000000",
+          "opacity": 0.05,
+          "label": "black"
+        }
+      ],
+      "city": {
+        "radiusMultiplier": 2,
+        "darknessMultiplier": 0.6
+      },
+      "field": {
+        "radiusMultiplier": 1.1,
+        "darknessMultiplier": 0.94
+      }
+    },
+    "Ночь": {
+      "tintLayers": [
+        {
+          "color": "#000000",
+          "opacity": 0.25,
+          "label": "night black"
+        }
+      ],
+      "city": {
+        "radiusMultiplier": 1.5,
+        "darknessMultiplier": 0.8
+      },
+      "field": {
+        "radiusMultiplier": 0.8,
+        "darknessMultiplier": 1.05
+      }
+    }
+  }
+}

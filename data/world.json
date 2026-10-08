@@ -67,8 +67,8 @@
       "rules": {
         "speedMultiplier": 1,
         "vision": {
-          "mode": "full",
-          "darkness": 0
+          "mode": "circle",
+          "darkness": 1
         }
       },
       "walls": [],
@@ -583,8 +583,8 @@
       "rules": {
         "speedMultiplier": 1,
         "vision": {
-          "mode": "full",
-          "darkness": 0
+          "mode": "circle",
+          "darkness": 1
         }
       },
       "walls": [],
@@ -1671,8 +1671,8 @@
       "rules": {
         "speedMultiplier": 1,
         "vision": {
-          "mode": "full",
-          "darkness": 0
+          "mode": "circle",
+          "darkness": 1
         }
       },
       "walls": [],
@@ -2831,8 +2831,8 @@
       "rules": {
         "speedMultiplier": 1,
         "vision": {
-          "mode": "full",
-          "darkness": 0
+          "mode": "circle",
+          "darkness": 1
         }
       },
       "walls": [],
@@ -3347,8 +3347,8 @@
       "rules": {
         "speedMultiplier": 1,
         "vision": {
-          "mode": "full",
-          "darkness": 0
+          "mode": "circle",
+          "darkness": 1
         }
       },
       "walls": [],

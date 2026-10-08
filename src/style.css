@@ -1807,7 +1807,8 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 /* v0.0.51 — explicit layer policy + same-level modal exclusivity */
 :root {
   --ug-z-world: 1;
-  --ug-z-vision: 2;
+  --ug-z-world-tint: 2;
+  --ug-z-vision: 3;
   --ug-z-hud: 4;
   --ug-z-touch: 5;
   --ug-z-controls: 40;
@@ -1818,6 +1819,13 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 }
 
 #game canvas { z-index: var(--ug-z-world); }
+.world-lighting-tint {
+  position: absolute;
+  inset: 0;
+  z-index: var(--ug-z-world-tint);
+  pointer-events: none;
+  display: none;
+}
 .vision-overlay { z-index: var(--ug-z-vision); }
 .game-hud,
 .quest-status,

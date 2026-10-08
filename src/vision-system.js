@@ -23,6 +23,9 @@ export class VisionSystem {
     this.darkness = 1;
     this.direction = { x: 1, y: 0 };
     this.zoneOverride = {};
+    this.modifiers = new Map();
+    this.coneHalfAngleDeg = 30;
+    this.coneDistanceMultiplier = 1.75;
     this.lastRenderAt = 0;
     this.minFrameMs = 33;
 
@@ -124,11 +127,56 @@ export class VisionSystem {
     this.update(true);
   }
 
+  setModifier(sourceId, modifier = {}) {
+    const id = String(sourceId || '').trim();
+    if (!id) return false;
+    this.modifiers.set(id, {
+      radiusFlat: Number(modifier.radiusFlat) || 0,
+      radiusMultiplier: Number.isFinite(Number(modifier.radiusMultiplier)) ? Number(modifier.radiusMultiplier) : 1,
+      radiusMultiplierBonus: Number(modifier.radiusMultiplierBonus) || 0,
+      darknessFlat: Number(modifier.darknessFlat) || 0,
+      darknessMultiplier: Number.isFinite(Number(modifier.darknessMultiplier)) ? Number(modifier.darknessMultiplier) : 1,
+      darknessMultiplierBonus: Number(modifier.darknessMultiplierBonus) || 0
+    });
+    this.update(true);
+    return true;
+  }
+
+  clearModifier(sourceId) {
+    const removed = this.modifiers.delete(String(sourceId || ''));
+    if (removed) this.update(true);
+    return removed;
+  }
+
+  getModifier(sourceId) {
+    return this.modifiers.get(String(sourceId || '')) || null;
+  }
+
   getEffectiveProfile() {
+    const baseRadius = Number(this.zoneOverride.radius ?? this.radius) || this.defaultRadius;
+    const baseDarkness = Number(this.zoneOverride.darkness ?? this.darkness);
+    let radiusFlat = 0;
+    let radiusMultiplier = 1;
+    let radiusMultiplierBonus = 0;
+    let darknessFlat = 0;
+    let darknessMultiplier = 1;
+    let darknessMultiplierBonus = 0;
+
+    for (const modifier of this.modifiers.values()) {
+      radiusFlat += Number(modifier.radiusFlat) || 0;
+      radiusMultiplier *= Number.isFinite(Number(modifier.radiusMultiplier)) ? Number(modifier.radiusMultiplier) : 1;
+      radiusMultiplierBonus += Number(modifier.radiusMultiplierBonus) || 0;
+      darknessFlat += Number(modifier.darknessFlat) || 0;
+      darknessMultiplier *= Number.isFinite(Number(modifier.darknessMultiplier)) ? Number(modifier.darknessMultiplier) : 1;
+      darknessMultiplierBonus += Number(modifier.darknessMultiplierBonus) || 0;
+    }
+
     return {
       mode: this.zoneOverride.mode ?? this.mode,
-      radius: this.zoneOverride.radius ?? this.radius,
-      darkness: this.zoneOverride.darkness ?? this.darkness
+      radius: clamp((baseRadius + radiusFlat) * radiusMultiplier * Math.max(0, 1 + radiusMultiplierBonus), 20, 1200),
+      darkness: clamp((baseDarkness + darknessFlat) * darknessMultiplier * Math.max(0, 1 + darknessMultiplierBonus), 0, 1),
+      coneHalfAngleDeg: this.coneHalfAngleDeg,
+      coneDistanceMultiplier: this.coneDistanceMultiplier
     };
   }
 
@@ -223,8 +271,8 @@ export class VisionSystem {
 
     if (effective.mode === 'cone') {
       const angle = Math.atan2(this.direction.y, this.direction.x);
-      const halfAngle = Math.PI / 6;
-      const distance = radius * 1.75;
+      const halfAngle = (Number(effective.coneHalfAngleDeg) || 30) * Math.PI / 180;
+      const distance = radius * (Number(effective.coneDistanceMultiplier) || 1.75);
       const leftAngle = angle - halfAngle;
       const rightAngle = angle + halfAngle;
       const x1 = x + Math.cos(leftAngle) * distance;

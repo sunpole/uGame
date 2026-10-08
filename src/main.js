@@ -24,6 +24,7 @@ import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
 import { GameClockSystem } from './game-clock-system.js';
+import { DaylightSystem } from './daylight-system.js';
 import { ChromeHeaderSystem } from './chrome-header-system.js';
 import { ActionRouter } from './action-router.js';
 import { InterfaceSettingsSystem } from './interface-settings.js';
@@ -58,6 +59,8 @@ let saveSystem = null;
 let projectHubSystem = null;
 let chromeContextSystem = null;
 let gameClockSystem = null;
+let daylightSystem = null;
+let activeZoneScene = null;
 let chromeHeaderSystem = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
@@ -116,6 +119,7 @@ async function loadVersion() {
 function executeDevCode(code) {
   const systems = [
     visionSystem,
+    daylightSystem,
     classSystem,
     playerController,
     containerSystem,
@@ -212,6 +216,7 @@ class ZoneScene extends Phaser.Scene {
       .rectangle(96, HEIGHT / 2, PLAYER_SIZE, PLAYER_SIZE, 0xf2f4f7)
       .setDepth(10);
 
+    activeZoneScene = this;
     visionSystem = new VisionSystem({
       host: this.gameElement,
       canvas: this.game.canvas,
@@ -221,6 +226,14 @@ class ZoneScene extends Phaser.Scene {
       camera: this.cameras.main,
       radius: VISIBILITY_RADIUS
     });
+
+    daylightSystem = new DaylightSystem({
+      host: this.gameElement,
+      visionSystem
+    });
+    await daylightSystem.load();
+    daylightSystem.setClockSnapshot(gameClockSystem?.snapshot?.() || { phase: 'День' });
+    this.daylightSystem = daylightSystem;
 
     this.viewportSystem = new ResponsiveViewportSystem({
       scene: this,
@@ -389,6 +402,7 @@ class ZoneScene extends Phaser.Scene {
       onStatus: (text) => this.setStatus(text),
       onZoneChange: (zone) => {
         this.zoneRulesSystem.apply(zone.rules);
+        daylightSystem?.setZone?.(zone);
         groundTextureSystem?.applyZone(zone);
         chromeContextSystem?.setZone(zone);
         chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null);
@@ -930,7 +944,11 @@ export async function bootGame() {
   chromeContextSystem.start();
   
   gameClockSystem = new GameClockSystem({
-    element: document.querySelector('#game-clock')
+    element: document.querySelector('#game-clock'),
+    onPhaseChange: (snapshot) => {
+      daylightSystem?.setClockSnapshot?.(snapshot);
+      activeZoneScene?.daylightSystem?.setClockSnapshot?.(snapshot);
+    }
   });
   gameClockSystem.start();
   

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.9",
-  "stage": "inspectable-preflight",
+  "version": "0.2.10",
+  "stage": "daylight-vision-architecture",
   "updated": "2026-10-08",
-  "summary": "Per-test preflight timing, copy-debug report and explicit Start Game gate after READY"
+  "summary": "Time-of-day vision/tint plus generic future modifier stack for classes/equipment"
 }

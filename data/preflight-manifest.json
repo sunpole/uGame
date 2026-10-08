@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.9",
+  "version": "0.2.10",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -60,7 +60,9 @@
     "./src/zone-rules-system.js",
     "./src/zone-system.js",
     "./data/steps-economy.json",
-    "./src/step-system.js"
+    "./src/step-system.js",
+    "./data/daylight-vision.json",
+    "./src/daylight-system.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -109,6 +111,7 @@
     "./src/world-spawn-state-system.js",
     "./src/zone-rules-system.js",
     "./src/zone-system.js",
-    "./src/step-system.js"
+    "./src/step-system.js",
+    "./src/daylight-system.js"
   ]
 }

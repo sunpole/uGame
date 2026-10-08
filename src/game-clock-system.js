@@ -31,8 +31,10 @@ function phaseIconForHour(hour) {
 }
 
 export class GameClockSystem {
-  constructor({ element } = {}) {
+  constructor({ element, onPhaseChange } = {}) {
     this.element = element;
+    this.onPhaseChange = onPhaseChange;
+    this.lastPhase = null;
     this.storage = safeLocalStorage();
     this.realStartedAt = this.restoreOrCreateStart();
     this.timer = null;
@@ -104,7 +106,11 @@ export class GameClockSystem {
     const snapshot = this.snapshot();
     if (this.element) {
       this.element.textContent = snapshot.label;
-      this.element.title = 'Game Clock: ×12; 1 игровая минута = 5 реальных секунд. Только отображение — gameplay timers остаются real-time.';
+      this.element.title = 'Game Clock: ×12; 1 игровая минута = 5 реальных секунд. Gameplay timers остаются real-time; время суток влияет на Daylight/Vision.';
+    }
+    if (snapshot.phase !== this.lastPhase) {
+      this.lastPhase = snapshot.phase;
+      this.onPhaseChange?.(snapshot);
     }
     return snapshot;
   }
