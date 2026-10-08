@@ -1,0 +1,46 @@
+name: uGame v0.2.41 QA release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.41.md'
+      - '.github/workflows/publish-v0241.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run full Master, city and crafting regressions
+        run: npm test
+      - name: Verify runtime version alignment
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for (const path of ['version.json', 'package.json', 'data/preflight-manifest.json']) {
+            const version=JSON.parse(fs.readFileSync(path,'utf8')).version;
+            if(version !== '0.2.41') throw Error('Version mismatch: '+path+' '+version);
+          }
+          const html=fs.readFileSync('index.html','utf8');
+          if(!html.includes(\"expectedVersion: '0.2.41'\")) throw Error('Preflight boot mismatch');
+          "
+      - name: Verify rollback release is published
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view v0.2.33
+      - name: Publish QA checkpoint (idempotent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.41 >/dev/null 2>&1; then
+            gh release create v0.2.41 --target "$GITHUB_SHA" --title "uGame v0.2.41 · Master indicator and first craft" --notes-file docs/releases/v0.2.41.md --prerelease
+          fi
