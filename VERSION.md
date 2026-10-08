@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.06**
+Current version: **0.1.07**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.07 | World Map Compass: N/NE/E/SE/S/SW/W/NW labels and arrows surround the 25-location diamond |
 | 0.1.06 | Diamond World Map UI: Project Hub renders all 25 locations as rotated squares with names, IDs, biome/city styling and current position |
 | 0.1.05 | Five-city Teleport Network: Aster opens all safe cities and teleports to the selected city center |
 | 0.1.04 | Working City Banker + Guides: Boris opens the existing bank; five biome guards open city-specific dialogues |
@@ -112,6 +113,9 @@ Current version: **0.1.06**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.07
+На World Map добавлена восьминаправленная ориентация по пользовательскому референсу: `N / NE / E / SE / S / SW / W / NW`, русские подписи и стрелки. Цветовая группировка повторяет принятую схему: север/NW — синий, восток/NE — зелёный, юг/SE — красный, запад/SW — золотой. Маркеры являются UI-навигацией и не влияют на WorldGraph.
 
 ## 0.1.06
 Project Hub получил отдельный экран **Карта мира**. Все 25 зон читаются напрямую из WorldGraph и отображаются как квадратные tiles, повёрнутые на 45° в общий ромб. Tile показывает временное название, `loc-xxxxx`, biome и `Location Tier` для field zones; пять safe cities имеют отдельные рамки по направлению. Текущая зона выделяется ярким контуром. Клик по tile пока только выбирает локацию для просмотра деталей и не телепортирует персонажа.

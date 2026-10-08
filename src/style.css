@@ -2220,3 +2220,37 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .world-map-detail { justify-content: flex-start; }
   .world-map-detail strong { text-align: left; }
 }
+
+/* v0.1.07 — world-map compass */
+.world-map-compass {
+  position: absolute;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  pointer-events: none;
+  text-align: center;
+  line-height: 1;
+  text-shadow: 0 2px 7px #000;
+}
+.world-map-compass b { font-size: 25px; }
+.world-map-compass span { margin-top: 3px; font-size: 7px; font-weight: 800; letter-spacing: .06em; }
+.world-map-compass i { margin-top: 3px; font-size: 18px; font-style: normal; font-weight: 900; }
+.world-map-compass-n,
+.world-map-compass-nw { color: #58a6ff; }
+.world-map-compass-ne,
+.world-map-compass-e { color: #3fb950; }
+.world-map-compass-se,
+.world-map-compass-s { color: #f85149; }
+.world-map-compass-sw,
+.world-map-compass-w { color: #d29922; }
+
+.world-map-compass-n { top: 8px; left: 50%; transform: translateX(-50%); }
+.world-map-compass-ne { top: 98px; right: 18px; }
+.world-map-compass-e { top: 50%; right: 9px; transform: translateY(-50%); }
+.world-map-compass-se { right: 18px; bottom: 88px; }
+.world-map-compass-s { bottom: 7px; left: 50%; transform: translateX(-50%); }
+.world-map-compass-sw { bottom: 88px; left: 18px; }
+.world-map-compass-w { top: 50%; left: 9px; transform: translateY(-50%); }
+.world-map-compass-nw { top: 98px; left: 18px; }

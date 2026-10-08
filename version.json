@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.06",
-  "stage": "diamond-world-map-ui",
+  "version": "0.1.07",
+  "stage": "world-map-compass",
   "updated": "2026-10-08",
-  "summary": "Project Hub gains an interactive read-only 25-location diamond world map with city/biome styling, IDs and current location"
+  "summary": "World map adds N/NE/E/SE/S/SW/W/NW directional markers with colored arrows and Russian labels"
 }
