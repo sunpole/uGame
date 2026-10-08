@@ -470,6 +470,23 @@ export class ContainerSystem {
     };
   }
 
+  materialMass({ includeBank = false } = {}) {
+    const result = {};
+    const ids = includeBank ? ['backpack', 'resourcePouch', 'bank'] : ['backpack', 'resourcePouch'];
+    for (const containerId of ids) {
+      const state = this.container(containerId);
+      if (!state || state.kind !== 'grid') continue;
+      for (const stack of state.slots || []) {
+        if (!stack) continue;
+        const item = this.item(stack.itemId);
+        if (!item?.massStorage || !item?.tier || !item?.resourceId) continue;
+        const massKg = stack.quantity * item.unitKg;
+        result[item.resourceId] = (result[item.resourceId] || 0) + massKg;
+      }
+    }
+    return Object.fromEntries(Object.entries(result).map(([id, value]) => [id, Math.round(value * 10) / 10]));
+  }
+
   summary() {
     const backpack = this.containerStats('backpack');
     const pouch = this.containerStats('resourcePouch');

@@ -261,17 +261,7 @@ class ZoneScene extends Phaser.Scene {
     resourceSystem = new ResourceSystem({
       eventSystem: this.eventSystem,
       onChange: (_id, _value, snapshot) => {
-        if (this.resourceStatusElement) {
-          const fragments = FIRST_PLAYABLE_FRAGMENTS.reduce((total, id) => total + (snapshot[id] || 0), 0);
-          const core = [
-            `Камень ${snapshot.stone || 0}`,
-            `Дерево ${snapshot.wood || 0}`,
-            `Вода ${snapshot.water || 0}`,
-            `Внимание ${snapshot.attention || 0}`
-          ].join(' · ');
-          this.resourceStatusElement.textContent = `${core} · Фрагменты ${fragments}/3`;
-        }
-        chromeHeaderSystem?.setResources(snapshot);
+        this.renderResourceHud(snapshot);
       }
     });
     resourceSystem.restore(restoredState.resources);
@@ -286,6 +276,7 @@ class ZoneScene extends Phaser.Scene {
           this.inventoryStatusElement.textContent = summary;
           chromeHeaderSystem?.setStorageSummary(summary);
         }
+        this.renderResourceHud();
       }
     });
     this.containerSystem = containerSystem;
@@ -457,7 +448,7 @@ class ZoneScene extends Phaser.Scene {
 
     if (!classSystem.apply(restoredState.player.classId)) classSystem.apply('wanderer');
     chromeHeaderSystem?.setClass(classSystem.current);
-    chromeHeaderSystem?.setResources(resourceSystem.snapshot());
+    this.renderResourceHud(resourceSystem.snapshot());
     this.initializeWorld(restoredState);
 
     this.scale.on('resize', () => this.viewportSystem?.schedule());
@@ -501,6 +492,7 @@ class ZoneScene extends Phaser.Scene {
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
       chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem.getLocationSummary(restoredZoneId));
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
+      this.renderResourceHud();
       this.persistGameState();
 
       this.eventSpotSystem.initialize(restoredState.dynamicEvents);
@@ -747,33 +739,65 @@ class ZoneScene extends Phaser.Scene {
     return false;
   }
 
-  grantResource(id, amount = 1) {
-    const requested = Math.max(1, Math.floor(Number(amount) || 1));
+  grantResource(id, amount = 1, tier = null) {
     const item = this.itemCatalog?.get(id);
 
     if (!item || item.type !== 'resource') {
+      const requested = Math.max(1, Math.floor(Number(amount) || 1));
       resourceSystem.add(id, requested);
       return true;
     }
 
     if (item.storageMode === 'account') {
+      const requested = Math.max(1, Math.floor(Number(amount) || 1));
       resourceSystem.add(id, requested);
       return true;
     }
 
     if (!containerSystem?.loaded) return false;
+
+    if (item.massStorage) {
+      const resolvedTier = typeof tier === 'string' && tier ? tier : 'T1';
+      const tierItemId = id + '-' + resolvedTier.toLowerCase();
+      const tierItem = this.itemCatalog?.get(tierItemId);
+      if (!tierItem) return false;
+      const massKg = Math.max(tierItem.unitKg, Math.round((Number(amount) || tierItem.unitKg) * 10) / 10);
+      const units = Math.max(1, Math.round(massKg / tierItem.unitKg));
+      const stored = containerSystem.addAuto(tierItemId, units, { atomic: true });
+      if (stored.added !== units) {
+        this.setStatus('Не хватает ячеек или переносимого веса для ' + massKg.toFixed(1) + ' кг');
+        return false;
+      }
+      this.renderResourceHud();
+      return true;
+    }
+
+    const requested = Math.max(1, Math.floor(Number(amount) || 1));
     const stored = containerSystem.addAuto(id, requested, { atomic: true });
     if (stored.added !== requested) {
       this.setStatus('Не хватает ячеек или переносимого веса для награды');
       return false;
     }
-
-    resourceSystem.add(id, requested);
     return true;
   }
 
   setStatus(text) {
     if (this.statusElement) this.statusElement.textContent = text;
+  }
+
+  renderResourceHud(snapshot = resourceSystem?.snapshot?.() || {}) {
+    const masses = containerSystem?.loaded ? containerSystem.materialMass() : {};
+    const fragments = FIRST_PLAYABLE_FRAGMENTS.reduce((total, id) => total + (snapshot[id] || 0), 0);
+    const kg = (id) => (Number(masses[id] || 0)).toFixed(1) + ' кг';
+    const core = [
+      'Камень ' + kg('stone'),
+      'Дерево ' + kg('wood'),
+      'Вода ' + kg('water'),
+      'Глина ' + kg('clay'),
+      'Внимание ' + Number(snapshot.attention || 0)
+    ].join(' · ');
+    if (this.resourceStatusElement) this.resourceStatusElement.textContent = core + ' · Фрагменты ' + fragments + '/3';
+    chromeHeaderSystem?.setResources(snapshot, masses);
   }
 
   renderSteps(snapshot = stepSystem?.snapshot?.()) {

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.3**
+Current version: **0.2.4**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.4 | Extraction Rewards in kg/Tier: Master Tier fixes resource Tier and persistent random mass uses accepted kg ranges |
 | 0.2.3 | Mass Resource Foundation: Stone/Wood/Water/Clay T1–T4, 0.1kg internal unit, 50kg resource-cell, legacy migration, inactive belt + bag slot |
 | 0.2.2 | Attention Exchange + Paid Teleport: 1 Attention→10M Steps, 100M Steps→1 Attention, WorldGraph-priced city teleport |
 | 0.2.1 | Steps Movement Cost: actual travelled distance spends Steps outside cities; dash ×2 speed / ×4 rate; movement can create debt |
@@ -138,6 +139,9 @@ Current version: **0.2.3**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.4
+Extraction Process теперь фиксирует reward при старте: Resource ID + Master Tier + random mass с шагом 0.1 кг. Диапазоны: Water 0.1–5.0, Wood 0.2–10.0, Stone 0.5–25.0, Clay 0.3–15.0 кг. Reload не reroll-ит pending reward. Physical reward кладётся как tier-specific mass stack и больше не дублируется count-значением в ResourceSystem. Header/HUD агрегируют переносимую массу из containers и показывают только кг.
 
 ## 0.2.3
 Physical resource catalog переведён на mass-resource foundation. Stone/Wood/Water/Clay имеют T1–T4 generated item identities, internal unit 0.1 кг и default 50.0 кг per resource-cell; Resource+Tier не смешиваются. Old count stacks автоматически мигрируют в T1 с сохранением приблизительной массы. UI больше не показывает граммы. Resource Pouch отключён до реального экипированного belt; в equipment добавлен пустой future slot `bag`. Backpack carry baseline временно 600 кг, чтобы 12×50 кг resource cells были физически достижимы до отдельного bag balance pass.

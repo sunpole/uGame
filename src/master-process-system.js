@@ -1,3 +1,14 @@
+function randomMassKg(range = {}) {
+  const minUnits = Math.max(1, Math.round((Number(range.min) || 0.1) * 10));
+  const maxUnits = Math.max(minUnits, Math.round((Number(range.max) || Number(range.min) || 0.1) * 10));
+  const units = minUnits + Math.floor(Math.random() * (maxUnits - minUnits + 1));
+  return units / 10;
+}
+
+function formatMass(value) {
+  return Math.max(0, Number(value) || 0).toFixed(1) + ' кг';
+}
+
 function formatRemaining(ms) {
   const total = Math.max(0, Math.ceil(Number(ms || 0) / 1000));
   const minutes = Math.floor(total / 60);
@@ -89,7 +100,11 @@ export class MasterProcessSystem {
       endsAt: now + durationMs,
       encounterExpiresAt: Number(spawn.expiresAt),
       status: 'active',
-      candidateBaseReward: profile.baseReward || { resourceId: 'stone', amount: 10 },
+      candidateBaseReward: {
+        resourceId: spawn.resourceDirectionId || 'stone',
+        tier: spawn.tier || 'T1',
+        massKg: randomMassKg(profile.rewardRangeKg || { min: 0.1, max: 1 })
+      },
       efficiencyMultiplier: Number(spawn.efficiencyMultiplier) || 1,
       locationBonus: Number(this.worldSpawnStateSystem?.getLocationSummary?.(spawn.zoneId)?.locationBonus) || 0
     };
@@ -100,28 +115,29 @@ export class MasterProcessSystem {
     return true;
   }
 
-  rewardAmount(pending) {
-    const baseAmount = Math.max(1, Number(pending?.baseReward?.amount) || 1);
-    const additive = Math.max(0, Number(pending?.locationBonus) || 0);
-    const masterMultiplier = Math.max(0, Number(pending?.efficiencyMultiplier) || 1);
-    return Math.max(1, Math.round(baseAmount * (1 + additive) * masterMultiplier));
+  rewardMassKg(pending) {
+    const direct = Number(pending?.baseReward?.massKg);
+    if (Number.isFinite(direct) && direct > 0) return Math.round(direct * 10) / 10;
+    const legacy = Number(pending?.baseReward?.amount);
+    return Math.max(0.1, Math.round((Number.isFinite(legacy) ? legacy : 1) * 10) / 10);
   }
 
   showPendingRewards(masterId, pendingRewards = []) {
     const actions = pendingRewards.map((pending, index) => {
       const resourceId = pending?.baseReward?.resourceId || 'stone';
-      const amount = this.rewardAmount(pending);
-      const resourceLabel = ({ stone: 'Камень', water: 'Вода', wood: 'Дерево' })[resourceId] || resourceId;
+      const tier = pending?.baseReward?.tier || 'T1';
+      const massKg = this.rewardMassKg(pending);
+      const resourceLabel = ({ stone: 'Камень', water: 'Вода', wood: 'Дерево', clay: 'Глина' })[resourceId] || resourceId;
       return {
         id: pending.rewardId,
-        label: 'Забрать: ' + resourceLabel + ' ×' + amount,
+        label: 'Забрать: ' + resourceLabel + ' ' + tier + ' · ' + formatMass(massKg),
         onSelect: () => {
-          const granted = this.grantResource?.(resourceId, amount);
+          const granted = this.grantResource?.(resourceId, massKg, tier);
           if (granted === false) {
             this.interactionPanel?.showMessage({
               title: 'Награда не помещается',
               text: 'Результат Process не потерян и остаётся pending reward у этого Master.',
-              meta: resourceLabel + ' ×' + amount
+              meta: resourceLabel + ' ' + tier + ' · ' + formatMass(massKg)
             });
             return false;
           }
@@ -129,7 +145,7 @@ export class MasterProcessSystem {
           this.interactionPanel?.showMessage({
             title: 'Результат получен',
             text: 'Завершённый Process выдал ресурс. Pending reward удалён только после успешного помещения награды.',
-            meta: resourceLabel + ' ×' + amount
+            meta: resourceLabel + ' ' + tier + ' · ' + formatMass(massKg)
           });
           return true;
         }

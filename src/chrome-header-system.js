@@ -27,6 +27,8 @@ export class ChromeHeaderSystem {
     this.fragmentElement = fragmentElement;
     this.resources = [];
     this.resourceMap = new Map();
+    this.lastResourceSnapshot = {};
+    this.materialMass = {};
   }
 
   async load(url = './data/resources.json') {
@@ -81,8 +83,10 @@ export class ChromeHeaderSystem {
     }
   }
 
-  setResources(snapshot = {}) {
+  setResources(snapshot = {}, materialMass = this.materialMass) {
     if (!this.resources.length) return;
+    this.lastResourceSnapshot = { ...snapshot };
+    this.materialMass = { ...(materialMass || {}) };
 
     const pinned = this.resources.slice(0, 5);
     if (this.resourcesElement) {
@@ -90,7 +94,11 @@ export class ChromeHeaderSystem {
       for (const resource of pinned) {
         const span = document.createElement('span');
         span.dataset.resourceId = resource.id;
-        span.textContent = `${resource.name} ${Number(snapshot[resource.id] || 0)}`;
+        if (resource.massStorage) {
+          span.textContent = resource.name + ' ' + (Number(this.materialMass[resource.id] || 0)).toFixed(1) + ' кг';
+        } else {
+          span.textContent = resource.name + ' ' + Number(snapshot[resource.id] || 0);
+        }
         if (resource.id === 'attention') span.dataset.special = 'attention';
         this.resourcesElement.append(span);
       }
@@ -99,7 +107,9 @@ export class ChromeHeaderSystem {
     let wealth = 0;
     for (const resource of this.resources) {
       if (!Array.isArray(resource.tags) || !resource.tags.includes('material')) continue;
-      const amount = Number(snapshot[resource.id] || 0);
+      const amount = resource.massStorage
+        ? Number(this.materialMass[resource.id] || 0)
+        : Number(snapshot[resource.id] || 0);
       const baseValue = Number(resource.baseValue || 0);
       wealth += amount * baseValue;
     }

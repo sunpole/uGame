@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.3",
-  "stage": "mass-resource-foundation",
+  "version": "0.2.4",
+  "stage": "tiered-mass-extraction-rewards",
   "updated": "2026-10-08",
-  "summary": "Tiered kg resource storage foundation for Stone/Wood/Water/Clay with 50kg cells and future belt/bag hooks"
+  "summary": "Persistent Master extraction rewards in kg with accepted ranges and Master Tier-specific material storage"
 }

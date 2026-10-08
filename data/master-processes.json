@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "updated": "2026-10-08",
-  "status": "candidate-qa",
-  "note": "QA-only values for validating the first persistent Extraction Process. Not final economy.",
+  "status": "accepted-mass-reward-baseline",
+  "note": "Extraction rewards are fixed in 0.1kg units at Process start so reload cannot reroll the pending result.",
   "profiles": [
     {
       "id": "stone-extraction-basic",
@@ -10,9 +10,9 @@
       "resourceDirectionId": "stone",
       "label": "Добыча камня",
       "durationSeconds": 60,
-      "baseReward": {
-        "resourceId": "stone",
-        "amount": 10
+      "rewardRangeKg": {
+        "min": 0.5,
+        "max": 25
       }
     },
     {
@@ -21,9 +21,9 @@
       "resourceDirectionId": "water",
       "label": "Добыча воды",
       "durationSeconds": 60,
-      "baseReward": {
-        "resourceId": "water",
-        "amount": 10
+      "rewardRangeKg": {
+        "min": 0.1,
+        "max": 5
       }
     },
     {
@@ -32,9 +32,20 @@
       "resourceDirectionId": "wood",
       "label": "Добыча лесных ресурсов",
       "durationSeconds": 60,
-      "baseReward": {
-        "resourceId": "wood",
-        "amount": 10
+      "rewardRangeKg": {
+        "min": 0.2,
+        "max": 10
+      }
+    },
+    {
+      "id": "clay-extraction-basic",
+      "moduleId": "extraction",
+      "resourceDirectionId": "clay",
+      "label": "Добыча глины",
+      "durationSeconds": 60,
+      "rewardRangeKg": {
+        "min": 0.3,
+        "max": 15
       }
     }
   ]
