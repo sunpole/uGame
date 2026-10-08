@@ -313,8 +313,9 @@ export class InventoryPanelSystem {
       ? `Вес ${weightLabel(stats.weightKg)} / ${weightLabel(stats.maxWeightKg)}`
       : `Вес ${weightLabel(stats.weightKg)} · без лимита`;
 
-    const visible = (this.containerSystem.container(config.id)?.slots || [])
-      .filter(Boolean).filter(stack => this.matches(stack)).length;
+    const rawSlots = this.containerSystem.container(config.id)?.slots || [];
+    const stacks = Array.isArray(rawSlots) ? rawSlots : Object.values(rawSlots);
+    const visible = stacks.filter(Boolean).filter(stack => this.matches(stack)).length;
     this.statsElement.textContent = `${slots} · ${weight} · найдено ${visible}`;
   }
 
