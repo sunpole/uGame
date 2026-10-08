@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "prototype-parameters-not-final-balance",
+  "status": "playable-skills-gated-prototype-balance",
   "maxParticipants": 12,
   "resourceTiersByMasterTier": {
     "T1": [
@@ -21,7 +21,14 @@
     ]
   },
   "enabledResourceTiers": [
-    "T1"
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8"
   ],
   "initialStockKg": 10,
   "automatic": {
@@ -58,5 +65,15 @@
   "soloStepRefundPercent": {
     "min": 10,
     "max": 40
+  },
+  "stockKgByTier": {
+    "T1": 10,
+    "T2": 12,
+    "T3": 15,
+    "T4": 18,
+    "T5": 22,
+    "T6": 26,
+    "T7": 30,
+    "T8": 35
   }
 }
