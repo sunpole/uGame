@@ -150,3 +150,8 @@ The Master reward loop is implemented with distinct current/historical pending r
 ## Концепция после анкеты — UGD-0035 (v0.2.28)
 
 Утверждено общее направление: свободный персонаж и жизнеспособные гибриды, глубокая обработка немногих материалов, долговечные предметы, разнообразные сокеты и необязательные сеты, экономика и командные роли. Четыре специализированных города дополняет пятый нейтральный Перекрёсток. **Формулы боя, цены, шесть материалов, рынок и параметры крафта ещё не утверждены**. Детали: `records/UGD-0035-freedom-crafting-economy.md`.
+
+
+## Implementation snapshot v0.2.33
+
+Source-level duplicate Interactable ID/Phaser marker defect prevented; still awaiting browser confirmation for intermittent red-dot reports. Project Journal UGD-0035 records free character development and durable player-crafted gear direction. The approved **4 specialized cities + neutral Crossroads** model has a provisional existing-zone assignment and visible description in Project Hub World Map. Six-material list and simple stone+wood craft are **proposals only**, not gameplay systems or accepted balance. Release and QA: `docs/QA-v0.2.33.md`.

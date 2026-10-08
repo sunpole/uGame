@@ -264,3 +264,15 @@ The historical sections above describe earlier baselines; they do not override n
 | P7 | City NPC walking routes and remaining content-first playable goals | Deferred pending current Master loop QA |
 
 The v0.2.20–v0.2.25 batch focuses on the already accepted Master Process loop and its QA; no new unapproved economy formula is introduced. Release and rollback rules: `docs/RELEASE-ROLLBACK.md`.
+
+
+## New queue following v0.2.33
+
+1. **P0 browser confirmation:** Master reward dot `claimed`/Phaser matching in the real game after dedupe; DEV 8388 if inconsistent.
+2. **Confirm geography:** user approval of proposed placement of balance/hunt/strength/wisdom among `loc-00001/00005/00021/00025`; `loc-00013` neutral remains fixed.
+3. **Confirm materials:** ore and hide are only candidates; current 4 resources remain untouched.
+4. **Confirm first recipe:** proposed Stone T1 0.4kg + Wood T1 0.2kg → simple field tool, only design; no live item yet.
+5. **After approvals:** tiny reversible playable crafting scenario, then item durability/repair, without universal crafting engine.
+6. **Later:** Traders and resource→Steps prices, progression tree, player economy and Attention/Impulse after separate design decisions.
+
+Release review: `docs/QA-v0.2.33.md`, `docs/RELEASE-ROLLBACK.md`.

@@ -27,3 +27,12 @@ If the updater's last backup isn't the needed release, GitHub Release source arc
 The final series commit adds .github/workflows/publish-qa-release.yml. On push to main, that workflow first runs the Node Master loop tests, then creates v0.2.19 and v0.2.25 tagged GitHub prereleases idempotently. If Actions or the token cannot write releases, the version/commit remain on main and the releases must be published manually. Verify both release pages before reporting that publishing succeeded.
 
 A release is a QA snapshot, not a guarantee of a completed manual browser smoke test.
+
+
+## New rollback checkpoint v0.2.33 (2026-10-08)
+
+- Before-series release: [v0.2.25](https://github.com/sunpole/uGame/releases/tag/v0.2.25), commit `b5e91400c958eadf70f835036fc54e4e14cd7462`.
+- After-series release: [v0.2.33](https://github.com/sunpole/uGame/releases/tag/v0.2.33) (QA prerelease, pending browser confirmation).
+- The new release workflow tests the Master and city/crafting Node suites before creating its tag/release.
+- The updater's option 7 rolls back to **its own immediately preceding local update ref**, not necessarily to arbitrary old release tags. The remote GitHub release itself cannot restore local browser saves.
+- Avoid deleting storage or forcing Git resets to address a visual sprite issue.

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.32",
-  "stage": "crafting-vertical-slice-design",
+  "version": "0.2.33",
+  "stage": "eight-patch-qa-release",
   "updated": "2026-10-08",
-  "summary": "Prepare one safe stone-and-wood crafting scenario without activating unapproved mechanics"
+  "summary": "Document v0.2.26–0.2.33 series, run regression suites and publish tagged QA source release"
 }

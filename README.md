@@ -1,6 +1,6 @@
 # uGame
 
-Latest QA checkpoint: **v0.2.25** (mini-patch series v0.2.20–0.2.25). Browser manual QA pending; GitHub tagged source snapshots are documented in [Release Rollback](docs/RELEASE-ROLLBACK.md).
+Latest QA checkpoint: **v0.2.33** (eight mini-patches v0.2.26–v0.2.33). Master marker identity fix and 4+1 city preview are ready for browser QA. Materials/first craft remain design-only. GitHub code snapshots and rollback instructions: [Release Rollback](docs/RELEASE-ROLLBACK.md).
 
 Windows entry point: **Update-uGame.cmd**. Uses its own checkout directory,
 including `C:\!CODE_CLUB\new 2026\011_uGame`, regardless of the terminal's current folder.

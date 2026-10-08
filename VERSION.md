@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.32**
+Current version: **0.2.33**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.33 | Final QA checklist, debt queue and GitHub tagged prerelease after both Node suites |
 | 0.2.32 | Design-only stone+wood simple field tool crafting vertical slice, no live inventory changes |
 | 0.2.31 | Six-material candidate: preserve 4 live resources, propose ore/hide read-only; data contract test |
 | 0.2.30 | World Map shows provisional city role descriptions; Hub documentation |
@@ -167,6 +168,9 @@ Current version: **0.2.32**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.33
+Concluded approved eight-commit series 0.2.26–0.2.33 with QA checklist, source release workflow, current project debt queue and safe rollback instructions. Master duplicate IDs are prevented and covered by a regression. City placement, raw material candidates, and crafting design remain provisional where indicated; no live economy or save changes. Node suites gate the v0.2.33 prerelease; true in-browser Phaser/marker QA still requires manual confirmation.
 
 ## 0.2.32
 Created `data/crafting-prototype.json` and `docs/CRAFTING-VERTICAL-SLICE.md` for the first proposed crafting route: Stone T1 0.4kg + Wood T1 0.2kg -> one candidate field tool. Recipe is explicitly **design-only**, with no crafting button, live recipe, new catalog item, inventory mutation, or save changes. Added Project Hub document and regression tests requiring `liveCraftingEnabled=false`. Owner approval of recipe inputs/output/implementation remains pending.
