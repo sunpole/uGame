@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.03**
+Current version: **0.1.04**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.04 | Working City Banker + Guides: Boris opens the existing bank; five biome guards open city-specific dialogues |
 | 0.1.03 | Expanded Biome Textures: forest/stone/south + city variants; south field uses brown sand and south city white marble |
 | 0.1.02 | Five-city Service NPC Cast: shared Banker/Teleporter personas plus 5 unique biome city guards with prototype silhouettes |
 | 0.1.01 | Safe City Hard Rules: 5 cities force full vision and cannot host Dynamic Events or Master encounters |
@@ -109,6 +110,9 @@ Current version: **0.1.03**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.04
+Городские service NPC получили первый functional layer. Любая копия **Бориса Хранильщика** (`city-banker`) открывает уже существующий реальный Bank UI с `bankAccess=true`. Пять уникальных `city-guide` запускают собственные простые диалоги: Северин, Рейнар, Маршал Гранит, Хасим и Аврелий. Новых параллельных банков/диалоговых движков не создавалось — используются существующие InventoryPanel и DialogueSystem.
 
 ## 0.1.03
 Biome Texture Runtime расширен слотами `forest`, `stone`, `south`, `city-forest`, `city-stone`, `city-south`. Южные field zones используют пользовательскую коричнево-песчаную текстуру, а `Беломраморный Двор` — пользовательскую белую мраморную текстуру. Forest/Stone пока используют существующие grass/city-grass assets как явный prototype fallback и могут быть заменены позже через Biome Visual Lab без изменения WorldGraph.

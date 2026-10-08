@@ -573,13 +573,14 @@ class ZoneScene extends Phaser.Scene {
         return;
       }
 
-      if (item.type === 'bank') {
+      if (item.type === 'bank' || item.type === 'city-banker') {
         this.inventoryPanel.open('bank', { bankAccess: true });
         return;
       }
 
-      if (item.type === 'npc' && item.dialogueId) {
+      if ((item.type === 'npc' || item.type === 'city-guide') && item.dialogueId) {
         this.dialogueSystem.start(item.dialogueId).catch(() => {});
+        return;
       }
     });
 

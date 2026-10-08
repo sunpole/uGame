@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.03",
-  "stage": "expanded-biome-texture-slots",
+  "version": "0.1.04",
+  "stage": "city-banker-and-guides",
   "updated": "2026-10-08",
-  "summary": "Add forest/stone/south and city variants; southern field uses brown sand and southern city uses white marble"
+  "summary": "Shared city banker opens the real bank; five unique biome city guards open their own guide dialogues"
 }
