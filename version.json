@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.20",
-  "stage": "preflight-loading-gate",
+  "version": "0.1.21",
+  "stage": "true-square-diamond-local-world",
   "updated": "2026-10-08",
-  "summary": "Add a blocking loading/preflight screen that validates files, module graph, syntax, versions, world data, Master runtime, textures and Phaser before revealing gameplay"
+  "summary": "Change local world canvas to 1920x1920 so the playable diamond is a true square rotated 45 degrees rather than a wide flattened rhombus"
 }

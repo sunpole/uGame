@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.20**
+Current version: **0.1.21**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.21 | True Square Diamond: local world becomes 1920×1920 so the 45° playable diamond is visually square, not flattened |
 | 0.1.20 | Pre-flight Loading Gate: validate runtime files/modules/syntax/version/world/Masters/textures/Phaser before revealing gameplay |
 | 0.1.19 | Boot Syntax Hotfix: close broken World Map stage string in project-hub-system.js |
 | 0.1.18 | Boot Diagnostics: visible global/module/world-init errors replace silent endless loading |
@@ -126,6 +127,9 @@ Current version: **0.1.20**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.21
+Локальный world canvas изменён с `1920×1080` на `1920×1920`. Поэтому вершины playable diamond теперь лежат на одинаковом расстоянии по X/Y от центра: это настоящий квадрат, повёрнутый на 45°, а не широкий плоский ромб. Все entry points, walls, interactables и Event Spots мигрированы по Y пропорционально старой нормализованной позиции. Camera viewport остаётся 960×540 и продолжает следовать за персонажем.
 
 ## 0.1.20
 Добавлен отдельный blocking Pre-flight screen. До показа игрового экрана проверяются manifest/core files, version consistency, рекурсивный ES-module dependency graph, named imports/exports, best-effort syntax parse, WorldGraph invariants, Stone/Water/Forest Master + Process data, texture assets и Phaser runtime. `main.js` больше не стартует автоматически при import: launcher импортирует модуль только после зелёного pre-flight, вызывает `bootGame()`, ждёт `worldReady`, и только затем открывает gameplay. При красном флаге игра не запускается и причина остаётся на loading screen.

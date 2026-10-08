@@ -122,6 +122,7 @@ function validateWorld(world) {
   const opposite = { nw: 'se', ne: 'sw', sw: 'ne', se: 'nw' };
 
   if (zones.length !== 25 || ids.size !== 25) throw new Error('WorldGraph zones must be 25 unique');
+  if (Number(world?.worldSize?.width) !== Number(world?.worldSize?.height)) throw new Error('Local world must be square before 45° rotation');
   if (cities.length !== 5 || fields.length !== 20) throw new Error('Expected 5 cities / 20 fields');
   if (transitions.length !== 80) throw new Error('Expected 80 directed transitions');
 

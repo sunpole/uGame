@@ -39,7 +39,7 @@ import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 const WIDTH = 960;
 const HEIGHT = 540;
 const WORLD_WIDTH = WIDTH * 2;
-const WORLD_HEIGHT = HEIGHT * 2;
+const WORLD_HEIGHT = WORLD_WIDTH;
 const PLAYER_SIZE = 28;
 const SPEED = 220;
 const VISIBILITY_RADIUS = 165;
