@@ -40,6 +40,7 @@ import { ResourceExpeditionSystem } from './resource-expedition-system.js';
 import { ResourceExpeditionView } from './resource-expedition-view.js';
 import { ResourceProfessionSystem } from './resource-profession-system.js';
 import { ResourceProfessionView } from './resource-profession-view.js';
+import { MasterActivitySystem } from './master-activity-system.js';
 import { CraftingSystem } from './crafting-system.js';
 import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
@@ -81,6 +82,7 @@ let resourceExpeditionSystem = null;
 let resourceExpeditionView = null;
 let resourceProfessionSystem = null;
 let resourceProfessionView = null;
+let masterActivitySystem = null;
 let spawnZoneDebugSystem = null;
 
 
@@ -361,13 +363,31 @@ class ZoneScene extends Phaser.Scene {
       }
     });
     this.resourceProfessionSystem = resourceProfessionSystem;
+    masterActivitySystem = new MasterActivitySystem({
+      onChange: (snapshot) => {
+        this.gameState.setMasterActivities(snapshot);
+        this.persistGameState();
+      },
+      getAnalyticsRank: (id) => resourceProfessionSystem?.get(id)?.skills?.analytics || 0,
+      onReward: (reward) => {
+        if (reward.itemId && !this.grantItem(reward.itemId,1)) return false;
+        if (reward.steps>0) stepSystem?.add(reward.steps,{source:'master-activity-'+reward.type});
+        if (reward.reputationXp>0) masterRelationshipSystem?.addRelationshipXp(reward.masterId,reward.reputationXp);
+        if (reward.professionXp>0) resourceProfessionSystem?.addXp(
+          reward.resourceDirectionId,reward.professionXp,{kind:'master-activity'});
+        return true;
+      }
+    });
+    this.masterActivitySystem = masterActivitySystem;
     resourceProfessionView = new ResourceProfessionView({
       professions: resourceProfessionSystem,
       relationships: masterRelationshipSystem,
       interactionPanel: this.interactionPanel,
       buyItem: (itemId, cost) => this.buyProfessionSupply(itemId, cost),
       consumeItem: (itemId, resourceId) => this.consumeProfessionSupply(itemId, resourceId),
-      getItemCount: (itemId) => this.backpackItemCount(itemId)
+      getItemCount: (itemId) => this.backpackItemCount(itemId),
+      activities: masterActivitySystem,
+      getRun: () => resourceExpeditionSystem?.run || null
     });
     this.resourceProfessionView = resourceProfessionView;
 
@@ -578,6 +598,7 @@ class ZoneScene extends Phaser.Scene {
         masterProcessSystem.load(),
         resourceExpeditionSystem.load(),
         resourceProfessionSystem.load(),
+        masterActivitySystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()
@@ -594,6 +615,7 @@ class ZoneScene extends Phaser.Scene {
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       masterProcessSystem?.update(Date.now(), true);
       resourceProfessionSystem.initialize(restoredState.resourceProfessions);
+      masterActivitySystem.initialize(restoredState.masterActivities);
       resourceExpeditionSystem.initialize(restoredState.resourceExpedition);
       resourceExpeditionSystem.update(Date.now(), true);
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;

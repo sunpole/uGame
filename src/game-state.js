@@ -126,6 +126,14 @@ function cleanContainers(value) {
 }
 
 
+function cleanMasterActivities(value) {
+  const source=value && typeof value==='object' && !Array.isArray(value) ? value : {};
+  const encounters=source.encounters && typeof source.encounters==='object' && !Array.isArray(source.encounters)
+    ? source.encounters : {};
+  return {schemaVersion:1,encounters:typeof structuredClone==='function'
+    ? structuredClone(encounters):JSON.parse(JSON.stringify(encounters))};
+}
+
 function cleanResourceProfessions(value) {
   const source=value && typeof value==='object' && !Array.isArray(value) ? value : {};
   return {
@@ -174,7 +182,8 @@ export function createDefaultGameState() {
     worldSpawnState: cleanWorldSpawnState(null),
     characterMasterRelationships: cleanMasterRelationships(null),
     resourceExpedition: cleanResourceExpedition(null),
-    resourceProfessions: cleanResourceProfessions(null)
+    resourceProfessions: cleanResourceProfessions(null),
+    masterActivities: cleanMasterActivities(null)
   };
 }
 
@@ -209,7 +218,8 @@ export function normalizeGameState(input) {
     worldSpawnState: cleanWorldSpawnState(input.worldSpawnState),
     characterMasterRelationships: cleanMasterRelationships(input.characterMasterRelationships),
     resourceExpedition: cleanResourceExpedition(input.resourceExpedition),
-    resourceProfessions: cleanResourceProfessions(input.resourceProfessions)
+    resourceProfessions: cleanResourceProfessions(input.resourceProfessions),
+    masterActivities: cleanMasterActivities(input.masterActivities)
   };
 }
 
@@ -283,5 +293,9 @@ export class GameState {
 
   setResourceProfessions(snapshot) {
     this.state.resourceProfessions = cleanResourceProfessions(snapshot);
+  }
+
+  setMasterActivities(snapshot) {
+    this.state.masterActivities = cleanMasterActivities(snapshot);
   }
 }

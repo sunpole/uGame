@@ -269,7 +269,7 @@ export class ResourceExpeditionView {
     this.put('spent', '−' + number(run.spentSteps));
     this.put('miner-mass', mass(run.extractedUnits));
     this.put('cycles', number(run.autoCycles));
-    this.put('attempts', number(run.manualAttempts));
+    this.put('attempts', number(run.manualAttempts)+' (точных '+number(run.precisionHits||0)+')');
     this.put('refund', '+' + number(run.refundSteps));
     this.put('steps', number(this.getSteps?.() ?? 0));
     this.put('xp', number(this.getRelationship?.(run.masterId)?.relationshipXp || 0));
