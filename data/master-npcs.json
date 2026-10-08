@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updated": "2026-10-08",
   "status": "prototype-neutral-lore",
-  "note": "Prototype identities for Stone/Water/Forest master lines. Tier/resource rules accepted; final names, titles, portraits and lore are not final.",
+  "note": "Prototype identities for Stone/Water/Forest/Clay master lines. Tier/resource rules accepted; final names, titles, portraits and lore are not final.",
   "modules": [
     {
       "id": "extraction",
@@ -266,6 +266,86 @@
       "id": "wood-master-t4",
       "displayName": "Мастер леса T4",
       "resourceDirectionId": "wood",
+      "tier": "T4",
+      "efficiencyMultiplier": 1.6,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 6,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "clay-master-t1",
+      "displayName": "Мастер глины T1",
+      "resourceDirectionId": "clay",
+      "tier": "T1",
+      "efficiencyMultiplier": 1,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 2,
+      "moduleCountMax": 3,
+      "enabled": true
+    },
+    {
+      "id": "clay-master-t2",
+      "displayName": "Мастер глины T2",
+      "resourceDirectionId": "clay",
+      "tier": "T2",
+      "efficiencyMultiplier": 1.2,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 3,
+      "moduleCountMax": 4,
+      "enabled": true
+    },
+    {
+      "id": "clay-master-t3",
+      "displayName": "Мастер глины T3",
+      "resourceDirectionId": "clay",
+      "tier": "T3",
+      "efficiencyMultiplier": 1.4,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 4,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "clay-master-t4",
+      "displayName": "Мастер глины T4",
+      "resourceDirectionId": "clay",
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [

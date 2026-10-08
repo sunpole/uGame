@@ -532,7 +532,7 @@ export class WorldSpawnStateSystem {
         const total = (id) => Object.values(byResource[id] || {}).reduce((sum, value) => sum + (Number(value) || 0), 0);
         return {
           handled: true,
-          message: '8300 · Masters ' + all.length + ' · камень ' + total('stone') + ' · вода ' + total('water') + ' · лес ' + total('wood'),
+          message: '8300 · Masters ' + all.length + ' · камень ' + total('stone') + ' · вода ' + total('water') + ' · лес ' + total('wood') + ' · глина ' + total('clay'),
           state: 'ok'
         };
       }

@@ -226,7 +226,8 @@ export class InteractableSystem {
       const resourcePalette = {
         stone: null,
         water: { fill: 0x1f8fc9, stroke: 0x8de7ff, text: '#8de7ff' },
-        wood: { fill: 0x2f7d45, stroke: 0x8ee6a7, text: '#8ee6a7' }
+        wood: { fill: 0x2f7d45, stroke: 0x8ee6a7, text: '#8ee6a7' },
+        clay: { fill: 0x9b5f3f, stroke: 0xe0a27a, text: '#e0a27a' }
       };
       const resourceColors = resourcePalette[item.masterResourceDirectionId] || null;
       const colors = resourceColors

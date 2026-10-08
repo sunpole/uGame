@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.4**
+Current version: **0.2.5**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.5 | Clay Master Line: Clay T1–T4 Masters, sand/south clay direction, clay Process validation and palette |
 | 0.2.4 | Extraction Rewards in kg/Tier: Master Tier fixes resource Tier and persistent random mass uses accepted kg ranges |
 | 0.2.3 | Mass Resource Foundation: Stone/Wood/Water/Clay T1–T4, 0.1kg internal unit, 50kg resource-cell, legacy migration, inactive belt + bag slot |
 | 0.2.2 | Attention Exchange + Paid Teleport: 1 Attention→10M Steps, 100M Steps→1 Attention, WorldGraph-priced city teleport |
@@ -139,6 +140,9 @@ Current version: **0.2.4**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.5
+Глина стала полностью добываемым четвёртым базовым материалом: `Мастер глины T1–T4`, Process profile уже использует accepted 0.3–15.0 кг range. Sand и South field zones получают resourceDirection `clay` вместе с прежними направлениями. Добавлена clay palette и Pre-flight теперь требует T1–T4 + Process для Stone/Water/Wood/Clay.
 
 ## 0.2.4
 Extraction Process теперь фиксирует reward при старте: Resource ID + Master Tier + random mass с шагом 0.1 кг. Диапазоны: Water 0.1–5.0, Wood 0.2–10.0, Stone 0.5–25.0, Clay 0.3–15.0 кг. Reload не reroll-ит pending reward. Physical reward кладётся как tier-specific mass stack и больше не дублируется count-значением в ResourceSystem. Header/HUD агрегируют переносимую массу из containers и показывают только кг.

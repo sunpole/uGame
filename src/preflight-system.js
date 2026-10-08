@@ -171,7 +171,7 @@ function validateWorld(world) {
 }
 
 function validateMasters(catalog, processes) {
-  for (const resource of ['stone', 'water', 'wood']) {
+  for (const resource of ['stone', 'water', 'wood', 'clay']) {
     const tiers = new Set((catalog?.masters || []).filter((m) => m.resourceDirectionId === resource).map((m) => m.tier));
     for (const tier of ['T1','T2','T3','T4']) if (!tiers.has(tier)) throw new Error(resource + ' missing ' + tier);
     if (!(processes?.profiles || []).some((p) => p.resourceDirectionId === resource)) throw new Error(resource + ' extraction profile missing');

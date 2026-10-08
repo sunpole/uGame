@@ -1481,7 +1481,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 2,
@@ -2159,7 +2160,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 3,
@@ -2300,7 +2302,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 3,
@@ -2642,7 +2645,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 3,
@@ -2783,7 +2787,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 3,
@@ -3014,7 +3019,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 4,
@@ -3155,7 +3161,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 4,
@@ -3296,7 +3303,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "clay"
       ],
       "worldMap": {
         "gridRow": 4,

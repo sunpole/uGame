@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.4",
-  "stage": "tiered-mass-extraction-rewards",
+  "version": "0.2.5",
+  "stage": "clay-master-line",
   "updated": "2026-10-08",
-  "summary": "Persistent Master extraction rewards in kg with accepted ranges and Master Tier-specific material storage"
+  "summary": "Add Clay Master T1-T4 and clay resource direction to sand/south field zones"
 }
