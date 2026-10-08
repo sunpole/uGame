@@ -133,6 +133,7 @@
               </div>
               <div class="touch-actions">
                 <button id="inventory-open-touch" type="button">Рюкзак</button>
+                <button id="workshop-open-touch" type="button">Мастерская</button>
                 <button type="button" data-control="dash">Рывок</button>
                 <button type="button" data-control="action">Действие</button>
               </div>
@@ -149,6 +150,7 @@
             <button class="mouse-control mouse-control-action" type="button" data-control="action" title="Действие · E / Space / Enter">Действие</button>
             <button class="mouse-control mouse-control-dash" type="button" data-control="dash" data-control-mode="pulse" title="Короткий импульс рывка">Рывок</button>
             <button id="inventory-open" class="mouse-control mouse-control-inventory" type="button" title="Открыть рюкзак">Инвентарь</button>
+            <button id="workshop-open" class="mouse-control mouse-control-inventory" type="button" title="Пробная мастерская без привязки к городу">Мастерская</button>
           </div>
 
           <form id="dev-console" class="dev-console" autocomplete="off">
@@ -273,7 +275,7 @@
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.33');
+        const gameModule = await import('./src/main.js?v=0.2.41');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
