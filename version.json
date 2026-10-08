@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.44",
-  "stage": "profession-mastery-t1-to-t8-qa",
+  "version": "0.2.45",
+  "stage": "all-six-local-master-activities-qa",
   "updated": "2026-10-09",
-  "summary": "Four persistent resource skill trees, NPC training/reputation, T1–T8 eligibility, analytics bonuses, tool/food/tonic buffs. Local solo QA, not real multiplayer."
+  "summary": "Complete all six Master activities for local encounters: finite gather quests, precision challenges, analytics bonuses with one-time rewards. Server multiplayer still pending."
 }
