@@ -190,7 +190,7 @@ test('depletion stamps exact time and shortens NPC Encounter to a persisted 30-s
   const events = [], snapshots = [], depletedEvents = [];
   const now = 1_000;
   const world = new WorldSpawnStateSystem({
-    eventSystem: { emit: (name, payload) => events.push({ name, payload }) },
+    eventSystem: { on() {}, emit: (name, payload) => events.push({ name, payload }) },
     onStateChange: (state) => snapshots.push(state)
   });
   world.state.activeMasterSpawns = [{
