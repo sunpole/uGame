@@ -118,6 +118,7 @@ export class MasterEncounterSystem {
         label: master?.displayName || spawn.displayName || 'Мастер',
         prompt: 'Взаимодействовать с мастером',
         expiresAt: Number(spawn.expiresAt),
+        masterExpeditionCompletedAt: Number(spawn.expeditionCompletedAt) || 0,
         interactionRadius: 68,
         trigger: 'action',
         sound: 'interact'

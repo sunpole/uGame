@@ -2322,3 +2322,69 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 /* Keep resume controls truly hidden despite generic control button display rules. */
 #workspace-control-strip .mouse-controls button[hidden],
 #touch-controls .touch-actions button[hidden] { display:none !important; }
+
+
+/* v0.2.43 — isolated low-GPU mining dimension. Normal Phaser world is fully obscured. */
+.expedition-realm {
+  position: fixed; inset: 0; z-index: 1100;
+  overflow: auto; overscroll-behavior: contain; color: #e4edf5;
+  background: radial-gradient(ellipse at 23% 38%, #223041 0, #101921 43%, #080e15 100%);
+  font: 14px/1.45 system-ui, Arial, sans-serif;
+}
+.expedition-realm[hidden], .expedition-realm [hidden] { display: none !important; }
+.expedition-realm[data-resource="wood"] { --exp-accent: #67c98c; --exp-glow:#245e39; }
+.expedition-realm[data-resource="stone"] { --exp-accent: #88c9f4; --exp-glow:#315774; }
+.expedition-realm[data-resource="water"] { --exp-accent: #60d7ec; --exp-glow:#1d6372; }
+.expedition-realm[data-resource="clay"] { --exp-accent: #efac7a; --exp-glow:#8b4c27; }
+.expedition-realm-shell { max-width: 1500px; margin: 0 auto; min-height: 100%; box-sizing: border-box; padding: clamp(14px,2vw,30px); display:flex; flex-direction:column; gap:22px; }
+.expedition-realm-header { display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid #34404e;padding-bottom:14px; }
+.expedition-realm-heading h1 { color:var(--exp-accent);font-size:clamp(22px,2.3vw,35px);margin:3px 0;line-height:1.12; }
+.expedition-realm-heading p { margin:3px 0 0; color:#97a6b6; overflow-wrap:anywhere; font-size:12px;max-width:600px; }
+.expedition-realm-kicker,.expedition-realm-eyebrow { font-size:11px; letter-spacing:.16em; color:#a7b4c6; font-weight:800; }
+.expedition-realm-top-stats { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.expedition-realm-top-stats>div { background:#111c29;border:1px solid #364657;border-radius:9px;padding:9px 13px;display:grid;gap:2px;min-width:85px; }
+.expedition-realm-top-stats small,.expedition-realm-metrics small { font-size:10px;letter-spacing:.08em;color:#a3b3c3; }
+.expedition-realm-top-stats strong { font-size:20px;font-variant-numeric:tabular-nums; }
+.expedition-realm-surface { border:1px solid #6d7788;border-radius:9px;background:#233043;color:#fff;min-height:48px;padding:8px 16px;cursor:pointer;font-weight:800; }
+.expedition-realm-content { display:grid;grid-template-columns:minmax(260px,1.15fr) minmax(340px,1fr);gap:20px;align-items:stretch;flex:1; }
+.expedition-realm-cavern { position:relative;overflow:hidden;min-height:550px;background:radial-gradient(ellipse at 50% 50%,var(--exp-glow) 0,#101722 53%,#070c10 100%);border:1px solid #3c4d5d;border-radius:16px;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:inset 0 0 130px #030609; }
+.expedition-realm-crystals { position:absolute;inset:0;display:grid;place-items:center;pointer-events:none; }
+.expedition-realm-orb { position:relative;z-index:1;font-size:clamp(110px,15vw,260px);line-height:1;color:var(--exp-accent);text-shadow:0 0 22px var(--exp-glow),0 0 100px var(--exp-accent);opacity:.75;filter:drop-shadow(0 20px 15px #05080a); }
+.expedition-realm-rock { position:absolute;z-index:0;width:70%;height:55%;background:#273241;opacity:.45;clip-path:polygon(15% 8%, 70% 0,100% 30%,92% 95%,30% 90%,0 60%);border:2px solid #657284; }
+.exp-rock-a {top:-26%;left:-30%;transform:rotate(22deg)}.exp-rock-b{top:3%;right:-43%;transform:rotate(-65deg)}.exp-rock-c{bottom:-45%;left:2%;transform:rotate(8deg)}
+.expedition-realm-deposit { position:relative;z-index:2;background:linear-gradient(0deg,rgba(6,10,16,.98),rgba(6,10,16,.8));padding:23px;display:grid;gap:9px; }
+.expedition-realm-deposit>strong { font-size:clamp(30px,4vw,58px);color:#fff;letter-spacing:-.04em;font-variant-numeric:tabular-nums; }
+.expedition-realm-progress { height:16px;border:1px solid #3e4c56;border-radius:99px;background:#1a2530;overflow:hidden; }
+.expedition-realm-progress span { display:block;height:100%;width:0;background:var(--exp-accent);box-shadow:0 0 20px var(--exp-accent);transition:width .2s linear; }
+.expedition-realm-progress-label {display:flex;justify-content:space-between;color:#b5c3d0;font-weight:700;font-size:12px;}
+.expedition-realm-column{min-width:0;display:grid;align-content:start;gap:17px}
+.expedition-realm-panel{background:rgba(14,23,33,.94);border:1px solid #3a4c60;border-radius:14px;padding:18px;display:grid;gap:15px;}
+.expedition-realm-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.expedition-realm-panel-head h2{margin:0;font-size:19px;}.expedition-realm-panel-head>span{font-size:11px;color:var(--exp-accent);font-weight:800;}
+.expedition-realm-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.expedition-realm-metrics>div{background:#101c29;border:1px solid #26384a;padding:10px 12px;border-radius:8px;display:grid;gap:5px}
+.expedition-realm-metrics strong{font-size:22px;font-variant-numeric:tabular-nums;color:#e7f3ff}
+.expedition-realm-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.expedition-realm-button{border:1px solid #536577;border-radius:9px;padding:11px 15px;min-height:46px;background:#1e2c3a;color:#eef7fc;cursor:pointer;font-weight:800;font:inherit;}
+.expedition-realm-button:hover:not(:disabled),.expedition-realm-surface:hover{filter:brightness(1.17)}
+.expedition-realm-button:disabled{opacity:.45;cursor:default}
+.exp-auto,.exp-claim{background:#245237;border-color:#60a76f}.exp-manual,.exp-hit{background:#245273;border-color:#56a1cc}
+.expedition-realm-manual{display:flex;gap:20px;align-items:center;background:#0a121c;border:1px solid #293b4b;border-radius:10px;padding:14px}
+.expedition-realm-meter{width:64px;height:215px;flex:0 0 64px;border:2px solid #758596;border-radius:7px;position:relative;background:linear-gradient(to bottom,#a73c35 0%,#e5ab4c 32%,#248d54 43%,#248d54 57%,#e5ab4c 68%,#a73c35 100%);}
+.expedition-realm-meter-pointer{position:absolute;top:50%;left:-5px;right:-5px;height:6px;background:white;box-shadow:0 0 0 2px #10151d,0 0 12px #fff;pointer-events:none}
+.expedition-realm-meter-guide{display:grid;gap:10px;flex:1}
+.expedition-realm-meter-guide p{font-size:12px;color:#bfccdb;margin:0}
+.expedition-realm-meter-guide small{color:#b0bdcd}
+.expedition-realm-results{display:grid;gap:11px;}
+.expedition-realm-results p{margin:0;color:#c4d8c8}
+.expedition-realm-feedback{min-height:20px;margin:0;color:#d1e1ab;font-size:12px}
+.expedition-realm-miners{display:grid;gap:5px;}
+.expedition-realm-miners>div{background:#112339;border:1px solid #334d61;border-radius:8px;padding:12px;display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.expedition-realm-miners span{color:#a9becf;font-size:12px}
+.expedition-realm-small{margin:0;font-size:12px;color:#9eacbc;line-height:1.5}
+.expedition-realm-report{display:grid;gap:8px}
+.expedition-realm-report>div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #2a3a4b;padding-top:8px}
+.expedition-realm-report strong{font-variant-numeric:tabular-nums}
+.expedition-realm-footer{font-size:11px;text-align:center;color:#8c9ba9;border-top:1px solid #34404e;padding-top:15px;}
+@media(max-width:880px){.expedition-realm-content{grid-template-columns:1fr}.expedition-realm-cavern{min-height:300px}.expedition-realm-crystals{opacity:.75}.expedition-realm-deposit{padding:15px}.expedition-realm-column{grid-template-columns:1fr}}
+@media(max-width:530px){.expedition-realm-shell{gap:12px;padding:10px}.expedition-realm-header{gap:10px}.expedition-realm-top-stats{width:100%}.expedition-realm-top-stats>div{flex:1}.expedition-realm-surface{flex:1}.expedition-realm-panel{padding:12px}.expedition-realm-cavern{min-height:250px}.expedition-realm-orb{font-size:110px}.expedition-realm-metrics strong{font-size:17px}.expedition-realm-manual{gap:12px}.expedition-realm-meter{height:165px}}

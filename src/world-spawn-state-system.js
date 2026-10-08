@@ -313,6 +313,22 @@ export class WorldSpawnStateSystem {
     return value ? clone(value) : null;
   }
 
+  // A depleted Expedition ends this exact Encounter after its own 30-second farewell.
+  // Persist the deadline in WorldSpawn so save/load, countdown and despawn agree.
+  markExpeditionDepleted(encounterId, completedAt = Date.now(), farewellMs = 30_000) {
+    if (typeof encounterId !== 'string' || !encounterId || !Number.isFinite(completedAt)) return false;
+    const spawn = (this.state.activeMasterSpawns || []).find((item) => item.encounterId === encounterId);
+    if (!spawn) return false;
+    if (Number.isFinite(Number(spawn.expeditionCompletedAt)) && spawn.expeditionCompletedAt > 0) return false;
+    const deadline = Math.max(0, Math.floor(completedAt)) + Math.max(1000, Math.floor(farewellMs));
+    spawn.expeditionCompletedAt = Math.max(0, Math.floor(completedAt));
+    spawn.expiresAt = deadline;
+    this.state.updatedAt = Date.now();
+    this.publish();
+    this.eventSystem?.emit('master-spawns:changed', { spawns: this.getActiveMasters() });
+    return true;
+  }
+
   masterTierWeights(zoneId) {
     const locationTier = this.getLocationTier(zoneId)?.tier || 'T1';
     return this.config?.masterTierByLocationTier?.[locationTier] || { T1: 100 };

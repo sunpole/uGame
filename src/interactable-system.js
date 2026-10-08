@@ -269,6 +269,17 @@ export class InteractableSystem {
         this.createMasterRewardMarker(item, item.masterRewardState || 'idle');
         if (item.masterRewardState === 'running') this.createMasterProcessTimer(item);
       }
+      if (item.masterExpeditionCompletedAt > 0) {
+        item._masterExpeditionTimer = scene.add.text(item.x, item.y - 83,
+          'УХОЖУ ЧЕРЕЗ ' + countdownText(item.expiresAt), {
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '13px',
+            fontStyle: 'bold',
+            color: '#ffb4a9',
+            backgroundColor: 'rgba(50, 8, 10, 0.88)',
+            padding: { x: 7, y: 4 }
+          }).setOrigin(0.5).setDepth(9);
+      }
       scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
@@ -288,6 +299,7 @@ export class InteractableSystem {
     if (glow) displayObjects.push(glow);
     if (item._masterRewardMarker) displayObjects.push(item._masterRewardMarker);
     if (item._masterProcessTimer) displayObjects.push(item._masterProcessTimer);
+    if (item._masterExpeditionTimer) displayObjects.push(item._masterExpeditionTimer);
 
     if (Number.isFinite(Number(item.expiresAt))) {
       const timerLabel = scene.add.text(item.x, item.y + 30, countdownText(item.expiresAt), {
@@ -349,6 +361,9 @@ export class InteractableSystem {
       if (item._timerLabel && Number.isFinite(Number(item.expiresAt))) {
         item._timerLabel.setText(countdownText(item.expiresAt, now));
       }
+      if (item._masterExpeditionTimer) {
+        item._masterExpeditionTimer.setText?.('УХОЖУ ЧЕРЕЗ ' + countdownText(item.expiresAt, now));
+      }
       if (item._masterProcessTimer && item.masterRewardState === 'running') {
         item._masterProcessTimer.setText?.(countdownText(item.masterProcessEndsAt, now));
       }
@@ -375,6 +390,7 @@ export class InteractableSystem {
       item._timerLabel?.setPosition?.(item.x, item.y + 30);
       item._masterRewardMarker?.setPosition?.(item.x, item.y - 24);
       item._masterProcessTimer?.setPosition?.(item.x, item.y - 65);
+      item._masterExpeditionTimer?.setPosition?.(item.x, item.y - 83);
     }
     return true;
   }

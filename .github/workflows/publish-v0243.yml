@@ -1,0 +1,52 @@
+name: uGame v0.2.43 QA release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.43.md'
+      - '.github/workflows/publish-v0243.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test Node regression suite
+        run: npm test
+      - name: Check JS syntax and aligned versions
+        run: |
+          node --check src/resource-expedition-system.js
+          node --check src/resource-expedition-view.js
+          node --check src/main.js
+          node --check src/world-spawn-state-system.js
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for (const path of ['version.json','package.json','data/preflight-manifest.json']) {
+            if (JSON.parse(fs.readFileSync(path,'utf8')).version !== '0.2.43') throw Error('Version mismatch '+path);
+          }
+          if (!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.43'\")) throw Error('preflight mismatch');
+          "
+      - name: Verify rollback v0.2.42 and v0.2.41
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.42
+          gh release view v0.2.41
+      - name: Publish prerelease on main (idempotent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.43 >/dev/null 2>&1; then
+            gh release create v0.2.43 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.43 · Immersive resource realm and NPC farewell" \
+              --notes-file docs/releases/v0.2.43.md --prerelease
+          fi

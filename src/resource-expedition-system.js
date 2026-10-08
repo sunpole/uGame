@@ -9,7 +9,7 @@ const tierNumber = (tier) => Number(String(tier || '').replace(/^T/, '')) || 1;
 const roundUnits = (kg) => Math.max(1, Math.round(Number(kg || 0) * 10));
 
 export class ResourceExpeditionSystem {
-  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, random = Math.random } = {}) {
+  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, onDepleted, random = Math.random } = {}) {
     this.config = config;
     this.onChange = onChange;
     this.availableSteps = availableSteps;
@@ -17,6 +17,7 @@ export class ResourceExpeditionSystem {
     this.addSteps = addSteps;
     this.grantResource = grantResource;
     this.grantRelationshipXp = grantRelationshipXp;
+    this.onDepleted = onDepleted;
     this.random = random;
     this.state = { schemaVersion: 1, usedEncounterIds: [], run: null };
     this.nextSyncAt = 0;
@@ -38,7 +39,7 @@ export class ResourceExpeditionSystem {
     if (run && (typeof run.encounterId !== 'string' || !run.encounterId || typeof run.masterId !== 'string')) run = null;
     if (run) {
       for (const key of ['stockUnits','initialUnits','cargoUnits','extractedUnits','spentSteps','refundSteps',
-        'lastAutoAt','endsAt','autoCycles','manualAttempts','manualStartedAt']) {
+        'lastAutoAt','endsAt','autoCycles','manualAttempts','manualStartedAt','completedAt']) {
         run[key] = positiveInt(run[key]);
       }
       run.mode = run.mode === 'auto' ? 'auto' : 'paused'; // A half-played manual attempt cannot resume after reload.
@@ -92,6 +93,7 @@ export class ResourceExpeditionSystem {
       tier,
       endsAt: Number(spawn.expiresAt),
       startedAt: now,
+      completedAt: 0,
       status: 'active',
       mode: 'paused',
       initialUnits,
@@ -179,7 +181,7 @@ export class ResourceExpeditionSystem {
     this.run.extractedUnits += mined;
     this.run.cargoUnits += mined;
     if (mined > 0) this.grantRelationshipXp?.(this.run.masterId, Math.max(1, Math.round(Number(result.baseRelationshipXp) * this.run.multiplier)));
-    if (this.run.stockUnits === 0) this.finish('depleted');
+    if (this.run.stockUnits === 0) this.finish('depleted', now);
     this.publish();
     return { ok: true, minedUnits: mined, result: result?.name || 'промах' };
   }
@@ -216,7 +218,7 @@ export class ResourceExpeditionSystem {
       }
     }
     if (run.stockUnits === 0) {
-      this.finish('depleted');
+      this.finish('depleted', run.lastAutoAt || cappedNow);
       changed = true;
     } else if (now >= run.endsAt) {
       this.finish('expired');
@@ -226,8 +228,12 @@ export class ResourceExpeditionSystem {
     return changed;
   }
 
-  finish(reason) {
+  finish(reason, at = Date.now()) {
     if (!this.isOccupied()) return false;
+    if (reason === 'depleted') {
+      this.run.completedAt = Math.min(this.run.endsAt, Math.max(this.run.startedAt, Math.floor(at)));
+      this.onDepleted?.({ encounterId: this.run.encounterId, completedAt: this.run.completedAt });
+    }
     this.run.status = reason;
     this.run.mode = 'paused';
     this.run.manualStartedAt = 0;
