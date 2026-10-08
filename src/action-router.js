@@ -12,12 +12,14 @@ export class ActionRouter {
     getInteraction,
     getInventory,
     getProjectHub,
+    getExpedition,
     onWorldPrimary
   } = {}) {
     this.getDialogue = getDialogue;
     this.getInteraction = getInteraction;
     this.getInventory = getInventory;
     this.getProjectHub = getProjectHub;
+    this.getExpedition = getExpedition;
     this.onWorldPrimary = onWorldPrimary;
     this.boundKeydown = (event) => this.handleKeydown(event);
     this.pointerBindings = [];
@@ -73,6 +75,7 @@ export class ActionRouter {
   }
 
   primary() {
+    if (this.getExpedition?.()?.isOpen?.()) return true; // Dedicated scene owns its controls.
     const dialogue = this.getDialogue?.();
     if (dialogue?.isOpen?.()) {
       dialogue.advance();
@@ -110,6 +113,7 @@ export class ActionRouter {
   }
 
   back() {
+    if (this.getExpedition?.()?.isOpen?.()) return true; // Exit requires its explicit confirmation.
     const dialogue = this.getDialogue?.();
     if (dialogue?.isOpen?.()) {
       dialogue.close(false);
@@ -138,6 +142,7 @@ export class ActionRouter {
   }
 
   navigate(code, repeat = false) {
+    if (this.getExpedition?.()?.isOpen?.()) return true;
     const interaction = this.getInteraction?.();
     if (interaction?.isOpen?.()) {
       interaction.navigate?.(code);
