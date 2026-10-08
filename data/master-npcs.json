@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updated": "2026-10-09",
   "status": "prototype-neutral-lore",
-  "note": "Expedition is guaranteed and free reward random for new Encounters. Legacy dialogue metadata retained for old saves; code must show expedition for existing Encounters. Tier+XP balance not final.",
+  "note": "All six Master activities have local playable actions. Server-wide encounters/multiplayer remain future milestones.",
   "modules": [
     {
       "id": "extraction",
@@ -27,7 +27,7 @@
       "id": "quest",
       "label": "Квест",
       "kind": "quest",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "analytics",
@@ -45,7 +45,7 @@
       "id": "special-event",
       "label": "Особое событие",
       "kind": "event",
-      "implemented": false
+      "implemented": true
     }
   ],
   "masters": [
