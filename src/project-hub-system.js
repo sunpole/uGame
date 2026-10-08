@@ -464,7 +464,7 @@ export class ProjectHubSystem {
       '<span data-kind="current">● Вы здесь</span>',
       '</div>',
       '<div class="world-map-scroll">',
-      '<div class="world-map-stage">
+      '<div class="world-map-stage">',
       '<div class="world-map-compass world-map-compass-n"><b>N</b><span>СЕВЕР</span><i>↑</i></div>',
       '<div class="world-map-compass world-map-compass-ne"><b>NE</b><span>СЕВЕРО-ВОСТОК</span><i>↗</i></div>',
       '<div class="world-map-compass world-map-compass-e"><b>E</b><span>ВОСТОК</span><i>→</i></div>',

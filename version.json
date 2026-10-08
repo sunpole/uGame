@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.18",
-  "stage": "boot-diagnostics",
+  "version": "0.1.19",
+  "stage": "project-hub-syntax-hotfix",
   "updated": "2026-10-08",
-  "summary": "Add visible boot diagnostics so pre-runtime module or world initialization failures no longer look like an endless loading screen"
+  "summary": "Fix unterminated World Map HTML string in project-hub-system.js that prevented the entire ES-module graph from booting"
 }

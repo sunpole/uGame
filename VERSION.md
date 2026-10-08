@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.18**
+Current version: **0.1.19**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.19 | Boot Syntax Hotfix: close broken World Map stage string in project-hub-system.js |
 | 0.1.18 | Boot Diagnostics: visible global/module/world-init errors replace silent endless loading |
 | 0.1.17 | Boot Hotfix: remove fragile cross-module humanoid helper export/import while preserving player-base city NPC visuals |
 | 0.1.16 | Local Diamond / Multi-Resource Master Audit: document four diagonal gates, Water/Forest Masters, prompt separation and shared humanoid city NPC |
@@ -124,6 +125,9 @@ Current version: **0.1.18**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.19
+Исправлена точная причина падения boot по ручному QA: в `src/project-hub-system.js` строка открытия `world-map-stage` была оборвана без закрывающей кавычки, из-за чего браузер выдавал `Invalid or unexpected token` на строке 467 и не запускал весь ES-module graph. Механики не менялись.
 
 ## 0.1.18
 Добавлена ранняя boot-диагностика до загрузки Phaser/main module. Глобальные `error` и `unhandledrejection` выводятся прямо в `quest-status`; если основной модуль вообще не стартовал за 8 секунд, вместо вечного `Загрузка квеста…` появляется явное сообщение. `main.js` дополнительно отмечает фазы `scene-create / world-init / ready / world-error`. Gameplay не менялся.
