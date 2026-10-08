@@ -26,6 +26,7 @@ export class MasterEncounterSystem {
     this.moveSpeedPxPerSec = 5;
     this.nextMotionUpdateAt = 0;
     this.motionIntervalMs = 50;
+    this.lastActivatedMasterEncounterId = null;
 
     this.eventSystem?.on('zone:enter', ({ zone }) => {
       this.currentZoneId = zone?.id || null;
@@ -253,9 +254,12 @@ export class MasterEncounterSystem {
         );
         return distance(left) - distance(right);
       });
-      const nearest = candidates[0];
-      if (!nearest) return { handled: true, message: '8388 · нет видимых Master NPC', state: 'reserved' };
-      const { spawn, item } = nearest;
+      // Prefer the last actual interaction; nearest is only a fallback.
+      const interacted = candidates.find((entry) => entry.spawn.encounterId === this.lastActivatedMasterEncounterId);
+      const selected = interacted || candidates[0];
+      if (!selected) return { handled: true, message: '8388 · нет видимых Master NPC', state: 'reserved' };
+      const targetMode = interacted ? 'последнее взаимодействие' : 'ближайший';
+      const { spawn, item } = selected;
       const claimed = this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId) === true;
       const marker = item._masterRewardMarker;
       const redDots = (this.interactableSystem?.scene?.children?.list || [])
@@ -263,6 +267,7 @@ export class MasterEncounterSystem {
       const info = {
         masterId: spawn.masterId,
         encounterId: spawn.encounterId,
+        targetMode,
         claimed,
         cachedAvailable: item.masterRewardAvailable,
         markerExists: Boolean(marker),
@@ -274,7 +279,7 @@ export class MasterEncounterSystem {
       console.info('[uGame DEV 8388] Master marker diagnosis', info);
       this.interactionPanel?.showMessage?.({
         title: 'DEV 8388 · красная точка Master',
-        text: 'NPC: ' + info.masterId + ' · Encounter: ' + info.encounterId
+        text: 'Источник: ' + targetMode + ' · NPC: ' + info.masterId + ' · Encounter: ' + info.encounterId
           + ' · claimed=' + info.claimed
           + ' · cachedAvailable=' + info.cachedAvailable
           + ' · markerExists=' + info.markerExists
@@ -307,6 +312,7 @@ export class MasterEncounterSystem {
     if (!encounterId) return false;
     const spawn = this.worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
     if (!spawn || Number(spawn.expiresAt) <= Date.now()) return false;
+    this.lastActivatedMasterEncounterId = encounterId;
     const master = this.masterCatalog?.get?.(spawn.masterId);
     const relationship = this.relationshipSystem?.meet?.(spawn.masterId, spawn.encounterId, Date.now());
     const multiplier = Number(spawn.efficiencyMultiplier || master?.efficiencyMultiplier || 1).toFixed(2);

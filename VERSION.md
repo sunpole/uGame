@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.21**
+Current version: **0.2.22**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.22 | DEV 8388 now diagnoses last interacted Master, nearest as fallback |
 | 0.2.21 | Auto-transition from real-time Master Process timer to claim button |
 | 0.2.20 | Live InteractionPanel completion does not accidentally close the next modal |
 | 0.2.19 | CMD updater: add option 11 Quick Run (no RUN prompt), preserve protected option 4 and existing launch checks |
@@ -156,6 +157,9 @@ Current version: **0.2.21**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.22
+Read-only DEV 8388 selects the last interacted Master (if still rendered), otherwise nearest. It displays selection mode to prevent diagnosing a different NPC inadvertently. No reward or save changes. Browser QA pending.
 
 ## 0.2.21
 Playable Master Process UX: when the REAL TIME countdown finishes while the modal is open, the exact Process's pending reward automatically appears as a claim action. Closing the window or reloading keeps the pending reward available through the existing save. No automatic inventory grant, new timers, or schema changes. Depends on v0.2.20 modal token guard. Browser QA pending.

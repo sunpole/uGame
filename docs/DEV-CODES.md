@@ -112,7 +112,7 @@ These codes are active against the persistent resource-Master runtime. `8300` su
 | `8312` | Teleport/cycle to next active T2 Stone master |
 | `8313` | Teleport/cycle to next active T3 Stone master |
 | `8314` | Teleport/cycle to next active T4 Stone master |
-| `8388` | Read-only nearest Master diagnostic: claimed state, cached eligibility, Phaser marker object/visibility, red circle count (also logs to browser console) |
+| `8388` | Read-only last-interacted Master diagnostic (fallback: nearest): claimed state, cached eligibility, Phaser marker object/visibility, red circle count (also logs to browser console) |
 | `8399` | Show candidate pool sizes and independent rotation round/coverage summary |
 
 The preferred UX later is a clickable **DEV World Analyzer** inside Project Hub with a list of active masters and TP buttons. Console codes remain a fast keyboard fallback.

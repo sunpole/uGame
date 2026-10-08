@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.21",
-  "stage": "master-process-auto-reward",
+  "version": "0.2.22",
+  "stage": "master-diagnostic-identity",
   "updated": "2026-10-08",
-  "summary": "Automatically show the Master Process reward action when the real-time countdown completes"
+  "summary": "Make DEV 8388 diagnose the last interacted Master Encounter before nearest fallback"
 }
