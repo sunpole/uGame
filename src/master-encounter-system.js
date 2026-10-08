@@ -6,7 +6,7 @@ function formatRemaining(ms) {
 }
 
 export class MasterEncounterSystem {
-  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, processSystem, canMoveTo, getWanderRadius } = {}) {
+  constructor({ worldGraph, zoneSystem, interactableSystem, eventSystem, worldSpawnStateSystem, masterCatalog, relationshipSystem, interactionPanel, processSystem, expeditionView, canMoveTo, getWanderRadius } = {}) {
     this.worldGraph = worldGraph;
     this.zoneSystem = zoneSystem;
     this.interactableSystem = interactableSystem;
@@ -16,6 +16,7 @@ export class MasterEncounterSystem {
     this.relationshipSystem = relationshipSystem;
     this.interactionPanel = interactionPanel;
     this.processSystem = processSystem;
+    this.expeditionView = expeditionView;
     this.canMoveTo = canMoveTo;
     this.getWanderRadius = getWanderRadius;
     this.currentZoneId = null;
@@ -60,6 +61,11 @@ export class MasterEncounterSystem {
     const active = this.relationshipSystem?.getActiveProcess?.(masterId);
     if (active?.encounterId === encounterId) {
       return { state: 'running', endsAt: Number(active.endsAt) || null };
+    }
+    // Free reward is now a random module, not a guaranteed option.
+    // Existing encounters retaining 'extraction' still show the original red marker.
+    if (!Array.isArray(spawn.activeModules) || !spawn.activeModules.includes('extraction')) {
+      return { state: 'claimed', endsAt: null };
     }
     return { state: 'idle', endsAt: null };
   }
@@ -371,7 +377,10 @@ export class MasterEncounterSystem {
     const master = this.masterCatalog?.get?.(spawn.masterId);
     const relationship = this.relationshipSystem?.meet?.(spawn.masterId, spawn.encounterId, Date.now());
     const multiplier = Number(spawn.efficiencyMultiplier || master?.efficiencyMultiplier || 1).toFixed(2);
-    const moduleIds = Array.isArray(spawn.activeModules) ? spawn.activeModules : [];
+    const moduleIds = Array.isArray(spawn.activeModules) ? [...spawn.activeModules] : [];
+    // Old saved Encounters predate UGD-0036: keep their legacy actions,
+    // but expose the new guaranteed Expedition without rewriting their save.
+    if (!moduleIds.includes('expedition')) moduleIds.unshift('expedition');
     const moduleLabels = moduleIds.map((id) => this.masterCatalog?.moduleLabel?.(id) || id);
     const encounterMeta = (now = Date.now()) => {
       const current = this.worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
@@ -396,7 +405,9 @@ export class MasterEncounterSystem {
           : (implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.'),
         onSelect: moduleId === 'extraction' && implemented && !claimedExtraction
           ? () => this.processSystem?.openExtraction?.(spawn)
-          : null
+          : moduleId === 'expedition' && implemented
+            ? () => this.expeditionView?.open?.(spawn)
+            : null
       };
     });
     if (historicalPending.length) {
