@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.26**
+Current version: **0.2.27**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.27 | Enforce unique Interactable IDs to prevent orphan Phaser reward markers; regression test |
 | 0.2.26 | Master red marker origin/duplicate diagnostics per Encounter; no state changes |
 | 0.2.25 | QA/release docs, current debt queue, GitHub Release checkpoints v0.2.19 and v0.2.25 |
 | 0.2.24 | Executable Master Process/claim/UI Node tests + GitHub Actions CI |
@@ -161,6 +162,9 @@ Current version: **0.2.26**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.27
+Fixed a reproducible orphan-red-marker scenario: adding an interactable with an already existing ID previously created a second independent Phaser GameObject while `getItem()` and mark/sync operations touched only the first. `InteractableSystem.add` now removes all existing items with the incoming ID before rendering. A Node regression test asserts duplicate insertion leaves exactly one item/marker/tween and a claim removes it fully. This is a verified code-level defect, but the original intermittent browser report is not yet proven to share this cause. No save schema or economy changes. Manual verification still required.
 
 ## 0.2.26
 Expanded read-only DEV 8388. It reports live claimed state, pending rewards for current/previous Encounters, active Process Encounter, count of interactables with the same id and count of Phaser markers bearing the same Encounter id. Identified a reproducible source-level hazard: InteractableSystem.add permits duplicate ids and getItem returns only the first match; a second red marker could remain visually unmanaged. This is a **possible**, not yet browser-confirmed, explanation for intermittent dots; the next patch enforces uniqueness and tests the exact scenario. No gameplay/save mutation from diagnostics.

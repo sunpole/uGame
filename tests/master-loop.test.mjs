@@ -156,3 +156,53 @@ test('live message expiry does not close its replacement panel', () => {
     else globalThis.window = oldWindow;
   }
 });
+
+
+test('duplicate interactable ID cannot leave a second orphan red Phaser sprite', async () => {
+  const { InteractableSystem } = await import('../src/interactable-system.js');
+  const objects = [];
+  const tweens = [];
+  function mockObject(kind, x, y, fillColor = null) {
+    const obj = {
+      kind, x, y, fillColor, active: true, visible: true,
+      width: 40, height: 40,
+      setDepth() { return this; }, setOrigin() { return this; },
+      setSize() { return this; }, setScale() { return this; },
+      setStrokeStyle() { return this; }, setVisible(visible) { this.visible = visible; return this; },
+      setPosition(x, y) { this.x=x; this.y=y; return this; },
+      setRotation() { return this; }, setName(name) { this.name=name; return this; },
+      add() { return this; },
+      destroy() { this.active=false; const ix=objects.indexOf(this); if(ix>=0)objects.splice(ix,1); }
+    };
+    objects.push(obj); return obj;
+  }
+  const scene = {
+    children: { list: objects },
+    tweens: {
+      add(entry) { tweens.push(entry); },
+      killTweensOf(target) { for(let i=tweens.length-1;i>=0;i--)if(tweens[i].targets===target)tweens.splice(i,1); }
+    },
+    add: {
+      circle(x,y,radius,color) { return mockObject('circle',x,y,color); },
+      ellipse(x,y,width,height,color) { return mockObject('ellipse',x,y,color); },
+      rectangle(x,y,width,height,color) { return mockObject('rectangle',x,y,color); },
+      container(x,y,children) { return mockObject('container',x,y); },
+      text(x,y,text) { return mockObject('text',x,y); }
+    }
+  };
+  const sys = new InteractableSystem({ scene, player: { x: 0, y: 0, width: 1, height: 1 } });
+  const definition = { id: 'master-interactable:encounter-test', masterEncounterId: 'encounter-test',
+    masterId: 'master-test', type: 'master-npc', masterTier: 'T1',
+    masterRewardAvailable: true, x: 50, y: 60 };
+  const redDots = () => objects.filter((object) => object.active && object.fillColor === 0xff3b30);
+  sys.add(definition);
+  sys.add(definition); // replicate duplicate rendering/event reentry
+  assert.equal(sys.items.filter((item) => item.id === definition.id).length, 1);
+  assert.equal(redDots().length, 1);
+  assert.equal(tweens.filter((entry) => entry.targets?.name === 'ugame-master-reward:encounter-test').length, 1);
+  sys.setMasterRewardAvailable(definition.id, false);
+  assert.equal(redDots().length, 0);
+  assert.equal(tweens.filter((entry) => entry.targets?.name === 'ugame-master-reward:encounter-test').length, 0);
+  sys.clear();
+  assert.equal(redDots().length, 0);
+});

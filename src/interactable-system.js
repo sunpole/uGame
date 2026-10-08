@@ -79,6 +79,12 @@ export class InteractableSystem {
   }
 
   add(definition) {
+    // Enforce scene identity. Previously repeated add(id) left multiple sprites,
+    // while getItem/syncRewardMarker only updated the first one.
+    // Remove *all* preexisting duplicates before drawing a replacement.
+    if (typeof definition?.id === 'string' && definition.id) {
+      while (this.getItem(definition.id)) this.remove(definition.id);
+    }
     const item = {
       trigger: 'action',
       interactionRadius: 58,

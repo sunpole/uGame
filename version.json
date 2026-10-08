@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.26",
-  "stage": "master-marker-identity-audit",
+  "version": "0.2.27",
+  "stage": "master-marker-unique-identity",
   "updated": "2026-10-08",
-  "summary": "Read-only Encounter marker diagnostics including duplicate Phaser objects and reward provenance"
+  "summary": "Prevent duplicate Interactable IDs and orphan Phaser Master reward sprites"
 }

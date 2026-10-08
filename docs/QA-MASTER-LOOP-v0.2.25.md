@@ -32,3 +32,8 @@ Date: 2026-10-08. Scope: gameplay and updater candidate; browser QA still pendin
 - Automated Node suite: GitHub Actions v0.2.24 passed; run again at v0.2.25 before publishing releases.
 - New Master UI auto-transition is **not yet browser-confirmed**.
 - v0.2.19 is the prior user-tested updater checkpoint; v0.2.25 is a new QA candidate.
+
+
+## v0.2.27 duplicate-identity regression
+
+The source now prevents duplicate Interactable ID insertion and tests the old orphan marker scenario with a Phaser-like mock. Confirm in browser that taking the **current** Encounter's reward removes its red dot. If it does not, call DEV 8388 and share its `claimed/currentPending/historicalPending/interactableCount/namedMarkerCount` report. Do not claim the intermittent root cause proven from headless tests alone.
