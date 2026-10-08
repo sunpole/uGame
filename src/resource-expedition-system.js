@@ -9,7 +9,7 @@ const tierNumber = (tier) => Number(String(tier || '').replace(/^T/, '')) || 1;
 const roundUnits = (kg) => Math.max(1, Math.round(Number(kg || 0) * 10));
 
 export class ResourceExpeditionSystem {
-  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, grantProfessionXp, getAccess, getModifiers, onDepleted, random = Math.random } = {}) {
+  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, grantProfessionXp, getAccess, getModifiers, onEntered, onDepleted, random = Math.random } = {}) {
     this.config = config;
     this.onChange = onChange;
     this.availableSteps = availableSteps;
@@ -20,6 +20,7 @@ export class ResourceExpeditionSystem {
     this.grantProfessionXp = grantProfessionXp;
     this.getAccess = getAccess;
     this.getModifiers = getModifiers;
+    this.onEntered = onEntered;
     this.onDepleted = onDepleted;
     this.random = random;
     this.state = { schemaVersion: 1, usedEncounterIds: [], run: null };
