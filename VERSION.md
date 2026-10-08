@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.16**
+Current version: **0.2.17**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.17 | Hard Phaser Master marker lifecycle on claim, sprite PRE-FLIGHT regression, read-only DEV 8388 diagnostic |
 | 0.2.16 | Master reward marker visibility reconciliation on NPC updates + executable PRE-FLIGHT regression test |
 | 0.2.15 | Fix Master reward PRE-FLIGHT false failure for data-driven claimed label; keep claim guard checks |
 | 0.2.14 | Master Reward Compatibility: preserve old pending rewards and reconstruct legacy Encounter ids before claim locking |
@@ -151,6 +152,9 @@ Current version: **0.2.16**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.17
+Follow-up to repeated real-browser QA: a red dot remained over a Master even after the same Encounter showed "Добыча · получено". The v0.2.16 state-reconciliation fix was insufficient in this environment; exact visual root cause remains unverified. This patch enforces a stricter renderer invariant: only unclaimed Encounters create a red Phaser GameObject, and successful claim destroys its sprite and infinite tween instead of merely setting `visible=false`. Claimed Masters rendered from saves never create the marker. The existing NPC reconciliation can restore it for unclaimed encounters. Added a headless InteractableSystem sprite-lifecycle smoke test in PRE-FLIGHT and read-only DEV code 8388 (nearest Master's live claimed/cached/Phaser marker state). No reward, Process, time, or save schema changes. Browser visual validation remains necessary.
 
 ## 0.2.16
 Follow-up to user QA: the current Encounter can display "Добыча · получено" while its red Phaser reward dot remains visible. The claim-lock source of truth (`Character↔Master.claimedEncounterIds`) and inventory reward workflow are unchanged. The Master NPC's existing throttled world update now reconciles the cached eligibility and Phaser marker's `visible` state against the saved claimed state, independently of one-off relationship change notifications. This self-corrects stale markers without adding a per-frame DOM update or a new timer. PRE-FLIGHT now executes a mocked runtime regression for immediate claim hiding, the disabled action, missed notifications, stale sprite visibility, and an unclaimed encounter. Automated mock tests passed; real browser/Phaser visual QA is still required.

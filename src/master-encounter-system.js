@@ -56,7 +56,10 @@ export class MasterEncounterSystem {
     // Character ↔ Master remains authoritative; the Phaser marker is just a view.
     const available = this.isFreeRewardAvailable(spawn);
     const marker = item._masterRewardMarker;
-    if (item.masterRewardAvailable === available && (!marker || marker.visible === available)) return false;
+    const spriteCorrect = available
+      ? Boolean(marker && marker.active !== false && marker.visible === true)
+      : !marker;
+    if (item.masterRewardAvailable === available && spriteCorrect) return false;
     return Boolean(this.interactableSystem?.setMasterRewardAvailable?.(item, available));
   }
 
@@ -236,6 +239,51 @@ export class MasterEncounterSystem {
   }
 
   executeDevCode(code) {
+    if (code === '8388') {
+      // Read-only real-scene diagnostics for the nearest rendered Master.
+      const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: this.currentZoneId }) || [];
+      const candidates = spawns.map((spawn) => ({
+        spawn, item: this.interactableSystem?.getItem?.('master-interactable:' + spawn.encounterId)
+      })).filter((entry) => entry.item);
+      const player = this.zoneSystem?.player;
+      candidates.sort((left, right) => {
+        const distance = (entry) => Math.hypot(
+          Number(entry.item.x) - Number(player?.x || 0),
+          Number(entry.item.y) - Number(player?.y || 0)
+        );
+        return distance(left) - distance(right);
+      });
+      const nearest = candidates[0];
+      if (!nearest) return { handled: true, message: '8388 · нет видимых Master NPC', state: 'reserved' };
+      const { spawn, item } = nearest;
+      const claimed = this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId) === true;
+      const marker = item._masterRewardMarker;
+      const redDots = (this.interactableSystem?.scene?.children?.list || [])
+        .filter((object) => object?.fillColor === 0xff3b30 && object?.active !== false);
+      const info = {
+        masterId: spawn.masterId,
+        encounterId: spawn.encounterId,
+        claimed,
+        cachedAvailable: item.masterRewardAvailable,
+        markerExists: Boolean(marker),
+        markerVisible: marker?.visible ?? null,
+        markerActive: marker?.active ?? null,
+        redDotCountInScene: redDots.length,
+        renderedMasterItems: candidates.length
+      };
+      console.info('[uGame DEV 8388] Master marker diagnosis', info);
+      this.interactionPanel?.showMessage?.({
+        title: 'DEV 8388 · красная точка Master',
+        text: 'NPC: ' + info.masterId + ' · Encounter: ' + info.encounterId
+          + ' · claimed=' + info.claimed
+          + ' · cachedAvailable=' + info.cachedAvailable
+          + ' · markerExists=' + info.markerExists
+          + ' · markerVisible=' + info.markerVisible
+          + ' · markerActive=' + info.markerActive,
+        meta: 'redDotCountInScene=' + info.redDotCountInScene + ' · renderedMasters=' + info.renderedMasterItems
+      });
+      return { handled: true, message: '8388 · диагностика Master открыта', state: 'ok' };
+    }
     if (!['8312', '8313', '8314'].includes(code)) return { handled: false };
     const tier = 'T' + code.at(-1);
     const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ resourceDirectionId: 'stone', tier }) || [];

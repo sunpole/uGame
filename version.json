@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.16",
-  "stage": "master-reward-visibility-sync",
+  "version": "0.2.17",
+  "stage": "master-marker-hard-lifecycle",
   "updated": "2026-10-08",
-  "summary": "Reconcile claimed Master reward marker visibility on NPC updates and cover it with PRE-FLIGHT runtime regression"
+  "summary": "Only create Phaser Master reward markers for unclaimed Encounters; destroy object and tween on claim; DEV 8388 diagnostics"
 }

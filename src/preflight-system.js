@@ -247,7 +247,8 @@ function validateMasterRewardState(sources) {
   if (!relationship.includes('claimedEncounterIds') || !relationship.includes('hasClaimedEncounter')) {
     throw new Error('claimed Encounter reward state missing');
   }
-  if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardAvailable')) {
+  if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardAvailable')
+    || !interactable.includes('marker.destroy?.()')) {
     throw new Error('Master red reward marker missing');
   }
   // The Extraction label is data-driven (master-npcs.json), so the complete
@@ -334,6 +335,67 @@ function validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRel
   notificationsEnabled = true;
   relationship.initialize(null);
   if (marker.visible !== true) throw new Error('fresh unclaimed marker was not restored');
+}
+
+function validateMasterRewardSpriteRuntime(InteractableSystem) {
+  // Tests real InteractableSystem drawing rules using a small Phaser-like scene.
+  // Never changes the user's game state or canvas.
+  const scene = {
+    children: { list: [] },
+    tweens: {
+      active: [],
+      add(config) { this.active.push(config); return config; },
+      killTweensOf(target) { this.active = this.active.filter((entry) => entry.targets !== target); }
+    }
+  };
+  function graphic(type, x, y, fillColor = null) {
+    const object = {
+      type, x, y, fillColor, active: true, visible: true,
+      setStrokeStyle() { return this; }, setDepth() { return this; },
+      setOrigin() { return this; }, setSize() { return this; },
+      setName(value) { this.name = value; return this; },
+      setVisible(value) { this.visible = Boolean(value); return this; },
+      setPosition(px, py) { this.x = px; this.y = py; return this; },
+      setRotation() { return this; }, setText() { return this; },
+      destroy() {
+        this.active = false;
+        scene.children.list = scene.children.list.filter((entry) => entry !== this);
+      }
+    };
+    scene.children.list.push(object);
+    return object;
+  }
+  scene.add = {
+    ellipse: (x, y, width, height, color) => graphic('Arc', x, y, color),
+    circle: (x, y, radius, color) => graphic('Arc', x, y, color),
+    container: (x, y) => graphic('Container', x, y),
+    text: (x, y) => graphic('Text', x, y)
+  };
+  const system = new InteractableSystem({ scene });
+  const redCount = () => scene.children.list.filter((object) =>
+    object.active && object.fillColor === 0xff3b30
+  ).length;
+  const make = (id, available) => system.add({
+    id: 'master-interactable:' + id, type: 'master-npc',
+    masterEncounterId: id, x: 40, y: 50,
+    label: 'Master', masterTier: 'T1', masterRewardAvailable: available
+  });
+  const first = make('test-1', true);
+  if (redCount() !== 1 || !first._masterRewardMarker) throw new Error('unclaimed marker not created');
+  const marker = first._masterRewardMarker;
+  system.setMasterRewardAvailable(first, false);
+  if (redCount() !== 0 || first._masterRewardMarker || marker.active !== false
+    || scene.tweens.active.some((tween) => tween.targets === marker)) {
+    throw new Error('claimed marker GameObject/tween not destroyed');
+  }
+  system.setMasterRewardAvailable(first, true);
+  if (redCount() !== 1 || !first._masterRewardMarker) throw new Error('unclaimed marker not restored');
+  system.remove(first.id);
+  if (redCount() !== 0) throw new Error('marker leaked on removal');
+  const claimed = make('test-2', false);
+  if (redCount() !== 0 || claimed._masterRewardMarker) throw new Error('claimed spawn created marker');
+  system.clear();
+  if (redCount() !== 0) throw new Error('marker leaked on zone clear');
 }
 
 function validateVersions(expected, versionJson, packageJson, manifest) {
@@ -480,12 +542,14 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
       fetchText('./src/master-process-system.js')
     ]);
     validateMasterRewardState({ relationship, interactable, encounter, process });
-    const [{ MasterEncounterSystem }, { CharacterMasterRelationshipSystem }] = await Promise.all([
+    const [{ MasterEncounterSystem }, { CharacterMasterRelationshipSystem }, { InteractableSystem }] = await Promise.all([
       import('./master-encounter-system.js'),
-      import('./character-master-relationship-system.js')
+      import('./character-master-relationship-system.js'),
+      import('./interactable-system.js')
     ]);
     validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRelationshipSystem });
-    return '1 free reward / Encounter · red marker · runtime claim/reconcile OK';
+    validateMasterRewardSpriteRuntime(InteractableSystem);
+    return '1 free / Encounter · Phaser sprite create/destroy + claimed lock OK';
   });
 
   await check('textures', 'Конфигурация текстур', async () => {

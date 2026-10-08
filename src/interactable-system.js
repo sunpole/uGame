@@ -258,20 +258,8 @@ export class InteractableSystem {
       item._masterFacingMark = facingMark;
       label = scene.add.text(item.x, item.y - 38, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
 
-      const rewardMarker = scene.add.circle(item.x, item.y - 24, 5, 0xff3b30, 1)
-        .setStrokeStyle(1.5, 0x7a1212, 1)
-        .setDepth(7)
-        .setVisible(item.masterRewardAvailable !== false);
-      item._masterRewardMarker = rewardMarker;
-      scene.tweens.add({
-        targets: rewardMarker,
-        alpha: { from: 1, to: 0.48 },
-        scale: { from: 0.85, to: 1.35 },
-        duration: 650,
-        ease: 'Sine.easeInOut',
-        yoyo: true,
-        repeat: -1
-      });
+      // A claimed Encounter must not own a red Phaser GameObject at all.
+      if (item.masterRewardAvailable !== false) this.createMasterRewardMarker(item);
       scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
@@ -376,11 +364,54 @@ export class InteractableSystem {
     return true;
   }
 
+  createMasterRewardMarker(item) {
+    if (!item || item.type !== 'master-npc') return null;
+    const marker = this.scene.add.circle(item.x, item.y - 24, 5, 0xff3b30, 1)
+      .setStrokeStyle(1.5, 0x7a1212, 1)
+      .setDepth(7)
+      .setVisible(true);
+    marker.setName?.('ugame-master-reward:' + String(item.masterEncounterId || item.id));
+    item._masterRewardMarker = marker;
+    this.scene.tweens.add({
+      targets: marker,
+      alpha: { from: 1, to: 0.48 },
+      scale: { from: 0.85, to: 1.35 },
+      duration: 650,
+      ease: 'Sine.easeInOut',
+      yoyo: true,
+      repeat: -1
+    });
+    return marker;
+  }
+
   setMasterRewardAvailable(id, available) {
     const item = typeof id === 'object' ? id : this.getItem(id);
     if (!item || item.type !== 'master-npc') return false;
-    item.masterRewardAvailable = Boolean(available);
-    item._masterRewardMarker?.setVisible?.(Boolean(available));
+    const eligible = Boolean(available);
+    item.masterRewardAvailable = eligible;
+    const marker = item._masterRewardMarker;
+
+    if (!eligible) {
+      // Delete the Phaser object and its infinite tween, not just its visible flag.
+      if (marker) {
+        this.scene?.tweens?.killTweensOf?.(marker);
+        marker.destroy?.();
+        item._displayObjects = (item._displayObjects || []).filter((object) => object !== marker);
+        this.objects = this.objects.filter((object) => object !== marker);
+        item._masterRewardMarker = null;
+      }
+      return true;
+    }
+
+    if (!marker || marker.active === false) {
+      const created = this.createMasterRewardMarker(item);
+      if (created) {
+        item._displayObjects?.push(created);
+        this.objects.push(created);
+      }
+    } else {
+      marker.setVisible?.(true);
+    }
     return true;
   }
 

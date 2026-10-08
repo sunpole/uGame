@@ -49,3 +49,7 @@ Pending rewards created before v0.2.13 may not contain a direct `encounterId`. T
 ## Implementation QA note v0.2.16
 
 A QA report found an already-claimed Master Encounter (`Добыча · получено`) with its red Phaser marker still visible. Marker visibility now reconciles from `claimedEncounterIds` during the existing throttled Master NPC update, as well as on relationship state changes. The rule remains one free Extraction per Encounter; no new currency, timer, or claim/reset semantics were introduced. PRE-FLIGHT runs a headless runtime regression for stale marker recovery. Browser/Phaser visual confirmation is pending.
+
+
+## Implementation QA note v0.2.17
+Repeated real-browser QA in v0.2.16 still showed a red dot after collecting an Encounter's free reward. Instead of another visibility-only fix, the marker now has a strict create/destroy lifecycle: unclaimed Encounters own a Phaser marker; claimed Encounters own none. The infinite pulse tween is killed when the marker is destroyed. DEV 8388 displays nearest-Master live state for diagnosing any remaining inconsistency. The underlying one-reward-per-Encounter economy, claims and saves remain unchanged. Root cause of prior browser behavior has not yet been directly observed.
