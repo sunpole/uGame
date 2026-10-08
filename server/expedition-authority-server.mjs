@@ -1,6 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { ExpeditionAuthority } from './expedition-authority.mjs';
@@ -37,7 +38,8 @@ const json=(res,status,value)=>{
 };
 export function createAuthorityHttpServer({adminKey,storageFile,clock,engine:existingEngine}={}) {
   if(typeof adminKey!=='string'||adminKey.length<24)throw Error('UGAME_EXPEDITION_ADMIN_KEY must be at least 24 characters');
-  const file=storageFile?path.resolve(storageFile):path.resolve('.ugame-expedition-authority.local.json');
+  const file=storageFile?path.resolve(storageFile):path.join(os.homedir(),'.ugame','expedition-authority.local.json');
+  fs.mkdirSync(path.dirname(file),{recursive:true,mode:0o700});
   let restored=null;
   if(fs.existsSync(file)) {
     try{restored=JSON.parse(fs.readFileSync(file,'utf8'));}
