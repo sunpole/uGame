@@ -70,7 +70,8 @@ test('sorting stacks by Tier consolidates identical resource cells without losin
   const res=c.organize('backpack',{by:'tier',merge:true});
   assert.equal(res.ok,true);
   assert.equal(res.freedSlots,1);
-  assert.equal(c.container('backpack').slots[0].itemId,'stone-t8');
+  assert.equal(c.item(c.container('backpack').slots[0].itemId).tier,'T8');
+  assert.equal(c.item(c.container('backpack').slots[1].itemId).tier,'T8');
   assert.equal(total(c,'stone-t1'),before);
   assert.equal(c.weightKg('backpack'),mass);
   assert.equal(events.filter(e=>e.name==='containers:changed').length,1);
