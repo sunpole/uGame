@@ -73,7 +73,7 @@ export class ResourceProfessionView {
         +' · репутация '+req.reputationLevel+' → '+(access.ok?'ОТКРЫТО':'закрыто');
     });
     const buffActions=(this.professions.config.buffItems||[]).map(buff=>{
-      const remaining=Math.max(0,Math.ceil((progress.buffs[buff.id]||0-Date.now())/1000));
+      const remaining=Math.max(0,Math.ceil(((progress.buffs[buff.id]||0)-Date.now())/1000));
       const owned=this.getItemCount?.(buff.id)||0;
       return {
         id:'activate-'+buff.id,
