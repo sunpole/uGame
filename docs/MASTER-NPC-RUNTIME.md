@@ -60,3 +60,12 @@ Four resource lines now exist: Stone, Water, Forest/Wood, Clay, each with T1–T
 Live Process modal shows REAL TIME countdown, transitioning directly to the matching claim action on completion. Closing the modal never discards the Process/pending result. DEV 8388 targets the last interacted Master, otherwise nearest. The current baseline tests live in `tests/master-loop.test.mjs` (Node built-in test runner; GitHub Actions).
 
 **QA status:** v0.2.19 was the prior user-tested checkpoint; v0.2.20–v0.2.25 require manual browser QA. See `docs/QA-MASTER-LOOP-v0.2.25.md`.
+
+## v0.2.41: Process / индикатор награды
+
+- До запуска Process у ещё не использованного Encounter — красная точка.
+- Во время 60-секундного реального Process — красная точка + оставшиеся мм:сс **над ней**.
+- После появления pending текущего Encounter — зелёная точка, таймер удаляется.
+- После успешного claim текущего Encounter — точка и таймер полностью удаляются вместе с Phaser GameObject/tween.
+- Награда **старого** Encounter не должна делать зелёной точку **нового**. При переходах и повторном входе маркеры вычисляются из сохранённой CharacterMasterRelationships.
+- DEV 8388 отображает фазу и наличие таймера. В версии без сервера «забрал кто-то» означает получение данным персонажем; общая multiplayer-награда пока не реализована.
