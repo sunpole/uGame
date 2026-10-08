@@ -39,3 +39,8 @@ The same state also disables the Extraction action and prevents starting a secon
 Existing saves receive `claimedEncounterIds: []` lazily through `ensureMaster()`.
 
 Pending rewards now persist `encounterId`; legacy pending rewards use the current Encounter as fallback when claimed.
+
+
+## Compatibility note v0.2.14
+
+Pending rewards created before v0.2.13 may not contain a direct `encounterId`. The runtime reconstructs it from the stable `process:<encounterId>:<timestamp>` id before using the current Encounter as a final fallback. Old pending rewards are also offered before the current-Encounter claimed lock, so historical results remain collectible.

@@ -66,18 +66,18 @@ export class MasterProcessSystem {
 
     this.update(now, true);
 
+    const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
+    if (pending.length) {
+      this.showPendingRewards(spawn.masterId, pending, spawn.encounterId);
+      return true;
+    }
+
     if (this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId)) {
       this.interactionPanel?.showMessage({
         title: profile.label,
         text: 'Бесплатная добыча у этого NPC в текущей встрече уже получена.',
         meta: 'Следующая бесплатная добыча будет у новой встречи / нового Encounter'
       });
-      return true;
-    }
-
-    const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
-    if (pending.length) {
-      this.showPendingRewards(spawn.masterId, pending, spawn.encounterId);
       return true;
     }
 

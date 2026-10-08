@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.13",
-  "stage": "master-free-reward-marker",
+  "version": "0.2.14",
+  "stage": "master-reward-compatibility",
   "updated": "2026-10-08",
-  "summary": "One free Master reward per Encounter with red pulsing world marker until successful claim"
+  "summary": "Keep legacy Master pending rewards collectible without consuming a new Encounter reward marker"
 }

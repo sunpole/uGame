@@ -2,6 +2,14 @@ function clone(value) {
   return typeof structuredClone === 'function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
 }
 
+function encounterIdFromProcessId(processId) {
+  const raw = String(processId || '');
+  if (!raw.startsWith('process:')) return null;
+  const lastColon = raw.lastIndexOf(':');
+  if (lastColon <= 'process:'.length) return null;
+  return raw.slice('process:'.length, lastColon) || null;
+}
+
 function normalize(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return { schemaVersion: 1, masters: {} };
   const masters = value.masters && typeof value.masters === 'object' && !Array.isArray(value.masters) ? value.masters : {};
@@ -99,7 +107,9 @@ export class CharacterMasterRelationshipSystem {
     const index = current.pendingRewards.findIndex((reward) => reward.rewardId === rewardId);
     if (index < 0) return null;
     const [removed] = current.pendingRewards.splice(index, 1);
-    const encounterId = removed?.encounterId || fallbackEncounterId;
+    const encounterId = removed?.encounterId
+      || encounterIdFromProcessId(removed?.processId)
+      || fallbackEncounterId;
     if (!Array.isArray(current.claimedEncounterIds)) current.claimedEncounterIds = [];
     if (encounterId && !current.claimedEncounterIds.includes(encounterId)) {
       current.claimedEncounterIds.push(encounterId);

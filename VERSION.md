@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.13**
+Current version: **0.2.14**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.14 | Master Reward Compatibility: preserve old pending rewards and reconstruct legacy Encounter ids before claim locking |
 | 0.2.13 | Master Reward Marker: one free Extraction per Encounter, red pulsing head marker until successful claim, claimed-state lock |
 | 0.2.12 | Daylight Boot Hotfix: non-blocking config load compatible with Phaser synchronous create(), preserving queued clock/zone state |
 | 0.2.11 | Daylight Audit: Pre-flight invariants, DEV phase overrides and source-of-truth modifier documentation |
@@ -148,6 +149,9 @@ Current version: **0.2.13**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.14
+Compatibility hotfix for the new one-free-reward lock. Historical pending rewards are presented before the current Encounter claim guard. Legacy pending rewards without an explicit `encounterId` reconstruct it from stable `process:<encounterId>:<timestamp>` before falling back to the current Encounter, preventing an old reward from consuming a new Encounter's free-reward marker.
 
 ## 0.2.13
 Master Encounter now has explicit one-free-reward state. A small red pulsing Phaser marker appears above Masters whose current Encounter reward is still unclaimed, follows wandering movement and disappears only after successful reward claim. `claimedEncounterIds` is the persistent source of truth; claimed Extraction becomes disabled and a second free Process cannot start in the same Encounter. Pending rewards now persist encounterId with legacy fallback. Also fixed Master Process tier forwarding so T2–T4 rewards reach `grantResource` with their actual Tier.
