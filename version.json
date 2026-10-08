@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.27",
-  "stage": "preflight-diamond-spatial-audit",
+  "version": "0.1.28",
+  "stage": "preflight-import-meta-hotfix",
   "updated": "2026-10-08",
-  "summary": "Document and audit preflight boot gate, true-square local diamond, performance pass, x3 city NPC and diagonal spatial safety rules"
+  "summary": "Fix false-positive preflight syntax failure for valid import.meta usage in ES modules"
 }

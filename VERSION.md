@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.27**
+Current version: **0.1.28**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.28 | Pre-flight Hotfix: support valid `import.meta` during browser-side syntax checking |
 | 0.1.27 | Pre-flight / True Diamond Audit: source-of-truth docs and manual QA checklist for v0.1.20–v0.1.26 |
 | 0.1.26 | Full Runtime Pre-flight: check every src JS module plus all runtime JSON files, JSON parse integrity and dependency/syntax coverage |
 | 0.1.25 | Spawn/Gate Safety Buffer: all 12 field candidate spots are at least 250px from diagonal entries; walls retain ≥100px clearance |
@@ -133,6 +134,9 @@ Current version: **0.1.27**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.28
+Исправлен ложный красный флаг Pre-flight для валидного ES-module выражения `import.meta.url` в `project-page-chrome.js`. Best-effort syntax checker больше не пытается парсить `import.meta` как обычный script-код через `new Function`; перед проверкой module-only выражение безопасно нормализуется. Игровой код `project-page-chrome.js` не изменялся.
 
 ## 0.1.27
 Закрыта документационная серия `UGD-0031`: pre-flight boot gate, true-square `1920×1920` local diamond, movement performance pass, city NPC ×3, diagonal field walls и spatial safety buffers. Добавлены `PREFLIGHT-BOOT.md` и отдельный audit/manual-QA checklist; CURRENT/NEXT/World docs обновлены.

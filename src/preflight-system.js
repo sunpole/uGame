@@ -59,6 +59,8 @@ function exportedNames(source) {
 function stripModuleSyntax(source) {
   return String(source)
     .replace(/^\s*import[^\n;]*(?:;|$)/gm, '')
+    .replace(/\bimport\.meta\.url\b/g, JSON.stringify(document.baseURI))
+    .replace(/\bimport\.meta\b/g, '({ url: ' + JSON.stringify(document.baseURI) + ' })')
     .replace(/\bexport\s+default\s+/g, '')
     .replace(/\bexport\s+async\s+function\s+/g, 'async function ')
     .replace(/\bexport\s+(class|function|const|let|var)\s+/g, '$1 ')
