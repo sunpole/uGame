@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.26",
-  "stage": "full-runtime-preflight-coverage",
+  "version": "0.1.27",
+  "stage": "preflight-diamond-spatial-audit",
   "updated": "2026-10-08",
-  "summary": "Expand loading preflight to all runtime JS modules and all runtime JSON data files, including JSON parse integrity and async export syntax checks"
+  "summary": "Document and audit preflight boot gate, true-square local diamond, performance pass, x3 city NPC and diagonal spatial safety rules"
 }

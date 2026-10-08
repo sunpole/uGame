@@ -1,10 +1,10 @@
 # uGame — 25-location Diamond World
 
-Current implementation: **v0.1.16**
+Current implementation: **v0.1.27**
 
 ## Local location geometry
 
-Each local location is a 1920×1080 **playable diamond**.
+Each local location uses a **1920×1920** world canvas. The playable area is a true square rotated by 45°, so its horizontal and vertical diagonals are equal.
 The rectangular canvas still exists technically, but the four outer corner triangles are masked and blocked.
 
 - `N / E / S / W` = orientation markers only.
@@ -54,7 +54,7 @@ All three lines use the same Encounter / Relationship / Module / REAL TIME Extra
 ## Event Spots
 
 Every field location has exactly 12 candidate Event Spots.
-v0.1.15 repositions them across the full diamond and guarantees playable-area margin plus wall clearance.
+v0.1.25 keeps 12 candidate spots across the full true-square diamond, at least 250 px from diagonal entries. v0.1.24–v0.1.25 keep diagonal walls at least 100 px from entries and spots.
 Safe cities keep 0 Event Spots.
 
 Existing rules remain:
@@ -68,3 +68,11 @@ Existing rules remain:
 World Map still displays N / NE / E / SE / S / SW / W / NW.
 All eight are useful orientation terms for quests and player communication.
 Only the four diagonal terms correspond to real local gates.
+
+## Field obstacle baseline
+
+Field prototype walls are rotated `+45°/-45°` and use rotated collision. Old horizontal/vertical wall placement is no longer the baseline.
+
+## City NPC landmark scale
+
+From v0.1.23 Banker / Teleporter / Guard are intentionally oversized landmark NPC, approximately ×3 versus the previous prototype presentation.

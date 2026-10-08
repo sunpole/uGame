@@ -44,6 +44,13 @@
       "label": "Проект",
       "items": [
         {
+          "id": "preflight-boot-doc",
+          "label": "Pre-flight Boot Gate",
+          "description": "Проверка всех runtime JS/JSON, связей, версий, WorldGraph и READY до показа игры.",
+          "type": "document",
+          "target": "./docs/PREFLIGHT-BOOT.md"
+        },
+        {
           "id": "current",
           "label": "Текущее состояние",
           "description": "Что сейчас принято, что обсуждается и что реализовано.",

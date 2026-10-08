@@ -1,6 +1,6 @@
 # WorldGraph
 
-Current implementation: **v0.1.16**
+Current implementation: **v0.1.27**
 
 ## Current graph
 
@@ -54,3 +54,9 @@ Movement also checks the diamond boundary, so the player cannot walk into the ma
 - max four exits per location.
 - field Event Spots stay inside the diamond.
 - city Event Spot count stays zero.
+
+## Local square-diamond dimensions
+
+Current local world canvas: `1920×1920`. The diamond vertices use equal X/Y radius from center, producing a square rotated 45° rather than a flattened rhombus.
+
+Field spatial QA additionally requires Event Spots ≥250 px from diagonal entries and rotated walls ≥100 px from entries/spots.

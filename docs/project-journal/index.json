@@ -947,6 +947,34 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0031",
+      "title": "Pre-flight boot gate, true square diamond and spatial safety",
+      "date": "2026-10-08",
+      "type": "architecture",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "preflight",
+        "boot",
+        "diamond",
+        "performance",
+        "walls",
+        "spawn-clearance",
+        "city-npc"
+      ],
+      "path": "records/UGD-0031-preflight-true-square-diamond-spatial-safety.md",
+      "related": [
+        "UGD-0027",
+        "UGD-0028",
+        "UGD-0029",
+        "UGD-0030"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

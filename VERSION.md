@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.26**
+Current version: **0.1.27**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.27 | Pre-flight / True Diamond Audit: source-of-truth docs and manual QA checklist for v0.1.20–v0.1.26 |
 | 0.1.26 | Full Runtime Pre-flight: check every src JS module plus all runtime JSON files, JSON parse integrity and dependency/syntax coverage |
 | 0.1.25 | Spawn/Gate Safety Buffer: all 12 field candidate spots are at least 250px from diagonal entries; walls retain ≥100px clearance |
 | 0.1.24 | Diagonal Obstacles + 100px Clearance: field walls become ±45° and spots/walls stay clear of entries/gates |
@@ -132,6 +133,9 @@ Current version: **0.1.26**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.27
+Закрыта документационная серия `UGD-0031`: pre-flight boot gate, true-square `1920×1920` local diamond, movement performance pass, city NPC ×3, diagonal field walls и spatial safety buffers. Добавлены `PREFLIGHT-BOOT.md` и отдельный audit/manual-QA checklist; CURRENT/NEXT/World docs обновлены.
 
 ## 0.1.26
 Pre-flight manifest расширен до всех runtime `src/*.js` модулей и всех runtime JSON data files. Loading screen отдельно подтверждает: доступность файлов, JSON parse integrity, version consistency, named import/export dependencies и syntax parse для всего JS-набора, даже если модуль не попадает в main import graph. Исправлен parser для `export async function`. Gameplay открывается только после зелёных проверок и подтверждения `worldReady`.
