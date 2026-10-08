@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.20**
+Current version: **0.2.21**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.21 | Auto-transition from real-time Master Process timer to claim button |
 | 0.2.20 | Live InteractionPanel completion does not accidentally close the next modal |
 | 0.2.19 | CMD updater: add option 11 Quick Run (no RUN prompt), preserve protected option 4 and existing launch checks |
 | 0.2.18 | Separate current/historical Master rewards, preserve correct Encounter claim marker and expose legacy loot independently |
@@ -155,6 +156,9 @@ Current version: **0.2.20**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.21
+Playable Master Process UX: when the REAL TIME countdown finishes while the modal is open, the exact Process's pending reward automatically appears as a claim action. Closing the window or reloading keeps the pending reward available through the existing save. No automatic inventory grant, new timers, or schema changes. Depends on v0.2.20 modal token guard. Browser QA pending.
 
 ## 0.2.20
 Live interaction modal safety: when an expiring message's callback opens a replacement panel, the old message must not close the newly opened window or overwrite its metadata. Completion checks now use the live-update token after the callback. This is groundwork for showing Master rewards automatically when a Process finishes. No reward/save logic changed. Requires live browser QA.

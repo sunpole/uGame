@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.20",
-  "stage": "panel-live-transition-safety",
+  "version": "0.2.21",
+  "stage": "master-process-auto-reward",
   "updated": "2026-10-08",
-  "summary": "Keep a newly opened result panel visible when a live countdown message expires"
+  "summary": "Automatically show the Master Process reward action when the real-time countdown completes"
 }

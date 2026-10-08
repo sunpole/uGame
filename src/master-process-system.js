@@ -203,10 +203,8 @@ export class MasterProcessSystem {
       this.update(now, true);
       const current = this.relationshipSystem?.getActiveProcess?.(process.masterId);
       if (!current || current.processId !== process.processId) {
-        const pending = this.relationshipSystem?.getPendingRewards?.(process.masterId) || [];
-        return pending.some((reward) => reward.processId === process.processId)
-          ? 'Process завершён · результат сохранён как pending reward'
-          : 'Process больше не активен';
+        // The live panel can transition to the claim UI for this exact Process.
+        return null;
       }
       const left = Number(current.endsAt) - now;
       return 'До завершения ' + formatRemaining(left) + ' · REAL TIME';
@@ -214,9 +212,14 @@ export class MasterProcessSystem {
 
     this.interactionPanel?.showMessage({
       title: 'Добыча / Process',
-      text: 'QA Process запущен и сохранён. Его startedAt/endsAt остаются в Character↔Master state после закрытия игры.',
+      text: 'Добыча выполняется в реальном времени. Когда Process завершится, появится кнопка получения награды. Можно закрыть окно: результат сохранится.',
       meta: metaProvider(Date.now()),
       metaProvider,
+      onExpired: () => {
+        const completed = (this.relationshipSystem?.getPendingRewards?.(process.masterId) || [])
+          .filter((reward) => reward.processId === process.processId);
+        if (completed.length) this.showPendingRewards(process.masterId, completed, process.encounterId);
+      },
       updateIntervalMs: 250
     });
   }
