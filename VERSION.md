@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.19**
+Current version: **0.2.20**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.20 | Live InteractionPanel completion does not accidentally close the next modal |
 | 0.2.19 | CMD updater: add option 11 Quick Run (no RUN prompt), preserve protected option 4 and existing launch checks |
 | 0.2.18 | Separate current/historical Master rewards, preserve correct Encounter claim marker and expose legacy loot independently |
 | 0.2.17 | Hard Phaser Master marker lifecycle on claim, sprite PRE-FLIGHT regression, read-only DEV 8388 diagnostic |
@@ -154,6 +155,9 @@ Current version: **0.2.19**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.20
+Live interaction modal safety: when an expiring message's callback opens a replacement panel, the old message must not close the newly opened window or overwrite its metadata. Completion checks now use the live-update token after the callback. This is groundwork for showing Master rewards automatically when a Process finishes. No reward/save logic changed. Requires live browser QA.
 
 ## 0.2.19
 Updater convenience patch: `Update-uGame.ps1` adds menu item 11 "Quick Run project (no RUN prompt)". Option 4 still requires entering `RUN`. Both use one `Run-Project` implementation and retain repository validation, `package.json` dev-script validation, local biome texture import, `npm --ignore-scripts run dev`, and no automatic dependency install or GitHub update. Only an explicit menu choice can start Quick Run. `tests/Test-Updater.ps1` adds static dispatch/confirmation assertions and a missing-game fast-run refusal. Windows PowerShell 5.1 end-to-end execution remains to be checked on the user's machine.

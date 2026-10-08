@@ -129,10 +129,14 @@ export class InteractionPanelSystem {
       const nextMeta = metaProvider(Date.now());
       if (nextMeta === null || nextMeta === false) {
         this.stopLiveUpdates();
+        const finishedToken = this.liveUpdateToken;
         onExpired?.();
-        if (this.isOpen()) this.close();
+        // A completion handler may have opened a new panel. Never close it.
+        if (finishedToken === this.liveUpdateToken && this.isOpen()) this.close();
         return;
       }
+      // A meta callback may have replaced the current panel as well.
+      if (token !== this.liveUpdateToken) return;
       if (this.metaElement) this.metaElement.textContent = String(nextMeta ?? '');
     };
 
