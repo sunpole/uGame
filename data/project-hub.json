@@ -13,6 +13,12 @@
           "type": "close"
         },
         {
+          "id": "world-map",
+          "label": "Карта мира",
+          "description": "25 локаций ромбом: города, поля, биомы, ID и текущая позиция.",
+          "type": "world-map"
+        },
+        {
           "id": "interface-settings",
           "label": "Настройки интерфейса",
           "description": "Выделение текста и другие локальные UI-настройки.",

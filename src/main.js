@@ -795,6 +795,23 @@ projectHubSystem = new ProjectHubSystem({
   onOpenChange: () => syncPlayerInputState(),
   interfaceSettings: interfaceSettingsSystem,
   biomeTextureSettings: biomeTextureSettingsSystem,
+  worldMap: {
+    getData: () => {
+      const graph = worldSpawnStateSystem?.worldGraph;
+      const currentZoneId = eventSpotSystem?.currentZoneId || masterEncounterSystem?.currentZoneId || null;
+      const zones = [...(graph?.zones?.values?.() || [])].map((zone) => ({
+        id: zone.id,
+        ordinalId: zone.ordinalId,
+        name: zone.name,
+        biome: zone.biome,
+        isSafeCity: zone.isSafeCity === true,
+        cityKey: zone.cityKey || null,
+        worldMap: zone.worldMap || null,
+        locationTier: zone.isSafeCity ? null : (worldSpawnStateSystem?.getLocationSummary?.(zone.id)?.tier || null)
+      }));
+      return { currentZoneId, zones };
+    }
+  },
   spawnZoneDebug: {
     getSettings: () => spawnZoneDebugSystem?.getSettings?.() || null,
     updateSettings: (patch) => spawnZoneDebugSystem?.updateSettings?.(patch) || null,

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.05**
+Current version: **0.1.06**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.06 | Diamond World Map UI: Project Hub renders all 25 locations as rotated squares with names, IDs, biome/city styling and current position |
 | 0.1.05 | Five-city Teleport Network: Aster opens all safe cities and teleports to the selected city center |
 | 0.1.04 | Working City Banker + Guides: Boris opens the existing bank; five biome guards open city-specific dialogues |
 | 0.1.03 | Expanded Biome Textures: forest/stone/south + city variants; south field uses brown sand and south city white marble |
@@ -111,6 +112,9 @@ Current version: **0.1.05**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.06
+Project Hub получил отдельный экран **Карта мира**. Все 25 зон читаются напрямую из WorldGraph и отображаются как квадратные tiles, повёрнутые на 45° в общий ромб. Tile показывает временное название, `loc-xxxxx`, biome и `Location Tier` для field zones; пять safe cities имеют отдельные рамки по направлению. Текущая зона выделяется ярким контуром. Клик по tile пока только выбирает локацию для просмотра деталей и не телепортирует персонажа.
 
 ## 0.1.05
 Все копии **Астэра Звездочёта** теперь являются одним functional city-teleporter service. InteractionPanel показывает пять safe cities в порядке их world ID; текущий город помечается `вы здесь` и недоступен для повторного выбора. Выбор другого города вызывает существующий `ZoneSystem.travel()` с `entryId=center`, поэтому это настоящий переход мира, а не отдельная копия сцены. После телепорта обновляется Vision и проигрывается portal sound.

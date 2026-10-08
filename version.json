@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.05",
-  "stage": "five-city-teleport-network",
+  "version": "0.1.06",
+  "stage": "diamond-world-map-ui",
   "updated": "2026-10-08",
-  "summary": "Aster the shared teleporter opens a five-city destination menu and performs real city-to-city travel"
+  "summary": "Project Hub gains an interactive read-only 25-location diamond world map with city/biome styling, IDs and current location"
 }

@@ -167,6 +167,7 @@ export class ProjectHubSystem {
     interfaceSettings,
     biomeTextureSettings,
     worldAnalyzer,
+    worldMap,
     spawnZoneDebug,
     devCodeRunner
   }) {
@@ -182,6 +183,7 @@ export class ProjectHubSystem {
     this.interfaceSettings = interfaceSettings;
     this.biomeTextureSettings = biomeTextureSettings;
     this.worldAnalyzer = worldAnalyzer;
+    this.worldMap = worldMap;
     this.spawnZoneDebug = spawnZoneDebug;
     this.devCodeRunner = devCodeRunner;
     this.config = null;
@@ -273,6 +275,11 @@ export class ProjectHubSystem {
 
     if (view.type === 'world-analyzer') {
       this.renderWorldAnalyzer(view);
+      return;
+    }
+
+    if (view.type === 'world-map') {
+      this.renderWorldMap(view);
       return;
     }
 
@@ -378,10 +385,89 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (item.type === 'world-map') {
+      this.stack.push({ type: 'world-map', label: item.label, selectedId: null });
+      this.renderCurrent();
+      return;
+    }
+
     if (item.type === 'spawn-zone-debug') {
       this.stack.push({ type: 'spawn-zone-debug', label: item.label });
       this.renderCurrent();
     }
+  }
+
+  renderWorldMap(view) {
+    this.setSubViewHeader(view.label || 'Карта мира', 'uGame / Мир / Карта');
+    const data = this.worldMap?.getData?.();
+    const zones = Array.isArray(data?.zones) ? data.zones : [];
+    if (!zones.length) {
+      this.contentElement.innerHTML = '<div class="project-hub-error">WorldMap runtime ещё не готов.</div>';
+      return;
+    }
+
+    const currentZoneId = data.currentZoneId || null;
+    if (!view.selectedId || !zones.some((zone) => zone.id === view.selectedId)) {
+      view.selectedId = currentZoneId || zones[0]?.id || null;
+    }
+    const selected = zones.find((zone) => zone.id === view.selectedId) || null;
+
+    const tiles = zones.map((zone) => {
+      const dx = Number(zone.worldMap?.diamondX) || 0;
+      const dy = Number(zone.worldMap?.diamondY) || 0;
+      const left = 'calc(50% + ' + (dx * 66) + 'px)';
+      const top = (112 + dy * 66) + 'px';
+      const classes = [
+        'world-map-tile',
+        zone.isSafeCity ? 'is-city' : 'is-field',
+        zone.id === currentZoneId ? 'is-current' : '',
+        zone.id === view.selectedId ? 'is-selected' : ''
+      ].filter(Boolean).join(' ');
+      const typeLabel = zone.isSafeCity ? 'ГОРОД' : (zone.locationTier ? 'LT ' + zone.locationTier : 'ПОЛЕ');
+      return [
+        '<button type="button" class="' + classes + '" data-world-map-zone="' + escapeHtml(zone.id) + '"',
+        ' data-biome="' + escapeHtml(zone.biome || 'unknown') + '"',
+        ' data-city-key="' + escapeHtml(zone.cityKey || '') + '"',
+        ' style="left:' + left + ';top:' + top + '">',
+        '<span class="world-map-tile-inner">',
+        '<strong>' + escapeHtml(zone.name || zone.id) + '</strong>',
+        '<small>' + escapeHtml(zone.id) + '</small>',
+        '<em>' + escapeHtml(typeLabel + ' · ' + (zone.biome || '—')) + '</em>',
+        '</span>',
+        '</button>'
+      ].join('');
+    }).join('');
+
+    const detail = selected ? [
+      '<div class="world-map-detail">',
+      '<strong>' + escapeHtml(selected.name || selected.id) + '</strong>',
+      '<span>' + escapeHtml(selected.id) + '</span>',
+      '<span>' + escapeHtml(selected.isSafeCity ? 'Мирный город' : 'Полевая локация') + '</span>',
+      '<span>Биом: <b>' + escapeHtml(selected.biome || '—') + '</b></span>',
+      selected.locationTier ? '<span>Location Tier: <b>' + escapeHtml(selected.locationTier) + '</b></span>' : '',
+      selected.id === currentZoneId ? '<span class="world-map-you-are-here">● Вы здесь</span>' : '',
+      '</div>'
+    ].join('') : '';
+
+    this.contentElement.innerHTML = [
+      '<div class="world-map-toolbar">',
+      '<div><strong>Мир uGame · 25 локаций</strong><span>5 мирных городов · 20 полевых зон · временные названия</span></div>',
+      detail,
+      '</div>',
+      '<div class="world-map-scroll">',
+      '<div class="world-map-stage">',
+      tiles,
+      '</div>',
+      '</div>'
+    ].join('');
+
+    for (const button of this.contentElement.querySelectorAll('[data-world-map-zone]')) {
+      button.addEventListener('click', () => {
+        view.selectedId = button.dataset.worldMapZone;
+        this.renderWorldMap(view);
+      });
+    }
+    this.contentElement.scrollTop = 0;
   }
 
   renderSpawnZoneDebug(view) {

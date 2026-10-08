@@ -2127,3 +2127,96 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .world-analyzer-zones { color:#8b949e; font:10px/1.5 monospace; word-break:break-word; }
 #world-analyzer-teleport { border-color:#238636; color:#7ee787; cursor:pointer; }
 @media (max-width:900px){.world-analyzer-layout{grid-template-columns:1fr;}}
+
+/* v0.1.06 — 25-location diamond world map */
+.world-map-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.world-map-toolbar > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.world-map-toolbar > div:first-child strong { color: #f0f6fc; font-size: 18px; }
+.world-map-toolbar > div:first-child span { color: #8b949e; font-size: 11px; }
+.world-map-detail {
+  min-width: 260px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px 10px;
+  color: #8b949e;
+  font-size: 10px;
+}
+.world-map-detail strong { width: 100%; color: #f0f6fc; text-align: right; font-size: 13px; }
+.world-map-you-are-here { color: #7ee787 !important; font-weight: 700; }
+.world-map-scroll { max-width: 100%; overflow: auto; }
+.world-map-stage {
+  position: relative;
+  width: 920px;
+  height: 720px;
+  margin: 0 auto;
+  border: 1px solid #21262d;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(56,139,253,0.09), transparent 46%),
+    #080b0f;
+  overflow: hidden;
+}
+.world-map-tile {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 3px solid #8b949e;
+  border-radius: 5px;
+  background: #252b33;
+  color: #e6edf3;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.world-map-tile:hover { z-index: 5; filter: brightness(1.22); }
+.world-map-tile.is-selected { z-index: 6; box-shadow: 0 0 0 3px rgba(240,246,252,0.75); }
+.world-map-tile.is-current { z-index: 7; box-shadow: 0 0 0 4px #f0f6fc, 0 0 22px rgba(126,231,135,0.85); }
+.world-map-tile-inner {
+  position: absolute;
+  inset: -15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transform: rotate(-45deg);
+  pointer-events: none;
+  text-align: center;
+}
+.world-map-tile-inner strong {
+  max-width: 106px;
+  color: #f0f6fc;
+  font-size: 9px;
+  line-height: 1.05;
+}
+.world-map-tile-inner small { color: #8b949e; font-size: 7px; }
+.world-map-tile-inner em { color: #c9d1d9; font-size: 7px; font-style: normal; }
+.world-map-tile[data-biome='snow'] { border-color: #58a6ff; background: #1e3350; }
+.world-map-tile[data-biome='forest'] { border-color: #3fb950; background: #173b24; }
+.world-map-tile[data-biome='sand'] { border-color: #d29922; background: #4b3617; }
+.world-map-tile[data-biome='stone'] { border-color: #c9d1d9; background: #30363d; }
+.world-map-tile[data-biome='south'] { border-color: #ff7b72; background: #54252a; }
+.world-map-tile.is-city { border-width: 5px; background: #11161d; }
+.world-map-tile[data-city-key='north'] { border-color: #388bfd; }
+.world-map-tile[data-city-key='east'] { border-color: #3fb950; }
+.world-map-tile[data-city-key='start'] { border-color: #f0f6fc; }
+.world-map-tile[data-city-key='west'] { border-color: #d29922; }
+.world-map-tile[data-city-key='south'] { border-color: #f85149; }
+
+@media (max-width: 800px) {
+  .world-map-toolbar { flex-direction: column; }
+  .world-map-detail { justify-content: flex-start; }
+  .world-map-detail strong { text-align: left; }
+}
