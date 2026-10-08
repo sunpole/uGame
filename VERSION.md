@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.23**
+Current version: **0.1.24**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.24 | Diagonal Obstacles + 100px Clearance: field walls become ±45° and spots/walls stay clear of entries/gates |
 | 0.1.23 | City NPC Scale ×3: Banker/Teleporter/Guard become intentionally large landmark characters with larger interaction radius |
 | 0.1.22 | Movement Performance: throttle DOM/SVG and slow Master work; cache HUD/arrows; remove per-frame interaction sort |
 | 0.1.21 | True Square Diamond: local world becomes 1920×1920 so the 45° playable diamond is visually square, not flattened |
@@ -129,6 +130,9 @@ Current version: **0.1.23**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.24
+Старые axis-aligned obstacles удалены из field data и заменены четырьмя детерминированными pattern-вариантами из трёх стен, каждая стена повёрнута на `+45°` или `-45°`. Rotated collision теперь считается в локальных координатах стены, а не через axis-aligned bounding box. Все 12 candidate Event Spots переразложены по true-square diamond. Минимальный clearance от Event Spot до entry/gate >100 px; стены валидируются с ≥100 px clearance от всех Event Spots и четырёх entries. Safe cities остаются без полевых стен/спавнов.
 
 ## 0.1.23
 Городские сервисные NPC увеличены примерно в 3 раза относительно v0.1.22. Banker использует scale 3×, Teleporter сохраняет вытянутую форму (`3×3.66`), Guard умножает прежний 1.28-scale до `3.84×3.84`. Их подписи подняты выше и увеличены до 16 px, default interaction radius расширен до 150 px. Функции Bank/Teleport/Guide не менялись.

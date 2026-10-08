@@ -132,8 +132,33 @@ function validateWorld(world) {
     if (transition?.to?.entryId !== opposite[side]) throw new Error('Bad opposite entry: ' + transition.id);
   }
 
+  const distance = (a, b) => Math.hypot(Number(a.x) - Number(b.x), Number(a.y) - Number(b.y));
+  const pointToWallDistance = (point, wall) => {
+    const angle = Number(wall.rotationDeg || 0) * Math.PI / 180;
+    const cos = Math.cos(-angle);
+    const sin = Math.sin(-angle);
+    const dx = Number(point.x) - Number(wall.x);
+    const dy = Number(point.y) - Number(wall.y);
+    const localX = dx * cos - dy * sin;
+    const localY = dx * sin + dy * cos;
+    const qx = Math.max(Math.abs(localX) - Number(wall.width) / 2, 0);
+    const qy = Math.max(Math.abs(localY) - Number(wall.height) / 2, 0);
+    return Math.hypot(qx, qy);
+  };
+
   for (const zone of fields) {
     if ((zone.eventSpots || []).length !== 12) throw new Error(zone.id + ': expected 12 Event Spots');
+    const entries = ['nw','ne','sw','se'].map((id) => zone.entries?.[id]).filter(Boolean);
+    for (const spot of zone.eventSpots || []) {
+      if (entries.some((entry) => distance(spot, entry) < 100)) throw new Error(zone.id + ': spot too close to gate');
+    }
+    for (const wall of zone.walls || []) {
+      if (Math.abs(Math.abs(Number(wall.rotationDeg || 0)) - 45) > 0.01) throw new Error(zone.id + ': wall is not ±45°');
+      const protectedPoints = [...entries, ...(zone.eventSpots || [])];
+      if (protectedPoints.some((point) => pointToWallDistance(point, wall) < 100)) {
+        throw new Error(zone.id + ': wall clearance < 100px');
+      }
+    }
   }
   for (const zone of cities) {
     if ((zone.eventSpots || []).length !== 0) throw new Error(zone.id + ': city Event Spots must be 0');

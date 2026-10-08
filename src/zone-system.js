@@ -143,7 +143,7 @@ export class ZoneSystem {
     this.makeCompassMarkers();
 
     for (const wall of zone.walls || []) {
-      this.makeWall(this.mapX(wall.x), wall.y, wall.width, wall.height);
+      this.makeWall(this.mapX(wall.x), wall.y, wall.width, wall.height, wall.rotationDeg || 0);
     }
 
     const interactables = (zone.interactables || []).map((definition) => ({
@@ -289,10 +289,34 @@ export class ZoneSystem {
     return side || 'по умолчанию';
   }
 
-  makeWall(x, y, width, height) {
-    const object = this.scene.add.rectangle(x, y, width, height, 0x30363d);
+  makeWall(x, y, width, height, rotationDeg = 0) {
+    const rotation = Number(rotationDeg || 0) * Math.PI / 180;
+    const object = this.scene.add.rectangle(x, y, width, height, 0x30363d)
+      .setStrokeStyle(1, 0x484f58)
+      .setRotation(rotation);
     this.objects.push(object);
-    this.walls.push({ x, y, width, height });
+    this.walls.push({
+      x,
+      y,
+      width,
+      height,
+      rotation,
+      cos: Math.cos(-rotation),
+      sin: Math.sin(-rotation)
+    });
+  }
+
+  collidesWithWall(x, y, margin = 14) {
+    for (const wall of this.walls) {
+      const dx = Number(x) - wall.x;
+      const dy = Number(y) - wall.y;
+      const localX = dx * wall.cos - dy * wall.sin;
+      const localY = dx * wall.sin + dy * wall.cos;
+      if (Math.abs(localX) <= wall.width / 2 + margin && Math.abs(localY) <= wall.height / 2 + margin) {
+        return true;
+      }
+    }
+    return false;
   }
 
   clear() {

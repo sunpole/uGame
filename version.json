@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.23",
-  "stage": "city-npc-scale-x3",
+  "version": "0.1.24",
+  "stage": "diagonal-walls-and-spawn-clearance",
   "updated": "2026-10-08",
-  "summary": "Scale city Banker, Teleporter and Guard visuals roughly 3x from their previous prototype sizes and enlarge interaction range/labels"
+  "summary": "Rebuild field obstacles as ±45° rotated walls and guarantee 100px clearance from gates/entries and Event Spots; keep spots away from entries"
 }
