@@ -85,8 +85,10 @@ export class ResourceExpeditionSystem {
     const candidates = this.allowedTiers(spawn.tier);
     if (!candidates.length) return { ok: false, reason: 'unsupported-tier' };
     const eligible = candidates.filter((tierId) => this.config.enabledResourceTiers.includes(tierId)
-      && (!this.getAccess || this.getAccess(spawn, tierId)?.ok === true));
-    const tier = desiredTier || eligible.at(-1) || candidates[0];
+      && (this.getAccess ? this.getAccess(spawn, tierId)?.ok === true : tierId === 'T1'));
+    // Fail closed for high Tiers when profession authorization is unavailable.
+    // Old T1 encounters continue to work without a profession callback.
+    const tier = desiredTier || eligible[0] || candidates[0];
     if (!candidates.includes(tier)) return { ok: false, reason: 'unsupported-tier' };
     if (!this.config.enabledResourceTiers.includes(tier) || !eligible.includes(tier)) {
       return { ok: false, reason: 'skills-locked', tier, availableTiers: candidates,
