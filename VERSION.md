@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.22**
+Current version: **0.1.23**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.23 | City NPC Scale ×3: Banker/Teleporter/Guard become intentionally large landmark characters with larger interaction radius |
 | 0.1.22 | Movement Performance: throttle DOM/SVG and slow Master work; cache HUD/arrows; remove per-frame interaction sort |
 | 0.1.21 | True Square Diamond: local world becomes 1920×1920 so the 45° playable diamond is visually square, not flattened |
 | 0.1.20 | Pre-flight Loading Gate: validate runtime files/modules/syntax/version/world/Masters/textures/Phaser before revealing gameplay |
@@ -128,6 +129,9 @@ Current version: **0.1.22**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.23
+Городские сервисные NPC увеличены примерно в 3 раза относительно v0.1.22. Banker использует scale 3×, Teleporter сохраняет вытянутую форму (`3×3.66`), Guard умножает прежний 1.28-scale до `3.84×3.84`. Их подписи подняты выше и увеличены до 16 px, default interaction radius расширен до 150 px. Функции Bank/Teleport/Guide не менялись.
 
 ## 0.1.22
 Оптимизирован игровой update-loop после появления большого diamond world. Vision SVG теперь обновляется максимум ~30 FPS вместо DOM mutation каждый frame; slow Master wandering считается с шагом 50 ms; HUD stamina и keyboard indicators пишутся в DOM только при изменении; nearest interactable выбирается одним проходом без создания/sort временных массивов. World Spawn/Event/Process timers остаются REAL TIME и не меняют частоту логики.

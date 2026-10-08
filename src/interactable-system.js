@@ -86,6 +86,9 @@ export class InteractableSystem {
       used: false,
       ...definition
     };
+    if (String(item.type || '').startsWith('city-') && definition?.interactionRadius == null) {
+      item.interactionRadius = 150;
+    }
 
     if (!(item.once && item.used)) item.display = this.createDisplay(item);
     else item.display = null;
@@ -143,15 +146,17 @@ export class InteractableSystem {
         bodyHeight: 27,
         armOffset: 15,
         legOffset: 7,
-        shadowWidth: 38
+        shadowWidth: 38,
+        scaleX: 3,
+        scaleY: 3
       });
       const coin = scene.add.circle(0, 4, 4, 0xf0c66a, 1).setStrokeStyle(1, 0xffdf8a);
       visual.container.add(coin);
       visual.container.setSize(42, 44);
       body = visual.container;
-      label = scene.add.text(item.x, item.y - 34, (item.label || 'Банкир') + '\n' + (item.roleLabel || 'Банкир'), { ...labelStyle, color: '#f0c66a', align: 'center' }).setOrigin(0.5);
+      label = scene.add.text(item.x, item.y - 88, (item.label || 'Банкир') + '\n' + (item.roleLabel || 'Банкир'), { ...labelStyle, fontSize: '16px', color: '#f0c66a', align: 'center' }).setOrigin(0.5);
     } else if (item.type === 'city-teleporter') {
-      glow = scene.add.circle(item.x, item.y + 2, 29, 0x8957e5, 0.16);
+      glow = scene.add.circle(item.x, item.y + 8, 72, 0x8957e5, 0.12);
       const visual = createHumanoidVisual(scene, {
         x: item.x,
         y: item.y,
@@ -164,13 +169,14 @@ export class InteractableSystem {
         armHeight: 17,
         legHeight: 16,
         shadowWidth: 22,
-        scaleY: 1.22
+        scaleX: 3,
+        scaleY: 3.66
       });
       const star = scene.add.star(13, -9, 5, 2, 5, 0xf0c66a, 1);
       visual.container.add(star);
       visual.container.setSize(30, 54);
       body = visual.container;
-      label = scene.add.text(item.x, item.y - 43, (item.label || 'Телепортер') + '\n' + (item.roleLabel || 'Телепортер'), { ...labelStyle, color: '#d2a8ff', align: 'center' }).setOrigin(0.5);
+      label = scene.add.text(item.x, item.y - 112, (item.label || 'Телепортер') + '\n' + (item.roleLabel || 'Телепортер'), { ...labelStyle, fontSize: '16px', color: '#d2a8ff', align: 'center' }).setOrigin(0.5);
       scene.tweens.add({ targets: glow, alpha: { from: 0.1, to: 0.34 }, scale: { from: 0.94, to: 1.12 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'city-guide') {
       const styles = {
@@ -191,8 +197,8 @@ export class InteractableSystem {
         bodyHeight: 25,
         armOffset: 11,
         shadowWidth: 28,
-        scaleX: 1.28,
-        scaleY: 1.28
+        scaleX: 3.84,
+        scaleY: 3.84
       });
       const cape = scene.add.triangle(0, 14, -10, 7, 10, 7, 0, 28, s.cape, 0.92);
       const sword = scene.add.rectangle(17, 3, 3, 27, 0xc9d1d9, 1).setStrokeStyle(1, s.trim).setRotation(-0.32);
@@ -200,7 +206,7 @@ export class InteractableSystem {
       visual.container.add([cape, sword, shield]);
       visual.container.setSize(56, 58);
       body = visual.container;
-      label = scene.add.text(item.x, item.y - 45, (item.label || 'Страж') + '\n' + (item.roleLabel || 'Страж города'), { ...labelStyle, color: s.text, align: 'center' }).setOrigin(0.5);
+      label = scene.add.text(item.x, item.y - 118, (item.label || 'Страж') + '\n' + (item.roleLabel || 'Страж города'), { ...labelStyle, fontSize: '16px', color: s.text, align: 'center' }).setOrigin(0.5);
     } else if (item.type === 'chest') {
       body = scene.add.rectangle(item.x, item.y, item.width || 40, item.height || 30, 0xc9963b, 1).setStrokeStyle(2, 0xf0c66a);
       label = scene.add.text(item.x, item.y - 28, item.label || 'Сундук', { ...labelStyle, color: '#f0c66a' }).setOrigin(0.5);
