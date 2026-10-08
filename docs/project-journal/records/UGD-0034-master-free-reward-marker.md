@@ -44,3 +44,8 @@ Pending rewards now persist `encounterId`; legacy pending rewards use the curren
 ## Compatibility note v0.2.14
 
 Pending rewards created before v0.2.13 may not contain a direct `encounterId`. The runtime reconstructs it from the stable `process:<encounterId>:<timestamp>` id before using the current Encounter as a final fallback. Old pending rewards are also offered before the current-Encounter claimed lock, so historical results remain collectible.
+
+
+## Implementation QA note v0.2.16
+
+A QA report found an already-claimed Master Encounter (`Добыча · получено`) with its red Phaser marker still visible. Marker visibility now reconciles from `claimedEncounterIds` during the existing throttled Master NPC update, as well as on relationship state changes. The rule remains one free Extraction per Encounter; no new currency, timer, or claim/reset semantics were introduced. PRE-FLIGHT runs a headless runtime regression for stale marker recovery. Browser/Phaser visual confirmation is pending.

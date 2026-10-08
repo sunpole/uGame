@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.15",
-  "stage": "master-reward-preflight-fix",
+  "version": "0.2.16",
+  "stage": "master-reward-visibility-sync",
   "updated": "2026-10-08",
-  "summary": "Fix false-negative Master reward PRE-FLIGHT validation of the data-driven claimed label, preserving gameplay"
+  "summary": "Reconcile claimed Master reward marker visibility on NPC updates and cover it with PRE-FLIGHT runtime regression"
 }

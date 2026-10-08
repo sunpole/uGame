@@ -264,6 +264,78 @@ function validateMasterRewardState(sources) {
   }
 }
 
+function validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRelationshipSystem }) {
+  const spawn = {
+    masterId: 'test-master', encounterId: 'test-encounter',
+    zoneId: 'test-zone', spotId: 'test-spot',
+    resourceDirectionId: 'stone', tier: 'T1',
+    activeModules: ['extraction'], efficiencyMultiplier: 1,
+    expiresAt: Date.now() + 60000
+  };
+  const marker = { visible: true, setVisible(value) { this.visible = Boolean(value); return this; } };
+  const item = {
+    id: 'master-interactable:' + spawn.encounterId,
+    type: 'master-npc', masterRewardAvailable: true, _masterRewardMarker: marker
+  };
+  let encounter, claimedActions = [], notificationsEnabled = true;
+  const relationship = new CharacterMasterRelationshipSystem({
+    onStateChange: () => { if (notificationsEnabled) encounter?.refreshRewardMarkers?.(); }
+  });
+  const interactable = {
+    getItem: (id) => id === item.id ? item : null,
+    setMasterRewardAvailable: (target, available) => {
+      const current = typeof target === 'string' ? interactable.getItem(target) : target;
+      if (!current) return false;
+      current.masterRewardAvailable = Boolean(available);
+      current._masterRewardMarker?.setVisible?.(Boolean(available));
+      return true;
+    },
+    setItemTransform: () => true
+  };
+  encounter = new MasterEncounterSystem({
+    worldGraph: { getZone: () => ({ eventSpots: [{ id: spawn.spotId, x: 100, y: 100 }] }) },
+    zoneSystem: { mapPoint: (point) => point },
+    interactableSystem: interactable,
+    worldSpawnStateSystem: {
+      getActiveMasters: () => [spawn],
+      getMasterSpawn: (id) => id === spawn.encounterId ? spawn : null
+    },
+    relationshipSystem: relationship,
+    masterCatalog: {
+      get: () => ({ displayName: 'Master' }),
+      getModule: () => ({ label: 'Добыча', implemented: true }),
+      moduleLabel: () => 'Добыча'
+    },
+    interactionPanel: { showActions: (value) => { claimedActions = value.actions; } }
+  });
+  encounter.currentZoneId = spawn.zoneId;
+  relationship.initialize();
+  if (!encounter.isFreeRewardAvailable(spawn)) throw new Error('fresh Encounter should be unclaimed');
+  relationship.markEncounterRewardClaimed(spawn.masterId, spawn.encounterId);
+  if (marker.visible !== false) throw new Error('claim event did not hide marker');
+  encounter.activate({ masterEncounterId: spawn.encounterId });
+  if (!claimedActions.some((x) => x.label === 'Добыча · получено' && x.disabled && !x.onSelect)) {
+    throw new Error('claimed Extraction not disabled');
+  }
+
+  // A lost visual notification must be repaired during the existing NPC update.
+  notificationsEnabled = false;
+  item.masterRewardAvailable = true;
+  marker.setVisible(true);
+  encounter.update(Date.now(), 16.67);
+  if (marker.visible !== false) throw new Error('stale red marker was not repaired');
+
+  // Cached logical state may match while the Phaser visibility flag is stale.
+  marker.setVisible(true);
+  encounter.nextMotionUpdateAt = 0;
+  encounter.update(Date.now(), 16.67);
+  if (marker.visible !== false) throw new Error('stale Phaser visible flag was not repaired');
+
+  notificationsEnabled = true;
+  relationship.initialize(null);
+  if (marker.visible !== true) throw new Error('fresh unclaimed marker was not restored');
+}
+
 function validateVersions(expected, versionJson, packageJson, manifest) {
   const values = [versionJson?.version, packageJson?.version, manifest?.version].map(String);
   if (values.some((value) => value !== expected)) throw new Error('versions: ' + values.join(' / ') + ', expected ' + expected);
@@ -408,7 +480,12 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
       fetchText('./src/master-process-system.js')
     ]);
     validateMasterRewardState({ relationship, interactable, encounter, process });
-    return '1 free reward / Encounter · red pulse marker · claimed-state lock OK';
+    const [{ MasterEncounterSystem }, { CharacterMasterRelationshipSystem }] = await Promise.all([
+      import('./master-encounter-system.js'),
+      import('./character-master-relationship-system.js')
+    ]);
+    validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRelationshipSystem });
+    return '1 free reward / Encounter · red marker · runtime claim/reconcile OK';
   });
 
   await check('textures', 'Конфигурация текстур', async () => {

@@ -49,13 +49,21 @@ export class MasterEncounterSystem {
     return !this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId);
   }
 
+  syncRewardMarker(spawn) {
+    if (!spawn?.encounterId) return false;
+    const item = this.interactableSystem?.getItem?.('master-interactable:' + spawn.encounterId);
+    if (!item || item.type !== 'master-npc') return false;
+    // Character ↔ Master remains authoritative; the Phaser marker is just a view.
+    const available = this.isFreeRewardAvailable(spawn);
+    const marker = item._masterRewardMarker;
+    if (item.masterRewardAvailable === available && (!marker || marker.visible === available)) return false;
+    return Boolean(this.interactableSystem?.setMasterRewardAvailable?.(item, available));
+  }
+
   refreshRewardMarkers() {
     if (!this.currentZoneId) return false;
     const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: this.currentZoneId }) || [];
-    for (const spawn of spawns) {
-      const id = 'master-interactable:' + spawn.encounterId;
-      this.interactableSystem?.setMasterRewardAvailable?.(id, this.isFreeRewardAvailable(spawn));
-    }
+    for (const spawn of spawns) this.syncRewardMarker(spawn);
     return true;
   }
 
@@ -114,6 +122,7 @@ export class MasterEncounterSystem {
     const spots = new Map((zone.eventSpots || []).map((spot) => [spot.id, spot]));
 
     for (const spawn of spawns) {
+      this.syncRewardMarker(spawn);
       const id = 'master-interactable:' + spawn.encounterId;
       const spot = spots.get(spawn.spotId);
       if (!spot) continue;

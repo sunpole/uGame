@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.15**
+Current version: **0.2.16**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.16 | Master reward marker visibility reconciliation on NPC updates + executable PRE-FLIGHT regression test |
 | 0.2.15 | Fix Master reward PRE-FLIGHT false failure for data-driven claimed label; keep claim guard checks |
 | 0.2.14 | Master Reward Compatibility: preserve old pending rewards and reconstruct legacy Encounter ids before claim locking |
 | 0.2.13 | Master Reward Marker: one free Extraction per Encounter, red pulsing head marker until successful claim, claimed-state lock |
@@ -150,6 +151,9 @@ Current version: **0.2.15**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.16
+Follow-up to user QA: the current Encounter can display "Добыча · получено" while its red Phaser reward dot remains visible. The claim-lock source of truth (`Character↔Master.claimedEncounterIds`) and inventory reward workflow are unchanged. The Master NPC's existing throttled world update now reconciles the cached eligibility and Phaser marker's `visible` state against the saved claimed state, independently of one-off relationship change notifications. This self-corrects stale markers without adding a per-frame DOM update or a new timer. PRE-FLIGHT now executes a mocked runtime regression for immediate claim hiding, the disabled action, missed notifications, stale sprite visibility, and an unclaimed encounter. Automated mock tests passed; real browser/Phaser visual QA is still required.
 
 ## 0.2.15
 Pre-flight hotfix: `MasterEncounterSystem` renders `Добыча · получено` dynamically from the extraction module's catalog label plus the ` · получено` suffix. The old static-source check demanded the fully concatenated literal, incorrectly halting boot. The validator now checks the actual claimed-state expression, generated suffix, and disabled-action guard. No gameplay behavior or save schema changed; v0.2.14 had not passed browser PRE-FLIGHT.
