@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.11**
+Current version: **0.1.12**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.12 | Interaction Prompt Separation: NPC/object hint occupies a dedicated lane above controls and no longer covers Action |
 | 0.1.11 | Local Diamond Geometry: playable area is a rhombus with exactly four real gates NW/NE/SW/SE; N/E/S/W are orientation-only |
 | 0.1.10 | Diamond World Series Audit: source-of-truth docs for 25 locations, five safe cities, city services, textures, compass and QA |
 | 0.1.09 | First Playable World Migration: Three Fragments/Core content restored in field zones; start-city guide becomes the quest introduction |
@@ -117,6 +118,9 @@ Current version: **0.1.11**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.12
+Interaction prompt вынесен выше постоянной нижней панели управления. Кнопка `Действие` остаётся видимой всегда, а подсказка вида `ДЕЙСТВИЕ · ... · E / Space / Enter` занимает отдельную строку над controls. На touch layout сохранён дополнительный отступ над крупными мобильными кнопками.
 
 ## 0.1.11
 Локальная игровая зона стала ромбической. За пределы ромба игрок выйти не может, внешние углы визуально затемнены. Реальных переходов ровно четыре: `NW / NE / SW / SE`; `N / E / S / W` отображаются только как ориентиры. Existing 5×5 logical adjacency remapped to diagonal gates: old east→SE, west→NW, south→SW, north→NE. Spawn в следующей локации происходит с противоположной диагональной стороны. Все 12 Event Spot каждой field zone перераспределены по всей площади ромба и валидированы как находящиеся внутри playable area.

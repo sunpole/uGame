@@ -234,7 +234,7 @@ export class InteractableSystem {
       .sort((a, b) => distance(this.player, a) - distance(this.player, b));
 
     const nearest = available[0];
-    this.onPrompt?.(nearest ? `E / Space / Enter · ${nearest.prompt || nearest.label || 'Взаимодействовать'}` : '');
+    this.onPrompt?.(nearest ? `ДЕЙСТВИЕ · ${nearest.prompt || nearest.label || 'Взаимодействовать'} · E / Space / Enter` : '');
 
     if (nearest && interactPressed) this.activate(nearest);
   }

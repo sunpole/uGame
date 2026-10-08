@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.11",
-  "stage": "local-diamond-four-diagonal-gates",
+  "version": "0.1.12",
+  "stage": "interaction-prompt-separation",
   "updated": "2026-10-08",
-  "summary": "Local locations become diamond playable areas with only four real gates: NW, NE, SW, SE; N/E/S/W are orientation markers only"
+  "summary": "Interaction hint gets its own lane above controls so NPC prompts never cover the persistent Action button"
 }
