@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.43",
-  "stage": "expedition-realm-qa",
+  "version": "0.2.44",
+  "stage": "profession-mastery-t1-to-t8-qa",
   "updated": "2026-10-09",
-  "summary": "Immersive separate resource realm and persistent NPC 30-second farewell after full stock depletion; solo QA only"
+  "summary": "Four persistent resource skill trees, NPC training/reputation, T1–T8 eligibility, analytics bonuses, tool/food/tonic buffs. Local solo QA, not real multiplayer."
 }
