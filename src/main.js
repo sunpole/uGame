@@ -322,6 +322,7 @@ class ZoneScene extends Phaser.Scene {
       onOpenChange: () => syncPlayerInputState(),
       windowManager: uiWindowManager
     });
+    this.stepsSummaryElement?.addEventListener('click', () => this.openStepsEconomy());
 
     masterProcessSystem = new MasterProcessSystem({
       relationshipSystem: masterRelationshipSystem,
@@ -620,14 +621,77 @@ class ZoneScene extends Phaser.Scene {
     });
 
     this.eventSystem.on('steps:debt-started', () => {
-      this.interactionPanel?.showMessage?.({
+      this.interactionPanel?.showActions?.({
         title: 'Шаги закончились',
         text: 'Движение не блокируется. Дальнейший путь увеличивает Долг Шагов. Обычный городской regen этот долг не погашает.',
-        meta: 'Погашение: Внимание → Шаги или будущая продажа ресурсов торговцу'
+        actions: [
+          {
+            id: 'steps-open-exchange',
+            label: 'Обмен Шагов / Внимания',
+            onSelect: () => {
+              this.openStepsEconomy();
+              return true;
+            }
+          },
+          {
+            id: 'steps-continue-debt',
+            label: 'Продолжить в долг',
+            onSelect: () => true
+          }
+        ],
+        meta: 'Погашение долга: Внимание → Шаги или будущая продажа ресурсов торговцу'
       });
     });
 
     this.eventSystem.on('quest:complete', () => this.audioSystem.play('quest'));
+  }
+
+  openStepsEconomy() {
+    if (!stepSystem?.loaded) return false;
+    const attention = Math.floor(Number(resourceSystem?.get?.('attention')) || 0);
+    const toSteps = stepSystem.attentionToStepsAmount();
+    const toAttention = stepSystem.stepsToAttentionAmount();
+    const balance = Math.floor(stepSystem.balance);
+    const debt = Math.floor(stepSystem.debt);
+    const fmt = (value) => Math.floor(Number(value) || 0).toLocaleString('ru-RU');
+
+    this.interactionPanel?.showActions?.({
+      title: 'Шаги / Внимание',
+      text: debt > 0
+        ? 'Есть Долг Шагов. Обмен Внимания сначала погашает долг; только остаток становится положительными Шагами.'
+        : 'Шаги можно обменивать на Внимание и обратно. Обратный курс намеренно в 10 раз менее выгоден.',
+      actions: [
+        {
+          id: 'attention-to-steps',
+          label: '1 Внимание → ' + fmt(toSteps) + ' Шагов',
+          disabled: attention < 1,
+          hint: attention < 1 ? 'Нет Внимания' : 'Сначала погасит Долг Шагов',
+          onSelect: () => {
+            if (!resourceSystem?.remove?.('attention', 1)) return false;
+            stepSystem.add(toSteps, { source: 'attention-exchange', payDebt: true });
+            this.flushStepPersistence(Date.now(), true);
+            this.openStepsEconomy();
+            return true;
+          }
+        },
+        {
+          id: 'steps-to-attention',
+          label: fmt(toAttention) + ' Шагов → 1 Внимание',
+          disabled: debt > 0 || balance < toAttention,
+          hint: debt > 0 ? 'Сначала нужно закрыть Долг Шагов' : (balance < toAttention ? 'Недостаточно Шагов' : 'Обратный курс ×10'),
+          onSelect: () => {
+            const spent = stepSystem.spendService(toAttention, { source: 'attention-buyback' });
+            if (!spent.ok) return false;
+            resourceSystem?.add?.('attention', 1);
+            this.flushStepPersistence(Date.now(), true);
+            this.openStepsEconomy();
+            return true;
+          }
+        }
+      ],
+      meta: 'Шаги ' + fmt(balance) + ' · Долг ' + fmt(debt) + ' · Внимание ' + fmt(attention)
+    });
+    return true;
   }
 
   openCityTeleporter(item) {
@@ -636,25 +700,42 @@ class ZoneScene extends Phaser.Scene {
       ?.sort((a, b) => Number(a.ordinalId || 0) - Number(b.ordinalId || 0)) || [];
     const currentZoneId = this.zoneSystem?.currentId || null;
 
-    const actions = cities.map((city) => ({
-      id: city.id,
-      label: city.name + (city.id === currentZoneId ? ' · вы здесь' : ''),
-      disabled: city.id === currentZoneId,
-      hint: city.cityRole || 'Мирный город',
-      onSelect: () => {
-        this.interactionPanel?.close?.();
-        this.zoneSystem?.travel?.({ zoneId: city.id, entryId: 'center' });
-        visionSystem?.update?.();
-        this.audioSystem?.play?.('portal');
-        return true;
-      }
-    }));
+    const actions = cities.map((city) => {
+      const transitions = city.id === currentZoneId
+        ? 0
+        : this.worldGraph.shortestDistance(currentZoneId, city.id);
+      const cost = Number.isFinite(transitions)
+        ? stepSystem?.teleportCostForTransitions?.(transitions) || 0
+        : Infinity;
+      const affordable = Number.isFinite(cost) && stepSystem?.canSpendService?.(cost);
+      return {
+        id: city.id,
+        label: city.name + (city.id === currentZoneId ? ' · вы здесь' : ' · ' + Number(cost || 0).toLocaleString('ru-RU') + ' Шагов'),
+        disabled: city.id === currentZoneId || !affordable,
+        hint: city.id === currentZoneId
+          ? (city.cityRole || 'Мирный город')
+          : ((city.cityRole || 'Мирный город') + ' · маршрут ' + transitions + ' переходов'),
+        onSelect: () => {
+          const spent = stepSystem?.spendService?.(cost, { source: 'city-teleport' });
+          if (!spent?.ok) {
+            this.openCityTeleporter(item);
+            return false;
+          }
+          this.flushStepPersistence(Date.now(), true);
+          this.interactionPanel?.close?.();
+          this.zoneSystem?.travel?.({ zoneId: city.id, entryId: 'center' });
+          visionSystem?.update?.();
+          this.audioSystem?.play?.('portal');
+          return true;
+        }
+      };
+    });
 
     this.interactionPanel?.showActions?.({
       title: item?.label || 'Астэр Звездочёт',
-      text: 'Выберите мирный город. Телепорт переносит персонажа прямо в центральную точку выбранного города.',
+      text: 'Выберите мирный город. Цена = кратчайший маршрут WorldGraph × 1 000 пеших Шагов × 60%. Телепорт не создаёт долг.',
       actions,
-      meta: 'Городская сеть · ' + cities.length + ' направлений'
+      meta: 'Городская сеть · ' + cities.length + ' городов · ' + stepSystem.statusText()
     });
   }
 

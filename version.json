@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.1",
-  "stage": "steps-movement-cost",
+  "version": "0.2.2",
+  "stage": "attention-exchange-paid-teleport",
   "updated": "2026-10-08",
-  "summary": "Spend Steps by actual field movement distance; safe cities free; dash x2 speed/x4 spend rate and debt fallback"
+  "summary": "Attention/Steps exchange and WorldGraph-priced city teleport using positive Steps only"
 }

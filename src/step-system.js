@@ -104,6 +104,20 @@ export class StepSystem {
     return { spent: requested, debtAdded, snapshot: this.snapshot() };
   }
 
+  teleportCostForTransitions(transitionCount) {
+    const count = Math.max(0, Math.floor(Number(transitionCount) || 0));
+    const walking = count * Math.max(1, Number(this.config?.teleportWalkStepsPerTransition) || 1000);
+    return Math.ceil(walking * Math.max(0, Number(this.config?.teleportCostFactor) || 0.6));
+  }
+
+  attentionToStepsAmount() {
+    return Math.max(1, Math.floor(Number(this.config?.attentionToSteps) || 10000000));
+  }
+
+  stepsToAttentionAmount() {
+    return Math.max(1, Math.floor(Number(this.config?.stepsToAttention) || 100000000));
+  }
+
   canSpendService(cost) {
     const requested = Math.max(0, Math.floor(Number(cost) || 0));
     return this.state.debt <= 0 && this.state.balance >= requested;

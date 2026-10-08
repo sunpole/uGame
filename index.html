@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.1</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.1" />
+    <title>uGame v0.2.2</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.2" />
     <style>
       .preflight-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#080b0f;color:#e6edf3;font:14px/1.35 Arial,sans-serif}
       .preflight-screen[hidden]{display:none}
@@ -175,7 +175,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.1</strong>
+          <strong id="footer-version">v0.2.2</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -206,18 +206,18 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.1';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.2';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.1', root });
+        const result = await runPreflight({ expectedVersion: '0.2.2', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.1');
+        const gameModule = await import('./src/main.js?v=0.2.2');
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK');
 
         result.report.set('world-boot', 'Запуск игрового мира', 'running', 'инициализация…');

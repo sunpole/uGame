@@ -14,6 +14,19 @@ export class ResourceSystem {
     return next;
   }
 
+  remove(id, amount = 1) {
+    const requested = Math.max(0, Number(amount) || 0);
+    const current = this.values.get(id) || 0;
+    if (requested <= 0 || current < requested) return false;
+    const next = current - requested;
+    if (next <= 0) this.values.delete(id);
+    else this.values.set(id, next);
+    this.onChange?.(id, Math.max(0, next), this.snapshot());
+    this.eventSystem?.emit('resource:changed', { id, amount: -requested, value: Math.max(0, next) });
+    this.eventSystem?.emit('quest:signal', { key: `resource:${id}` });
+    return true;
+  }
+
   restore(snapshot = {}) {
     this.values.clear();
     for (const [id, raw] of Object.entries(snapshot || {})) {

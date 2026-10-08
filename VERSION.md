@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.1**
+Current version: **0.2.2**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.2 | Attention Exchange + Paid Teleport: 1 Attention→10M Steps, 100M Steps→1 Attention, WorldGraph-priced city teleport |
 | 0.2.1 | Steps Movement Cost: actual travelled distance spends Steps outside cities; dash ×2 speed / ×4 rate; movement can create debt |
 | 0.2.0 | Steps Economy Core: persistent Steps + StepDebt, city REAL TIME regen target and UI |
 | 0.1.28 | Pre-flight Hotfix: support valid `import.meta` during browser-side syntax checking |
@@ -136,6 +137,9 @@ Current version: **0.2.1**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.2
+Кнопка Шагов открывает экономическое окно. `1 Attention → 10 000 000 Steps` является special payment: сначала гасит StepDebt, остаток попадает в balance. Обратный обмен `100 000 000 Steps → 1 Attention` доступен только без debt и из положительного balance. City Teleporter теперь рассчитывает цену через `shortestDistance × 1000 × 0.60`; teleport — service spend и никогда не создаёт debt.
 
 ## 0.2.1
 Movement подключён к StepSystem. Расход считается по фактически изменившейся world-position, а не по времени клавиши: baseline `1 Step ≈ 1.2 px`. Safe city movement бесплатно. Dash теперь ровно ×2 speed; при ×4 spend-rate та же дистанция стоит примерно ×2 Steps. При исчерпании balance движение не блокируется и создаёт StepDebt; при первом уходе в долг показывается объясняющее окно.
