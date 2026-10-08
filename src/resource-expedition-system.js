@@ -9,7 +9,7 @@ const tierNumber = (tier) => Number(String(tier || '').replace(/^T/, '')) || 1;
 const roundUnits = (kg) => Math.max(1, Math.round(Number(kg || 0) * 10));
 
 export class ResourceExpeditionSystem {
-  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, onDepleted, random = Math.random } = {}) {
+  constructor({ config = null, onChange, availableSteps, spendSteps, addSteps, grantResource, grantRelationshipXp, grantProfessionXp, getAccess, getModifiers, onDepleted, random = Math.random } = {}) {
     this.config = config;
     this.onChange = onChange;
     this.availableSteps = availableSteps;
@@ -17,6 +17,9 @@ export class ResourceExpeditionSystem {
     this.addSteps = addSteps;
     this.grantResource = grantResource;
     this.grantRelationshipXp = grantRelationshipXp;
+    this.grantProfessionXp = grantProfessionXp;
+    this.getAccess = getAccess;
+    this.getModifiers = getModifiers;
     this.onDepleted = onDepleted;
     this.random = random;
     this.state = { schemaVersion: 1, usedEncounterIds: [], run: null };
@@ -64,7 +67,7 @@ export class ResourceExpeditionSystem {
     return this.config?.resourceTiersByMasterTier?.[masterTier] || [];
   }
 
-  enter(spawn, now = Date.now()) {
+  enter(spawn, now = Date.now(), desiredTier = null) {
     if (!this.config || !spawn?.encounterId || !spawn?.masterId || !spawn?.resourceDirectionId) {
       return { ok: false, reason: 'invalid' };
     }
@@ -78,12 +81,17 @@ export class ResourceExpeditionSystem {
     if (Number(spawn.expiresAt) <= now) return { ok: false, reason: 'expired' };
     if (this.state.usedEncounterIds.includes(spawn.encounterId)) return { ok: false, reason: 'used' };
 
-    const tier = this.allowedTiers(spawn.tier)[0];
-    if (!tier) return { ok: false, reason: 'unsupported-tier' };
-    if (!this.config.enabledResourceTiers.includes(tier)) {
-      return { ok: false, reason: 'skills-locked', tier, availableTiers: this.allowedTiers(spawn.tier) };
+    const candidates = this.allowedTiers(spawn.tier);
+    if (!candidates.length) return { ok: false, reason: 'unsupported-tier' };
+    const eligible = candidates.filter((tierId) => this.config.enabledResourceTiers.includes(tierId)
+      && (!this.getAccess || this.getAccess(spawn, tierId)?.ok === true));
+    const tier = desiredTier || eligible.at(-1) || candidates[0];
+    if (!candidates.includes(tier)) return { ok: false, reason: 'unsupported-tier' };
+    if (!this.config.enabledResourceTiers.includes(tier) || !eligible.includes(tier)) {
+      return { ok: false, reason: 'skills-locked', tier, availableTiers: candidates,
+        access: this.getAccess?.(spawn, tier) || null };
     }
-    const initialUnits = roundUnits(this.config.initialStockKg);
+    const initialUnits = roundUnits(this.config.stockKgByTier?.[tier] || this.config.initialStockKg);
     this.state.run = {
       expeditionId: 'expedition:' + spawn.encounterId,
       encounterId: spawn.encounterId,
@@ -110,6 +118,7 @@ export class ResourceExpeditionSystem {
       claimed: false,
       multiplier: Math.max(1, Number(spawn.efficiencyMultiplier) || 1)
     };
+    this.onEntered?.(spawn);
     this.state.usedEncounterIds.push(spawn.encounterId);
     this.state.usedEncounterIds = this.state.usedEncounterIds.slice(-300);
     this.publish();
@@ -164,7 +173,11 @@ export class ResourceExpeditionSystem {
       ? -1
       : 0.5 - Math.abs(this.meterPosition(now) - 0.5);
     const result = (this.config.manual.results || []).find((option) => accuracy >= Number(option.minAccuracy));
-    const units = result ? roundUnits(result.massKg) : 0;
+    const buffs = this.getModifiers?.(this.run.resourceId, now) || {};
+    const units = result
+      ? Math.max(1,Math.round(roundUnits(result.massKg)*Math.max(1,Number(buffs.yieldMultiplier)||1))
+        + Math.max(0,Math.floor(Number(buffs.manualExtraUnits)||0)))
+      : 0;
     if (cost > 0 && this.availableSteps() < cost) {
       this.run.mode = 'paused';
       this.run.manualStartedAt = 0;
@@ -180,7 +193,11 @@ export class ResourceExpeditionSystem {
     this.run.stockUnits -= mined;
     this.run.extractedUnits += mined;
     this.run.cargoUnits += mined;
-    if (mined > 0) this.grantRelationshipXp?.(this.run.masterId, Math.max(1, Math.round(Number(result.baseRelationshipXp) * this.run.multiplier)));
+    if (mined > 0) {
+      const xp=Math.max(1,Math.round(Number(result.baseRelationshipXp)*this.run.multiplier*(Number(buffs.xpMultiplier)||1)));
+      this.grantRelationshipXp?.(this.run.masterId,xp);
+      this.grantProfessionXp?.(this.run.resourceId,xp,{kind:'manual',units:mined,cycles:1});
+    }
     if (this.run.stockUnits === 0) this.finish('depleted', now);
     this.publish();
     return { ok: true, minedUnits: mined, result: result?.name || 'промах' };
@@ -195,26 +212,42 @@ export class ResourceExpeditionSystem {
     const cappedNow = Math.min(now, run.endsAt);
     if (run.mode === 'auto' && cappedNow > run.lastAutoAt) {
       const cfg = this.config.automatic;
-      const cycleMs = Math.max(1000, Number(cfg.cycleSeconds) * 1000);
-      const units = roundUnits(cfg.massKgPerCycle);
-      const cost = positiveInt(cfg.stepsPerCycle, 2);
-      const elapsedCycles = Math.floor((cappedNow - run.lastAutoAt) / cycleMs);
-      const possible = Math.min(elapsedCycles, Math.ceil(run.stockUnits / units),
-        cost > 0 ? Math.floor(Math.max(0, this.availableSteps()) / cost) : elapsedCycles);
-      if (possible > 0 && (cost === 0 || this.spendSteps(possible * cost))) {
-        const mined = Math.min(run.stockUnits, possible * units);
-        run.stockUnits -= mined;
-        run.extractedUnits += mined;
-        run.cargoUnits += mined;
-        run.autoCycles += possible;
-        run.spentSteps += possible * cost;
-        run.lastAutoAt += possible * cycleMs;
-        this.grantRelationshipXp?.(run.masterId, Math.max(1, Math.round(possible * Number(cfg.baseRelationshipXp || 1) * run.multiplier)));
-        changed = true;
+      const cycleMs = Math.max(1000, Number(cfg.cycleSeconds)*1000);
+      const elapsedCycles = Math.floor((cappedNow - run.lastAutoAt)/cycleMs);
+      let finished = 0, minedTotal = 0, xpTotal = 0;
+      // Timestamp each offline cycle so food/tonic bonuses cannot outlive their expiry.
+      for (let n=0; n<Math.min(2000,elapsedCycles) && run.stockUnits>0; n++) {
+        const when=run.lastAutoAt+cycleMs;
+        const buffs=this.getModifiers?.(run.resourceId,when) || {};
+        const units=Math.max(1,Math.round(roundUnits(cfg.massKgPerCycle)
+          *Math.max(1,Number(buffs.yieldMultiplier)||1)
+          *Math.max(1,Number(buffs.autoRateMultiplier)||1)));
+        const price=Math.max(1,Math.ceil(positiveInt(cfg.stepsPerCycle,2)
+          *Math.max(.5,Number(buffs.stepsMultiplier)||1)));
+        if (this.availableSteps()<price || !this.spendSteps(price)) {
+          run.mode='paused';
+          changed=true;
+          break;
+        }
+        const mined=Math.min(run.stockUnits,units);
+        run.stockUnits-=mined;
+        run.extractedUnits+=mined;
+        run.cargoUnits+=mined;
+        run.autoCycles+=1;
+        run.spentSteps+=price;
+        run.lastAutoAt=when;
+        minedTotal+=mined;
+        xpTotal+=Math.max(1,Math.round(Number(cfg.baseRelationshipXp||1)*run.multiplier*(Number(buffs.xpMultiplier)||1)));
+        finished++;
+        changed=true;
       }
-      if (possible < elapsedCycles && run.stockUnits > 0) {
-        run.mode = 'paused'; // No stored backlog that can be collected later without Steps.
-        changed = true;
+      if (minedTotal>0) {
+        this.grantRelationshipXp?.(run.masterId,xpTotal);
+        this.grantProfessionXp?.(run.resourceId,xpTotal,{kind:'auto',units:minedTotal,cycles:finished});
+      }
+      if (elapsedCycles>2000 && run.stockUnits>0) {
+        run.mode='paused'; // Corrupt/huge wall-clock jumps cannot force unbounded CPU usage.
+        changed=true;
       }
     }
     if (run.stockUnits === 0) {
