@@ -119,6 +119,19 @@
       ],
       "weightKg": 0.1,
       "stackLimit": 20
+    },
+    {
+      "id": "gatherer-gloves",
+      "name": "Рабочие перчатки добытчика",
+      "type": "equipment",
+      "tags": [
+        "item",
+        "equipment",
+        "gathering"
+      ],
+      "equipSlot": "gloves",
+      "weightKg": 0.4,
+      "stackLimit": 1
     }
   ]
 }
