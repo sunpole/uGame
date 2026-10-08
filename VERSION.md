@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.11**
+Current version: **0.2.12**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.12 | Daylight Boot Hotfix: non-blocking config load compatible with Phaser synchronous create(), preserving queued clock/zone state |
 | 0.2.11 | Daylight Audit: Pre-flight invariants, DEV phase overrides and source-of-truth modifier documentation |
 | 0.2.10 | Daylight Vision Architecture: generic flat/multiplier/multiplier-bonus stack, time-of-day vision and map-only tint |
 | 0.2.9 | Inspectable Pre-flight: per-test timing, copy-debug text, READY hold screen and explicit Start Game button |
@@ -146,6 +147,9 @@ Current version: **0.2.11**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.12
+Hotfix до ручного запуска: Phaser `create()` остаётся synchronous; Daylight config загружается promise-based без invalid `await`. Clock phase и city/field context можно передать до загрузки config, а `load()` применяет накопленное состояние сразу после JSON ready. Это предотвращает syntax/pre-flight failure и race при первом zone build.
 
 ## 0.2.11
 Pre-flight now validates all four Daylight phases, exact city/field radius and darkness multipliers, tint totals and generic flat/multiplier/multiplierBonus formula hooks. DEV 1301–1304 switch phase instantly; 1399 returns to actual Game Clock. Added UGD-0033 and manual QA checklist.

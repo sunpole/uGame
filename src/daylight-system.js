@@ -20,6 +20,7 @@ export class DaylightSystem {
     if (!response.ok) throw new Error('Daylight config failed: ' + response.status);
     this.config = await response.json();
     this.ensureTintElements(2);
+    this.apply();
     return this;
   }
 
@@ -36,15 +37,15 @@ export class DaylightSystem {
 
   setClockSnapshot(snapshot = {}) {
     const phase = String(snapshot.phase || '');
-    if (!this.config?.phases?.[phase]) return false;
+    if (!phase) return false;
     this.clockPhase = phase;
-    if (!this.overridePhase) this.apply();
+    if (this.config && !this.overridePhase) this.apply();
     return true;
   }
 
   setZone(zone = {}) {
     this.safeCity = zone?.isSafeCity === true;
-    this.apply();
+    if (this.config) this.apply();
   }
 
   phaseName() {

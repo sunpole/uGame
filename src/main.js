@@ -231,8 +231,10 @@ class ZoneScene extends Phaser.Scene {
       host: this.gameElement,
       visionSystem
     });
-    await daylightSystem.load();
     daylightSystem.setClockSnapshot(gameClockSystem?.snapshot?.() || { phase: 'День' });
+    daylightSystem.load().catch((error) => {
+      console.warn('DaylightSystem load failed', error);
+    });
     this.daylightSystem = daylightSystem;
 
     this.viewportSystem = new ResponsiveViewportSystem({

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.11",
-  "stage": "daylight-vision-audit",
+  "version": "0.2.12",
+  "stage": "daylight-boot-hotfix",
   "updated": "2026-10-08",
-  "summary": "Validate and document daylight vision modifier stack with DEV phase overrides"
+  "summary": "Fix Daylight loading inside synchronous Phaser create and preserve queued phase/zone context"
 }
