@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "storageKey": "ugame.biome-textures.v1",
   "textures": [
     {
@@ -59,6 +59,66 @@
       "city": true,
       "textureName": "Город · снег",
       "textureFile": "./assets/textures/biomes/city_snow_1024.png",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "forest",
+      "biome": "forest",
+      "city": false,
+      "textureName": "Лесной грунт",
+      "textureFile": "./assets/textures/biomes/grass_1024.png",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "stone",
+      "biome": "stone",
+      "city": false,
+      "textureName": "Каменный грунт",
+      "textureFile": "./assets/textures/biomes/grass_1024.png",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "south",
+      "biome": "south",
+      "city": false,
+      "textureName": "Южный коричневый песок",
+      "textureFile": "./assets/textures/biomes/south_256.jpg",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "city-forest",
+      "biome": "forest",
+      "city": true,
+      "textureName": "Лесной город",
+      "textureFile": "./assets/textures/biomes/city_grass_1024.png",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "city-stone",
+      "biome": "stone",
+      "city": true,
+      "textureName": "Стартовый каменный город",
+      "textureFile": "./assets/textures/biomes/city_grass_1024.png",
+      "enabled": true,
+      "scalePercent": 40,
+      "opacityPercent": 40
+    },
+    {
+      "id": "city-south",
+      "biome": "south",
+      "city": true,
+      "textureName": "Южный город · белый мрамор",
+      "textureFile": "./assets/textures/biomes/city_south_512.jpg",
       "enabled": true,
       "scalePercent": 40,
       "opacityPercent": 40

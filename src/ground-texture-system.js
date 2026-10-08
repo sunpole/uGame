@@ -7,7 +7,9 @@ export const GROUND_TEXTURE_ASSETS = [
   { key: 'ground-snow', file: './assets/textures/biomes/snow_1024.png', label: 'snow_1024.png' },
   { key: 'ground-city-grass', file: './assets/textures/biomes/city_grass_1024.png', label: 'city_grass_1024.png' },
   { key: 'ground-city-sand', file: './assets/textures/biomes/city_sand_1024.png', label: 'city_sand_1024.png' },
-  { key: 'ground-city-snow', file: './assets/textures/biomes/city_snow_1024.png', label: 'city_snow_1024.png' }
+  { key: 'ground-city-snow', file: './assets/textures/biomes/city_snow_1024.png', label: 'city_snow_1024.png' },
+  { key: 'ground-south', file: './assets/textures/biomes/south_256.jpg', label: 'south_256.jpg · южный песок' },
+  { key: 'ground-city-south', file: './assets/textures/biomes/city_south_512.jpg', label: 'city_south_512.jpg · белый мрамор' }
 ];
 
 function clone(value) {

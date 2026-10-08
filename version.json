@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.02",
-  "stage": "five-city-service-npcs",
+  "version": "0.1.03",
+  "stage": "expanded-biome-texture-slots",
   "updated": "2026-10-08",
-  "summary": "All five safe cities now contain the shared banker Boris, shared teleporter Aster, and one biome-specific unique city guide/guard with distinct prototype silhouettes"
+  "summary": "Add forest/stone/south and city variants; southern field uses brown sand and southern city uses white marble"
 }

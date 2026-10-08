@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.02**
+Current version: **0.1.03**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.03 | Expanded Biome Textures: forest/stone/south + city variants; south field uses brown sand and south city white marble |
 | 0.1.02 | Five-city Service NPC Cast: shared Banker/Teleporter personas plus 5 unique biome city guards with prototype silhouettes |
 | 0.1.01 | Safe City Hard Rules: 5 cities force full vision and cannot host Dynamic Events or Master encounters |
 | 0.1.00 | 25-location Diamond WorldGraph: logical 5×5 grid, 5 safe cities, 20 fields, 80 directed links and temporary names/IDs |
@@ -108,6 +109,9 @@ Current version: **0.1.02**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.03
+Biome Texture Runtime расширен слотами `forest`, `stone`, `south`, `city-forest`, `city-stone`, `city-south`. Южные field zones используют пользовательскую коричнево-песчаную текстуру, а `Беломраморный Двор` — пользовательскую белую мраморную текстуру. Forest/Stone пока используют существующие grass/city-grass assets как явный prototype fallback и могут быть заменены позже через Biome Visual Lab без изменения WorldGraph.
 
 ## 0.1.02
 Во всех 5 safe cities добавлены три статичных сервисных NPC. **Борис Хранильщик** — одна banker-persona с копиями в каждом городе; **Астэр Звездочёт** — одна teleporter-persona с копиями; третий NPC уникален для города: Северин Белый Щит (snow knight), Рейнар Дубовый Страж (forest ranger), Маршал Гранит (start/stone marshal), Хасим Песчаный Венец (sand pharaoh), Аврелий Белый Легат (south/marble). `InteractableSystem` получил отдельные prototype silhouettes для banker, mage/astrologer teleporter и пяти guide styles. Перемещение городских NPC пока намеренно не реализовано.
