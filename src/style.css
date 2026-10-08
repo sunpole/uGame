@@ -2318,3 +2318,7 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .resource-expedition-stats{font-size:12px;color:#9caaba;line-height:1.5}
 .resource-expedition-meter{height:145px;width:58px;justify-self:center;position:relative;border:2px solid #48515b;border-radius:9px;overflow:hidden;background:linear-gradient(to bottom,#b91c1c 0%,#cf6020 20%,#dbb027 37%,#15803d 46%,#15803d 54%,#dbb027 63%,#cf6020 80%,#b91c1c 100%)}
 .resource-expedition-pointer{position:absolute;left:0;right:0;height:6px;top:50%;margin-top:-3px;background:#fff;box-shadow:0 0 0 2px #111827,0 0 8px #fff}
+
+/* Keep resume controls truly hidden despite generic control button display rules. */
+#workspace-control-strip .mouse-controls button[hidden],
+#touch-controls .touch-actions button[hidden] { display:none !important; }
