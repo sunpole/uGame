@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.45",
+  "version": "0.2.46",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -74,7 +74,8 @@
     "./src/resource-profession-system.js",
     "./src/resource-profession-view.js",
     "./data/master-activities.json",
-    "./src/master-activity-system.js"
+    "./src/master-activity-system.js",
+    "./src/inventory-management.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -130,6 +131,7 @@
     "./src/resource-expedition-view.js",
     "./src/resource-profession-system.js",
     "./src/resource-profession-view.js",
-    "./src/master-activity-system.js"
+    "./src/master-activity-system.js",
+    "./src/inventory-management.js"
   ]
 }
