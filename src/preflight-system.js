@@ -247,9 +247,9 @@ function validateMasterRewardState(sources) {
   if (!relationship.includes('claimedEncounterIds') || !relationship.includes('hasClaimedEncounter')) {
     throw new Error('claimed Encounter reward state missing');
   }
-  if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardAvailable')
-    || !interactable.includes('marker.destroy?.()')) {
-    throw new Error('Master red reward marker missing');
+  if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardState')
+    || !interactable.includes('createMasterProcessTimer') || !interactable.includes('object.destroy?.()')) {
+    throw new Error('Master red/running/ready/claimed marker runtime missing');
   }
   // The Extraction label is data-driven (master-npcs.json), so the complete
   // "Добыча · получено" string is not a literal in this module.
@@ -284,11 +284,12 @@ function validateMasterRewardRuntime({ MasterEncounterSystem, CharacterMasterRel
   });
   const interactable = {
     getItem: (id) => id === item.id ? item : null,
-    setMasterRewardAvailable: (target, available) => {
+    setMasterRewardState: (target, state) => {
       const current = typeof target === 'string' ? interactable.getItem(target) : target;
       if (!current) return false;
-      current.masterRewardAvailable = Boolean(available);
-      current._masterRewardMarker?.setVisible?.(Boolean(available));
+      current.masterRewardState = state;
+      current.masterRewardAvailable = state !== 'claimed';
+      current._masterRewardMarker?.setVisible?.(state !== 'claimed');
       return true;
     },
     setItemTransform: () => true
@@ -356,7 +357,8 @@ function validateMasterRewardSpriteRuntime(InteractableSystem) {
       setName(value) { this.name = value; return this; },
       setVisible(value) { this.visible = Boolean(value); return this; },
       setPosition(px, py) { this.x = px; this.y = py; return this; },
-      setRotation() { return this; }, setText() { return this; },
+      setRotation() { return this; }, setText(value) { this.text=value; return this; },
+      setFillStyle(color) { this.fillColor=color; return this; },
       destroy() {
         this.active = false;
         scene.children.list = scene.children.list.filter((entry) => entry !== this);
@@ -383,6 +385,13 @@ function validateMasterRewardSpriteRuntime(InteractableSystem) {
   const first = make('test-1', true);
   if (redCount() !== 1 || !first._masterRewardMarker) throw new Error('unclaimed marker not created');
   const marker = first._masterRewardMarker;
+  system.setMasterRewardState(first, 'running', Date.now() + 60000);
+  if (!first._masterProcessTimer) throw new Error('Process countdown not created');
+  system.setMasterRewardState(first, 'ready');
+  if (redCount() !== 0 || first._masterProcessTimer
+    || scene.children.list.filter((obj) => obj.active && obj.fillColor === 0x22c55e).length !== 1) {
+    throw new Error('ready marker not green / stale countdown');
+  }
   system.setMasterRewardAvailable(first, false);
   if (redCount() !== 0 || first._masterRewardMarker || marker.active !== false
     || scene.tweens.active.some((tween) => tween.targets === marker)) {
