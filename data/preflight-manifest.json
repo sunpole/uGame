@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.41",
+  "version": "0.2.42",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -66,7 +66,10 @@
     "./data/city-specializations.json",
     "./data/materials-proposal.json",
     "./data/crafting-prototype.json",
-    "./src/crafting-system.js"
+    "./src/crafting-system.js",
+    "./data/resource-expeditions.json",
+    "./src/resource-expedition-system.js",
+    "./src/resource-expedition-view.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -117,6 +120,8 @@
     "./src/zone-system.js",
     "./src/step-system.js",
     "./src/daylight-system.js",
-    "./src/crafting-system.js"
+    "./src/crafting-system.js",
+    "./src/resource-expedition-system.js",
+    "./src/resource-expedition-view.js"
   ]
 }

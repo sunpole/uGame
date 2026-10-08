@@ -1,0 +1,44 @@
+name: uGame resource expedition v0.2.42 tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/resource-expedition-*.js'
+      - 'src/game-state.js'
+      - 'src/main.js'
+      - 'src/master-encounter-system.js'
+      - 'src/character-master-relationship-system.js'
+      - 'data/resource-expeditions.json'
+      - 'data/master-npcs.json'
+      - 'tests/resource-expedition.test.mjs'
+      - 'package.json'
+      - '.github/workflows/resource-expedition-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/resource-expedition-*.js'
+      - 'src/game-state.js'
+      - 'src/main.js'
+      - 'data/resource-expeditions.json'
+      - 'tests/resource-expedition.test.mjs'
+      - '.github/workflows/resource-expedition-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  expedition-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript module syntax
+        run: |
+          node --check src/resource-expedition-system.js
+          node --check src/resource-expedition-view.js
+          node --check src/main.js
+      - name: All Node regression tests
+        run: npm test

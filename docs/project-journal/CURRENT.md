@@ -164,3 +164,7 @@ Source-level duplicate Interactable ID/Phaser marker defect prevented; still awa
 - Из обсуждения 08.10: интерес к A+B+D (редкие Мастера, поручения, активная/Idle добыча); работа только в пределах Encounter и продолжается по REAL TIME при закрытом браузере, пока Encounter существует. Правило нахождения самого персонажа при Auto пока открыто.
 - **Текущий код v0.2.41:** прежняя гарантированная бесплатная Extraction и ресурсы T1–T4; новая гарантия Expedition и случайная доступность бонуса №2 **ещё не внедрены**. Временная совместимость старого `extraction` с новой шестёркой, новые Tier и навыки требуют отдельного решения/миграции и QA. Историческая запись `UGD-0015` сохраняется.
 - Подробности и открытые вопросы: `records/UGD-0036-resource-expeditions-active-idle.md`.
+
+## Реализация первого среза Resource Expedition v0.2.42 (QA feature branch)
+
+В отдельной ветке `feature/expeditions-v0.2.42` появляется локальный **1/12** прототип отдельной панели экспедиции: гарантированный пункт у Мастеров, finite T1 запас, Auto REAL TIME (offline до Encounter), Manual accuracy, расход Шагов и Relationship XP, pending cargo, solo Step refund. Это не multiplayer. T5–T8/дерево умений/12 реальных добытчиков пока отсутствуют. См. `docs/releases/v0.2.42.md`. Новая программа и её баланс требуют CI и ручного browser QA; пока PR не объединён с main.

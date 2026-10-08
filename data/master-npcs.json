@@ -1,20 +1,27 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "status": "prototype-neutral-lore",
-  "note": "Prototype identities for Stone/Water/Forest/Clay master lines. Tier/resource rules accepted; final names, titles, portraits and lore are not final.",
+  "note": "Expedition is guaranteed and free reward random for new Encounters. Legacy dialogue metadata retained for old saves; code must show expedition for existing Encounters. Tier+XP balance not final.",
   "modules": [
     {
       "id": "extraction",
-      "label": "Добыча",
+      "label": "Свободная награда · 60 секунд",
       "kind": "process",
       "implemented": true
     },
     {
       "id": "dialogue",
-      "label": "Разговор",
+      "label": "Разговор (старая встреча)",
       "kind": "dialogue",
-      "implemented": false
+      "implemented": false,
+      "legacy": true
+    },
+    {
+      "id": "expedition",
+      "label": "Ресурсная экспедиция",
+      "kind": "expedition",
+      "implemented": true
     },
     {
       "id": "quest",
@@ -24,13 +31,13 @@
     },
     {
       "id": "analytics",
-      "label": "Аналитика",
+      "label": "Аналитика и бонусы",
       "kind": "analytics",
       "implemented": false
     },
     {
       "id": "training",
-      "label": "Развитие",
+      "label": "Репутация и навыки",
       "kind": "training",
       "implemented": false
     },
@@ -49,13 +56,13 @@
       "tier": "T1",
       "efficiencyMultiplier": 1,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 2,
@@ -69,13 +76,13 @@
       "tier": "T2",
       "efficiencyMultiplier": 1.2,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 3,
@@ -89,13 +96,13 @@
       "tier": "T3",
       "efficiencyMultiplier": 1.4,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 4,
@@ -109,13 +116,13 @@
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 6,
@@ -129,13 +136,13 @@
       "tier": "T1",
       "efficiencyMultiplier": 1,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 2,
@@ -149,13 +156,13 @@
       "tier": "T2",
       "efficiencyMultiplier": 1.2,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 3,
@@ -169,13 +176,13 @@
       "tier": "T3",
       "efficiencyMultiplier": 1.4,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 4,
@@ -189,13 +196,13 @@
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 6,
@@ -209,13 +216,13 @@
       "tier": "T1",
       "efficiencyMultiplier": 1,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 2,
@@ -229,13 +236,13 @@
       "tier": "T2",
       "efficiencyMultiplier": 1.2,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 3,
@@ -249,13 +256,13 @@
       "tier": "T3",
       "efficiencyMultiplier": 1.4,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 4,
@@ -269,13 +276,13 @@
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 6,
@@ -289,13 +296,13 @@
       "tier": "T1",
       "efficiencyMultiplier": 1,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 2,
@@ -309,13 +316,13 @@
       "tier": "T2",
       "efficiencyMultiplier": 1.2,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 3,
@@ -329,13 +336,13 @@
       "tier": "T3",
       "efficiencyMultiplier": 1.4,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 4,
@@ -349,13 +356,13 @@
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [
-        "extraction"
+        "expedition"
       ],
       "modulePool": [
-        "dialogue",
+        "extraction",
+        "training",
         "quest",
         "analytics",
-        "training",
         "special-event"
       ],
       "moduleCountMin": 6,

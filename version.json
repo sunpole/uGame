@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.41",
-  "stage": "crafting-and-master-markers-qa",
-  "updated": "2026-10-08",
-  "summary": "60-second extraction countdown, green ready claim marker and first atomic T1 wood+stone crafting slice; awaiting smoke test"
+  "version": "0.2.42",
+  "stage": "resource-expedition-local-qa",
+  "updated": "2026-10-09",
+  "summary": "First solo finite-stock expedition via Master: auto REAL TIME, manual precision, 12-slot future cap, cargo claim, T2+ skill-lock placeholders"
 }

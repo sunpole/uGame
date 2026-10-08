@@ -126,6 +126,19 @@ function cleanContainers(value) {
 }
 
 
+function cleanResourceExpedition(value) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  return {
+    schemaVersion: 1,
+    usedEncounterIds: Array.isArray(source.usedEncounterIds)
+      ? [...new Set(source.usedEncounterIds.filter((id) => typeof id === 'string' && id))].slice(-300)
+      : [],
+    run: source.run && typeof source.run === 'object' && !Array.isArray(source.run)
+      ? (typeof structuredClone === 'function' ? structuredClone(source.run) : JSON.parse(JSON.stringify(source.run)))
+      : null
+  };
+}
+
 export function createDefaultGameState() {
   return {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
@@ -149,7 +162,8 @@ export function createDefaultGameState() {
       zones: {}
     },
     worldSpawnState: cleanWorldSpawnState(null),
-    characterMasterRelationships: cleanMasterRelationships(null)
+    characterMasterRelationships: cleanMasterRelationships(null),
+    resourceExpedition: cleanResourceExpedition(null)
   };
 }
 
@@ -182,7 +196,8 @@ export function normalizeGameState(input) {
     quests: cleanQuestState(input.quests),
     dynamicEvents: cleanDynamicEvents(input.dynamicEvents),
     worldSpawnState: cleanWorldSpawnState(input.worldSpawnState),
-    characterMasterRelationships: cleanMasterRelationships(input.characterMasterRelationships)
+    characterMasterRelationships: cleanMasterRelationships(input.characterMasterRelationships),
+    resourceExpedition: cleanResourceExpedition(input.resourceExpedition)
   };
 }
 
@@ -248,5 +263,9 @@ export class GameState {
 
   setCharacterMasterRelationships(snapshot) {
     this.state.characterMasterRelationships = cleanMasterRelationships(snapshot);
+  }
+
+  setResourceExpedition(snapshot) {
+    this.state.resourceExpedition = cleanResourceExpedition(snapshot);
   }
 }

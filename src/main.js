@@ -36,6 +36,8 @@ import { MasterCatalog } from './master-catalog.js';
 import { MasterEncounterSystem } from './master-encounter-system.js';
 import { CharacterMasterRelationshipSystem } from './character-master-relationship-system.js';
 import { MasterProcessSystem } from './master-process-system.js';
+import { ResourceExpeditionSystem } from './resource-expedition-system.js';
+import { ResourceExpeditionView } from './resource-expedition-view.js';
 import { CraftingSystem } from './crafting-system.js';
 import { SpawnZoneDebugSystem } from './spawn-zone-debug-system.js';
 
@@ -73,6 +75,8 @@ let masterCatalog = new MasterCatalog();
 let masterEncounterSystem = null;
 let masterRelationshipSystem = null;
 let masterProcessSystem = null;
+let resourceExpeditionSystem = null;
+let resourceExpeditionView = null;
 let spawnZoneDebugSystem = null;
 
 
@@ -83,7 +87,7 @@ function syncPlayerInputState() {
     const element = document.getElementById(id);
     return element && !element.hidden;
   });
-  playerController.setEnabled(!anyOverlayOpen);
+  playerController.setEnabled(!anyOverlayOpen && !resourceExpeditionSystem?.isOccupied?.());
 }
 
 function fitPlayfield() {
@@ -346,6 +350,42 @@ class ZoneScene extends Phaser.Scene {
     });
     this.masterProcessSystem = masterProcessSystem;
 
+    resourceExpeditionSystem = new ResourceExpeditionSystem({
+      onChange: (snapshot) => {
+        this.gameState.setResourceExpedition(snapshot);
+        this.persistGameState();
+        this.syncExpeditionUI();
+      },
+      availableSteps: () => stepSystem?.debt > 0 ? 0 : Math.floor(Number(stepSystem?.balance) || 0),
+      spendSteps: (amount) => stepSystem?.spendService?.(amount, { source: 'resource-expedition' })?.ok === true,
+      addSteps: (amount) => stepSystem?.add?.(amount, { source: 'expedition-solo-refund' }),
+      grantResource: (id, mass, tier) => this.grantResource(id, mass, tier),
+      grantRelationshipXp: (masterId, xp) => masterRelationshipSystem?.addRelationshipXp?.(masterId, xp)
+    });
+    this.resourceExpeditionSystem = resourceExpeditionSystem;
+    resourceExpeditionView = new ResourceExpeditionView({
+      expeditionSystem: resourceExpeditionSystem,
+      interactionPanel: this.interactionPanel,
+      onOccupancyChange: () => this.syncExpeditionUI()
+    });
+    this.resourceExpeditionView = resourceExpeditionView;
+    const strip = document.querySelector('#workspace-control-strip .mouse-controls');
+    this.expeditionResumeButton = document.createElement('button');
+    this.expeditionResumeButton.type = 'button';
+    this.expeditionResumeButton.className = 'mouse-control mouse-control-inventory';
+    this.expeditionResumeButton.textContent = 'Экспедиция';
+    this.expeditionResumeButton.title = 'Вернуться к добыче или забрать груз';
+    this.expeditionResumeButton.hidden = true;
+    this.expeditionResumeButton.addEventListener('click', () => resourceExpeditionView?.show());
+    strip?.append(this.expeditionResumeButton);
+    const touch = document.querySelector('#touch-controls .touch-actions');
+    this.expeditionResumeTouchButton = document.createElement('button');
+    this.expeditionResumeTouchButton.type = 'button';
+    this.expeditionResumeTouchButton.textContent = 'Экспедиция';
+    this.expeditionResumeTouchButton.hidden = true;
+    this.expeditionResumeTouchButton.addEventListener('click', () => resourceExpeditionView?.show());
+    touch?.append(this.expeditionResumeTouchButton);
+
     this.inventoryPanel = new InventoryPanelSystem({
       eventSystem: this.eventSystem,
       containerSystem,
@@ -452,6 +492,7 @@ class ZoneScene extends Phaser.Scene {
       relationshipSystem: masterRelationshipSystem,
       interactionPanel: this.interactionPanel,
       processSystem: masterProcessSystem,
+      expeditionView: resourceExpeditionView,
       canMoveTo: (x, y) => this.canMoveTo(x, y),
       getWanderRadius: () => spawnZoneDebugSystem?.getSettings?.().radiusPx || 150
     });
@@ -499,6 +540,7 @@ class ZoneScene extends Phaser.Scene {
         biomeTextureSettingsSystem.load(),
         masterCatalog.load(),
         masterProcessSystem.load(),
+        resourceExpeditionSystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
         this.itemCatalog.load()
@@ -514,6 +556,8 @@ class ZoneScene extends Phaser.Scene {
       await this.craftingSystem.load();
       await worldSpawnStateSystem.initialize(restoredState.worldSpawnState);
       masterProcessSystem?.update(Date.now(), true);
+      resourceExpeditionSystem.initialize(restoredState.resourceExpedition);
+      resourceExpeditionSystem.update(Date.now(), true);
       const restoredZoneId = this.worldGraph.resolveZoneId(restoredState.world.zoneId) || this.worldGraph.start.zoneId;
       chromeContextSystem?.setLocationTierContext(worldSpawnStateSystem.getLocationSummary(restoredZoneId));
       chromeHeaderSystem?.setStorageSummary(`Хранилища: ${containerSystem.summary()}`);
@@ -533,6 +577,10 @@ class ZoneScene extends Phaser.Scene {
       this.gameState.setStepEconomy(stepSystem.snapshot());
       this.stepsDirty = true;
       this.worldReady = true;
+      this.syncExpeditionUI();
+      if (resourceExpeditionSystem.run && !resourceExpeditionSystem.run.claimed) {
+        resourceExpeditionView?.show();
+      }
       if (window.__ugameBoot) window.__ugameBoot.phase = 'ready';
       visionSystem?.update();
     } catch (error) {
@@ -547,6 +595,13 @@ class ZoneScene extends Phaser.Scene {
         this.questStatusElement.textContent = `Ошибка мира: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
+  }
+
+  syncExpeditionUI() {
+    const run = resourceExpeditionSystem?.run;
+    if (this.expeditionResumeButton) this.expeditionResumeButton.hidden = !run || run.claimed;
+    if (this.expeditionResumeTouchButton) this.expeditionResumeTouchButton.hidden = !run || run.claimed;
+    syncPlayerInputState();
   }
 
   bindPersistenceEvents() {
@@ -948,6 +1003,7 @@ class ZoneScene extends Phaser.Scene {
     worldSpawnStateSystem?.update(now);
     this.eventSpotSystem?.update(now);
     masterProcessSystem?.update(now);
+    resourceExpeditionSystem?.update(now);
     masterEncounterSystem?.update(now, delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update(false);
