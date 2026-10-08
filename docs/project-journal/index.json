@@ -1051,6 +1051,35 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0035",
+      "title": "Свободный персонаж, долгоживущие предметы и взаимосвязанная экономика",
+      "date": "2026-10-08",
+      "type": "game-direction",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-prototype"
+      ],
+      "tags": [
+        "gameplay",
+        "progression",
+        "professions",
+        "crafting",
+        "world",
+        "equipment",
+        "economy"
+      ],
+      "path": "records/UGD-0035-freedom-crafting-economy.md",
+      "related": [
+        "UGD-0009",
+        "UGD-0015",
+        "UGD-0029",
+        "UGD-0034"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

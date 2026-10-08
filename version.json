@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.27",
-  "stage": "master-marker-unique-identity",
+  "version": "0.2.28",
+  "stage": "game-concept-accepted",
   "updated": "2026-10-08",
-  "summary": "Prevent duplicate Interactable IDs and orphan Phaser Master reward sprites"
+  "summary": "Document accepted freedom, crafting and economic vision without implementing unapproved numerical rules"
 }

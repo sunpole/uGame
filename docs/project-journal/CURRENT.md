@@ -145,3 +145,8 @@
 ## Implementation snapshot v0.2.25 (2026-10-08)
 
 The Master reward loop is implemented with distinct current/historical pending rewards, an Encounter claim lock, red Phaser markers, REAL TIME Process, automatic claim dialog on completion, and DEV 8388 identification of the last interacted NPC. These implementations are not new economy design decisions. v0.2.20–v0.2.25 are a QA candidate awaiting a single live browser smoke; GitHub source rollback checkpoints are tracked separately from browser saves. See `docs/NEXT-IMPLEMENTATION-PLAN.md` and `docs/RELEASE-ROLLBACK.md`.
+
+
+## Концепция после анкеты — UGD-0035 (v0.2.28)
+
+Утверждено общее направление: свободный персонаж и жизнеспособные гибриды, глубокая обработка немногих материалов, долговечные предметы, разнообразные сокеты и необязательные сеты, экономика и командные роли. Четыре специализированных города дополняет пятый нейтральный Перекрёсток. **Формулы боя, цены, шесть материалов, рынок и параметры крафта ещё не утверждены**. Детали: `records/UGD-0035-freedom-crafting-economy.md`.

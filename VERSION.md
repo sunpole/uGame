@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.27**
+Current version: **0.2.28**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.28 | Record accepted uGame concept UGD-0035; separate direction from unapproved balance/math |
 | 0.2.27 | Enforce unique Interactable IDs to prevent orphan Phaser reward markers; regression test |
 | 0.2.26 | Master red marker origin/duplicate diagnostics per Encounter; no state changes |
 | 0.2.25 | QA/release docs, current debt queue, GitHub Release checkpoints v0.2.19 and v0.2.25 |
@@ -162,6 +163,9 @@ Current version: **0.2.27**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.28
+Recorded user-approved high-level concept in Project Journal UGD-0035: free/hybrid builds, durable customizable gear, mixed sets/sockets, deep processing of few base resources, player economy, useful party roles, four specialized cities plus neutral Crossroads. Updated Journal index and CURRENT. Precise resources, combat, socket math and market prices remain hypotheses. No gameplay/save changes.
 
 ## 0.2.27
 Fixed a reproducible orphan-red-marker scenario: adding an interactable with an already existing ID previously created a second independent Phaser GameObject while `getItem()` and mark/sync operations touched only the first. `InteractableSystem.add` now removes all existing items with the incoming ID before rendering. A Node regression test asserts duplicate insertion leaves exactly one item/marker/tween and a claim removes it fully. This is a verified code-level defect, but the original intermittent browser report is not yet proven to share this cause. No save schema or economy changes. Manual verification still required.
