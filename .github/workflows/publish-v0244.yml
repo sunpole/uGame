@@ -1,0 +1,49 @@
+name: uGame v0.2.44 profession QA release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.44.md'
+      - '.github/workflows/publish-v0244.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Full regression tests
+        run: npm test
+      - name: Verify modules, preflight, and release versions
+        run: |
+          node --check src/resource-profession-system.js
+          node --check src/resource-profession-view.js
+          node --check src/resource-expedition-system.js
+          node --check src/resource-expedition-view.js
+          node --check src/main.js
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for (const file of ['version.json','package.json','data/preflight-manifest.json']) {
+            if(JSON.parse(fs.readFileSync(file,'utf8')).version !== '0.2.44') throw Error('mismatch: '+file);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.44'\")) throw Error('index preflight mismatch');
+          "
+      - name: Check rollback checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view v0.2.43
+      - name: Publish QA prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.44 >/dev/null 2>&1; then
+            gh release create v0.2.44 --target "$GITHUB_SHA" --title "uGame v0.2.44 · Resource professions and T1–T8" --notes-file docs/releases/v0.2.44.md --prerelease
+          fi
