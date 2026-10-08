@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-08",
+  "model": "four-specialized-cities-plus-neutral-crossroads",
+  "modelStatus": "accepted",
+  "placementStatus": "candidate-requires-owner-review",
+  "gameplayEffectsEnabled": false,
+  "note": "City roles are approved; exact assignment to existing zones is provisional. No locked classes, skill multipliers, material prices, or production buffs.",
+  "cities": [
+    {
+      "zoneId": "loc-00013",
+      "roleId": "crossroads",
+      "roleName": "Перекрёсток",
+      "kind": "neutral",
+      "focus": "Связи, встреча игроков, обмен и нейтральные услуги",
+      "preview": "Общий центр; не доминирует в профессиях."
+    },
+    {
+      "zoneId": "loc-00001",
+      "roleId": "balance",
+      "roleName": "Равновесие",
+      "kind": "specialized",
+      "focus": "Гибридные роли, устойчивость, сочетание направлений",
+      "preview": "Северная площадка для гибридов и обучения общим навыкам."
+    },
+    {
+      "zoneId": "loc-00005",
+      "roleId": "hunt",
+      "roleName": "Охота",
+      "kind": "specialized",
+      "focus": "Разведка, природные ресурсы, следопытство",
+      "preview": "Лесное направление; добыча и изучение природы."
+    },
+    {
+      "zoneId": "loc-00021",
+      "roleId": "strength",
+      "roleName": "Сила",
+      "kind": "specialized",
+      "focus": "Переработка сырья, мастерские и материальное производство",
+      "preview": "Песчаный регион с будущими ремесленными площадками."
+    },
+    {
+      "zoneId": "loc-00025",
+      "roleId": "wisdom",
+      "roleName": "Мудрость",
+      "kind": "specialized",
+      "focus": "Знания, исследование свойств, улучшение предметов",
+      "preview": "Южное направление для будущих исследований и рецептов."
+    }
+  ]
+}

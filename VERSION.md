@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.28**
+Current version: **0.2.29**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.29 | Data-driven 4+1 city roles, five stable WorldGraph city IDs; draft placement only |
 | 0.2.28 | Record accepted uGame concept UGD-0035; separate direction from unapproved balance/math |
 | 0.2.27 | Enforce unique Interactable IDs to prevent orphan Phaser reward markers; regression test |
 | 0.2.26 | Master red marker origin/duplicate diagnostics per Encounter; no state changes |
@@ -163,6 +164,9 @@ Current version: **0.2.28**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.29
+Created `data/city-specializations.json` and `docs/CITY-SPECIALIZATIONS.md` mapping five existing safe cities to four proposed specializations plus the existing neutral Crossroads. The 4+1 model is accepted; geographic assignment of roles is provisional. No WorldGraph ID/transition changes, player restrictions or numerical bonuses. Added Node validation and CI baseline. v0.2.30 will render these descriptions in the live Project Hub map.
 
 ## 0.2.28
 Recorded user-approved high-level concept in Project Journal UGD-0035: free/hybrid builds, durable customizable gear, mixed sets/sockets, deep processing of few base resources, player economy, useful party roles, four specialized cities plus neutral Crossroads. Updated Journal index and CURRENT. Precise resources, combat, socket math and market prices remain hypotheses. No gameplay/save changes.

@@ -1,0 +1,31 @@
+name: uGame cities and crafting tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/city-specializations.json'
+      - 'data/crafting-prototype.json'
+      - 'data/materials-proposal.json'
+      - 'tests/city-crafting.test.mjs'
+      - '.github/workflows/city-crafting-tests.yml'
+  pull_request:
+    paths:
+      - 'data/city-specializations.json'
+      - 'data/crafting-prototype.json'
+      - 'data/materials-proposal.json'
+      - 'tests/city-crafting.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/city-crafting.test.mjs
