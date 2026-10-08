@@ -24,6 +24,8 @@ export class MasterEncounterSystem {
     this.motionState = new Map();
     this.turnSpeedRadPerSec = 0.22;
     this.moveSpeedPxPerSec = 5;
+    this.nextMotionUpdateAt = 0;
+    this.motionIntervalMs = 50;
 
     this.eventSystem?.on('zone:enter', ({ zone }) => {
       this.currentZoneId = zone?.id || null;
@@ -77,7 +79,9 @@ export class MasterEncounterSystem {
   }
 
   update(now = Date.now(), deltaMs = 16.67) {
-    if (!this.currentZoneId) return;
+    if (!this.currentZoneId || now < this.nextMotionUpdateAt) return;
+    const elapsedMs = this.nextMotionUpdateAt > 0 ? Math.max(this.motionIntervalMs, now - (this.nextMotionUpdateAt - this.motionIntervalMs)) : Number(deltaMs);
+    this.nextMotionUpdateAt = now + this.motionIntervalMs;
     const zone = this.worldGraph?.getZone?.(this.currentZoneId);
     if (!zone) return;
 
@@ -87,7 +91,7 @@ export class MasterEncounterSystem {
       if (!alive.has(encounterId)) this.motionState.delete(encounterId);
     }
 
-    const dt = Math.max(0, Math.min(0.1, Number(deltaMs) / 1000 || 0));
+    const dt = Math.max(0, Math.min(0.12, Number(elapsedMs) / 1000 || 0));
     const pauseTranslation = Boolean(this.interactionPanel?.isOpen?.());
     const configuredRadius = Number(this.getWanderRadius?.());
     const wanderRadius = Math.max(10, Math.min(500, Number.isFinite(configuredRadius) ? configuredRadius : 150));

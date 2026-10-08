@@ -666,11 +666,16 @@ class ZoneScene extends Phaser.Scene {
 
   updatePlayerHud(state) {
     if (!state) return;
-    const dash = state.dashing ? ' · РЫВОК' : '';
-    if (this.playerStateElement) {
-      this.playerStateElement.textContent = `Stamina ${Math.round(state.stamina)}${dash}`;
+    const rounded = Math.round(state.stamina);
+    const signature = rounded + ':' + (state.dashing ? '1' : '0');
+    if (signature !== this.lastHudSignature) {
+      this.lastHudSignature = signature;
+      const dash = state.dashing ? ' · РЫВОК' : '';
+      if (this.playerStateElement) {
+        this.playerStateElement.textContent = `Stamina ${rounded}${dash}`;
+      }
+      chromeHeaderSystem?.setStamina(state);
     }
-    chromeHeaderSystem?.setStamina(state);
 
     if (state.dashing && !this.wasDashing) this.audioSystem.play('dash');
     this.wasDashing = state.dashing;
@@ -686,12 +691,13 @@ class ZoneScene extends Phaser.Scene {
     }
 
     this.characterView.update(state, delta);
-    worldSpawnStateSystem?.update(Date.now());
-    this.eventSpotSystem?.update(Date.now());
-    masterProcessSystem?.update(Date.now());
-    masterEncounterSystem?.update(Date.now(), delta);
+    const now = Date.now();
+    worldSpawnStateSystem?.update(now);
+    this.eventSpotSystem?.update(now);
+    masterProcessSystem?.update(now);
+    masterEncounterSystem?.update(now, delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
-    visionSystem.update();
+    visionSystem.update(false);
   }
 
   canMoveTo(x, y) {

@@ -13,6 +13,7 @@ export class PlayerController {
     this.canMove = canMove;
     this.onState = onState;
     this.arrowIndicators = arrowIndicators || {};
+    this.arrowIndicatorState = {};
     this.enabled = true;
 
     this.staminaMax = 100;
@@ -162,6 +163,8 @@ export class PlayerController {
     };
 
     for (const [direction, isDown] of Object.entries(states)) {
+      if (this.arrowIndicatorState[direction] === isDown) continue;
+      this.arrowIndicatorState[direction] = isDown;
       const element = this.arrowIndicators[direction];
       if (element) element.dataset.active = isDown ? 'true' : 'false';
     }

@@ -306,12 +306,15 @@ export class InteractableSystem {
       if (!inside && this.lastAutoId === item.id) this.lastAutoId = null;
     }
 
-    const available = this.items
-      .filter((item) => item.trigger === 'action' && !(item.used && item.once))
-      .filter((item) => distance(this.player, item) <= item.interactionRadius)
-      .sort((a, b) => distance(this.player, a) - distance(this.player, b));
-
-    const nearest = available[0];
+    let nearest = null;
+    let nearestDistance = Infinity;
+    for (const item of this.items) {
+      if (item.trigger !== 'action' || (item.used && item.once)) continue;
+      const currentDistance = distance(this.player, item);
+      if (currentDistance > item.interactionRadius || currentDistance >= nearestDistance) continue;
+      nearest = item;
+      nearestDistance = currentDistance;
+    }
     this.onPrompt?.(nearest ? `ДЕЙСТВИЕ · ${nearest.prompt || nearest.label || 'Взаимодействовать'} · E / Space / Enter` : '');
 
     if (nearest && interactPressed) this.activate(nearest);

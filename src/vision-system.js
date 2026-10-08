@@ -23,9 +23,11 @@ export class VisionSystem {
     this.darkness = 1;
     this.direction = { x: 1, y: 0 };
     this.zoneOverride = {};
+    this.lastRenderAt = 0;
+    this.minFrameMs = 33;
 
     this.createOverlay();
-    this.update();
+    this.update(true);
   }
 
   createOverlay() {
@@ -97,7 +99,7 @@ export class VisionSystem {
     this.maskBase?.setAttribute('height', String(nextHeight));
     this.darknessRect?.setAttribute('width', String(nextWidth));
     this.darknessRect?.setAttribute('height', String(nextHeight));
-    this.update();
+    this.update(true);
   }
 
   setDirection(dx, dy) {
@@ -110,7 +112,7 @@ export class VisionSystem {
     if (['circle', 'cone', 'full', 'none'].includes(mode)) this.mode = mode;
     if (Number.isFinite(radius)) this.radius = clamp(radius, 60, 420);
     if (Number.isFinite(darkness)) this.darkness = clamp(darkness, 0, 1);
-    this.update();
+    this.update(true);
   }
 
   setZoneOverride(profile = {}) {
@@ -119,7 +121,7 @@ export class VisionSystem {
     if (Number.isFinite(profile.radius)) next.radius = clamp(profile.radius, 60, 420);
     if (Number.isFinite(profile.darkness)) next.darkness = clamp(profile.darkness, 0, 1);
     this.zoneOverride = next;
-    this.update();
+    this.update(true);
   }
 
   getEffectiveProfile() {
@@ -133,17 +135,17 @@ export class VisionSystem {
   setMode(mode) {
     if (!['circle', 'cone', 'full', 'none'].includes(mode)) return;
     this.mode = mode;
-    this.update();
+    this.update(true);
   }
 
   setRadius(radius) {
     this.radius = clamp(radius, 60, 420);
-    this.update();
+    this.update(true);
   }
 
   setDarkness(value) {
     this.darkness = clamp(value, 0, 1);
-    this.update();
+    this.update(true);
   }
 
   executeDevCode(code) {
@@ -183,8 +185,11 @@ export class VisionSystem {
     }
   }
 
-  update() {
+  update(force = false) {
     if (!this.svg || !this.darknessRect || !this.player || !this.host) return;
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (!force && now - this.lastRenderAt < this.minFrameMs) return;
+    this.lastRenderAt = now;
 
     const effective = this.getEffectiveProfile();
     const worldView = this.camera?.worldView;

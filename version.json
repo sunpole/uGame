@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.21",
-  "stage": "true-square-diamond-local-world",
+  "version": "0.1.22",
+  "stage": "movement-runtime-performance",
   "updated": "2026-10-08",
-  "summary": "Change local world canvas to 1920x1920 so the playable diamond is a true square rotated 45 degrees rather than a wide flattened rhombus"
+  "summary": "Reduce movement stutter by throttling SVG vision and slow Master motion work, caching DOM HUD/arrow updates, and removing per-frame interaction sorting"
 }

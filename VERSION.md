@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.21**
+Current version: **0.1.22**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.22 | Movement Performance: throttle DOM/SVG and slow Master work; cache HUD/arrows; remove per-frame interaction sort |
 | 0.1.21 | True Square Diamond: local world becomes 1920×1920 so the 45° playable diamond is visually square, not flattened |
 | 0.1.20 | Pre-flight Loading Gate: validate runtime files/modules/syntax/version/world/Masters/textures/Phaser before revealing gameplay |
 | 0.1.19 | Boot Syntax Hotfix: close broken World Map stage string in project-hub-system.js |
@@ -127,6 +128,9 @@ Current version: **0.1.21**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.22
+Оптимизирован игровой update-loop после появления большого diamond world. Vision SVG теперь обновляется максимум ~30 FPS вместо DOM mutation каждый frame; slow Master wandering считается с шагом 50 ms; HUD stamina и keyboard indicators пишутся в DOM только при изменении; nearest interactable выбирается одним проходом без создания/sort временных массивов. World Spawn/Event/Process timers остаются REAL TIME и не меняют частоту логики.
 
 ## 0.1.21
 Локальный world canvas изменён с `1920×1080` на `1920×1920`. Поэтому вершины playable diamond теперь лежат на одинаковом расстоянии по X/Y от центра: это настоящий квадрат, повёрнутый на 45°, а не широкий плоский ромб. Все entry points, walls, interactables и Event Spots мигрированы по Y пропорционально старой нормализованной позиции. Camera viewport остаётся 960×540 и продолжает следовать за персонажем.
