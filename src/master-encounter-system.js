@@ -45,23 +45,35 @@ export class MasterEncounterSystem {
     this.renderedIds.clear();
   }
 
+  // The persistent Character ↔ Master state is authoritative.
+  getRewardMarkerState(spawn) {
+    if (!spawn?.masterId || !spawn?.encounterId) return { state: 'claimed', endsAt: null };
+    const { masterId, encounterId } = spawn;
+    if (this.relationshipSystem?.hasClaimedEncounter?.(masterId, encounterId)) {
+      return { state: 'claimed', endsAt: null };
+    }
+    const pending = this.relationshipSystem?.getPendingRewards?.(masterId) || [];
+    if (pending.some((reward) =>
+      this.relationshipSystem?.pendingRewardEncounterId?.(reward) === encounterId)) {
+      return { state: 'ready', endsAt: null };
+    }
+    const active = this.relationshipSystem?.getActiveProcess?.(masterId);
+    if (active?.encounterId === encounterId) {
+      return { state: 'running', endsAt: Number(active.endsAt) || null };
+    }
+    return { state: 'idle', endsAt: null };
+  }
+
   isFreeRewardAvailable(spawn) {
-    if (!spawn?.masterId || !spawn?.encounterId) return false;
-    return !this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId);
+    return this.getRewardMarkerState(spawn).state !== 'claimed';
   }
 
   syncRewardMarker(spawn) {
     if (!spawn?.encounterId) return false;
     const item = this.interactableSystem?.getItem?.('master-interactable:' + spawn.encounterId);
     if (!item || item.type !== 'master-npc') return false;
-    // Character ↔ Master remains authoritative; the Phaser marker is just a view.
-    const available = this.isFreeRewardAvailable(spawn);
-    const marker = item._masterRewardMarker;
-    const spriteCorrect = available
-      ? Boolean(marker && marker.active !== false && marker.visible === true)
-      : !marker;
-    if (item.masterRewardAvailable === available && spriteCorrect) return false;
-    return Boolean(this.interactableSystem?.setMasterRewardAvailable?.(item, available));
+    const status = this.getRewardMarkerState(spawn);
+    return Boolean(this.interactableSystem?.setMasterRewardState?.(item, status.state, status.endsAt));
   }
 
   refreshRewardMarkers() {
@@ -93,6 +105,8 @@ export class MasterEncounterSystem {
         masterTier: spawn.tier,
         masterResourceDirectionId: spawn.resourceDirectionId,
         masterRewardAvailable: this.isFreeRewardAvailable(spawn),
+        masterRewardState: this.getRewardMarkerState(spawn).state,
+        masterProcessEndsAt: this.getRewardMarkerState(spawn).endsAt,
         x: point.x,
         y: point.y,
         label: master?.displayName || spawn.displayName || 'Мастер',
@@ -264,6 +278,9 @@ export class MasterEncounterSystem {
       markerExists: Boolean(marker),
       markerVisible: marker?.visible ?? null,
       markerActive: marker?.active ?? null,
+      markerState: this.getRewardMarkerState(spawn).state,
+      processEndsAt: this.getRewardMarkerState(spawn).endsAt,
+      countdownExists: Boolean(item?._masterProcessTimer),
       source: 'live character/master and Phaser scene; read-only'
     };
   }
@@ -322,6 +339,8 @@ export class MasterEncounterSystem {
           + ' · itemsSameID=' + fullDiagnostic?.interactableCount
           + ' · spritesSameEncounter=' + fullDiagnostic?.namedMarkerCount
           + ' · redDotsScene=' + info.redDotCountInScene
+          + ' · phase=' + (fullDiagnostic?.markerState || 'нет')
+          + ' · timer=' + fullDiagnostic?.countdownExists
       });
       return { handled: true, message: '8388 · диагностика Master открыта', state: 'ok' };
     }
