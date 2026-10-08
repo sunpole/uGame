@@ -38,6 +38,16 @@ export class ResourceProfessionView {
           return result.ok;
         }
       })),
+      {
+        id:'buy-gatherer-gloves',
+        label:'Купить рабочие перчатки · 200 Шагов',
+        hint:'Экипируй в слот перчаток: +15% добычи; простой полевой инструмент в рюкзаке даёт такой же бонус (не суммируется)',
+        onSelect:()=>{
+          const success=this.buyItem?.('gatherer-gloves',200)===true;
+          this.openTraining(spawn,success?'Перчатки в рюкзаке: экипируйте их через Инвентарь':'Недостаточно Шагов или места');
+          return success;
+        }
+      },
       ...(this.professions.config.buffItems||[]).map(buff=>({
         id:'buy-'+buff.id,
         label:'Купить '+buff.label+' · '+buff.costSteps+' Шагов',
