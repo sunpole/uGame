@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "design-only-no-live-craft",
+  "updated": "2026-10-08",
+  "overview": "Первый вертикальный срез обработки двух существующих материалов без новой системы экономики.",
+  "requiresApprovalBeforeGameplay": true,
+  "liveCraftingEnabled": false,
+  "recipe": {
+    "id": "candidate-simple-field-tool",
+    "name": "Простой полевой инструмент",
+    "status": "candidate",
+    "materials": [
+      {
+        "resourceId": "stone",
+        "tier": "T1",
+        "massKg": 0.4
+      },
+      {
+        "resourceId": "wood",
+        "tier": "T1",
+        "massKg": 0.2
+      }
+    ],
+    "process": "Собрать каменный рабочий элемент и деревянную рукоять",
+    "workshopRole": "strength",
+    "workshopRoleRequired": false,
+    "output": {
+      "id": "candidate-field-tool",
+      "label": "Простой полевой инструмент",
+      "count": 1,
+      "inLiveItemCatalog": false
+    },
+    "openChoices": [
+      "Первый инструмент — ремонт или создание?",
+      "Чем отличается T1 от T2?",
+      "Зависит ли результат от мастерства?",
+      "Можно ли переработать без полного разрушения?"
+    ],
+    "runtimeEffects": "none"
+  },
+  "safeguards": [
+    "Не расходовать реальные ресурсы до подтверждения.",
+    "Не создавать предмет в Inventory до нового утвержденного изменения.",
+    "Мастерская города Силы — предложение, а не классовый запрет.",
+    "Кандидат рецепта не определяет глобальный баланс и дроп."
+  ]
+}

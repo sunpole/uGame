@@ -57,3 +57,23 @@ test('six-material proposal has four real resources and two strictly inactive ca
   }
   assert.ok(p.rawMaterials.filter((m) => !m.inCurrentGame).every((m) => m.requiresOwnerApproval));
 });
+
+test('design-only first crafting recipe uses existing resource ids and never live item output', () => {
+  const recipe = data('data/crafting-prototype.json');
+  const sources = data('data/resources.json');
+  const items = data('data/items.json');
+  const ids = new Set(sources.resources.map((x) => x.id));
+  const itemIds = new Set((items.items || []).map((x) => x.id));
+  assert.equal(recipe.status,'design-only-no-live-craft');
+  assert.equal(recipe.liveCraftingEnabled,false);
+  assert.equal(recipe.requiresApprovalBeforeGameplay,true);
+  assert.equal(recipe.recipe.materials.length,2);
+  assert.deepEqual(new Set(recipe.recipe.materials.map((x)=>x.resourceId)),new Set(['stone','wood']));
+  for(const material of recipe.recipe.materials) {
+    assert.ok(ids.has(material.resourceId));
+    assert.ok(['T1','T2','T3','T4'].includes(material.tier));
+    assert.equal(Math.round(material.massKg*10),material.massKg*10);
+  }
+  assert.equal(recipe.recipe.output.inLiveItemCatalog,false);
+  assert.equal(itemIds.has(recipe.recipe.output.id),false);
+});

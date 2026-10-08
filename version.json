@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.31",
-  "stage": "six-base-material-candidate",
+  "version": "0.2.32",
+  "stage": "crafting-vertical-slice-design",
   "updated": "2026-10-08",
-  "summary": "Document six-material candidate while keeping ore/hide strictly out of live gameplay"
+  "summary": "Prepare one safe stone-and-wood crafting scenario without activating unapproved mechanics"
 }
