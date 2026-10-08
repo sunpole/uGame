@@ -155,3 +155,12 @@ The Master reward loop is implemented with distinct current/historical pending r
 ## Implementation snapshot v0.2.33
 
 Source-level duplicate Interactable ID/Phaser marker defect prevented; still awaiting browser confirmation for intermittent red-dot reports. Project Journal UGD-0035 records free character development and durable player-crafted gear direction. The approved **4 specialized cities + neutral Crossroads** model has a provisional existing-zone assignment and visible description in Project Hub World Map. Six-material list and simple stone+wood craft are **proposals only**, not gameplay systems or accepted balance. Release and QA: `docs/QA-v0.2.33.md`.
+
+## Актуальное уточнение: Master Modules / Resource Expeditions (UGD-0036, 09.10.2026)
+
+- **Зафиксировано пользователем как целевое направление (не реализовано):** Master T1→ресурсы T1–T2; T2→T3–T4; T3→T5–T6; T4→T7–T8. Это независимые шкалы; высокоуровневая добыча требует профессиональных навыков и репутации/отношений с NPC.
+- Шесть активностей Мастера: (1) репутация/профессия/навыки, (2) бесплатная награда с таймером, (3) **общая ресурсная экспедиция — 100% при любом Tier**, (4) квесты — placeholder, (5) аналитика с будущими бонусами развития, (6) специальные события — placeholder. Остальные пять случайны; T4 гарантирует все шесть. Исторические диапазоны количества модулей T1 2–3 / T2 3–4 / T3 4–6 / T4 все сохраняются.
+- Экспедиция: лёгкая отдельная Event-zone через Master, ограниченный общий запас, **не более 12 участников**, ручная мини-игра и Automatic Idle, использование мастерства, умений, инструментов, еды, зелий и экипировки, рейтинг по добытой массе. Условия возврата Шагов, новые виды наград и финальный баланс ещё обсуждаются.
+- Из обсуждения 08.10: интерес к A+B+D (редкие Мастера, поручения, активная/Idle добыча); работа только в пределах Encounter и продолжается по REAL TIME при закрытом браузере, пока Encounter существует. Правило нахождения самого персонажа при Auto пока открыто.
+- **Текущий код v0.2.41:** прежняя гарантированная бесплатная Extraction и ресурсы T1–T4; новая гарантия Expedition и случайная доступность бонуса №2 **ещё не внедрены**. Временная совместимость старого `extraction` с новой шестёркой, новые Tier и навыки требуют отдельного решения/миграции и QA. Историческая запись `UGD-0015` сохраняется.
+- Подробности и открытые вопросы: `records/UGD-0036-resource-expeditions-active-idle.md`.
