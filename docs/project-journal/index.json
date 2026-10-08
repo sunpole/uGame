@@ -1003,6 +1003,30 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0033",
+      "title": "Daylight / Vision modifier stack",
+      "date": "2026-10-08",
+      "type": "gameplay",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "daylight",
+        "vision",
+        "time",
+        "modifiers",
+        "cone",
+        "city"
+      ],
+      "path": "records/UGD-0033-daylight-vision-modifiers.md",
+      "related": [
+        "UGD-0031"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

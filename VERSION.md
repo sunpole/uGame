@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.10**
+Current version: **0.2.11**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.11 | Daylight Audit: Pre-flight invariants, DEV phase overrides and source-of-truth modifier documentation |
 | 0.2.10 | Daylight Vision Architecture: generic flat/multiplier/multiplier-bonus stack, time-of-day vision and map-only tint |
 | 0.2.9 | Inspectable Pre-flight: per-test timing, copy-debug text, READY hold screen and explicit Start Game button |
 | 0.2.8 | Steps Movement Performance: remove per-frame snapshots/events/DOM writes; exact movement accounting with HUD throttled to 5 Hz |
@@ -145,6 +146,9 @@ Current version: **0.2.10**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.11
+Pre-flight now validates all four Daylight phases, exact city/field radius and darkness multipliers, tint totals and generic flat/multiplier/multiplierBonus formula hooks. DEV 1301–1304 switch phase instantly; 1399 returns to actual Game Clock. Added UGD-0033 and manual QA checklist.
 
 ## 0.2.10
 Daylight/Vision modifier stack: radius/darkness support flat, independent multiplier and additive multiplier bonus by named source for future daylight/class/equipment/buffs. Morning field radius is ×1.0. City full-vision is replaced by circle so time-of-day can affect cities. Tint layers live inside #game between canvas and Vision, leaving header/footer/UI unchanged. Cone geometry remains available and its angle/distance are now explicit variables for future narrow/wide modes.

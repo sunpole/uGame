@@ -946,8 +946,8 @@ export async function bootGame() {
   gameClockSystem = new GameClockSystem({
     element: document.querySelector('#game-clock'),
     onPhaseChange: (snapshot) => {
-      daylightSystem?.setClockSnapshot?.(snapshot);
-      activeZoneScene?.daylightSystem?.setClockSnapshot?.(snapshot);
+      const target = activeZoneScene?.daylightSystem || daylightSystem;
+      target?.setClockSnapshot?.(snapshot);
     }
   });
   gameClockSystem.start();

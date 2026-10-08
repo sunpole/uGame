@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.10",
-  "stage": "daylight-vision-architecture",
+  "version": "0.2.11",
+  "stage": "daylight-vision-audit",
   "updated": "2026-10-08",
-  "summary": "Time-of-day vision/tint plus generic future modifier stack for classes/equipment"
+  "summary": "Validate and document daylight vision modifier stack with DEV phase overrides"
 }

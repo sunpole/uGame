@@ -188,6 +188,28 @@ function validateStepsEconomy(config) {
   }
 }
 
+function validateDaylight(config) {
+  const expected = {
+    'Утро': { tint: 0.25, cityRadius: 3.0, cityDarkness: 0.30, fieldRadius: 1.0, fieldDarkness: 0.76 },
+    'День': { tint: 0.15, cityRadius: 2.5, cityDarkness: 0.50, fieldRadius: 1.2, fieldDarkness: 0.88 },
+    'Вечер': { tint: 0.15, cityRadius: 2.0, cityDarkness: 0.60, fieldRadius: 1.1, fieldDarkness: 0.94 },
+    'Ночь': { tint: 0.25, cityRadius: 1.5, cityDarkness: 0.80, fieldRadius: 0.8, fieldDarkness: 1.05 }
+  };
+  for (const [phaseName, rules] of Object.entries(expected)) {
+    const phase = config?.phases?.[phaseName];
+    if (!phase) throw new Error('missing phase: ' + phaseName);
+    const tint = (phase.tintLayers || []).reduce((sum, layer) => sum + (Number(layer.opacity) || 0), 0);
+    if (Math.abs(tint - rules.tint) > 0.0001) throw new Error(phaseName + ': tint opacity mismatch');
+    if (Number(phase.city?.radiusMultiplier) !== rules.cityRadius) throw new Error(phaseName + ': city radius mismatch');
+    if (Number(phase.city?.darknessMultiplier) !== rules.cityDarkness) throw new Error(phaseName + ': city darkness mismatch');
+    if (Number(phase.field?.radiusMultiplier) !== rules.fieldRadius) throw new Error(phaseName + ': field radius mismatch');
+    if (Number(phase.field?.darknessMultiplier) !== rules.fieldDarkness) throw new Error(phaseName + ': field darkness mismatch');
+  }
+  if (!String(config?.modifierFormula?.radius || '').includes('flatSum')) throw new Error('radius modifier formula missing flat layer');
+  if (!String(config?.modifierFormula?.radius || '').includes('multiplierBonusSum')) throw new Error('radius multiplier-bonus layer missing');
+  if (!String(config?.modifierFormula?.darkness || '').includes('flatSum')) throw new Error('darkness modifier formula missing flat layer');
+}
+
 function validateMassResources(resources, containers) {
   const expected = {
     stone: [0.5, 25],
@@ -321,6 +343,12 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     const config = await fetchJson('./data/steps-economy.json');
     validateStepsEconomy(config);
     return '10 000 start · 100 000 000 max · 1.2 px/Step · city +5/s · auto Attention OK';
+  });
+
+  await check('daylight', 'Daylight / Vision modifiers', async () => {
+    const config = await fetchJson('./data/daylight-vision.json');
+    validateDaylight(config);
+    return 'Утро/День/Вечер/Ночь · city/field · flat/multiplier/bonus stack OK';
   });
 
   await check('mass-resources', 'Mass-resources / Tiers', async () => {
