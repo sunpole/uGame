@@ -10,6 +10,7 @@ import { CharacterView } from './character-view.js';
 import { AudioSystem } from './audio-system.js';
 import { ZoneRulesSystem } from './zone-rules-system.js';
 import { ResourceSystem } from './resource-system.js';
+import { StepSystem } from './step-system.js';
 import { ItemCatalog } from './item-catalog.js';
 import { ContainerSystem } from './container-system.js';
 import { InventoryPanelSystem } from './inventory-panel-system.js';
@@ -49,6 +50,7 @@ let visionSystem = null;
 let classSystem = null;
 let playerController = null;
 let resourceSystem = null;
+let stepSystem = null;
 let containerSystem = null;
 let questSystem = null;
 let eventSpotSystem = null;
@@ -117,6 +119,7 @@ function executeDevCode(code) {
     classSystem,
     playerController,
     containerSystem,
+    stepSystem,
     resourceSystem,
     questSystem,
     eventSpotSystem,
@@ -157,6 +160,10 @@ class ZoneScene extends Phaser.Scene {
     this.zoneRuleStatusElement = document.querySelector('#zone-rule-status');
     this.questStatusElement = document.querySelector('#quest-status');
     this.interactPromptElement = document.querySelector('#interact-prompt');
+    this.stepsSummaryElement = document.querySelector('#steps-summary');
+    this.stepsHudElement = document.querySelector('#steps-hud');
+    this.stepsDirty = false;
+    this.nextStepsPersistAt = 0;
 
     this.saveSystem = new SaveSystem({
       getState: () => this.gameState?.snapshot()
@@ -167,6 +174,16 @@ class ZoneScene extends Phaser.Scene {
 
     this.eventSystem = new EventSystem();
     this.audioSystem = new AudioSystem();
+
+    stepSystem = new StepSystem({
+      eventSystem: this.eventSystem,
+      onChange: (snapshot) => {
+        this.gameState.setStepEconomy(snapshot);
+        this.stepsDirty = true;
+        this.renderSteps(snapshot);
+      }
+    });
+    this.stepSystem = stepSystem;
     masterRelationshipSystem = new CharacterMasterRelationshipSystem({
       onStateChange: (snapshot) => {
         this.gameState.setCharacterMasterRelationships(snapshot);
@@ -462,6 +479,7 @@ class ZoneScene extends Phaser.Scene {
     try {
       if (window.__ugameBoot) window.__ugameBoot.phase = 'world-init';
       await Promise.all([
+        stepSystem.load(restoredState.stepEconomy),
         biomeTextureSettingsSystem.load(),
         masterCatalog.load(),
         masterProcessSystem.load(),
@@ -492,6 +510,9 @@ class ZoneScene extends Phaser.Scene {
         || this.worldGraph.start.entryId;
 
       this.zoneSystem.build(zoneId, entryId);
+      stepSystem.update(Date.now(), { safeCity: this.zoneSystem.current?.isSafeCity === true, force: true });
+      this.gameState.setStepEconomy(stepSystem.snapshot());
+      this.stepsDirty = true;
       this.worldReady = true;
       if (window.__ugameBoot) window.__ugameBoot.phase = 'ready';
       visionSystem?.update();
@@ -518,6 +539,8 @@ class ZoneScene extends Phaser.Scene {
 
     this.eventSystem.on('zone:enter', ({ zone, entry }) => {
       this.gameState.setZone(zone?.id, entry);
+      stepSystem?.resetRegenClock?.(Date.now());
+      this.gameState.setStepEconomy(stepSystem?.snapshot?.() || this.gameState.state.stepEconomy);
       this.persistGameState();
     });
 
@@ -664,6 +687,32 @@ class ZoneScene extends Phaser.Scene {
     if (this.statusElement) this.statusElement.textContent = text;
   }
 
+  renderSteps(snapshot = stepSystem?.snapshot?.()) {
+    if (!snapshot) return;
+    const balance = Math.floor(Number(snapshot.balance) || 0);
+    const debt = Math.floor(Number(snapshot.debt) || 0);
+    const fmt = (value) => Math.abs(value).toLocaleString('ru-RU');
+    const primary = debt > 0 && balance <= 0 ? 'Шаги −' + fmt(debt) : 'Шаги ' + fmt(balance);
+    const detail = debt > 0 && balance > 0 ? primary + ' · долг ' + fmt(debt) : primary;
+    if (this.stepsSummaryElement) {
+      this.stepsSummaryElement.textContent = detail;
+      this.stepsSummaryElement.dataset.debt = String(debt > 0);
+    }
+    if (this.stepsHudElement) {
+      this.stepsHudElement.textContent = detail;
+      this.stepsHudElement.dataset.debt = String(debt > 0);
+    }
+  }
+
+  flushStepPersistence(now = Date.now(), force = false) {
+    if (!this.stepsDirty || (!force && now < this.nextStepsPersistAt)) return false;
+    this.nextStepsPersistAt = now + 1000;
+    this.gameState.setStepEconomy(stepSystem?.snapshot?.());
+    this.persistGameState();
+    this.stepsDirty = false;
+    return true;
+  }
+
   updatePlayerHud(state) {
     if (!state) return;
     const rounded = Math.round(state.stamina);
@@ -692,6 +741,8 @@ class ZoneScene extends Phaser.Scene {
 
     this.characterView.update(state, delta);
     const now = Date.now();
+    stepSystem?.update(now, { safeCity: this.zoneSystem?.current?.isSafeCity === true });
+    this.flushStepPersistence(now);
     worldSpawnStateSystem?.update(now);
     this.eventSpotSystem?.update(now);
     masterProcessSystem?.update(now);

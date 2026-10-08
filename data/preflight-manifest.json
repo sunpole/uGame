@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.1.28",
+  "version": "0.2.0",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -58,7 +58,9 @@
     "./src/world-graph.js",
     "./src/world-spawn-state-system.js",
     "./src/zone-rules-system.js",
-    "./src/zone-system.js"
+    "./src/zone-system.js",
+    "./data/steps-economy.json",
+    "./src/step-system.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -106,6 +108,7 @@
     "./src/world-graph.js",
     "./src/world-spawn-state-system.js",
     "./src/zone-rules-system.js",
-    "./src/zone-system.js"
+    "./src/zone-system.js",
+    "./src/step-system.js"
   ]
 }

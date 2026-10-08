@@ -84,6 +84,16 @@ function cleanWorldSpawnState(value) {
   }
 }
 
+function cleanStepEconomy(value) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  return {
+    schemaVersion: 1,
+    balance: Math.max(0, Number.isFinite(Number(source.balance)) ? Number(source.balance) : 10000),
+    debt: Math.max(0, Number.isFinite(Number(source.debt)) ? Number(source.debt) : 0),
+    lastRegenAt: Number.isFinite(Number(source.lastRegenAt)) ? Number(source.lastRegenAt) : Date.now()
+  };
+}
+
 function cleanMasterRelationships(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return { schemaVersion: 1, masters: {} };
   const masters = value.masters;
@@ -128,6 +138,7 @@ export function createDefaultGameState() {
       usedInteractables: []
     },
     resources: {},
+    stepEconomy: cleanStepEconomy(null),
     inventory: {},
     containers: {
       schemaVersion: 1,
@@ -165,6 +176,7 @@ export function normalizeGameState(input) {
       usedInteractables: cleanStringList(input.world?.usedInteractables)
     },
     resources: cleanCounts(input.resources),
+    stepEconomy: cleanStepEconomy(input.stepEconomy),
     inventory: cleanCounts(input.inventory),
     containers: cleanContainers(input.containers),
     quests: cleanQuestState(input.quests),
@@ -208,6 +220,10 @@ export class GameState {
 
   setResources(snapshot) {
     this.state.resources = cleanCounts(snapshot);
+  }
+
+  setStepEconomy(snapshot) {
+    this.state.stepEconomy = cleanStepEconomy(snapshot);
   }
 
   setInventory(snapshot) {

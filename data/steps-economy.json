@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-08",
+  "status": "accepted-baseline",
+  "reserveTarget": 10000,
+  "pixelsPerStep": 1.2,
+  "cityRegenPercentPerRealMinute": 0.01,
+  "dashSpeedMultiplier": 2,
+  "dashSpendRateMultiplier": 4,
+  "attentionToSteps": 10000000,
+  "stepsToAttention": 100000000,
+  "teleportWalkStepsPerTransition": 1000,
+  "teleportCostFactor": 0.6
+}

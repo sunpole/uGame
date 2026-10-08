@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.28",
-  "stage": "preflight-import-meta-hotfix",
+  "version": "0.2.0",
+  "stage": "steps-economy-core",
   "updated": "2026-10-08",
-  "summary": "Fix false-positive preflight syntax failure for valid import.meta usage in ES modules"
+  "summary": "Persistent Steps and StepDebt core with city REAL TIME regeneration"
 }

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.28**
+Current version: **0.2.0**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.0 | Steps Economy Core: persistent Steps + StepDebt, city REAL TIME regen target and UI |
 | 0.1.28 | Pre-flight Hotfix: support valid `import.meta` during browser-side syntax checking |
 | 0.1.27 | Pre-flight / True Diamond Audit: source-of-truth docs and manual QA checklist for v0.1.20–v0.1.26 |
 | 0.1.26 | Full Runtime Pre-flight: check every src JS module plus all runtime JSON files, JSON parse integrity and dependency/syntax coverage |
@@ -134,6 +135,9 @@ Current version: **0.1.28**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.0
+Добавлен persistent StepSystem: Steps, отдельный StepDebt, natural reserve target 10 000, city REAL TIME regen +1% reserve/minute только при debt=0, service/movement spend contracts и DEV 6401/6402/6499. Save schema остаётся backward-compatible.
 
 ## 0.1.28
 Исправлен ложный красный флаг Pre-flight для валидного ES-module выражения `import.meta.url` в `project-page-chrome.js`. Best-effort syntax checker больше не пытается парсить `import.meta` как обычный script-код через `new Function`; перед проверкой module-only выражение безопасно нормализуется. Игровой код `project-page-chrome.js` не изменялся.
