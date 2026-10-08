@@ -2158,7 +2158,7 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .world-map-stage {
   position: relative;
   width: 920px;
-  height: 720px;
+  height: 820px;
   margin: 0 auto;
   border: 1px solid #21262d;
   border-radius: 12px;
@@ -2254,3 +2254,27 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .world-map-compass-sw { bottom: 88px; left: 18px; }
 .world-map-compass-w { top: 50%; left: 9px; transform: translateY(-50%); }
 .world-map-compass-nw { top: 98px; left: 18px; }
+
+/* v0.1.08 — world-map legend / spacing */
+.world-map-legend {
+  display: flex;
+  gap: 7px;
+  margin: 0 0 10px;
+  flex-wrap: wrap;
+}
+.world-map-legend span {
+  padding: 4px 8px;
+  border: 1px solid #30363d;
+  border-radius: 999px;
+  background: #0b0f14;
+  color: #c9d1d9;
+  font-size: 9px;
+}
+.world-map-legend span::before { content: '■'; margin-right: 5px; }
+.world-map-legend span[data-biome='snow']::before { color: #58a6ff; }
+.world-map-legend span[data-biome='forest']::before { color: #3fb950; }
+.world-map-legend span[data-biome='sand']::before { color: #d29922; }
+.world-map-legend span[data-biome='stone']::before { color: #c9d1d9; }
+.world-map-legend span[data-biome='south']::before { color: #f85149; }
+.world-map-legend span[data-kind='city']::before { content: '◆'; color: #f0f6fc; }
+.world-map-legend span[data-kind='current']::before { content: '●'; color: #7ee787; }

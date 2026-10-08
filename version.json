@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.07",
-  "stage": "world-map-compass",
+  "version": "0.1.08",
+  "stage": "world-map-layout-polish",
   "updated": "2026-10-08",
-  "summary": "World map adds N/NE/E/SE/S/SW/W/NW directional markers with colored arrows and Russian labels"
+  "summary": "World map gets safe compass spacing and biome/city/current-location legend"
 }

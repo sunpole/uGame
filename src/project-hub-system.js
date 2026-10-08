@@ -416,7 +416,7 @@ export class ProjectHubSystem {
       const dx = Number(zone.worldMap?.diamondX) || 0;
       const dy = Number(zone.worldMap?.diamondY) || 0;
       const left = 'calc(50% + ' + (dx * 66) + 'px)';
-      const top = (112 + dy * 66) + 'px';
+      const top = (145 + dy * 66) + 'px';
       const classes = [
         'world-map-tile',
         zone.isSafeCity ? 'is-city' : 'is-field',
@@ -454,8 +454,17 @@ export class ProjectHubSystem {
       '<div><strong>Мир uGame · 25 локаций</strong><span>5 мирных городов · 20 полевых зон · временные названия</span></div>',
       detail,
       '</div>',
+      '<div class="world-map-legend">',
+      '<span data-biome="snow">Снег</span>',
+      '<span data-biome="forest">Лес</span>',
+      '<span data-biome="sand">Песок</span>',
+      '<span data-biome="stone">Камень</span>',
+      '<span data-biome="south">Юг</span>',
+      '<span data-kind="city">◆ Мирный город</span>',
+      '<span data-kind="current">● Вы здесь</span>',
+      '</div>',
       '<div class="world-map-scroll">',
-      '<div class="world-map-stage">',
+      '<div class="world-map-stage">
       '<div class="world-map-compass world-map-compass-n"><b>N</b><span>СЕВЕР</span><i>↑</i></div>',
       '<div class="world-map-compass world-map-compass-ne"><b>NE</b><span>СЕВЕРО-ВОСТОК</span><i>↗</i></div>',
       '<div class="world-map-compass world-map-compass-e"><b>E</b><span>ВОСТОК</span><i>→</i></div>',

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.07**
+Current version: **0.1.08**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.08 | World Map Layout Polish: compass gets clear margins and map gains biome/city/current-location legend |
 | 0.1.07 | World Map Compass: N/NE/E/SE/S/SW/W/NW labels and arrows surround the 25-location diamond |
 | 0.1.06 | Diamond World Map UI: Project Hub renders all 25 locations as rotated squares with names, IDs, biome/city styling and current position |
 | 0.1.05 | Five-city Teleport Network: Aster opens all safe cities and teleports to the selected city center |
@@ -113,6 +114,9 @@ Current version: **0.1.07**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.08
+World Map получил дополнительный вертикальный запас: северный и южный compass-marker больше не должны накладываться на крайние city tiles. Добавлена компактная легенда цветов `snow / forest / sand / stone / south`, отдельное обозначение мирного города и маркер текущей позиции. Геометрия WorldGraph и переходы не менялись.
 
 ## 0.1.07
 На World Map добавлена восьминаправленная ориентация по пользовательскому референсу: `N / NE / E / SE / S / SW / W / NW`, русские подписи и стрелки. Цветовая группировка повторяет принятую схему: север/NW — синий, восток/NE — зелёный, юг/SE — красный, запад/SW — золотой. Маркеры являются UI-навигацией и не влияют на WorldGraph.
