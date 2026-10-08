@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.09",
-  "stage": "first-playable-world-migration",
+  "version": "0.1.10",
+  "stage": "diamond-world-series-audit",
   "updated": "2026-10-08",
-  "summary": "Restore the Three Fragments first-playable quest inside the new 25-location world without adding non-service NPCs to safe cities"
+  "summary": "Document and audit the 25-location diamond world, five safe cities, city services, textures, compass and migrated First Playable"
 }

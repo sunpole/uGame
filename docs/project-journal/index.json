@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "records": [
     {
       "id": "UGD-0001",
@@ -883,6 +883,38 @@
         "UGD-0016",
         "UGD-0024",
         "UGD-0027"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0029",
+      "title": "25-location diamond world and five safe cities",
+      "date": "2026-10-08",
+      "type": "world",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "temporary-names"
+      ],
+      "tags": [
+        "world-map",
+        "25-locations",
+        "safe-city",
+        "city-npc",
+        "teleporter",
+        "banker",
+        "biome",
+        "compass"
+      ],
+      "path": "records/UGD-0029-25-location-diamond-world-five-safe-cities.md",
+      "related": [
+        "UGD-0004",
+        "UGD-0013",
+        "UGD-0016",
+        "UGD-0023",
+        "UGD-0027",
+        "UGD-0028"
       ],
       "supersedes": [],
       "superseded_by": []

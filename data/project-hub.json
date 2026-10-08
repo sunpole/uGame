@@ -74,9 +74,16 @@
         {
           "id": "biome-ground-doc",
           "label": "Biome Ground Textures",
-          "description": "Runtime пола, шесть biome/city slots, локальный импорт PNG и DEV Visual Lab.",
+          "description": "Runtime пола: 12 biome/city slots, south textures, browser-local overrides и DEV Visual Lab.",
           "type": "document",
           "target": "./docs/BIOME-GROUND-TEXTURES.md"
+        },
+        {
+          "id": "world-map-doc",
+          "label": "25-location World Map",
+          "description": "Ромбическая сетка 25 локаций, 5 safe cities, city services, compass и biome layout.",
+          "type": "document",
+          "target": "./docs/WORLD-MAP-25-LOCATIONS.md"
         },
         {
           "id": "world-spawn-state-doc",

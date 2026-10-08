@@ -1,6 +1,6 @@
 # uGame — текущее состояние концепции
 
-Обновлено: 2026-10-07
+Обновлено: 2026-10-08
 
 Этот файл специально короткий. Он показывает текущее состояние важных тем; подробности и история находятся в `records/`. Общая структура последних Active/Idle-идей собрана в `ACTIVE-IDLE-CORE.md`.
 
@@ -36,6 +36,7 @@
 - Принято и реализовано `UGD-0025`: live REAL TIME countdown, biome default 40/40, Spawn Zone DEV controls, temporary humanoid Master shell, slow facing и slow wandering в пределах Event Spot radius. Внешний legacy `resource` Event удалён: resourceDirection идёт через Master NPC; остальные generic slots используют временный candidate-QA Chest/Portal mix. На этапе разработки Spawn Zone Debug default ON.
 - Принято и реализовано `UGD-0026`: первый functional Stone Extraction Process — REAL TIME, persistent startedAt/endsAt, duration ≤ Encounter remainder, offline completion → Character↔Master pending reward → claim через ту же Master identity. QA duration/base reward пока не финальный баланс.
 - Принято и реализовано `UGD-0027`: один Event Spot одновременно имеет ровно одного active owner. Master и generic Event не могут делить один `spotId`; при Master reservation существующий Chest/Portal безопасно переносится на другой свободный spot.
+- Принято и реализовано `UGD-0029`: world baseline = 25 локаций в логической сетке 5×5 с ромбической World Map; 5 safe cities + 20 fields, local world 1920×1080, 15 service NPC, working Bank/Teleport/Guide, 12 texture slots и N/NE/E/SE/S/SW/W/NW compass.
 
 ## Активные рабочие гипотезы
 
@@ -84,6 +85,7 @@
 - `v0.0.85–v0.0.88` реализуют первый vertical Process loop: module action menu → persistent Stone Extraction → offline pending reward → claim.
 - `v0.0.90–v0.0.92` исправляют EventSpot↔WorldSpawn integration и закрепляют hard occupancy invariant `1 spotId = 1 occupant` с safe relocation generic Event.
 - `v0.0.94–v0.0.96` расширяют каждую текущую карту до 12 candidate Event Spot и добавляют weighted anti-repeat для generic Event и Master placement.
+- `v0.0.99–v0.1.09` перестраивают playable world: local area ×4, 25-zone WorldGraph, 5 hard safe cities, 15 city service NPC, southern textures, real Bank/Teleport/Guide, interactive diamond World Map + compass и миграция First Playable.
 - `v0.0.81–v0.0.83` убирают внешний legacy Resource Event, вводят отдельный candidate-QA Chest/Portal mix и включают Spawn Zone Debug по умолчанию на время разработки.
 - В коде уже существуют Interactable, EventSystem, DialogueSystem, QuestSystem, ресурсы, инвентарь и базовые переходы.
 - Project Hub → DEV-коды теперь добавляет рядом с каждой документированной 4-значной командой кнопку «Выполнить», которая использует тот же footer DEV-console handler; ручной ввод сохранён.
@@ -91,7 +93,7 @@
 
 ## Текущий приоритет
 
-- Выполнить ручной desktop QA v0.0.97: проверить 12 candidate circles, exclusivity (`8298`), recent generic history (`8297`), визуальное снижение повторов spot при нескольких refresh, затем продолжить Extraction QA.
+- Выполнить ручной desktop QA v0.1.10: переходы/камера на 1920×1080, 25-zone World Map, все 5 городов, full vision/no events, 15 service NPC, Bank, Teleport, Guide dialogues, south textures, field 12 spots/exclusivity и First Playable migration.
 - Никакой gameplay timer не переводить на Game Clock: Event/Location/NPC/Process/cooldown/Location Tier/Master Encounter остаются REAL TIME до отдельного решения.
 - После успешного QA первый Extraction loop считается вертикально проверенным; следующие Dialogue/Analytics/Quest/Training/Event подключать отдельными маленькими патчами, не объявляя placeholders готовой механикой.
 - Большие Simulation Lab runs по-прежнему остановлены после #20; automatic smoke — только техническая проверка.
@@ -126,3 +128,4 @@
 - `UGD-0026` — первый functional Stone Extraction Process с offline completion / pending reward / claim; реализовано v0.0.85–v0.0.88, требуется ручной gameplay QA.
 - `UGD-0027` — hard Event Spot exclusivity `1 spotId = 1 occupant`; реализовано v0.0.90–v0.0.92, требуется ручной gameplay QA.
 - `UGD-0028` — 12 candidate Event Spots + weighted anti-repeat placement; реализовано v0.0.94–v0.0.96, веса требуют визуального QA.
+- `UGD-0029` — 25-location diamond world + five safe cities + city services + compass; реализовано v0.0.99–v0.1.10, требуется ручной browser/gameplay QA.

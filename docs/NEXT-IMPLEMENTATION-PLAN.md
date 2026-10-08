@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
-Дата: 2026-10-07  
-Статус: Stage C–E и module availability реализованы до v0.0.72; v0.0.73–v0.0.79 закрывают Master UX/DEV presentation series; v0.0.81–v0.0.83 убирают parallel Resource Event и усиливают DEV spawn-zone QA. Текущая точка — ручной QA v0.0.83, затем функциональная Добыча/Process.
+Дата: 2026-10-08  
+Статус: Stage C–F prototype и первый Extraction vertical slice реализованы; v0.0.99–v0.1.10 перестраивают мир в 25-location diamond baseline с пятью safe cities и рабочими city services. Текущая точка — ручной QA v0.1.10.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.0.80:
+Состояние после v0.1.10:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -41,7 +41,7 @@
 - текущий gameplay v0.0.35–0.0.39 foundation;
 - Persistent Game Chrome v0.0.41–v0.0.48: Header/Workspace/Footer, build/session/location/real/game clocks, live character/resources header, Action Router, AnyDesk controls, text-selection settings, shared Journal/Simulation chrome;
 - Workspace Window Policy v0.0.49–v0.0.53: bounded runtime windows, scale-first fallback, formal layers and visible Game Clock seconds/phase;
-- Responsive Workspace + Biome Visual Layer v0.0.54–v0.0.58: normal-size Bank/Inventory, full Workspace game viewport, responsive non-stretch camera, six biome/city floor slots and temporary Biome Visual Lab;
+- Responsive Workspace + Biome Visual Layer v0.0.54–v0.0.58, затем world expansion v0.0.99–v0.1.10: 1920×1080 local worlds, following camera, 12 biome/city texture slots, 25-zone WorldGraph, five safe cities, city services и diamond World Map;
 - WorldSpawnState / Location Tier Stage C v0.0.60–v0.0.64: persistent local world state, safe-city graph distance, Stone eligibility, external T1–T4 real-time Tier-state, 2–6 capacity and 84xx QA;
 - Persistent Location Intel v0.0.65: LT / distance / current-tier chance / location bonus always visible in Header/Footer;
 - Stone Master Stage D v0.0.66–v0.0.70: four identities, persistent 30m Encounter, candidate allocator, caps/rotation, visible Tier NPC, character relationship history and active 83xx QA;
@@ -235,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.0.97: 12 candidate spots + anti-repeat + Event Spot exclusivity + Stone runtime + persistent Extraction/offline pending reward/claim.
-2. После успешного QA считать первый Process vertical slice подтверждённым.
-3. Затем отдельными маленькими версиями подключать Dialogue → Analytics → Quest → Training → special Event по фактической игровой необходимости.
+1. Провести ручной QA v0.1.10: 25-zone world, ×4 local maps/camera entries, five safe cities, Bank/Teleport/Guide, textures, World Map/compass, 12 spots/exclusivity и restored First Playable.
+2. После успешного QA исправить только выявленные regression/UX-долги этой world series.
+3. Затем вернуться к content-first Master modules / progression и отдельной проработке city NPC roaming routes.

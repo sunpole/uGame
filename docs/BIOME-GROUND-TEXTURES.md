@@ -1,76 +1,64 @@
 # Biome Ground Texture System
 
-Current implementation: **v0.0.74**
+Current implementation: **v0.1.10**
 
 ## Purpose
 
-The runtime floor and the temporary admin editor are intentionally separate:
-
 - `GroundTextureSystem` renders the floor in gameplay.
 - `BiomeTextureSettingsSystem` owns defaults and browser-local overrides.
-- `Biome Visual Lab · DEV` is temporary Project Hub tooling and may later be hidden without changing runtime behavior.
+- `Biome Visual Lab · DEV` edits the same slots without changing WorldGraph.
 
 ## Source configuration
 
-`data/biome-textures.json` defines six slots:
+`data/biome-textures.json` defines **12 slots**:
 
-| Slot | Biome | City |
-|---|---|---|
-| grass | grass | no |
-| sand | sand | no |
-| snow | snow | no |
-| city-grass | grass | yes |
-| city-sand | sand | yes |
-| city-snow | snow | yes |
+| Slot | Biome | City | Current asset |
+|---|---|---:|---|
+| grass | grass | no | grass_1024.png |
+| sand | sand | no | sand_1024.png |
+| snow | snow | no | snow_1024.png |
+| forest | forest | no | grass_1024.png prototype fallback |
+| stone | stone | no | grass_1024.png prototype fallback |
+| south | south | no | south_256.jpg |
+| city-grass | grass | yes | city_grass_1024.png |
+| city-sand | sand | yes | city_sand_1024.png |
+| city-snow | snow | yes | city_snow_1024.png |
+| city-forest | forest | yes | city_grass_1024.png prototype fallback |
+| city-stone | stone | yes | city_grass_1024.png prototype fallback |
+| city-south | south | yes | city_south_512.jpg |
 
-Each slot has `enabled`, `textureName`, `textureFile`, `scalePercent` and `opacityPercent`.
+Default baseline remains **40% scale + 40% opacity** unless a browser-local override exists.
 
-Ranges:
+## Tiling
 
-- scale: 1–10 000%;
-- opacity: 0–100%.
+Texture pixels repeat in world space; sources are not stretched to the browser viewport.
 
-At 100% one source texture spans 1024 world units. The image repeats in world space; it is not stretched to the browser viewport.
+At scale 100% a 1024 source repeats every 1024 world units, the south city 512 source every 512, and the south field 256 source every 256.
 
-## Current prototype zone mapping
+## Current world mapping
 
-- zone-001 Перекрёсток → grass + city;
-- zone-002 Галерея → sand;
-- zone-003 Тёмный сад → grass;
-- zone-004 Сердце руин → sand.
+The 25-location world uses `snow`, `forest`, `stone`, `sand`, `south` plus matching city slots.
 
-Snow slots are already available in the system and Visual Lab but are not assigned to the four current zones.
+South is the first newly tracked dedicated pair:
 
-## Local texture import
+- south field — user-provided brown sandy/stone reference;
+- south city — user-provided white marble reference.
 
-Development PNGs live locally at `assets/textures/biomes/` and are ignored by Git.
+Forest and Stone deliberately reuse existing assets as prototype fallbacks until dedicated textures are approved.
 
-The updater recognizes exactly:
+## Asset workflow
 
-- grass_1024.png
-- sand_1024.png
-- snow_1024.png
-- city_grass_1024.png
-- city_sand_1024.png
-- city_snow_1024.png
+The original six development PNGs remain supported by the local updater import workflow.
 
-`Update-uGame.cmd → 10` copies/updates those files from `%USERPROFILE%\Desktop`. Local RUN performs the same check automatically before starting the dev server.
-
-This is a prototype asset workflow. Before public deployment, approved binaries must be promoted into tracked or otherwise deployed static assets.
+The approved South prototype JPEGs are tracked with the project because the current 25-zone world depends on them.
 
 ## QA
 
-Check:
-
-1. all six files are available locally after updater import;
-2. city and non-city slots select the expected texture;
-3. changing scale does not change player/NPC proportions;
-4. opacity 0 hides the texture and 100 shows it fully;
-5. Apply updates the active floor immediately;
-6. Reset restores JSON defaults;
-7. a missing texture does not break the game;
-8. responsive viewport resizing keeps the floor covering all visible world space.
-
-## v0.0.74 baseline
-
-All six current biome/city slots default to **40% scale + 40% opacity**. Browser-local Biome Visual Lab overrides remain explicit overrides and are not erased by the default change.
+1. all 12 slots appear in Biome Visual Lab;
+2. all five field biome ids resolve without missing texture;
+3. all five city biome ids resolve a city slot;
+4. South city visibly uses white marble;
+5. South fields visibly use brown sandy ground;
+6. scale changes do not alter player/NPC proportions;
+7. Apply/Reset still work;
+8. camera movement across 1920×1080 keeps the tile floor continuous.

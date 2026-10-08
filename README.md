@@ -34,16 +34,17 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.0.72 — Stone Master runtime + DEV World Analyzer + gameplay prototype
+## Game prototype v0.1.10 — 25-location diamond world + city services + Stone runtime
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
 
-- four connected top-down zones loaded from `data/world.json` through WorldGraph;
-- five Dynamic Event Spots in the safe-city prototype and six eligible Event/NPC Spots in each current external zone;
+- 25 connected top-down locations loaded from `data/world.json` through WorldGraph: 5 safe cities + 20 field zones;
+- each local world is 1920×1080 (2× width × 2× height / area ×4) with a following camera;
+- every field zone has 12 candidate Event Spots spread across the expanded map; safe cities have zero Event Spots;
 - persistent external Location Tier T1–T4 with real-time Tier-state lifetime, safe-city distance and 2–6 active spawn capacity;
 - 30-minute Dynamic Event encounters continue to live independently inside the longer Location Tier-state;
-- random Resource, Chest and placeholder Event Portal encounters;
+- generic field events currently use Chest / placeholder Event Portal; resource-direction gameplay is routed through Master NPC;
 - a reusable InteractionPanel for reward choice and informational event windows;
 - data-driven resource catalog and reward/event generation rules;
 - persistent pending reward offers so reload/zone travel cannot freely reroll them;
@@ -89,7 +90,11 @@ The current prototype includes:
 - shared project chrome on Journal / Active–Idle / Simulation Results HTML pages;
 - scale-first bounded runtime windows with fixed-size Inventory/Bank slots and scroll fallback;
 - a full-Workspace responsive Phaser viewport: wide screens reveal more world instead of stretching sprites or vision;
-- biome/city ground textures for grass, sand and snow through a dedicated GroundTextureSystem;
+- biome/city ground texture slots for grass, sand, snow, forest, stone and south through a dedicated GroundTextureSystem;
+- dedicated tracked South prototype textures: brown sandy field ground + white marble city ground;
+- five safe cities with full vision, no Dynamic Events/Masters, and three service NPC each;
+- shared Banker Boris opens the existing Bank, shared Teleporter Aster connects all five cities, and each city has a unique biome guide/guard;
+- Project Hub World Map renders all 25 locations as a 45° diamond with temporary names/IDs/biomes/current position and N/NE/E/SE/S/SW/W/NW compass;
 - per-texture enabled, name/file, scale 1–10,000% and opacity 0–100% settings;
 - a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides;
 - local serializable `WorldSpawnState` persisted inside Game State so reload/zone travel cannot freely reroll Location Tier;
@@ -103,8 +108,7 @@ The current prototype includes:
 - Project Hub `DEV World Analyzer` for active masters, Location context, candidate pools, rotation coverage and one-click teleport;
 - persistent per-Encounter module availability: Extraction is guaranteed; T1 2–3, T2 3–4, T3 4–6, T4 all six modules.
 
-The original First Playable quest remains available: speak with the Guide, explore the connected
-zones, find the blue, amber and violet fragments, then activate the extinguished core.
+The original First Playable quest remains available inside the expanded world: speak with start-city Marshal Granit, explore the field zones, find the blue, amber and violet fragments, then activate the extinguished core.
 On top of that static loop, v0.0.32 tests whether changing Event Spots make revisiting zones
 more interesting. v0.0.35 adds the first inventory/storage gameplay layer: physical rewards now
 need portable container capacity, while Attention remains intangible/account storage. v0.0.36 adds
@@ -174,10 +178,10 @@ The v0.0.57 runtime selects a floor by `biome + isCity` and repeats a 1024×1024
 
 Current development slots:
 
-- grass / sand / snow;
-- city-grass / city-sand / city-snow.
+- field: grass / sand / snow / forest / stone / south;
+- city: city-grass / city-sand / city-snow / city-forest / city-stone / city-south.
 
-The exact six PNG binaries are local development assets. `Update-uGame.cmd → 10` imports them from the developer Desktop, and option 4 performs the same check before RUN. The copied PNGs are intentionally Git-ignored so updater safety is preserved. The runtime falls back to the existing dark floor if a texture is missing.
+The original six PNG binaries remain local development assets handled by `Update-uGame.cmd → 10`. The two South prototype JPEG assets are tracked in the repository because the current world uses them directly. Forest/Stone currently reuse existing grass/city-grass art as explicit prototype fallbacks.
 
 `Project Hub → Игра → Biome Visual Lab · DEV` is temporary admin tooling. It can change the texture name/file, enable state, scale from 1% to 10,000%, opacity from 0% to 100%, and preview the same tiled behavior used in gameplay. Later the admin UI can be hidden without removing the runtime GroundTextureSystem.
 
