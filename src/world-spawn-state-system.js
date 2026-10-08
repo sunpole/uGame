@@ -528,10 +528,11 @@ export class WorldSpawnStateSystem {
     if (['8300', '8302', '8303', '8304', '8399'].includes(code)) {
       if (code === '8300') {
         const all = this.getActiveMasters();
-        const counts = this.state.activeCountsByResourceAndTier?.stone || {};
+        const byResource = this.state.activeCountsByResourceAndTier || {};
+        const total = (id) => Object.values(byResource[id] || {}).reduce((sum, value) => sum + (Number(value) || 0), 0);
         return {
           handled: true,
-          message: '8300 · Stone master: ' + all.length + ' · T1 ' + (counts.T1 || 0) + ' · T2 ' + (counts.T2 || 0) + ' · T3 ' + (counts.T3 || 0) + ' · T4 ' + (counts.T4 || 0),
+          message: '8300 · Masters ' + all.length + ' · камень ' + total('stone') + ' · вода ' + total('water') + ' · лес ' + total('wood'),
           state: 'ok'
         };
       }

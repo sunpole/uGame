@@ -244,7 +244,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 0,
@@ -379,7 +380,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 0,
@@ -514,7 +516,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "wood"
       ],
       "worldMap": {
         "gridRow": 0,
@@ -739,7 +742,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 1,
@@ -874,7 +878,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 1,
@@ -1009,7 +1014,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 1,
@@ -1144,7 +1150,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "wood"
       ],
       "worldMap": {
         "gridRow": 1,
@@ -1279,7 +1286,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "wood"
       ],
       "worldMap": {
         "gridRow": 1,
@@ -1549,7 +1557,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 2,
@@ -1795,7 +1804,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 2,
@@ -1930,7 +1940,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "wood"
       ],
       "worldMap": {
         "gridRow": 2,
@@ -2364,7 +2375,8 @@
       "cityKey": null,
       "cityRole": null,
       "resourceDirections": [
-        "stone"
+        "stone",
+        "water"
       ],
       "worldMap": {
         "gridRow": 3,

@@ -111,7 +111,7 @@ export class MasterProcessSystem {
     const actions = pendingRewards.map((pending, index) => {
       const resourceId = pending?.baseReward?.resourceId || 'stone';
       const amount = this.rewardAmount(pending);
-      const resourceLabel = resourceId === 'stone' ? 'Камень' : resourceId;
+      const resourceLabel = ({ stone: 'Камень', water: 'Вода', wood: 'Дерево' })[resourceId] || resourceId;
       return {
         id: pending.rewardId,
         label: 'Забрать: ' + resourceLabel + ' ×' + amount,

@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.12**
+Current version: **0.1.13**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.13 | Water + Forest Masters: T1–T4 lines use the same Master/Process runtime as Stone with water/wood rewards and biome directions |
 | 0.1.12 | Interaction Prompt Separation: NPC/object hint occupies a dedicated lane above controls and no longer covers Action |
 | 0.1.11 | Local Diamond Geometry: playable area is a rhombus with exactly four real gates NW/NE/SW/SE; N/E/S/W are orientation-only |
 | 0.1.10 | Diamond World Series Audit: source-of-truth docs for 25 locations, five safe cities, city services, textures, compass and QA |
@@ -118,6 +119,9 @@ Current version: **0.1.12**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.13
+Добавлены полноценные линии `Мастер воды T1–T4` и `Мастер леса T1–T4`. Они используют тот же Master allocator, Encounter lifetime, Relationship state, modules и REAL TIME Extraction Process, что и Stone Master. Snow field zones теперь имеют направления `stone + water`, forest field zones — `stone + wood`; остальные сохраняют stone. Water Process выдаёт `water`, Forest Process — `wood`. Визуально Water Master получает cyan/blue palette, Forest Master — green palette, при сохранении Tier-индикации. DEV `8300` теперь показывает суммарные количества камень/вода/лес.
 
 ## 0.1.12
 Interaction prompt вынесен выше постоянной нижней панели управления. Кнопка `Действие` остаётся видимой всегда, а подсказка вида `ДЕЙСТВИЕ · ... · E / Space / Enter` занимает отдельную строку над controls. На touch layout сохранён дополнительный отступ над крупными мобильными кнопками.

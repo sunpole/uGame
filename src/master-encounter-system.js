@@ -62,6 +62,7 @@ export class MasterEncounterSystem {
         masterEncounterId: spawn.encounterId,
         masterId: spawn.masterId,
         masterTier: spawn.tier,
+        masterResourceDirectionId: spawn.resourceDirectionId,
         x: point.x,
         y: point.y,
         label: master?.displayName || spawn.displayName || 'Мастер',

@@ -147,7 +147,16 @@ export class InteractableSystem {
         T3: { fill: 0x8957e5, stroke: 0xd2a8ff, text: '#d2a8ff' },
         T4: { fill: 0xc9963b, stroke: 0xf0c66a, text: '#f0c66a' }
       };
-      const colors = palette[item.masterTier] || palette.T1;
+      const tierColors = palette[item.masterTier] || palette.T1;
+      const resourcePalette = {
+        stone: null,
+        water: { fill: 0x1f8fc9, stroke: 0x8de7ff, text: '#8de7ff' },
+        wood: { fill: 0x2f7d45, stroke: 0x8ee6a7, text: '#8ee6a7' }
+      };
+      const resourceColors = resourcePalette[item.masterResourceDirectionId] || null;
+      const colors = resourceColors
+        ? { fill: resourceColors.fill, stroke: item.masterTier === 'T4' ? tierColors.stroke : resourceColors.stroke, text: resourceColors.text }
+        : tierColors;
       glow = scene.add.ellipse(item.x, item.y + 7, 34, 24, colors.fill, 0.18);
 
       const shadow = scene.add.ellipse(0, 11, 26, 10, 0x000000, 0.34);

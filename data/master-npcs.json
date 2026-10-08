@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "status": "prototype-neutral-lore",
-  "note": "Neutral placeholder identities. Tier/resource rules are accepted; final names, titles, portraits and lore are intentionally not final.",
+  "note": "Prototype identities for Stone/Water/Forest master lines. Tier/resource rules accepted; final names, titles, portraits and lore are not final.",
   "modules": [
     {
       "id": "extraction",
@@ -106,6 +106,166 @@
       "id": "stone-master-t4",
       "displayName": "Мастер камня T4",
       "resourceDirectionId": "stone",
+      "tier": "T4",
+      "efficiencyMultiplier": 1.6,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 6,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "water-master-t1",
+      "displayName": "Мастер воды T1",
+      "resourceDirectionId": "water",
+      "tier": "T1",
+      "efficiencyMultiplier": 1,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 2,
+      "moduleCountMax": 3,
+      "enabled": true
+    },
+    {
+      "id": "water-master-t2",
+      "displayName": "Мастер воды T2",
+      "resourceDirectionId": "water",
+      "tier": "T2",
+      "efficiencyMultiplier": 1.2,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 3,
+      "moduleCountMax": 4,
+      "enabled": true
+    },
+    {
+      "id": "water-master-t3",
+      "displayName": "Мастер воды T3",
+      "resourceDirectionId": "water",
+      "tier": "T3",
+      "efficiencyMultiplier": 1.4,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 4,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "water-master-t4",
+      "displayName": "Мастер воды T4",
+      "resourceDirectionId": "water",
+      "tier": "T4",
+      "efficiencyMultiplier": 1.6,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 6,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "wood-master-t1",
+      "displayName": "Мастер леса T1",
+      "resourceDirectionId": "wood",
+      "tier": "T1",
+      "efficiencyMultiplier": 1,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 2,
+      "moduleCountMax": 3,
+      "enabled": true
+    },
+    {
+      "id": "wood-master-t2",
+      "displayName": "Мастер леса T2",
+      "resourceDirectionId": "wood",
+      "tier": "T2",
+      "efficiencyMultiplier": 1.2,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 3,
+      "moduleCountMax": 4,
+      "enabled": true
+    },
+    {
+      "id": "wood-master-t3",
+      "displayName": "Мастер леса T3",
+      "resourceDirectionId": "wood",
+      "tier": "T3",
+      "efficiencyMultiplier": 1.4,
+      "guaranteedModules": [
+        "extraction"
+      ],
+      "modulePool": [
+        "dialogue",
+        "quest",
+        "analytics",
+        "training",
+        "special-event"
+      ],
+      "moduleCountMin": 4,
+      "moduleCountMax": 6,
+      "enabled": true
+    },
+    {
+      "id": "wood-master-t4",
+      "displayName": "Мастер леса T4",
+      "resourceDirectionId": "wood",
       "tier": "T4",
       "efficiencyMultiplier": 1.6,
       "guaranteedModules": [

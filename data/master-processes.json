@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "status": "candidate-qa",
   "note": "QA-only values for validating the first persistent Extraction Process. Not final economy.",
   "profiles": [
@@ -12,6 +12,28 @@
       "durationSeconds": 60,
       "baseReward": {
         "resourceId": "stone",
+        "amount": 10
+      }
+    },
+    {
+      "id": "water-extraction-basic",
+      "moduleId": "extraction",
+      "resourceDirectionId": "water",
+      "label": "Добыча воды",
+      "durationSeconds": 60,
+      "baseReward": {
+        "resourceId": "water",
+        "amount": 10
+      }
+    },
+    {
+      "id": "wood-extraction-basic",
+      "moduleId": "extraction",
+      "resourceDirectionId": "wood",
+      "label": "Добыча лесных ресурсов",
+      "durationSeconds": 60,
+      "baseReward": {
+        "resourceId": "wood",
         "amount": 10
       }
     }

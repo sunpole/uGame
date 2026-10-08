@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.12",
-  "stage": "interaction-prompt-separation",
+  "version": "0.1.13",
+  "stage": "water-and-forest-masters",
   "updated": "2026-10-08",
-  "summary": "Interaction hint gets its own lane above controls so NPC prompts never cover the persistent Action button"
+  "summary": "Add Water and Forest Master lines T1-T4 with extraction Process, resource-aware visuals and biome resource directions"
 }
