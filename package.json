@@ -1,10 +1,10 @@
 {
   "name": "ugame",
-  "version": "0.2.43",
+  "version": "0.2.44",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node tools/dev-server.mjs",
-    "test": "node --test tests/master-loop.test.mjs tests/city-crafting.test.mjs tests/crafting-runtime.test.mjs tests/resource-expedition.test.mjs"
+    "test": "node --test tests/master-loop.test.mjs tests/city-crafting.test.mjs tests/crafting-runtime.test.mjs tests/resource-expedition.test.mjs tests/resource-profession.test.mjs"
   }
 }

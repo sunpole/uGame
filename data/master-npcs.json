@@ -33,13 +33,13 @@
       "id": "analytics",
       "label": "Аналитика и бонусы",
       "kind": "analytics",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "training",
       "label": "Репутация и навыки",
       "kind": "training",
-      "implemented": false
+      "implemented": true
     },
     {
       "id": "special-event",

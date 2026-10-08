@@ -1,26 +1,36 @@
-name: uGame resource expedition v0.2.42 tests
+name: uGame expedition and professions regression
 
 on:
   pull_request:
     paths:
       - 'src/resource-expedition-*.js'
+      - 'src/resource-profession-*.js'
       - 'src/game-state.js'
       - 'src/main.js'
       - 'src/master-encounter-system.js'
       - 'src/character-master-relationship-system.js'
       - 'data/resource-expeditions.json'
+      - 'data/resource-professions.json'
+      - 'data/resources.json'
+      - 'data/items.json'
       - 'data/master-npcs.json'
       - 'tests/resource-expedition.test.mjs'
+      - 'tests/resource-profession.test.mjs'
       - 'package.json'
       - '.github/workflows/resource-expedition-tests.yml'
   push:
     branches: [main]
     paths:
       - 'src/resource-expedition-*.js'
+      - 'src/resource-profession-*.js'
       - 'src/game-state.js'
       - 'src/main.js'
       - 'data/resource-expeditions.json'
+      - 'data/resource-professions.json'
+      - 'data/resources.json'
+      - 'data/items.json'
       - 'tests/resource-expedition.test.mjs'
+      - 'tests/resource-profession.test.mjs'
       - '.github/workflows/resource-expedition-tests.yml'
   workflow_dispatch:
 
@@ -38,6 +48,8 @@ jobs:
       - name: Check JavaScript module syntax
         run: |
           node --check src/resource-expedition-system.js
+          node --check src/resource-profession-system.js
+          node --check src/resource-profession-view.js
           node --check src/resource-expedition-view.js
           node --check src/main.js
       - name: All Node regression tests
