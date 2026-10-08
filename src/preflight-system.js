@@ -250,7 +250,13 @@ function validateMasterRewardState(sources) {
   if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardAvailable')) {
     throw new Error('Master red reward marker missing');
   }
-  if (!encounter.includes('isFreeRewardAvailable') || !encounter.includes('Добыча · получено')) {
+  // The Extraction label is data-driven (master-npcs.json), so the complete
+  // "Добыча · получено" string is not a literal in this module.
+  // Verify the claimed state, suffix and disabled-action guard instead.
+  if (!encounter.includes('isFreeRewardAvailable')
+    || !encounter.includes('claimedExtraction')
+    || !encounter.includes("' · получено'")
+    || !encounter.includes('disabled: !implemented || claimedExtraction')) {
     throw new Error('Encounter reward eligibility UI missing');
   }
   if (!process.includes('Бесплатная добыча у этого NPC') || !process.includes('fallbackEncounterId')) {

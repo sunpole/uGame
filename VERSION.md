@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.14**
+Current version: **0.2.15**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.15 | Fix Master reward PRE-FLIGHT false failure for data-driven claimed label; keep claim guard checks |
 | 0.2.14 | Master Reward Compatibility: preserve old pending rewards and reconstruct legacy Encounter ids before claim locking |
 | 0.2.13 | Master Reward Marker: one free Extraction per Encounter, red pulsing head marker until successful claim, claimed-state lock |
 | 0.2.12 | Daylight Boot Hotfix: non-blocking config load compatible with Phaser synchronous create(), preserving queued clock/zone state |
@@ -149,6 +150,9 @@ Current version: **0.2.14**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.15
+Pre-flight hotfix: `MasterEncounterSystem` renders `Добыча · получено` dynamically from the extraction module's catalog label plus the ` · получено` suffix. The old static-source check demanded the fully concatenated literal, incorrectly halting boot. The validator now checks the actual claimed-state expression, generated suffix, and disabled-action guard. No gameplay behavior or save schema changed; v0.2.14 had not passed browser PRE-FLIGHT.
 
 ## 0.2.14
 Compatibility hotfix for the new one-free-reward lock. Historical pending rewards are presented before the current Encounter claim guard. Legacy pending rewards without an explicit `encounterId` reconstruct it from stable `process:<encounterId>:<timestamp>` before falling back to the current Encounter, preventing an old reward from consuming a new Encounter's free-reward marker.

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.14",
-  "stage": "master-reward-compatibility",
+  "version": "0.2.15",
+  "stage": "master-reward-preflight-fix",
   "updated": "2026-10-08",
-  "summary": "Keep legacy Master pending rewards collectible without consuming a new Encounter reward marker"
+  "summary": "Fix false-negative Master reward PRE-FLIGHT validation of the data-driven claimed label, preserving gameplay"
 }
