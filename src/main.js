@@ -356,7 +356,7 @@ class ZoneScene extends Phaser.Scene {
         this.persistGameState();
         this.syncExpeditionUI();
       },
-      availableSteps: () => Math.floor(Number(stepSystem?.balance) || 0),
+      availableSteps: () => stepSystem?.debt > 0 ? 0 : Math.floor(Number(stepSystem?.balance) || 0),
       spendSteps: (amount) => stepSystem?.spendService?.(amount, { source: 'resource-expedition' })?.ok === true,
       addSteps: (amount) => stepSystem?.add?.(amount, { source: 'expedition-solo-refund' }),
       grantResource: (id, mass, tier) => this.grantResource(id, mass, tier),
