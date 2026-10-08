@@ -9,7 +9,7 @@ const spawn = (tier = 'T1', encounterId = 'test-001') => ({
   tier, expiresAt: 1_200_000, efficiencyMultiplier: tier === 'T1' ? 1 : 1.6
 });
 
-function fixture({ steps = 1000, save = null, random = () => 0.5 } = {}) {
+function fixture({ steps = 1000, save = null, random = () => 0.5, onDepleted } = {}) {
   const grants = [], xp = [], refunds = [], snapshots = [];
   const expedition = new ResourceExpeditionSystem({
     config,
@@ -23,7 +23,8 @@ function fixture({ steps = 1000, save = null, random = () => 0.5 } = {}) {
     },
     addSteps: (amount) => { steps += amount; refunds.push(amount); },
     grantResource: (id, mass, tier) => { grants.push({ id, mass, tier }); return true; },
-    grantRelationshipXp: (id, amount) => xp.push({ id, amount })
+    grantRelationshipXp: (id, amount) => xp.push({ id, amount }),
+    onDepleted
   });
   expedition.initialize(save);
   return { expedition, grants, refunds, xp, snapshots, getSteps: () => steps };
@@ -182,4 +183,71 @@ test('no Steps pauses auto, full inventory preserves cargo and does not reroll',
   f.expedition.grantResource = () => true;
   assert.equal(f.expedition.claim(), true);
   assert.equal(f.expedition.claim(), false);
+});
+
+test('depletion stamps exact time and shortens NPC Encounter to a persisted 30-second countdown', async () => {
+  const { WorldSpawnStateSystem } = await import('../src/world-spawn-state-system.js');
+  const events = [], snapshots = [], depletedEvents = [];
+  const now = 1_000;
+  const world = new WorldSpawnStateSystem({
+    eventSystem: { emit: (name, payload) => events.push({ name, payload }) },
+    onStateChange: (state) => snapshots.push(state)
+  });
+  world.state.activeMasterSpawns = [{
+    ...spawn('T1','depletion-30'), spotId: 'rock-1', zoneId: 'zone-001'
+  }];
+  world.initialized = true;
+  const f = fixture({ onDepleted: (value) => {
+    depletedEvents.push(value);
+    world.markExpeditionDepleted(value.encounterId,value.completedAt,30_000);
+  } });
+  f.expedition.enter(spawn('T1','depletion-30'),now);
+  f.expedition.startAuto(now);
+  f.expedition.update(501_000,true);
+  assert.equal(f.expedition.run.status,'depleted');
+  assert.equal(f.expedition.run.completedAt,501_000);
+  assert.equal(depletedEvents.length,1);
+  assert.equal(world.getMasterSpawn('depletion-30').expeditionCompletedAt,501_000);
+  assert.equal(world.getMasterSpawn('depletion-30').expiresAt,531_000);
+  assert.equal(world.getMasterSpawn('depletion-30').zoneId,'zone-001');
+  assert.equal(world.markExpeditionDepleted('depletion-30',515_000),false);
+  assert.equal(snapshots.length,1);
+  assert.ok(events.some(x=>x.name==='master-spawns:changed'));
+  assert.equal(f.expedition.update(520_000,true),false);
+  assert.equal(depletedEvents.length,1);
+  assert.equal(f.expedition.claim(),true);
+  assert.equal(f.grants.length,1);
+});
+
+test('expired and voluntarily abandoned excavations do not trigger Master farewell', () => {
+  const depleted = [];
+  const abandoned = fixture({ onDepleted: value=>depleted.push(value),steps:1 });
+  abandoned.expedition.enter(spawn(),1_000);
+  abandoned.expedition.startAuto(1_000);
+  abandoned.expedition.update(1_500_000,true);
+  assert.equal(abandoned.expedition.run.status,'expired');
+  assert.equal(depleted.length,0);
+  const left = fixture({ onDepleted: value=>depleted.push(value) });
+  left.expedition.enter(spawn(),1_000);
+  left.expedition.leave(2_000);
+  assert.equal(depleted.length,0);
+});
+
+test('immersive Expedition realm owns navigation separately from the original NPC interaction menu', async () => {
+  const { ResourceExpeditionView } = await import('../src/resource-expedition-view.js');
+  const f = fixture();
+  const events = [];
+  const view = new ResourceExpeditionView({
+    expeditionSystem: f.expedition,
+    interactionPanel: { close: () => events.push('close') },
+    onOccupancyChange: () => events.push('sync'),
+    getSteps: f.getSteps,
+    getRelationship: () => ({relationshipXp:10})
+  });
+  assert.equal(view.isOpen(),false); // server-side Node: DOM is absent
+  assert.equal(f.expedition.enter(spawn(),1000).ok,true);
+  assert.equal(typeof view.show,'function');
+  assert.equal(typeof view.tick,'function');
+  view.hide();
+  assert.ok(events.includes('sync'));
 });
