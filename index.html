@@ -179,7 +179,30 @@
       </footer>
     </div>
 
+    <script>
+      window.__ugameBoot = { phase: 'html', startedAt: Date.now(), error: null };
+      const showBootError = (message) => {
+        const text = String(message || 'Неизвестная ошибка запуска');
+        window.__ugameBoot.error = text;
+        const target = document.querySelector('#quest-status');
+        if (target) {
+          target.textContent = 'Ошибка запуска: ' + text;
+          target.style.color = '#ff7b72';
+        }
+      };
+      window.addEventListener('error', (event) => {
+        showBootError(event?.error?.message || event?.message || 'JavaScript error');
+      });
+      window.addEventListener('unhandledrejection', (event) => {
+        showBootError(event?.reason?.message || event?.reason || 'Unhandled promise rejection');
+      });
+      window.setTimeout(() => {
+        if (window.__ugameBoot?.phase === 'html' && !window.__ugameBoot?.error) {
+          showBootError('основной модуль игры не запустился');
+        }
+      }, 8000);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
-    <script type="module" src="./src/main.js?v=0.1.17"></script>
+    <script type="module" src="./src/main.js?v=0.1.18"></script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.17",
-  "stage": "boot-hotfix-decouple-humanoid-helper",
+  "version": "0.1.18",
+  "stage": "boot-diagnostics",
   "updated": "2026-10-08",
-  "summary": "Hotfix startup by removing the cross-module createHumanoidVisual named-export dependency introduced by city NPC redesign"
+  "summary": "Add visible boot diagnostics so pre-runtime module or world initialization failures no longer look like an endless loading screen"
 }

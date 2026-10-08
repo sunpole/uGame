@@ -147,6 +147,7 @@ class ZoneScene extends Phaser.Scene {
   }
 
   create() {
+    if (window.__ugameBoot) window.__ugameBoot.phase = 'scene-create';
     this.cameras.main.setBackgroundColor('#0b0d10');
     this.statusElement = document.querySelector('#zone-status');
     this.gameElement = document.querySelector('#game');
@@ -459,6 +460,7 @@ class ZoneScene extends Phaser.Scene {
 
   async initializeWorld(restoredState) {
     try {
+      if (window.__ugameBoot) window.__ugameBoot.phase = 'world-init';
       await Promise.all([
         biomeTextureSettingsSystem.load(),
         masterCatalog.load(),
@@ -491,9 +493,14 @@ class ZoneScene extends Phaser.Scene {
 
       this.zoneSystem.build(zoneId, entryId);
       this.worldReady = true;
+      if (window.__ugameBoot) window.__ugameBoot.phase = 'ready';
       visionSystem?.update();
     } catch (error) {
       this.worldReady = false;
+      if (window.__ugameBoot) {
+        window.__ugameBoot.phase = 'world-error';
+        window.__ugameBoot.error = error instanceof Error ? error.message : String(error);
+      }
       playerController?.setEnabled(false);
       this.setStatus('WorldGraph не загрузился');
       if (this.questStatusElement) {

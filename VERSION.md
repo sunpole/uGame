@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.17**
+Current version: **0.1.18**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.18 | Boot Diagnostics: visible global/module/world-init errors replace silent endless loading |
 | 0.1.17 | Boot Hotfix: remove fragile cross-module humanoid helper export/import while preserving player-base city NPC visuals |
 | 0.1.16 | Local Diamond / Multi-Resource Master Audit: document four diagonal gates, Water/Forest Masters, prompt separation and shared humanoid city NPC |
 | 0.1.15 | Diamond Event Spot Clearance: 12 field candidate spots stay evenly spread but now have guaranteed wall clearance |
@@ -123,6 +124,9 @@ Current version: **0.1.17**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.18
+Добавлена ранняя boot-диагностика до загрузки Phaser/main module. Глобальные `error` и `unhandledrejection` выводятся прямо в `quest-status`; если основной модуль вообще не стартовал за 8 секунд, вместо вечного `Загрузка квеста…` появляется явное сообщение. `main.js` дополнительно отмечает фазы `scene-create / world-init / ready / world-error`. Gameplay не менялся.
 
 ## 0.1.17
 Hotfix после ручного QA: локальная v0.1.16 могла остаться на статическом HTML-экране до запуска Phaser/runtime. Убрана новая межфайловая именованная зависимость `InteractableSystem -> CharacterView.createHumanoidVisual`, появившаяся в v0.1.14. Player CharacterView и city NPC теперь имеют самостоятельный локальный helper с одной и той же геометрией, поэтому смешанный/stale module при обновлении не может остановить весь ES-module graph из-за отсутствующего named export. Визуальные пропорции Banker/Teleporter/Guard и gameplay v0.1.11–v0.1.16 не откатывались.
