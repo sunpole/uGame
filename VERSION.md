@@ -1,3 +1,13 @@
+# uGame v0.2.45 — Complete Six Master Activities QA
+
+- Условные локальные Master Quest, Special precision challenge, Analytics report bonus.
+- Однократные reward-claims на Encounter, сохранения, реальный рюкзак для наград.
+- Остальные три активности Master действуют из v0.2.43–v0.2.44.
+- Сетевой сервер и 12 общих участников всё ещё впереди; не считать локальный 1/12 полноценным MMO.
+- `npm test` + CI + ручной Browser QA. Подробности `docs/releases/v0.2.45.md`.
+
+---
+
 # uGame v0.2.44 · Resource Profession QA — 2026-10-09
 
 - Четыре дерева умений, XP/репутация/тренировки, восемь Tier ресурсов.
