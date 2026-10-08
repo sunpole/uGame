@@ -1027,6 +1027,30 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0034",
+      "title": "Master free-reward marker",
+      "date": "2026-10-08",
+      "type": "gameplay",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "master",
+        "npc",
+        "reward",
+        "marker",
+        "encounter",
+        "process"
+      ],
+      "path": "records/UGD-0034-master-free-reward-marker.md",
+      "related": [
+        "UGD-0032"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

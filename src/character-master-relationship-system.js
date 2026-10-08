@@ -45,12 +45,14 @@ export class CharacterMasterRelationshipSystem {
         specialFlags: [],
         pendingRewards: [],
         seenEncounterIds: [],
+        claimedEncounterIds: [],
         activeProcess: null
       };
     }
     const current = this.state.masters[masterId];
     if (!Array.isArray(current.pendingRewards)) current.pendingRewards = [];
     if (!Array.isArray(current.seenEncounterIds)) current.seenEncounterIds = [];
+    if (!Array.isArray(current.claimedEncounterIds)) current.claimedEncounterIds = [];
     if (!Object.prototype.hasOwnProperty.call(current, 'activeProcess')) current.activeProcess = null;
     return current;
   }
@@ -73,12 +75,36 @@ export class CharacterMasterRelationshipSystem {
     return Array.isArray(current?.pendingRewards) ? clone(current.pendingRewards) : [];
   }
 
-  consumePendingReward(masterId, rewardId) {
+  hasClaimedEncounter(masterId, encounterId) {
+    if (!masterId || !encounterId) return false;
+    const current = this.state.masters?.[masterId];
+    return Array.isArray(current?.claimedEncounterIds) && current.claimedEncounterIds.includes(encounterId);
+  }
+
+  markEncounterRewardClaimed(masterId, encounterId) {
+    if (!masterId || !encounterId) return false;
+    const current = this.ensureMaster(masterId);
+    if (!current) return false;
+    if (!Array.isArray(current.claimedEncounterIds)) current.claimedEncounterIds = [];
+    if (current.claimedEncounterIds.includes(encounterId)) return false;
+    current.claimedEncounterIds.push(encounterId);
+    current.claimedEncounterIds = current.claimedEncounterIds.slice(-200);
+    this.publish();
+    return true;
+  }
+
+  consumePendingReward(masterId, rewardId, fallbackEncounterId = null) {
     const current = this.state.masters?.[masterId];
     if (!current || !Array.isArray(current.pendingRewards)) return null;
     const index = current.pendingRewards.findIndex((reward) => reward.rewardId === rewardId);
     if (index < 0) return null;
     const [removed] = current.pendingRewards.splice(index, 1);
+    const encounterId = removed?.encounterId || fallbackEncounterId;
+    if (!Array.isArray(current.claimedEncounterIds)) current.claimedEncounterIds = [];
+    if (encounterId && !current.claimedEncounterIds.includes(encounterId)) {
+      current.claimedEncounterIds.push(encounterId);
+      current.claimedEncounterIds = current.claimedEncounterIds.slice(-200);
+    }
     this.publish();
     return clone(removed);
   }
@@ -109,6 +135,7 @@ export class CharacterMasterRelationshipSystem {
           processId: process.processId,
           profileId: process.profileId,
           moduleId: process.moduleId,
+          encounterId: process.encounterId || null,
           resourceDirectionId: process.resourceDirectionId,
           completedAt: endsAt || now,
           baseReward: clone(process.candidateBaseReward || { resourceId: 'stone', amount: 1 }),

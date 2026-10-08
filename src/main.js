@@ -194,6 +194,7 @@ class ZoneScene extends Phaser.Scene {
     masterRelationshipSystem = new CharacterMasterRelationshipSystem({
       onStateChange: (snapshot) => {
         this.gameState.setCharacterMasterRelationships(snapshot);
+        masterEncounterSystem?.refreshRewardMarkers?.();
         this.persistGameState();
       }
     });
@@ -337,7 +338,7 @@ class ZoneScene extends Phaser.Scene {
       relationshipSystem: masterRelationshipSystem,
       interactionPanel: this.interactionPanel,
       worldSpawnStateSystem,
-      grantResource: (id, amount) => this.grantResource(id, amount)
+      grantResource: (id, amount, tier) => this.grantResource(id, amount, tier)
     });
     this.masterProcessSystem = masterProcessSystem;
 

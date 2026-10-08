@@ -44,6 +44,21 @@ export class MasterEncounterSystem {
     this.renderedIds.clear();
   }
 
+  isFreeRewardAvailable(spawn) {
+    if (!spawn?.masterId || !spawn?.encounterId) return false;
+    return !this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId);
+  }
+
+  refreshRewardMarkers() {
+    if (!this.currentZoneId) return false;
+    const spawns = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: this.currentZoneId }) || [];
+    for (const spawn of spawns) {
+      const id = 'master-interactable:' + spawn.encounterId;
+      this.interactableSystem?.setMasterRewardAvailable?.(id, this.isFreeRewardAvailable(spawn));
+    }
+    return true;
+  }
+
   renderCurrentZone() {
     if (!this.currentZoneId) return;
     const zone = this.worldGraph?.getZone?.(this.currentZoneId);
@@ -65,6 +80,7 @@ export class MasterEncounterSystem {
         masterId: spawn.masterId,
         masterTier: spawn.tier,
         masterResourceDirectionId: spawn.resourceDirectionId,
+        masterRewardAvailable: this.isFreeRewardAvailable(spawn),
         x: point.x,
         y: point.y,
         label: master?.displayName || spawn.displayName || 'Мастер',
@@ -244,15 +260,21 @@ export class MasterEncounterSystem {
       if (!current || Number(current.expiresAt) <= now) return null;
       return 'Эффективность ×' + multiplier + ' · встреч: ' + (relationship?.encountersCount || 0) + ' · осталось ' + formatRemaining(Number(current.expiresAt) - now);
     };
+    const freeRewardAvailable = this.isFreeRewardAvailable(spawn);
     const actions = moduleIds.map((moduleId) => {
       const module = this.masterCatalog?.getModule?.(moduleId);
       const implemented = module?.implemented === true;
+      const claimedExtraction = moduleId === 'extraction' && implemented && !freeRewardAvailable;
       return {
         id: moduleId,
-        label: (module?.label || moduleId) + (implemented ? '' : ' · позже'),
-        disabled: !implemented,
-        hint: implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.',
-        onSelect: moduleId === 'extraction' && implemented
+        label: claimedExtraction
+          ? (module?.label || moduleId) + ' · получено'
+          : (module?.label || moduleId) + (implemented ? '' : ' · позже'),
+        disabled: !implemented || claimedExtraction,
+        hint: claimedExtraction
+          ? 'Бесплатная добыча этой встречи уже получена.'
+          : (implemented ? '' : 'Модуль доступен в этой встрече, но его игровая логика ещё не подключена.'),
+        onSelect: moduleId === 'extraction' && implemented && !claimedExtraction
           ? () => this.processSystem?.openExtraction?.(spawn)
           : null
       };

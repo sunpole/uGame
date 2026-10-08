@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.12",
-  "stage": "daylight-boot-hotfix",
+  "version": "0.2.13",
+  "stage": "master-free-reward-marker",
   "updated": "2026-10-08",
-  "summary": "Fix Daylight loading inside synchronous Phaser create and preserve queued phase/zone context"
+  "summary": "One free Master reward per Encounter with red pulsing world marker until successful claim"
 }

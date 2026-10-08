@@ -65,9 +65,19 @@ export class MasterProcessSystem {
     if (!profile) return false;
 
     this.update(now, true);
+
+    if (this.relationshipSystem?.hasClaimedEncounter?.(spawn.masterId, spawn.encounterId)) {
+      this.interactionPanel?.showMessage({
+        title: profile.label,
+        text: 'Бесплатная добыча у этого NPC в текущей встрече уже получена.',
+        meta: 'Следующая бесплатная добыча будет у новой встречи / нового Encounter'
+      });
+      return true;
+    }
+
     const pending = this.relationshipSystem?.getPendingRewards?.(spawn.masterId) || [];
     if (pending.length) {
-      this.showPendingRewards(spawn.masterId, pending);
+      this.showPendingRewards(spawn.masterId, pending, spawn.encounterId);
       return true;
     }
 
@@ -122,7 +132,7 @@ export class MasterProcessSystem {
     return Math.max(0.1, Math.round((Number.isFinite(legacy) ? legacy : 1) * 10) / 10);
   }
 
-  showPendingRewards(masterId, pendingRewards = []) {
+  showPendingRewards(masterId, pendingRewards = [], fallbackEncounterId = null) {
     const actions = pendingRewards.map((pending, index) => {
       const resourceId = pending?.baseReward?.resourceId || 'stone';
       const tier = pending?.baseReward?.tier || 'T1';
@@ -141,7 +151,7 @@ export class MasterProcessSystem {
             });
             return false;
           }
-          this.relationshipSystem?.consumePendingReward?.(masterId, pending.rewardId);
+          this.relationshipSystem?.consumePendingReward?.(masterId, pending.rewardId, pending?.encounterId || fallbackEncounterId);
           this.interactionPanel?.showMessage({
             title: 'Результат получен',
             text: 'Завершённый Process выдал ресурс. Pending reward удалён только после успешного помещения награды.',

@@ -257,6 +257,21 @@ export class InteractableSystem {
       body.setSize(34, 40);
       item._masterFacingMark = facingMark;
       label = scene.add.text(item.x, item.y - 38, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
+
+      const rewardMarker = scene.add.circle(item.x, item.y - 24, 5, 0xff3b30, 1)
+        .setStrokeStyle(1.5, 0x7a1212, 1)
+        .setDepth(7)
+        .setVisible(item.masterRewardAvailable !== false);
+      item._masterRewardMarker = rewardMarker;
+      scene.tweens.add({
+        targets: rewardMarker,
+        alpha: { from: 1, to: 0.48 },
+        scale: { from: 0.85, to: 1.35 },
+        duration: 650,
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: -1
+      });
       scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
@@ -274,6 +289,7 @@ export class InteractableSystem {
 
     const displayObjects = [body, label].filter(Boolean);
     if (glow) displayObjects.push(glow);
+    if (item._masterRewardMarker) displayObjects.push(item._masterRewardMarker);
 
     if (Number.isFinite(Number(item.expiresAt))) {
       const timerLabel = scene.add.text(item.x, item.y + 30, countdownText(item.expiresAt), {
@@ -355,7 +371,16 @@ export class InteractableSystem {
       item._glow?.setPosition?.(item.x, item.y + 7);
       item._label?.setPosition?.(item.x, item.y - 38);
       item._timerLabel?.setPosition?.(item.x, item.y + 30);
+      item._masterRewardMarker?.setPosition?.(item.x, item.y - 24);
     }
+    return true;
+  }
+
+  setMasterRewardAvailable(id, available) {
+    const item = typeof id === 'object' ? id : this.getItem(id);
+    if (!item || item.type !== 'master-npc') return false;
+    item.masterRewardAvailable = Boolean(available);
+    item._masterRewardMarker?.setVisible?.(Boolean(available));
     return true;
   }
 
@@ -373,6 +398,7 @@ export class InteractableSystem {
 
     const [item] = this.items.splice(index, 1);
     if (item._glow) this.scene?.tweens?.killTweensOf(item._glow);
+    if (item._masterRewardMarker) this.scene?.tweens?.killTweensOf(item._masterRewardMarker);
 
     const objectSet = new Set(item._displayObjects || []);
     for (const object of objectSet) object?.destroy?.();
@@ -387,6 +413,7 @@ export class InteractableSystem {
     this.onPrompt?.('');
     for (const item of this.items) {
       if (item._glow) this.scene?.tweens?.killTweensOf(item._glow);
+      if (item._masterRewardMarker) this.scene?.tweens?.killTweensOf(item._masterRewardMarker);
     }
     for (const object of this.objects) object?.destroy?.();
     this.items = [];

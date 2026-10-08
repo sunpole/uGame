@@ -239,6 +239,25 @@ function validateMasters(catalog, processes) {
   }
 }
 
+function validateMasterRewardState(sources) {
+  const relationship = sources.relationship || '';
+  const interactable = sources.interactable || '';
+  const encounter = sources.encounter || '';
+  const process = sources.process || '';
+  if (!relationship.includes('claimedEncounterIds') || !relationship.includes('hasClaimedEncounter')) {
+    throw new Error('claimed Encounter reward state missing');
+  }
+  if (!interactable.includes('_masterRewardMarker') || !interactable.includes('setMasterRewardAvailable')) {
+    throw new Error('Master red reward marker missing');
+  }
+  if (!encounter.includes('isFreeRewardAvailable') || !encounter.includes('Добыча · получено')) {
+    throw new Error('Encounter reward eligibility UI missing');
+  }
+  if (!process.includes('Бесплатная добыча у этого NPC') || !process.includes('fallbackEncounterId')) {
+    throw new Error('one-free-reward Process guard missing');
+  }
+}
+
 function validateVersions(expected, versionJson, packageJson, manifest) {
   const values = [versionJson?.version, packageJson?.version, manifest?.version].map(String);
   if (values.some((value) => value !== expected)) throw new Error('versions: ' + values.join(' / ') + ', expected ' + expected);
@@ -373,6 +392,17 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     ]);
     validateMasters(catalog, processes);
     return 'Stone / Water / Forest / Clay T1–T4';
+  });
+
+  await check('master-reward-marker', 'Master reward marker', async () => {
+    const [relationship, interactable, encounter, process] = await Promise.all([
+      fetchText('./src/character-master-relationship-system.js'),
+      fetchText('./src/interactable-system.js'),
+      fetchText('./src/master-encounter-system.js'),
+      fetchText('./src/master-process-system.js')
+    ]);
+    validateMasterRewardState({ relationship, interactable, encounter, process });
+    return '1 free reward / Encounter · red pulse marker · claimed-state lock OK';
   });
 
   await check('textures', 'Конфигурация текстур', async () => {
