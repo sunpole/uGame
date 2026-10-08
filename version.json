@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.42",
-  "stage": "resource-expedition-local-qa",
+  "version": "0.2.43",
+  "stage": "expedition-realm-qa",
   "updated": "2026-10-09",
-  "summary": "First solo finite-stock expedition via Master: auto REAL TIME, manual precision, 12-slot future cap, cargo claim, T2+ skill-lock placeholders"
+  "summary": "Immersive separate resource realm and persistent NPC 30-second farewell after full stock depletion; solo QA only"
 }
