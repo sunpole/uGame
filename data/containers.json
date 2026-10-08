@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "containers": [
     {
       "id": "backpack",
@@ -7,9 +7,9 @@
       "kind": "grid",
       "access": "global",
       "slotCount": 12,
-      "maxWeightKg": 30,
+      "maxWeightKg": 600,
       "allowedTags": [],
-      "description": "Переносной инвентарь персонажа. Один stack занимает одну ячейку."
+      "description": "Переносной инвентарь персонажа. Для material resource одна ячейка хранит до 50.0 кг одного Resource+Tier. Общий carry baseline временно 600 кг до системы сумки."
     },
     {
       "id": "resourcePouch",
@@ -17,14 +17,13 @@
       "kind": "grid",
       "access": "global",
       "slotCount": 1,
-      "maxWeightKg": 15,
+      "maxWeightKg": 50,
       "allowedTags": [
         "resource"
       ],
-      "allowedItemIds": [
-        "stone"
-      ],
-      "description": "Стартовый прототип: одна ячейка и только Камень. Будущие навыки расширят типы, ячейки, вес и stack limit."
+      "allowedItemIds": [],
+      "description": "Будущий пояс ресурсов. Сейчас недоступен, потому что реальный пояс не экипирован. Future hook: повышенная ёмкость resource-cell.",
+      "enabled": false
     },
     {
       "id": "equipment",
@@ -41,13 +40,14 @@
         "ring2",
         "amulet",
         "cloak",
-        "belt"
+        "belt",
+        "bag"
       ],
       "maxWeightKg": null,
       "allowedTags": [
         "equipment"
       ],
-      "description": "Специализированные слоты экипировки персонажа."
+      "description": "Специализированные слоты экипировки. Belt и Bag пока являются future hooks без активных бонусов."
     },
     {
       "id": "bank",

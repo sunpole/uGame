@@ -30,18 +30,44 @@ export class ItemCatalog {
 
     for (const resource of resources.resources || []) {
       if (!resource?.id) continue;
-      this.items.set(resource.id, {
+      const tags = Array.isArray(resource.tags) ? [...resource.tags] : ['resource'];
+      const massStorage = Boolean(resource.massStorage);
+      const unitKg = massStorage ? Math.max(0.001, Number(resource.unitKg) || 0.1) : Math.max(0, Number(resource.weightKg) || 0);
+      const slotCapacityKg = massStorage ? Math.max(unitKg, Number(resource.slotCapacityKg) || 50) : null;
+      const tiers = massStorage && Array.isArray(resource.tiers) ? resource.tiers.filter(Boolean) : [];
+      const base = {
         id: resource.id,
         name: resource.name || resource.id,
         type: 'resource',
-        tags: Array.isArray(resource.tags) ? [...resource.tags] : ['resource'],
+        tags,
         weightKg: Math.max(0, Number(resource.weightKg) || 0),
         stackLimit: Math.max(1, Number(resource.stackLimit) || 1),
         storageMode: resource.storageMode || 'physical',
         baseValue: Math.max(0, Number(resource.baseValue) || 0),
         accountBound: Boolean(resource.accountBound),
-        tierHint: resource.tierHint || ''
-      });
+        tierHint: resource.tierHint || '',
+        massStorage,
+        legacyMassResourceBase: massStorage,
+        unitKg,
+        slotCapacityKg,
+        rewardRangeKg: resource.rewardRangeKg || null,
+        tiers
+      };
+      this.items.set(resource.id, base);
+
+      for (const tier of tiers) {
+        const tierId = resource.id + '-' + String(tier).toLowerCase();
+        this.items.set(tierId, {
+          ...base,
+          id: tierId,
+          name: base.name + ' ' + tier,
+          resourceId: resource.id,
+          tier,
+          weightKg: unitKg,
+          stackLimit: Math.max(1, Math.floor((slotCapacityKg + 1e-9) / unitKg)),
+          legacyMassResourceBase: false
+        });
+      }
     }
 
     for (const item of items.items || []) {
@@ -76,7 +102,12 @@ export class ItemCatalog {
       weightKg: 0,
       stackLimit: 100,
       storageMode: 'physical',
-      equipSlot: null
+      equipSlot: null,
+      massStorage: false,
+      unitKg: 0,
+      slotCapacityKg: null,
+      tier: null,
+      resourceId: null
     };
   }
 

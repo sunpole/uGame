@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "baseResourceId": "stone",
   "resources": [
     {
@@ -8,7 +8,19 @@
       "baseValue": 1,
       "tierHint": "normal",
       "weightKg": 1,
-      "stackLimit": 100,
+      "unitKg": 0.1,
+      "slotCapacityKg": 50,
+      "massStorage": true,
+      "tiers": [
+        "T1",
+        "T2",
+        "T3",
+        "T4"
+      ],
+      "rewardRangeKg": {
+        "min": 0.5,
+        "max": 25
+      },
       "storageMode": "physical",
       "tags": [
         "resource",
@@ -21,7 +33,19 @@
       "baseValue": 10,
       "tierHint": "rare",
       "weightKg": 0.5,
-      "stackLimit": 100,
+      "unitKg": 0.1,
+      "slotCapacityKg": 50,
+      "massStorage": true,
+      "tiers": [
+        "T1",
+        "T2",
+        "T3",
+        "T4"
+      ],
+      "rewardRangeKg": {
+        "min": 0.2,
+        "max": 10
+      },
       "storageMode": "physical",
       "tags": [
         "resource",
@@ -34,7 +58,44 @@
       "baseValue": 100,
       "tierHint": "magic",
       "weightKg": 0.1,
-      "stackLimit": 100,
+      "unitKg": 0.1,
+      "slotCapacityKg": 50,
+      "massStorage": true,
+      "tiers": [
+        "T1",
+        "T2",
+        "T3",
+        "T4"
+      ],
+      "rewardRangeKg": {
+        "min": 0.1,
+        "max": 5
+      },
+      "storageMode": "physical",
+      "tags": [
+        "resource",
+        "material"
+      ]
+    },
+    {
+      "id": "clay",
+      "name": "Глина",
+      "baseValue": 5,
+      "tierHint": "normal",
+      "weightKg": 0.1,
+      "unitKg": 0.1,
+      "slotCapacityKg": 50,
+      "massStorage": true,
+      "tiers": [
+        "T1",
+        "T2",
+        "T3",
+        "T4"
+      ],
+      "rewardRangeKg": {
+        "min": 0.3,
+        "max": 15
+      },
       "storageMode": "physical",
       "tags": [
         "resource",

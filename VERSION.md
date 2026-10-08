@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.2**
+Current version: **0.2.3**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.3 | Mass Resource Foundation: Stone/Wood/Water/Clay T1–T4, 0.1kg internal unit, 50kg resource-cell, legacy migration, inactive belt + bag slot |
 | 0.2.2 | Attention Exchange + Paid Teleport: 1 Attention→10M Steps, 100M Steps→1 Attention, WorldGraph-priced city teleport |
 | 0.2.1 | Steps Movement Cost: actual travelled distance spends Steps outside cities; dash ×2 speed / ×4 rate; movement can create debt |
 | 0.2.0 | Steps Economy Core: persistent Steps + StepDebt, city REAL TIME regen target and UI |
@@ -137,6 +138,9 @@ Current version: **0.2.2**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.3
+Physical resource catalog переведён на mass-resource foundation. Stone/Wood/Water/Clay имеют T1–T4 generated item identities, internal unit 0.1 кг и default 50.0 кг per resource-cell; Resource+Tier не смешиваются. Old count stacks автоматически мигрируют в T1 с сохранением приблизительной массы. UI больше не показывает граммы. Resource Pouch отключён до реального экипированного belt; в equipment добавлен пустой future slot `bag`. Backpack carry baseline временно 600 кг, чтобы 12×50 кг resource cells были физически достижимы до отдельного bag balance pass.
 
 ## 0.2.2
 Кнопка Шагов открывает экономическое окно. `1 Attention → 10 000 000 Steps` является special payment: сначала гасит StepDebt, остаток попадает в balance. Обратный обмен `100 000 000 Steps → 1 Attention` доступен только без debt и из положительного balance. City Teleporter теперь рассчитывает цену через `shortestDistance × 1000 × 0.60`; teleport — service spend и никогда не создаёт debt.

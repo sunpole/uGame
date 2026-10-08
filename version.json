@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.2",
-  "stage": "attention-exchange-paid-teleport",
+  "version": "0.2.3",
+  "stage": "mass-resource-foundation",
   "updated": "2026-10-08",
-  "summary": "Attention/Steps exchange and WorldGraph-priced city teleport using positive Steps only"
+  "summary": "Tiered kg resource storage foundation for Stone/Wood/Water/Clay with 50kg cells and future belt/bag hooks"
 }

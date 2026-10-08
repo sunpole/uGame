@@ -8,14 +8,13 @@ const SLOT_LABELS = {
   ring2: 'Кольцо 2',
   amulet: 'Амулет',
   cloak: 'Плащ',
-  belt: 'Пояс'
+  belt: 'Пояс',
+  bag: 'Сумка'
 };
 
 function weightLabel(value) {
-  const number = Number(value) || 0;
-  if (number <= 0) return '0 кг';
-  if (number < 1) return `${Math.round(number * 1000)} г`;
-  return `${number.toFixed(number >= 10 ? 0 : 1)} кг`;
+  const number = Math.max(0, Number(value) || 0);
+  return number.toFixed(1) + ' кг';
 }
 
 export class InventoryPanelSystem {
@@ -113,6 +112,9 @@ export class InventoryPanelSystem {
     if (!this.containerSystem?.loaded) return;
 
     if (this.currentTab === 'bank' && !this.bankAccess) this.currentTab = 'backpack';
+    if (this.currentTab === 'resourcePouch' && this.containerSystem?.config('resourcePouch')?.enabled === false) {
+      this.currentTab = 'backpack';
+    }
     this.renderTabs();
 
     const config = this.containerSystem.config(this.currentTab);
@@ -134,7 +136,11 @@ export class InventoryPanelSystem {
     for (const button of this.tabsElement?.querySelectorAll('[data-container-tab]') || []) {
       const id = button.dataset.containerTab;
       button.dataset.active = String(id === this.currentTab);
-      button.disabled = id === 'bank' && !this.bankAccess;
+      button.disabled = (id === 'bank' && !this.bankAccess)
+        || (id === 'resourcePouch' && this.containerSystem?.config('resourcePouch')?.enabled === false);
+      if (id === 'resourcePouch' && button.disabled) {
+        button.title = 'Ресурсный пояс пока не экипирован';
+      }
       if (id === 'bank') {
         button.title = this.bankAccess ? 'Банк доступен' : 'Банк открывается только в городе';
       }
@@ -184,7 +190,12 @@ export class InventoryPanelSystem {
 
       const details = document.createElement('span');
       details.className = 'inventory-slot-details';
-      details.textContent = `×${stack.quantity} · ${weightLabel(item.weightKg * stack.quantity)} · stack ${this.containerSystem.stackLimit(config.id, item.id)}`;
+      if (item.massStorage && item.tier) {
+        const massKg = stack.quantity * item.unitKg;
+        details.textContent = weightLabel(massKg) + ' · ' + item.tier + ' · ячейка ' + weightLabel(item.slotCapacityKg || 50);
+      } else {
+        details.textContent = `×${stack.quantity} · ${weightLabel(item.weightKg * stack.quantity)} · stack ${this.containerSystem.stackLimit(config.id, item.id)}`;
+      }
       slot.append(details);
 
       const actions = document.createElement('div');

@@ -61,6 +61,7 @@ export class ContainerSystem {
         name: raw.name || raw.id,
         kind: raw.kind === 'equipment' ? 'equipment' : 'grid',
         access: raw.access || 'global',
+        enabled: raw.enabled !== false,
         slotCount: Math.max(0, Math.floor(Number(raw.slotCount) || 0)),
         slotKeys: Array.isArray(raw.slotKeys) ? raw.slotKeys.filter(Boolean) : [],
         maxWeightKg: raw.maxWeightKg === null || raw.maxWeightKg === undefined
@@ -86,6 +87,8 @@ export class ContainerSystem {
       this.state.containers[config.id] = this.restoreContainer(config, source?.[config.id]);
     }
 
+    if (hasStoredContainers) this.migrateLegacyMassResources();
+
     if (!hasStoredContainers && legacyInventory && typeof legacyInventory === 'object') {
       for (const [itemId, rawAmount] of Object.entries(legacyInventory)) {
         const amount = Math.max(0, Math.floor(Number(rawAmount) || 0));
@@ -105,9 +108,15 @@ export class ContainerSystem {
         const amount = Math.max(0, Math.floor(Number(rawAmount) || 0));
         if (amount <= 0) continue;
 
-        const carried = this.addAuto(itemId, amount, { atomic: false, silent: true });
+        const targetId = item.legacyMassResourceBase ? itemId + '-t1' : itemId;
+        const targetItem = this.itemCatalog.get(targetId);
+        const targetAmount = item.legacyMassResourceBase && targetItem
+          ? Math.max(1, Math.round(amount * item.weightKg / targetItem.unitKg))
+          : amount;
+
+        const carried = this.addAuto(targetId, targetAmount, { atomic: false, silent: true });
         if (carried.remaining > 0) {
-          this.addTo('bank', itemId, carried.remaining, { atomic: false, silent: true });
+          this.addTo('bank', targetId, carried.remaining, { atomic: false, silent: true });
         }
       }
     }
@@ -115,6 +124,36 @@ export class ContainerSystem {
     this.loaded = true;
     this.emitChange({ reason: hasStoredContainers ? 'restore' : 'restore-or-migrate' });
     return this.snapshot();
+  }
+
+  migrateLegacyMassResources() {
+    const pending = [];
+    for (const [containerId, state] of Object.entries(this.state.containers || {})) {
+      if (!state || state.kind !== 'grid') continue;
+      state.slots.forEach((stack, index) => {
+        if (!stack) return;
+        const base = this.itemCatalog.get(stack.itemId);
+        if (!base?.legacyMassResourceBase) return;
+        const targetId = base.id + '-t1';
+        const target = this.itemCatalog.get(targetId);
+        if (!target) return;
+        const units = Math.max(1, Math.round(stack.quantity * base.weightKg / target.unitKg));
+        pending.push({ containerId, targetId, units });
+        state.slots[index] = null;
+      });
+    }
+
+    for (const entry of pending) {
+      let result;
+      if (entry.containerId === 'bank') {
+        result = this.addTo('bank', entry.targetId, entry.units, { atomic: false, silent: true });
+      } else {
+        result = this.addAuto(entry.targetId, entry.units, { atomic: false, silent: true });
+      }
+      if (result.remaining > 0) {
+        this.addTo('bank', entry.targetId, result.remaining, { atomic: false, silent: true });
+      }
+    }
   }
 
   restoreContainer(config, source) {
@@ -174,7 +213,7 @@ export class ContainerSystem {
     const config = this.config(containerId);
     const state = this.container(containerId);
     const item = this.item(itemId);
-    if (!config || !state) return false;
+    if (!config || !state || config.enabled === false) return false;
 
     if (config.kind === 'equipment') {
       return item.tags.includes('equipment') && Boolean(item.equipSlot);
@@ -297,7 +336,8 @@ export class ContainerSystem {
       return { added: requested, remaining: 0, containerIds: [], account: true };
     }
 
-    const order = item.tags.includes('resource')
+    const pouchEnabled = this.config('resourcePouch')?.enabled !== false;
+    const order = item.tags.includes('resource') && pouchEnabled
       ? ['resourcePouch', 'backpack']
       : ['backpack'];
 
