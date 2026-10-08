@@ -413,7 +413,11 @@ export class MasterEncounterSystem {
               ? () => this.professionView?.openTraining?.(spawn)
               : moduleId === 'analytics' && implemented
                 ? () => this.professionView?.openAnalytics?.(spawn)
-                : null
+                : moduleId === 'quest' && implemented
+                  ? () => this.professionView?.openQuest?.(spawn)
+                  : moduleId === 'special-event' && implemented
+                    ? () => this.professionView?.openSpecial?.(spawn)
+                    : null
       };
     });
     if (historicalPending.length) {
