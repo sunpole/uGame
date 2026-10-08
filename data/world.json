@@ -1622,7 +1622,7 @@
           "label": "Маршал Гранит",
           "roleLabel": "Страж города",
           "prompt": "Спросить о городе",
-          "dialogueId": "city_guide_start",
+          "dialogueId": "guide_first_playable",
           "interactionRadius": 72
         }
       ],
@@ -1701,7 +1701,20 @@
           "height": 220
         }
       ],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "fragment-blue-node",
+          "type": "resource",
+          "x": 1510,
+          "y": 280,
+          "label": "Синий фрагмент",
+          "prompt": "Взять синий фрагмент",
+          "resourceId": "fragment-blue",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        }
+      ],
       "eventSpots": [
         {
           "id": "spot-1",
@@ -2245,7 +2258,32 @@
           "height": 220
         }
       ],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "fragment-amber-node",
+          "type": "resource",
+          "x": 310,
+          "y": 760,
+          "label": "Янтарный фрагмент",
+          "prompt": "Взять янтарный фрагмент",
+          "resourceId": "fragment-amber",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        },
+        {
+          "id": "garden-secret-cache",
+          "type": "chest",
+          "x": 1510,
+          "y": 830,
+          "label": "Забытый тайник",
+          "prompt": "Открыть тайник",
+          "itemId": "lost-token",
+          "amount": 1,
+          "once": true,
+          "sound": "chest"
+        }
+      ],
       "eventSpots": [
         {
           "id": "spot-1",
@@ -2384,7 +2422,33 @@
           "height": 220
         }
       ],
-      "interactables": [],
+      "interactables": [
+        {
+          "id": "fragment-violet-node",
+          "type": "resource",
+          "x": 1510,
+          "y": 280,
+          "label": "Фиолетовый фрагмент",
+          "prompt": "Взять фиолетовый фрагмент",
+          "resourceId": "fragment-violet",
+          "amount": 1,
+          "once": true,
+          "sound": "resource"
+        },
+        {
+          "id": "first-core",
+          "type": "chest",
+          "x": 960,
+          "y": 850,
+          "label": "Погасшее ядро",
+          "prompt": "Активировать ядро",
+          "itemId": "core-spark",
+          "amount": 1,
+          "questSignal": "core:first",
+          "once": true,
+          "sound": "quest"
+        }
+      ],
       "eventSpots": [
         {
           "id": "spot-1",

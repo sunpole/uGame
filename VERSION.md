@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.08**
+Current version: **0.1.09**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.09 | First Playable World Migration: Three Fragments/Core content restored in field zones; start-city guide becomes the quest introduction |
 | 0.1.08 | World Map Layout Polish: compass gets clear margins and map gains biome/city/current-location legend |
 | 0.1.07 | World Map Compass: N/NE/E/SE/S/SW/W/NW labels and arrows surround the 25-location diamond |
 | 0.1.06 | Diamond World Map UI: Project Hub renders all 25 locations as rotated squares with names, IDs, biome/city styling and current position |
@@ -114,6 +115,9 @@ Current version: **0.1.08**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.09
+После перехода на 25-zone WorldGraph восстановлен старый playable slice «Три фрагмента», не нарушая safe-city rule. Маршал Гранит в стартовом городе использует стабильный dialogue signal `guide_first_playable`, а `fragment-blue-node`, `fragment-amber-node`, `fragment-violet-node`, `garden-secret-cache` и `first-core` перенесены в field zones с прежними stable interactable IDs. Это сохраняет совместимость с уже использованными one-time IDs в старых save. В город не возвращались полевые Resource/Chest/Event объекты.
 
 ## 0.1.08
 World Map получил дополнительный вертикальный запас: северный и южный compass-marker больше не должны накладываться на крайние city tiles. Добавлена компактная легенда цветов `snow / forest / sand / stone / south`, отдельное обозначение мирного города и маркер текущей позиции. Геометрия WorldGraph и переходы не менялись.
