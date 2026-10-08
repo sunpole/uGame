@@ -1,3 +1,12 @@
+## v0.2.41 — Master Process indicators and first crafting action (QA)
+
+- Existing real-time Process stays 60 seconds.
+- Master marker statuses: idle (red), running (red plus mm:ss above), ready (green), claimed (no marker/timer). Source of truth is persisted CharacterMasterRelationships; old Encounter rewards do not unlock the current dot.
+- First real craft: 0.4 kg stone T1 + 0.2 kg wood T1 -> one "Простой полевой инструмент" in backpack. Temporary "Мастерская" button in bottom and touch controls, without city/class lock.
+- One atomic ContainerSystem inventory commit for costs/output. Insufficient materials or inventory slots do not consume anything; only one saved container-change event on success.
+- Local browser saves only; no multiplayer server-side ownership/claim guarantee. See docs/CRAFTING-VERTICAL-SLICE.md and docs/releases/v0.2.41.md.
+- Regression: `npm test`. Browser smoke test still required.
+
 # uGame
 
 Latest QA checkpoint: **v0.2.33** (eight mini-patches v0.2.26–v0.2.33). Master marker identity fix and 4+1 city preview are ready for browser QA. Materials/first craft remain design-only. GitHub code snapshots and rollback instructions: [Release Rollback](docs/RELEASE-ROLLBACK.md).
