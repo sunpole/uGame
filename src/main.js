@@ -378,6 +378,13 @@ class ZoneScene extends Phaser.Scene {
     this.expeditionResumeButton.hidden = true;
     this.expeditionResumeButton.addEventListener('click', () => resourceExpeditionView?.show());
     strip?.append(this.expeditionResumeButton);
+    const touch = document.querySelector('#touch-controls .touch-actions');
+    this.expeditionResumeTouchButton = document.createElement('button');
+    this.expeditionResumeTouchButton.type = 'button';
+    this.expeditionResumeTouchButton.textContent = 'Экспедиция';
+    this.expeditionResumeTouchButton.hidden = true;
+    this.expeditionResumeTouchButton.addEventListener('click', () => resourceExpeditionView?.show());
+    touch?.append(this.expeditionResumeTouchButton);
 
     this.inventoryPanel = new InventoryPanelSystem({
       eventSystem: this.eventSystem,
@@ -593,6 +600,7 @@ class ZoneScene extends Phaser.Scene {
   syncExpeditionUI() {
     const run = resourceExpeditionSystem?.run;
     if (this.expeditionResumeButton) this.expeditionResumeButton.hidden = !run || run.claimed;
+    if (this.expeditionResumeTouchButton) this.expeditionResumeTouchButton.hidden = !run || run.claimed;
     syncPlayerInputState();
   }
 
