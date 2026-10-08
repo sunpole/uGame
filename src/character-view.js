@@ -3,6 +3,44 @@ function approach(current, target, delta, response = 80) {
   return current + (target - current) * t;
 }
 
+export function createHumanoidVisual(scene, {
+  x = 0,
+  y = 0,
+  depth = 5,
+  bodyColor = 0x5f81ff,
+  legColor = 0x30363d,
+  skinColor = 0xe7c6a5,
+  faceColor = 0x1f2328,
+  bodyWidth = 20,
+  bodyHeight = 24,
+  armOffset = 10,
+  armWidth = 5,
+  armHeight = 14,
+  legOffset = 5,
+  legWidth = 6,
+  legHeight = 12,
+  shadowWidth = 24,
+  shadowHeight = 10,
+  scaleX = 1,
+  scaleY = 1
+} = {}) {
+  const container = scene.add.container(x, y).setDepth(depth);
+  const shadow = scene.add.ellipse(0, 9, shadowWidth, shadowHeight, 0x000000, 0.35);
+  const body = scene.add.ellipse(0, 4, bodyWidth, bodyHeight, bodyColor, 1);
+  const head = scene.add.circle(0, 1, 8, skinColor, 1);
+  const face = scene.add.circle(0, -2, 2.3, faceColor, 1);
+  const armLeft = scene.add.rectangle(-armOffset, 4, armWidth, armHeight, skinColor, 1);
+  const armRight = scene.add.rectangle(armOffset, 4, armWidth, armHeight, skinColor, 1);
+  const legLeft = scene.add.rectangle(-legOffset, 13, legWidth, legHeight, legColor, 1);
+  const legRight = scene.add.rectangle(legOffset, 13, legWidth, legHeight, legColor, 1);
+
+  container.add([shadow, legLeft, legRight, armLeft, armRight, body, head, face]);
+  container.setScale(scaleX, scaleY);
+  container.setSize(Math.max(shadowWidth, bodyWidth + armOffset), 40);
+
+  return { container, shadow, body, head, face, armLeft, armRight, legLeft, legRight };
+}
+
 export class CharacterView {
   constructor({ scene, player } = {}) {
     this.scene = scene;
@@ -12,26 +50,16 @@ export class CharacterView {
 
     player.setAlpha(0);
 
-    this.container = scene.add.container(player.x, player.y).setDepth(10);
-    this.shadow = scene.add.ellipse(0, 9, 24, 10, 0x000000, 0.35);
-    this.body = scene.add.ellipse(0, 4, 20, 24, 0x5f81ff, 1);
-    this.head = scene.add.circle(0, 1, 8, 0xe7c6a5, 1);
-    this.face = scene.add.circle(0, -2, 2.3, 0x1f2328, 1);
-    this.armLeft = scene.add.rectangle(-10, 4, 5, 14, 0xe7c6a5, 1);
-    this.armRight = scene.add.rectangle(10, 4, 5, 14, 0xe7c6a5, 1);
-    this.legLeft = scene.add.rectangle(-5, 13, 6, 12, 0x30363d, 1);
-    this.legRight = scene.add.rectangle(5, 13, 6, 12, 0x30363d, 1);
-
-    this.container.add([
-      this.shadow,
-      this.legLeft,
-      this.legRight,
-      this.armLeft,
-      this.armRight,
-      this.body,
-      this.head,
-      this.face
-    ]);
+    const visual = createHumanoidVisual(scene, { x: player.x, y: player.y, depth: 10 });
+    this.container = visual.container;
+    this.shadow = visual.shadow;
+    this.body = visual.body;
+    this.head = visual.head;
+    this.face = visual.face;
+    this.armLeft = visual.armLeft;
+    this.armRight = visual.armRight;
+    this.legLeft = visual.legLeft;
+    this.legRight = visual.legRight;
   }
 
   update(state, delta) {

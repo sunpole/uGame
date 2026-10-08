@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.13**
+Current version: **0.1.14**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.14 | City NPC Player-Model Redesign: banker/teleporter/guards reuse the same humanoid base as the player with role-specific proportions/accessories |
 | 0.1.13 | Water + Forest Masters: T1–T4 lines use the same Master/Process runtime as Stone with water/wood rewards and biome directions |
 | 0.1.12 | Interaction Prompt Separation: NPC/object hint occupies a dedicated lane above controls and no longer covers Action |
 | 0.1.11 | Local Diamond Geometry: playable area is a rhombus with exactly four real gates NW/NE/SW/SE; N/E/S/W are orientation-only |
@@ -119,6 +120,9 @@ Current version: **0.1.13**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.14
+Городские NPC пересобраны на общей визуальной базе игрового персонажа: те же голова/лицо/тело/руки/ноги теперь создаются через shared `createHumanoidVisual()`, который использует и `CharacterView` игрока. Банкир шире и массивнее, но остаётся тем же типом человека; телепортер выше и тоньше, со звездой/магическим glow; городской страж увеличен и получает простой плащ, меч и щит. Пять стражей сохраняют собственные biome palettes: snow / forest / stone / sand / south.
 
 ## 0.1.13
 Добавлены полноценные линии `Мастер воды T1–T4` и `Мастер леса T1–T4`. Они используют тот же Master allocator, Encounter lifetime, Relationship state, modules и REAL TIME Extraction Process, что и Stone Master. Snow field zones теперь имеют направления `stone + water`, forest field zones — `stone + wood`; остальные сохраняют stone. Water Process выдаёт `water`, Forest Process — `wood`. Визуально Water Master получает cyan/blue palette, Forest Master — green palette, при сохранении Tier-индикации. DEV `8300` теперь показывает суммарные количества камень/вода/лес.

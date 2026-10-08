@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.13",
-  "stage": "water-and-forest-masters",
+  "version": "0.1.14",
+  "stage": "city-npc-player-model-redesign",
   "updated": "2026-10-08",
-  "summary": "Add Water and Forest Master lines T1-T4 with extraction Process, resource-aware visuals and biome resource directions"
+  "summary": "City NPCs now reuse the player's humanoid visual base: banker wider, teleporter taller/thinner, guards larger with sword/shield/cape and biome palettes"
 }
