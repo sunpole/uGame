@@ -1,147 +1,70 @@
 # uGame — 25-location Diamond World
 
-Current implementation: **v0.1.10**
+Current implementation: **v0.1.16**
 
-## Geometry
+## Local location geometry
 
-The prototype world contains **25 locations** arranged as a logical 5×5 grid and presented on the World Map as a square rotated by 45°.
+Each local location is a 1920×1080 **playable diamond**.
+The rectangular canvas still exists technically, but the four outer corner triangles are masked and blocked.
 
-- center = starting safe city;
-- outer tips = North / East / South / West safe cities;
-- remaining 20 locations = field zones.
+- `N / E / S / W` = orientation markers only.
+- `NW / NE / SW / SE` = the only four real transition directions.
+- There are no N/E/S/W portals.
 
-## Local-map size
+### Opposite-entry rule
 
-Each location is a **1920×1080 world**, while the normal visible camera is approximately the old 960×540 screen.
+- NW → target SE
+- NE → target SW
+- SW → target NE
+- SE → target NW
 
-- width ×2;
-- height ×2;
-- area ×4;
-- camera follows the player;
-- entering from left/right/top/bottom places the character near that corresponding edge.
+Logical 5×5 adjacency maps to the rotated diamond as:
+
+- logical east → local SE
+- logical west → local NW
+- logical south → local SW
+- logical north → local NE
 
 ## Safe cities
 
-| ID | Temporary name | Direction | Biome | Service NPC |
-|---|---|---|---|---|
-| loc-00001 | Белый Венец | north | snow | Борис Хранильщик · Астэр Звездочёт · Северин Белый Щит |
-| loc-00005 | Дубовый Престол | east | forest | Борис Хранильщик · Астэр Звездочёт · Рейнар Дубовый Страж |
-| loc-00013 | Каменный Перекрёсток | start | stone | Борис Хранильщик · Астэр Звездочёт · Маршал Гранит |
-| loc-00021 | Золотой Оазис | west | sand | Борис Хранильщик · Астэр Звездочёт · Хасим Песчаный Венец |
-| loc-00025 | Беломраморный Двор | south | south | Борис Хранильщик · Астэр Звездочёт · Аврелий Белый Легат |
+Five safe cities remain hard-safe: full vision, darkness 0, no Event Spots, no Dynamic Events, no resource Masters.
 
-Safe-city invariants:
+## City NPC
 
-- full vision;
-- darkness 0;
-- no Dynamic Event;
-- no Event Spot;
-- no resource Master encounter;
-- only city/service NPC and city infrastructure.
+Every city has Banker Boris, Teleporter Aster and one unique Guide/Guard.
+From v0.1.14 all city NPC reuse the player's humanoid visual base.
 
-## City NPC model
+- Banker = wider/heavier.
+- Teleporter = taller/thinner.
+- Guard = larger + cape + sword + shield.
+- Guard palette remains biome-specific.
 
-Every city currently has three static service NPC.
+## Resource Masters
 
-- **Борис Хранильщик** — shared banker persona; every copy opens the same existing Bank.
-- **Астэр Звездочёт** — shared teleporter persona; every copy opens the same five-city teleport network.
-- the third NPC is a unique biome city guide/guard.
+Field Master runtime supports three directions:
 
-Unique guides:
+- stone → Мастер камня T1–T4
+- water → Мастер воды T1–T4
+- wood → Мастер леса T1–T4
 
-- North — Северин Белый Щит / snow knight;
-- East — Рейнар Дубовый Страж / forest ranger;
-- Center — Маршал Гранит / stone marshal;
-- West — Хасим Песчаный Венец / sand pharaoh;
-- South — Аврелий Белый Легат / marble legatus.
+Snow fields expose stone + water. Forest fields expose stone + wood. Sand/South currently expose stone.
 
-City NPC movement is deferred; they are static in this stage.
-
-## World-map compass
-
-World Map displays `N / NE / E / SE / S / SW / W / NW`.
-
-- N / NW — blue;
-- NE / E — green;
-- SE / S — red;
-- SW / W — gold.
-
-## Location registry
-
-Names are temporary and may be replaced when lore is written.
-
-| # | ID | Temporary name | Type | Biome | Grid row,col |
-|---:|---|---|---|---|---|
-| 01 | loc-00001 | Белый Венец | CITY | snow | 1,1 |
-| 02 | loc-00002 | Инейный Предел | FIELD | snow | 1,2 |
-| 03 | loc-00003 | Серебряная Гряда | FIELD | snow | 1,3 |
-| 04 | loc-00004 | Зелёный Перевал | FIELD | forest | 1,4 |
-| 05 | loc-00005 | Дубовый Престол | CITY | forest | 1,5 |
-| 06 | loc-00006 | Морозные Врата | FIELD | snow | 2,1 |
-| 07 | loc-00007 | Хрустальная Низина | FIELD | snow | 2,2 |
-| 08 | loc-00008 | Снежный Рубеж | FIELD | snow | 2,3 |
-| 09 | loc-00009 | Мшистая Балка | FIELD | forest | 2,4 |
-| 10 | loc-00010 | Роща Стражей | FIELD | forest | 2,5 |
-| 11 | loc-00011 | Песчаный Просвет | FIELD | sand | 3,1 |
-| 12 | loc-00012 | Белая Тропа | FIELD | snow | 3,2 |
-| 13 | loc-00013 | Каменный Перекрёсток | CITY | stone | 3,3 |
-| 14 | loc-00014 | Ледяной Карниз | FIELD | snow | 3,4 |
-| 15 | loc-00015 | Лесной Разлом | FIELD | forest | 3,5 |
-| 16 | loc-00016 | Барханный Порог | FIELD | sand | 4,1 |
-| 17 | loc-00017 | Сухая Лощина | FIELD | sand | 4,2 |
-| 18 | loc-00018 | Морозная Кромка | FIELD | snow | 4,3 |
-| 19 | loc-00019 | Красная Степь | FIELD | south | 4,4 |
-| 20 | loc-00020 | Мраморный Путь | FIELD | south | 4,5 |
-| 21 | loc-00021 | Золотой Оазис | CITY | sand | 5,1 |
-| 22 | loc-00022 | Дюны Хасима | FIELD | sand | 5,2 |
-| 23 | loc-00023 | Пепельные Пески | FIELD | south | 5,3 |
-| 24 | loc-00024 | Южный Тракт | FIELD | south | 5,4 |
-| 25 | loc-00025 | Беломраморный Двор | CITY | south | 5,5 |
-
-## Biome placement baseline
-
-- four field zones directly around the central city are snow;
-- near North city: snow;
-- near East city: forest;
-- near West city: sand;
-- near South city: south;
-- transition zones use the current prototype distribution and can be changed later without changing stable location IDs.
+All three lines use the same Encounter / Relationship / Module / REAL TIME Extraction Process runtime.
 
 ## Event Spots
 
-Every **field** location has 12 candidate Event Spots spread across the full 1920×1080 area.
-
-Every **city** has 0 Event Spots.
+Every field location has exactly 12 candidate Event Spots.
+v0.1.15 repositions them across the full diamond and guarantees playable-area margin plus wall clearance.
+Safe cities keep 0 Event Spots.
 
 Existing rules remain:
 
-- Location Tier controls simultaneous active capacity, not candidate-spot count;
-- one spotId = one active occupant;
-- generic Event and Master share capacity;
-- weighted anti-repeat reduces immediate spot reuse without forbidding repeats.
+- Location Tier controls active capacity, not candidate count.
+- weighted anti-repeat remains active.
+- `1 spotId = 1 active occupant` remains hard.
 
-## Ground textures
+## Orientation
 
-The runtime exposes 12 biome/city slots.
-
-- south field = dedicated brown sandy/stone prototype texture;
-- south city = dedicated white marble prototype texture;
-- forest and stone currently reuse existing art as explicit prototype fallbacks.
-
-## First Playable migration
-
-The earlier «Три фрагмента» slice remains playable after the world expansion.
-
-- start-city Marshal uses the stable `guide_first_playable` dialogue signal;
-- blue / amber / violet fragments live in field locations;
-- forgotten cache and extinguished core live in field locations;
-- stable interactable IDs were retained for save compatibility.
-
-## Deferred
-
-- final lore/location names;
-- final city/biome art;
-- city NPC roaming routes;
-- production-quality NPC animation;
-- world-map roads/route art;
-- final biome distribution tuning.
+World Map still displays N / NE / E / SE / S / SW / W / NW.
+All eight are useful orientation terms for quests and player communication.
+Only the four diagonal terms correspond to real local gates.

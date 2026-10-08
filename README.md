@@ -34,13 +34,14 @@ GitHub Pages exposes a read-only view at:
 
 The Pages interface reads `CURRENT.md`, `index.json` and record Markdown directly. It is not a separate source of truth.
 
-## Game prototype v0.1.10 — 25-location diamond world + city services + Stone runtime
+## Game prototype v0.1.16 — local diamond maps + multi-resource Masters + city services
 
 uGame keeps the First Playable slice and changing-world/container layers, and now adds an in-game Project Hub for project navigation and documentation.
 The current prototype includes:
 
 - 25 connected top-down locations loaded from `data/world.json` through WorldGraph: 5 safe cities + 20 field zones;
-- each local world is 1920×1080 (2× width × 2× height / area ×4) with a following camera;
+- each local world is 1920×1080 (2× width × 2× height / area ×4) with a following camera and diamond playable boundary;
+- real local transitions exist only at NW/NE/SW/SE gates; N/E/S/W are orientation terms only;
 - every field zone has 12 candidate Event Spots spread across the expanded map; safe cities have zero Event Spots;
 - persistent external Location Tier T1–T4 with real-time Tier-state lifetime, safe-city distance and 2–6 active spawn capacity;
 - 30-minute Dynamic Event encounters continue to live independently inside the longer Location Tier-state;
@@ -93,7 +94,7 @@ The current prototype includes:
 - biome/city ground texture slots for grass, sand, snow, forest, stone and south through a dedicated GroundTextureSystem;
 - dedicated tracked South prototype textures: brown sandy field ground + white marble city ground;
 - five safe cities with full vision, no Dynamic Events/Masters, and three service NPC each;
-- shared Banker Boris opens the existing Bank, shared Teleporter Aster connects all five cities, and each city has a unique biome guide/guard;
+- shared Banker Boris opens the existing Bank, shared Teleporter Aster connects all five cities, and each city has a unique biome guide/guard; all city NPC reuse the player's humanoid visual base with role-specific proportions/accessories;
 - Project Hub World Map renders all 25 locations as a 45° diamond with temporary names/IDs/biomes/current position and N/NE/E/SE/S/SW/W/NW compass;
 - per-texture enabled, name/file, scale 1–10,000% and opacity 0–100% settings;
 - a temporary Project Hub `Biome Visual Lab · DEV` with a live tiled preview and local Apply/Reset overrides;
@@ -101,7 +102,7 @@ The current prototype includes:
 - WorldGraph shortest-distance to `isSafeCity` plus Stone-only resource eligibility for the current external-zone prototype;
 - Location Tier QA codes `8400`, `8401–8404`, `8499` for controlled testing without waiting hours;
 - persistent Header/Footer location intelligence: current Location Tier, graph distance, current-tier probability and location bonus are always visible;
-- four neutral Stone Master identities T1–T4 with persistent ~30-minute Encounter instances, `×1.00/1.20/1.40/1.60` multipliers, world caps and independent rotation coverage;
+- three resource Master lines — Stone / Water / Forest, each T1–T4 — with persistent Encounter instances, shared REAL TIME Process runtime, Tier multipliers, caps and per-resource rotation coverage;
 - master encounters occupy the same Location Tier Event/NPC capacity as generic events and render as Tier-colored NPCs;
 - character-scoped persistent Master relationship history: first/last meeting and unique Encounter count without click-spam growth;
 - active Master QA codes `8300`, `8302–8304`, `8312–8314`, `8399` for registry/filter/rotation/teleport testing;

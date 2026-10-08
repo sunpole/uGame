@@ -1,7 +1,7 @@
 # uGame — предварительный план реализации после Simulation Lab
 
 Дата: 2026-10-08  
-Статус: Stage C–F prototype и первый Extraction vertical slice реализованы; v0.0.99–v0.1.10 перестраивают мир в 25-location diamond baseline с пятью safe cities и рабочими city services. Текущая точка — ручной QA v0.1.10.
+Статус: Stage C–F prototype и первый Extraction vertical slice реализованы; v0.0.99–v0.1.10 перестраивают мир в 25-location diamond baseline с пятью safe cities и рабочими city services. Текущая точка — ручной QA v0.1.16.
 
 ## Цель
 
@@ -31,7 +31,7 @@
 
 ## Этап A — закрепить текущую основу
 
-Состояние после v0.1.10:
+Состояние после v0.1.16:
 
 - Project Hub;
 - встроенная документация/Journal;
@@ -235,6 +235,6 @@ DEEP 1M не является обязательным ритуалом. Он з
 
 ## Следующее действие
 
-1. Провести ручной QA v0.1.10: 25-zone world, ×4 local maps/camera entries, five safe cities, Bank/Teleport/Guide, textures, World Map/compass, 12 spots/exclusivity и restored First Playable.
+1. Провести ручной QA v0.1.16: local playable diamond, только NW/NE/SW/SE transition gates, opposite-entry spawn, interaction hint lane, Water/Forest Master Process, redesigned city NPC, затем full regression 25-zone/safe-city/12-spots/First Playable.
 2. После успешного QA исправить только выявленные regression/UX-долги этой world series.
 3. Затем вернуться к content-first Master modules / progression и отдельной проработке city NPC roaming routes.

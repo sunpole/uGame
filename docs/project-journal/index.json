@@ -918,6 +918,35 @@
       ],
       "supersedes": [],
       "superseded_by": []
+    },
+    {
+      "id": "UGD-0030",
+      "title": "Local diamond gates, multi-resource Masters and shared humanoid city NPC",
+      "date": "2026-10-08",
+      "type": "world",
+      "status": "accepted",
+      "flags": [
+        "needs-test"
+      ],
+      "tags": [
+        "diamond-zone",
+        "diagonal-gates",
+        "master-water",
+        "master-forest",
+        "city-npc",
+        "action-ui"
+      ],
+      "path": "records/UGD-0030-local-diamond-multi-resource-masters-city-npc.md",
+      "related": [
+        "UGD-0015",
+        "UGD-0016",
+        "UGD-0025",
+        "UGD-0027",
+        "UGD-0028",
+        "UGD-0029"
+      ],
+      "supersedes": [],
+      "superseded_by": []
     }
   ]
 }

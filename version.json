@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.15",
-  "stage": "diamond-event-spot-clearance",
+  "version": "0.1.16",
+  "stage": "local-diamond-multiresource-audit",
   "updated": "2026-10-08",
-  "summary": "Redistribute all 12 field Event Spots across the diamond with guaranteed clearance from configured walls"
+  "summary": "Document and audit four diagonal local gates, Water/Forest Masters, separated interaction hint and player-base city NPC visuals"
 }

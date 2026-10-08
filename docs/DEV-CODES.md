@@ -101,11 +101,11 @@ The old `8202/8211–8214` quality controls now apply only to the safe-city prot
 
 ## Master NPC QA — active
 
-These codes are active against the persistent Stone Master runtime.
+These codes are active against the persistent resource-Master runtime. `8300` summarizes Stone/Water/Forest; the existing Tier-list and teleport codes remain Stone-specific QA shortcuts.
 
 | Code | Action |
 |---|---|
-| `8300` | Show active Stone Master registry/counts |
+| `8300` | Show active Master summary: Stone / Water / Forest |
 | `8302` | List active T2 Stone master zones |
 | `8303` | List active T3 Stone master zones |
 | `8304` | List active T4 Stone master zones |

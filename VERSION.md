@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.15**
+Current version: **0.1.16**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.16 | Local Diamond / Multi-Resource Master Audit: document four diagonal gates, Water/Forest Masters, prompt separation and shared humanoid city NPC |
 | 0.1.15 | Diamond Event Spot Clearance: 12 field candidate spots stay evenly spread but now have guaranteed wall clearance |
 | 0.1.14 | City NPC Player-Model Redesign: banker/teleporter/guards reuse the same humanoid base as the player with role-specific proportions/accessories |
 | 0.1.13 | Water + Forest Masters: T1–T4 lines use the same Master/Process runtime as Stone with water/wood rewards and biome directions |
@@ -121,6 +122,9 @@ Current version: **0.1.15**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.16
+Документирована серия `UGD-0030`. Источник истины фиксирует: local playable area = diamond; реальные gates только `NW/NE/SW/SE`; `N/E/S/W` orientation-only; target entry всегда противоположная диагональ. Master runtime расширен до Stone/Water/Forest T1–T4 с общим REAL TIME Process. City NPC используют player humanoid base. Static audit: 80 transitions, 0 non-diagonal gates, 0 bad opposite-entry pairs, 12 spots на каждом field, 0 spots outside diamond, 0 wall-clearance conflicts, 5 cities × 3 service NPC.
 
 ## 0.1.15
 Статический аудит v0.1.14 обнаружил, что часть candidate Event Spot после ромбизации находилась слишком близко к configured walls. Все field zones получили единый проверенный 12-point layout, равномерно использующий верх, середину, левую/правую части и низ ромба. Для каждой точки подтверждены playable-diamond margin и wall clearance ≥55 px. Active placement/anti-repeat/occupancy rules не менялись.
