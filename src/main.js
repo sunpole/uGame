@@ -87,7 +87,7 @@ function syncPlayerInputState() {
     const element = document.getElementById(id);
     return element && !element.hidden;
   });
-  playerController.setEnabled(!anyOverlayOpen && !resourceExpeditionSystem?.isOccupied?.());
+  playerController.setEnabled(!anyOverlayOpen && !resourceExpeditionSystem?.isOccupied?.() && !resourceExpeditionView?.isOpen?.());
 }
 
 function fitPlayfield() {
@@ -360,13 +360,16 @@ class ZoneScene extends Phaser.Scene {
       spendSteps: (amount) => stepSystem?.spendService?.(amount, { source: 'resource-expedition' })?.ok === true,
       addSteps: (amount) => stepSystem?.add?.(amount, { source: 'expedition-solo-refund' }),
       grantResource: (id, mass, tier) => this.grantResource(id, mass, tier),
-      grantRelationshipXp: (masterId, xp) => masterRelationshipSystem?.addRelationshipXp?.(masterId, xp)
+      grantRelationshipXp: (masterId, xp) => masterRelationshipSystem?.addRelationshipXp?.(masterId, xp),
+      onDepleted: ({ encounterId, completedAt }) => worldSpawnStateSystem?.markExpeditionDepleted?.(encounterId, completedAt, 30_000)
     });
     this.resourceExpeditionSystem = resourceExpeditionSystem;
     resourceExpeditionView = new ResourceExpeditionView({
       expeditionSystem: resourceExpeditionSystem,
       interactionPanel: this.interactionPanel,
-      onOccupancyChange: () => this.syncExpeditionUI()
+      onOccupancyChange: () => this.syncExpeditionUI(),
+      getSteps: () => Math.floor(Number(stepSystem?.balance) || 0),
+      getRelationship: (id) => masterRelationshipSystem?.get?.(id)
     });
     this.resourceExpeditionView = resourceExpeditionView;
     const strip = document.querySelector('#workspace-control-strip .mouse-controls');
@@ -1004,6 +1007,7 @@ class ZoneScene extends Phaser.Scene {
     this.eventSpotSystem?.update(now);
     masterProcessSystem?.update(now);
     resourceExpeditionSystem?.update(now);
+    resourceExpeditionView?.tick(now);
     masterEncounterSystem?.update(now, delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update(false);
