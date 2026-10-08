@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.7**
+Current version: **0.2.8**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.8 | Steps Movement Performance: remove per-frame snapshots/events/DOM writes; exact movement accounting with HUD throttled to 5 Hz |
 | 0.2.7 | Steps Capacity/Regen: 10k start, 100M max, visible current/max, city +5 Steps/s formula, automatic 100M→1 Attention |
 | 0.2.6 | Steps Economy Audit: accepted source-of-truth docs + Pre-flight validation for Steps formulas and kg/Tier resources |
 | 0.2.5 | Clay Master Line: Clay T1–T4 Masters, sand/south clay direction, clay Process validation and palette |
@@ -142,6 +143,9 @@ Current version: **0.2.7**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.8
+Movement cost still accumulates from actual travelled pixels every frame, but ordinary walk/dash no longer clones Step state, emits Step change events or rewrites DOM at frame rate. The Steps HUD is refreshed at most 5 times/sec and save persistence remains throttled to once/sec. This specifically targets the small walking stutters observed after v0.2.x.
 
 ## 0.2.7
 Steps display now shows current/max. Starting baseline remains 10,000; visible maximum is 100,000,000. City regeneration is formula-driven (`flat + max×percent`) with current baseline +5 Steps/s and 0% component. At 100,000,000 positive Steps the game automatically purchases 1 Attention and subtracts the threshold. Manual Attention→Steps remains for debt repayment.

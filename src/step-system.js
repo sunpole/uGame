@@ -100,7 +100,7 @@ export class StepSystem {
     const distance = Math.max(0, Number(distancePx) || 0);
     if (distance <= 0 || safeCity) {
       if (safeCity) this.movementCostRemainder = 0;
-      return { spent: 0, debtAdded: 0, snapshot: this.snapshot() };
+      return { spent: 0, debtAdded: 0 };
     }
 
     const speedMultiplier = Math.max(1, Number(this.config?.dashSpeedMultiplier) || 2);
@@ -111,21 +111,21 @@ export class StepSystem {
       + this.movementCostRemainder;
     const wholeSteps = Math.floor(rawCost);
     this.movementCostRemainder = rawCost - wholeSteps;
-    if (wholeSteps <= 0) return { spent: 0, debtAdded: 0, snapshot: this.snapshot() };
-    return this.spendMovementSteps(wholeSteps, { source: dashing ? 'dash' : 'walk' });
+    if (wholeSteps <= 0) return { spent: 0, debtAdded: 0 };
+    return this.spendMovementSteps(wholeSteps, { source: dashing ? 'dash' : 'walk', publish: false });
   }
 
-  spendMovementSteps(cost, { source = 'movement' } = {}) {
+  spendMovementSteps(cost, { source = 'movement', publish = true } = {}) {
     const requested = Math.max(0, Math.floor(Number(cost) || 0));
-    if (requested <= 0) return { spent: 0, debtAdded: 0, snapshot: this.snapshot() };
+    if (requested <= 0) return { spent: 0, debtAdded: 0 };
     const fromBalance = Math.min(this.state.balance, requested);
     this.state.balance -= fromBalance;
     const debtAdded = requested - fromBalance;
     const beforeDebt = this.state.debt;
     if (debtAdded > 0) this.state.debt += debtAdded;
-    this.publish('movement-spend', { source, spent: requested, fromBalance, debtAdded });
+    if (publish) this.publish('movement-spend', { source, spent: requested, fromBalance, debtAdded });
     if (beforeDebt <= 0 && this.state.debt > 0) this.eventSystem?.emit('steps:debt-started', this.snapshot());
-    return { spent: requested, debtAdded, snapshot: this.snapshot() };
+    return { spent: requested, debtAdded };
   }
 
   teleportCostForTransitions(transitionCount) {

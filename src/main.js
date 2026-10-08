@@ -164,6 +164,7 @@ class ZoneScene extends Phaser.Scene {
     this.stepsHudElement = document.querySelector('#steps-hud');
     this.stepsDirty = false;
     this.nextStepsPersistAt = 0;
+    this.nextStepsHudAt = 0;
 
     this.saveSystem = new SaveSystem({
       getState: () => this.gameState?.snapshot()
@@ -848,10 +849,17 @@ class ZoneScene extends Phaser.Scene {
 
     const state = playerController.update(delta);
     if (state.movedDistancePx > 0) {
-      stepSystem?.spendDistance(state.movedDistancePx, {
+      const spend = stepSystem?.spendDistance(state.movedDistancePx, {
         dashing: state.dashing,
         safeCity: this.zoneSystem?.current?.isSafeCity === true
       });
+      if (spend?.spent > 0) {
+        this.stepsDirty = true;
+        if (_time >= this.nextStepsHudAt) {
+          this.nextStepsHudAt = _time + 200;
+          this.renderSteps();
+        }
+      }
     }
 
     if (state.moving) {

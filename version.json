@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.7",
-  "stage": "steps-capacity-city-regen",
+  "version": "0.2.8",
+  "stage": "steps-movement-performance",
   "updated": "2026-10-08",
-  "summary": "100M Steps capacity display, city +5/s formula and automatic Attention purchase at cap"
+  "summary": "Remove per-frame Step snapshots/events/DOM writes while preserving exact movement accounting"
 }
