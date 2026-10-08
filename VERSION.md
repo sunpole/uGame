@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.24**
+Current version: **0.1.25**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.25 | Spawn/Gate Safety Buffer: all 12 field candidate spots are at least 250px from diagonal entries; walls retain ≥100px clearance |
 | 0.1.24 | Diagonal Obstacles + 100px Clearance: field walls become ±45° and spots/walls stay clear of entries/gates |
 | 0.1.23 | City NPC Scale ×3: Banker/Teleporter/Guard become intentionally large landmark characters with larger interaction radius |
 | 0.1.22 | Movement Performance: throttle DOM/SVG and slow Master work; cache HUD/arrows; remove per-frame interaction sort |
@@ -130,6 +131,9 @@ Current version: **0.1.24**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.25
+Усилено правило «не спавнить рядом со входом»: Event Spot теперь валидируется минимум на 250 px от любого `NW/NE/SW/SE` entry. 12 candidate spots переразложены по true-square diamond, сохраняя использование верхней/центральной/нижней частей карты. Wall patterns обновлены так, чтобы сохранять ≥100 px geometric clearance от всех entries и Event Spots.
 
 ## 0.1.24
 Старые axis-aligned obstacles удалены из field data и заменены четырьмя детерминированными pattern-вариантами из трёх стен, каждая стена повёрнута на `+45°` или `-45°`. Rotated collision теперь считается в локальных координатах стены, а не через axis-aligned bounding box. Все 12 candidate Event Spots переразложены по true-square diamond. Минимальный clearance от Event Spot до entry/gate >100 px; стены валидируются с ≥100 px clearance от всех Event Spots и четырёх entries. Safe cities остаются без полевых стен/спавнов.

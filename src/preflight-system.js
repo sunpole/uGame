@@ -150,7 +150,7 @@ function validateWorld(world) {
     if ((zone.eventSpots || []).length !== 12) throw new Error(zone.id + ': expected 12 Event Spots');
     const entries = ['nw','ne','sw','se'].map((id) => zone.entries?.[id]).filter(Boolean);
     for (const spot of zone.eventSpots || []) {
-      if (entries.some((entry) => distance(spot, entry) < 100)) throw new Error(zone.id + ': spot too close to gate');
+      if (entries.some((entry) => distance(spot, entry) < 250)) throw new Error(zone.id + ': spot too close to gate (<250px)');
     }
     for (const wall of zone.walls || []) {
       if (Math.abs(Math.abs(Number(wall.rotationDeg || 0)) - 45) > 0.01) throw new Error(zone.id + ': wall is not ±45°');

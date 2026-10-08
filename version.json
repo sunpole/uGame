@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.24",
-  "stage": "diagonal-walls-and-spawn-clearance",
+  "version": "0.1.25",
+  "stage": "spawn-gate-safety-buffer",
   "updated": "2026-10-08",
-  "summary": "Rebuild field obstacles as ±45° rotated walls and guarantee 100px clearance from gates/entries and Event Spots; keep spots away from entries"
+  "summary": "Increase Event Spot distance from diagonal entries to at least 250px while keeping all diagonal walls at least 100px away from protected points"
 }
