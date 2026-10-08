@@ -578,6 +578,11 @@ class ZoneScene extends Phaser.Scene {
         return;
       }
 
+      if (item.type === 'city-teleporter') {
+        this.openCityTeleporter(item);
+        return;
+      }
+
       if ((item.type === 'npc' || item.type === 'city-guide') && item.dialogueId) {
         this.dialogueSystem.start(item.dialogueId).catch(() => {});
         return;
@@ -585,6 +590,34 @@ class ZoneScene extends Phaser.Scene {
     });
 
     this.eventSystem.on('quest:complete', () => this.audioSystem.play('quest'));
+  }
+
+  openCityTeleporter(item) {
+    const cities = this.worldGraph?.getSafeCityZones?.()
+      ?.slice()
+      ?.sort((a, b) => Number(a.ordinalId || 0) - Number(b.ordinalId || 0)) || [];
+    const currentZoneId = this.zoneSystem?.currentId || null;
+
+    const actions = cities.map((city) => ({
+      id: city.id,
+      label: city.name + (city.id === currentZoneId ? ' · вы здесь' : ''),
+      disabled: city.id === currentZoneId,
+      hint: city.cityRole || 'Мирный город',
+      onSelect: () => {
+        this.interactionPanel?.close?.();
+        this.zoneSystem?.travel?.({ zoneId: city.id, entryId: 'center' });
+        visionSystem?.update?.();
+        this.audioSystem?.play?.('portal');
+        return true;
+      }
+    }));
+
+    this.interactionPanel?.showActions?.({
+      title: item?.label || 'Астэр Звездочёт',
+      text: 'Выберите мирный город. Телепорт переносит персонажа прямо в центральную точку выбранного города.',
+      actions,
+      meta: 'Городская сеть · ' + cities.length + ' направлений'
+    });
   }
 
   grantItem(id, amount = 1) {

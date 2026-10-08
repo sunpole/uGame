@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.1.04**
+Current version: **0.1.05**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.1.05 | Five-city Teleport Network: Aster opens all safe cities and teleports to the selected city center |
 | 0.1.04 | Working City Banker + Guides: Boris opens the existing bank; five biome guards open city-specific dialogues |
 | 0.1.03 | Expanded Biome Textures: forest/stone/south + city variants; south field uses brown sand and south city white marble |
 | 0.1.02 | Five-city Service NPC Cast: shared Banker/Teleporter personas plus 5 unique biome city guards with prototype silhouettes |
@@ -110,6 +111,9 @@ Current version: **0.1.04**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.1.05
+Все копии **Астэра Звездочёта** теперь являются одним functional city-teleporter service. InteractionPanel показывает пять safe cities в порядке их world ID; текущий город помечается `вы здесь` и недоступен для повторного выбора. Выбор другого города вызывает существующий `ZoneSystem.travel()` с `entryId=center`, поэтому это настоящий переход мира, а не отдельная копия сцены. После телепорта обновляется Vision и проигрывается portal sound.
 
 ## 0.1.04
 Городские service NPC получили первый functional layer. Любая копия **Бориса Хранильщика** (`city-banker`) открывает уже существующий реальный Bank UI с `bankAccess=true`. Пять уникальных `city-guide` запускают собственные простые диалоги: Северин, Рейнар, Маршал Гранит, Хасим и Аврелий. Новых параллельных банков/диалоговых движков не создавалось — используются существующие InventoryPanel и DialogueSystem.

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.1.04",
-  "stage": "city-banker-and-guides",
+  "version": "0.1.05",
+  "stage": "five-city-teleport-network",
   "updated": "2026-10-08",
-  "summary": "Shared city banker opens the real bank; five unique biome city guards open their own guide dialogues"
+  "summary": "Aster the shared teleporter opens a five-city destination menu and performs real city-to-city travel"
 }
