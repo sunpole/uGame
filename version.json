@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.0",
-  "stage": "steps-economy-core",
+  "version": "0.2.1",
+  "stage": "steps-movement-cost",
   "updated": "2026-10-08",
-  "summary": "Persistent Steps and StepDebt core with city REAL TIME regeneration"
+  "summary": "Spend Steps by actual field movement distance; safe cities free; dash x2 speed/x4 spend rate and debt fallback"
 }

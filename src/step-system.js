@@ -18,6 +18,7 @@ export class StepSystem {
     this.state = { schemaVersion: 1, balance: 10000, debt: 0, lastRegenAt: Date.now() };
     this.loaded = false;
     this.nextUpdateAt = 0;
+    this.movementCostRemainder = 0;
   }
 
   async load(snapshot = null) {
@@ -69,6 +70,25 @@ export class StepSystem {
     if (value > 0) this.state.balance += value;
     this.publish('add', { source, debtPaid, balanceAdded: value });
     return this.snapshot();
+  }
+
+  spendDistance(distancePx, { dashing = false, safeCity = false } = {}) {
+    const distance = Math.max(0, Number(distancePx) || 0);
+    if (distance <= 0 || safeCity) {
+      if (safeCity) this.movementCostRemainder = 0;
+      return { spent: 0, debtAdded: 0, snapshot: this.snapshot() };
+    }
+
+    const speedMultiplier = Math.max(1, Number(this.config?.dashSpeedMultiplier) || 2);
+    const rateMultiplier = Math.max(1, Number(this.config?.dashSpendRateMultiplier) || 4);
+    const distanceCostMultiplier = dashing ? rateMultiplier / speedMultiplier : 1;
+    const rawCost = distance / Math.max(0.01, Number(this.config?.pixelsPerStep) || 1.2)
+      * distanceCostMultiplier
+      + this.movementCostRemainder;
+    const wholeSteps = Math.floor(rawCost);
+    this.movementCostRemainder = rawCost - wholeSteps;
+    if (wholeSteps <= 0) return { spent: 0, debtAdded: 0, snapshot: this.snapshot() };
+    return this.spendMovementSteps(wholeSteps, { source: dashing ? 'dash' : 'walk' });
   }
 
   spendMovementSteps(cost, { source = 'movement' } = {}) {

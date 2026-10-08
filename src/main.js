@@ -619,6 +619,14 @@ class ZoneScene extends Phaser.Scene {
       }
     });
 
+    this.eventSystem.on('steps:debt-started', () => {
+      this.interactionPanel?.showMessage?.({
+        title: 'Шаги закончились',
+        text: 'Движение не блокируется. Дальнейший путь увеличивает Долг Шагов. Обычный городской regen этот долг не погашает.',
+        meta: 'Погашение: Внимание → Шаги или будущая продажа ресурсов торговцу'
+      });
+    });
+
     this.eventSystem.on('quest:complete', () => this.audioSystem.play('quest'));
   }
 
@@ -734,6 +742,12 @@ class ZoneScene extends Phaser.Scene {
     if (!this.worldReady) return;
 
     const state = playerController.update(delta);
+    if (state.movedDistancePx > 0) {
+      stepSystem?.spendDistance(state.movedDistancePx, {
+        dashing: state.dashing,
+        safeCity: this.zoneSystem?.current?.isSafeCity === true
+      });
+    }
 
     if (state.moving) {
       visionSystem.setDirection(state.direction.x, state.direction.y);

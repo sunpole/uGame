@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.0**
+Current version: **0.2.1**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.1 | Steps Movement Cost: actual travelled distance spends Steps outside cities; dash ×2 speed / ×4 rate; movement can create debt |
 | 0.2.0 | Steps Economy Core: persistent Steps + StepDebt, city REAL TIME regen target and UI |
 | 0.1.28 | Pre-flight Hotfix: support valid `import.meta` during browser-side syntax checking |
 | 0.1.27 | Pre-flight / True Diamond Audit: source-of-truth docs and manual QA checklist for v0.1.20–v0.1.26 |
@@ -135,6 +136,9 @@ Current version: **0.2.0**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.1
+Movement подключён к StepSystem. Расход считается по фактически изменившейся world-position, а не по времени клавиши: baseline `1 Step ≈ 1.2 px`. Safe city movement бесплатно. Dash теперь ровно ×2 speed; при ×4 spend-rate та же дистанция стоит примерно ×2 Steps. При исчерпании balance движение не блокируется и создаёт StepDebt; при первом уходе в долг показывается объясняющее окно.
 
 ## 0.2.0
 Добавлен persistent StepSystem: Steps, отдельный StepDebt, natural reserve target 10 000, city REAL TIME regen +1% reserve/minute только при debt=0, service/movement spend contracts и DEV 6401/6402/6499. Save schema остаётся backward-compatible.

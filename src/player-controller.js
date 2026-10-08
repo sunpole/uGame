@@ -18,7 +18,7 @@ export class PlayerController {
 
     this.staminaMax = 100;
     this.stamina = this.staminaMax;
-    this.dashMultiplier = 1.7;
+    this.dashMultiplier = 2;
     this.dashDrainPerSecond = 55;
     this.staminaRegenPerSecond = 30;
     this.direction = { x: 1, y: 0 };
@@ -121,10 +121,13 @@ export class PlayerController {
 
     const speed = this.baseSpeed * this.speedMultiplier * (dashing ? this.dashMultiplier : 1);
     const distance = speed * seconds;
+    const beforeX = this.player.x;
+    const beforeY = this.player.y;
     if (moving) {
       this.tryMove(dx * distance, 0);
       this.tryMove(0, dy * distance);
     }
+    const movedDistancePx = Math.hypot(this.player.x - beforeX, this.player.y - beforeY);
 
     const keyboardInteract = keyboardAllowed && (
       Phaser.Input.Keyboard.JustDown(this.keys.interact) ||
@@ -140,6 +143,7 @@ export class PlayerController {
       direction: { ...this.direction },
       stamina: this.stamina,
       staminaMax: this.staminaMax,
+      movedDistancePx,
       interactPressed
     };
     this.onState?.(state);
