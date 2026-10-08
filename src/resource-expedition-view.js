@@ -288,8 +288,8 @@ export class ResourceExpeditionView {
       : 'Экспедиция окончена');
     const bar = this.field('bar');
     if (bar) bar.style.width = (100 * fraction).toFixed(1) + '%';
-    const progress = this.root.querySelector('.expedition-realm-progress');
-    progress?.setAttribute('aria-valuenow', String(Math.round(100 * fraction)));
+    const progressBar = this.root.querySelector('.expedition-realm-progress');
+    progressBar?.setAttribute('aria-valuenow', String(Math.round(100 * fraction)));
     const manualZone = this.field('manual-zone');
     if (manualZone) manualZone.hidden = !isActive || run.mode !== 'manual';
     const pointer = this.field('pointer');
