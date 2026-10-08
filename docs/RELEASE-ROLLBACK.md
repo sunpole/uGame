@@ -36,3 +36,9 @@ A release is a QA snapshot, not a guarantee of a completed manual browser smoke 
 - The new release workflow tests the Master and city/crafting Node suites before creating its tag/release.
 - The updater's option 7 rolls back to **its own immediately preceding local update ref**, not necessarily to arbitrary old release tags. The remote GitHub release itself cannot restore local browser saves.
 - Avoid deleting storage or forcing Git resets to address a visual sprite issue.
+
+## QA checkpoint v0.2.41 (2026-10-08)
+
+- Pre-change source release: [v0.2.33](https://github.com/sunpole/uGame/releases/tag/v0.2.33).
+- Target QA release: [v0.2.41](https://github.com/sunpole/uGame/releases/tag/v0.2.41) — check Actions/release publication before assuming it exists.
+- Repo code rollback does not reverse local inventory, Master encounters or browser saves; copy/export save separately if needed.

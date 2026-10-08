@@ -6,6 +6,10 @@ on:
     paths:
       - 'data/city-specializations.json'
       - 'data/crafting-prototype.json'
+      - 'data/items.json'
+      - 'src/crafting-system.js'
+      - 'src/container-system.js'
+      - 'tests/crafting-runtime.test.mjs'
       - 'data/materials-proposal.json'
       - 'tests/city-crafting.test.mjs'
       - '.github/workflows/city-crafting-tests.yml'
@@ -28,4 +32,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/city-crafting.test.mjs
+      - run: node --test tests/city-crafting.test.mjs tests/crafting-runtime.test.mjs

@@ -7,6 +7,8 @@ on:
       - 'src/master-process-system.js'
       - 'src/character-master-relationship-system.js'
       - 'src/master-encounter-system.js'
+      - 'src/interactable-system.js'
+      - 'src/preflight-system.js'
       - 'src/interaction-panel-system.js'
       - 'tests/master-loop.test.mjs'
       - '.github/workflows/master-loop-tests.yml'

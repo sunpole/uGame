@@ -171,6 +171,8 @@ test('duplicate interactable ID cannot leave a second orphan red Phaser sprite',
       setStrokeStyle() { return this; }, setVisible(visible) { this.visible = visible; return this; },
       setPosition(x, y) { this.x=x; this.y=y; return this; },
       setRotation() { return this; }, setName(name) { this.name=name; return this; },
+      setFillStyle(color) { this.fillColor=color; return this; },
+      setText(value) { this.text=value; return this; },
       add() { return this; },
       destroy() { this.active=false; const ix=objects.indexOf(this); if(ix>=0)objects.splice(ix,1); }
     };
@@ -200,6 +202,23 @@ test('duplicate interactable ID cannot leave a second orphan red Phaser sprite',
   assert.equal(sys.items.filter((item) => item.id === definition.id).length, 1);
   assert.equal(redDots().length, 1);
   assert.equal(tweens.filter((entry) => entry.targets?.name === 'ugame-master-reward:encounter-test').length, 1);
+  const endsAt = Date.now() + 60000;
+  sys.setMasterRewardState(definition.id, 'running', endsAt);
+  const running = sys.getItem(definition.id);
+  assert.equal(redDots().length, 1);
+  assert.equal(running._masterProcessTimer.text, undefined); // constructor text is a scene mock
+  assert.equal(objects.filter((obj) => obj.kind === 'text').length, 2);
+  sys.updateCountdowns(endsAt - 59000);
+  assert.equal(running._masterProcessTimer.text, '00:59');
+  sys.setItemTransform(definition.id, { x: 90, y: 100 });
+  assert.equal(running._masterProcessTimer.y, 35);
+  sys.setMasterRewardState(definition.id, 'ready');
+  assert.equal(redDots().length, 0);
+  assert.equal(objects.filter((obj) => obj.fillColor === 0x22c55e).length, 1);
+  assert.equal(running._masterProcessTimer, null);
+  sys.setMasterRewardState(definition.id, 'claimed');
+  assert.equal(objects.filter((obj) => obj.fillColor === 0x22c55e).length, 0);
+  assert.equal(redDots().length, 0);
   sys.setMasterRewardAvailable(definition.id, false);
   assert.equal(redDots().length, 0);
   assert.equal(tweens.filter((entry) => entry.targets?.name === 'ugame-master-reward:encounter-test').length, 0);

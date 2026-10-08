@@ -264,8 +264,11 @@ export class InteractableSystem {
       item._masterFacingMark = facingMark;
       label = scene.add.text(item.x, item.y - 38, (item.label || 'Мастер') + ' · ' + (item.masterTier || 'T?'), { ...labelStyle, color: colors.text }).setOrigin(0.5);
 
-      // A claimed Encounter must not own a red Phaser GameObject at all.
-      if (item.masterRewardAvailable !== false) this.createMasterRewardMarker(item);
+      // The status is derived from the persistent Encounter, never from visual state.
+      if (item.masterRewardState !== 'claimed' && item.masterRewardAvailable !== false) {
+        this.createMasterRewardMarker(item, item.masterRewardState || 'idle');
+        if (item.masterRewardState === 'running') this.createMasterProcessTimer(item);
+      }
       scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
       body = scene.add.circle(item.x, item.y, item.radius || 15, 0xbc8cff, 1).setStrokeStyle(2, 0xe1c7ff);
@@ -284,6 +287,7 @@ export class InteractableSystem {
     const displayObjects = [body, label].filter(Boolean);
     if (glow) displayObjects.push(glow);
     if (item._masterRewardMarker) displayObjects.push(item._masterRewardMarker);
+    if (item._masterProcessTimer) displayObjects.push(item._masterProcessTimer);
 
     if (Number.isFinite(Number(item.expiresAt))) {
       const timerLabel = scene.add.text(item.x, item.y + 30, countdownText(item.expiresAt), {
@@ -342,8 +346,12 @@ export class InteractableSystem {
     this.nextCountdownUpdateAt = now + 250;
 
     for (const item of this.items) {
-      if (!item._timerLabel || !Number.isFinite(Number(item.expiresAt))) continue;
-      item._timerLabel.setText(countdownText(item.expiresAt, now));
+      if (item._timerLabel && Number.isFinite(Number(item.expiresAt))) {
+        item._timerLabel.setText(countdownText(item.expiresAt, now));
+      }
+      if (item._masterProcessTimer && item.masterRewardState === 'running') {
+        item._masterProcessTimer.setText?.(countdownText(item.masterProcessEndsAt, now));
+      }
     }
   }
 
@@ -366,14 +374,16 @@ export class InteractableSystem {
       item._label?.setPosition?.(item.x, item.y - 38);
       item._timerLabel?.setPosition?.(item.x, item.y + 30);
       item._masterRewardMarker?.setPosition?.(item.x, item.y - 24);
+      item._masterProcessTimer?.setPosition?.(item.x, item.y - 65);
     }
     return true;
   }
 
-  createMasterRewardMarker(item) {
+  createMasterRewardMarker(item, state = 'idle') {
     if (!item || item.type !== 'master-npc') return null;
-    const marker = this.scene.add.circle(item.x, item.y - 24, 5, 0xff3b30, 1)
-      .setStrokeStyle(1.5, 0x7a1212, 1)
+    const ready = state === 'ready';
+    const marker = this.scene.add.circle(item.x, item.y - 24, 5, ready ? 0x22c55e : 0xff3b30, 1)
+      .setStrokeStyle(1.5, ready ? 0x146c37 : 0x7a1212, 1)
       .setDepth(7)
       .setVisible(true);
     marker.setName?.('ugame-master-reward:' + String(item.masterEncounterId || item.id));
@@ -390,35 +400,76 @@ export class InteractableSystem {
     return marker;
   }
 
-  setMasterRewardAvailable(id, available) {
+  createMasterProcessTimer(item) {
+    if (!item || item.type !== 'master-npc') return null;
+    const timer = this.scene.add.text(item.x, item.y - 65, countdownText(item.masterProcessEndsAt), {
+      fontFamily: 'Arial, sans-serif', fontSize: '12px', fontStyle: 'bold',
+      color: '#ffb4a9', backgroundColor: 'rgba(5, 6, 8, 0.78)',
+      padding: { x: 4, y: 2 }
+    }).setOrigin(0.5).setDepth(7);
+    item._masterProcessTimer = timer;
+    return timer;
+  }
+
+  // Phaser visuals are disposable views; pending/claimed status comes from saved relationships.
+  setMasterRewardState(id, state = 'idle', endsAt = null) {
     const item = typeof id === 'object' ? id : this.getItem(id);
     if (!item || item.type !== 'master-npc') return false;
-    const eligible = Boolean(available);
-    item.masterRewardAvailable = eligible;
+    const next = ['idle', 'running', 'ready', 'claimed'].includes(state) ? state : 'idle';
+    const nextEndsAt = next === 'running' && Number.isFinite(Number(endsAt)) ? Number(endsAt) : null;
     const marker = item._masterRewardMarker;
+    const timer = item._masterProcessTimer;
+    const markerValid = Boolean(marker && marker.active !== false);
+    const timerValid = Boolean(timer && timer.active !== false);
+    if (item.masterRewardState === next && item.masterProcessEndsAt === nextEndsAt
+      && (next === 'claimed' ? !markerValid && !timerValid
+        : markerValid && (next === 'running' ? timerValid : !timerValid))) return false;
 
-    if (!eligible) {
-      // Delete the Phaser object and its infinite tween, not just its visible flag.
-      if (marker) {
-        this.scene?.tweens?.killTweensOf?.(marker);
-        marker.destroy?.();
-        item._displayObjects = (item._displayObjects || []).filter((object) => object !== marker);
-        this.objects = this.objects.filter((object) => object !== marker);
-        item._masterRewardMarker = null;
-      }
+    const removeVisual = (object) => {
+      if (!object) return;
+      this.scene?.tweens?.killTweensOf?.(object);
+      object.destroy?.();
+      item._displayObjects = (item._displayObjects || []).filter((value) => value !== object);
+      this.objects = this.objects.filter((value) => value !== object);
+    };
+    item.masterRewardState = next;
+    item.masterRewardAvailable = next !== 'claimed';
+    item.masterProcessEndsAt = nextEndsAt;
+    if (next === 'claimed') {
+      removeVisual(marker);
+      removeVisual(timer);
+      item._masterRewardMarker = null;
+      item._masterProcessTimer = null;
       return true;
     }
-
-    if (!marker || marker.active === false) {
-      const created = this.createMasterRewardMarker(item);
-      if (created) {
-        item._displayObjects?.push(created);
-        this.objects.push(created);
-      }
+    if (!markerValid) {
+      removeVisual(marker);
+      const created = this.createMasterRewardMarker(item, next);
+      if (created) { item._displayObjects?.push(created); this.objects.push(created); }
     } else {
+      const ready = next === 'ready';
+      marker.setFillStyle?.(ready ? 0x22c55e : 0xff3b30, 1);
+      marker.setStrokeStyle?.(1.5, ready ? 0x146c37 : 0x7a1212, 1);
       marker.setVisible?.(true);
     }
+    if (next === 'running') {
+      if (!timerValid) {
+        removeVisual(timer);
+        const created = this.createMasterProcessTimer(item);
+        if (created) { item._displayObjects?.push(created); this.objects.push(created); }
+      } else {
+        timer.setText?.(countdownText(nextEndsAt));
+      }
+    } else {
+      removeVisual(timer);
+      item._masterProcessTimer = null;
+    }
     return true;
+  }
+
+  // Legacy caller retained for older tests and extensions.
+  setMasterRewardAvailable(id, available) {
+    return this.setMasterRewardState(id, available ? 'idle' : 'claimed');
   }
 
   activate(item) {

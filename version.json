@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.33",
-  "stage": "eight-patch-qa-release",
+  "version": "0.2.41",
+  "stage": "crafting-and-master-markers-qa",
   "updated": "2026-10-08",
-  "summary": "Document v0.2.26–0.2.33 series, run regression suites and publish tagged QA source release"
+  "summary": "60-second extraction countdown, green ready claim marker and first atomic T1 wood+stone crafting slice; awaiting smoke test"
 }

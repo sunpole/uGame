@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "status": "design-only-no-live-craft",
+  "status": "live-first-recipe",
   "updated": "2026-10-08",
   "overview": "Первый вертикальный срез обработки двух существующих материалов без новой системы экономики.",
-  "requiresApprovalBeforeGameplay": true,
-  "liveCraftingEnabled": false,
+  "requiresApprovalBeforeGameplay": false,
+  "liveCraftingEnabled": true,
   "recipe": {
-    "id": "candidate-simple-field-tool",
+    "id": "simple-field-tool",
     "name": "Простой полевой инструмент",
-    "status": "candidate",
+    "status": "live",
     "materials": [
       {
         "resourceId": "stone",
@@ -25,10 +25,10 @@
     "workshopRole": "strength",
     "workshopRoleRequired": false,
     "output": {
-      "id": "candidate-field-tool",
+      "id": "simple-field-tool",
       "label": "Простой полевой инструмент",
       "count": 1,
-      "inLiveItemCatalog": false
+      "inLiveItemCatalog": true
     },
     "openChoices": [
       "Первый инструмент — ремонт или создание?",
@@ -39,9 +39,10 @@
     "runtimeEffects": "none"
   },
   "safeguards": [
-    "Не расходовать реальные ресурсы до подтверждения.",
-    "Не создавать предмет в Inventory до нового утвержденного изменения.",
-    "Мастерская города Силы — предложение, а не классовый запрет.",
-    "Кандидат рецепта не определяет глобальный баланс и дроп."
+    "Активен только первый проверенный рецепт T1.",
+    "Только переносимые ресурсы игрока, не банк.",
+    "Списание материалов и выдача предмета — единая транзакция.",
+    "Локация и профессия мастерской пока не ограничены.",
+    "В будущем баланс и назначение предмета пересматриваются отдельно."
   ]
 }
