@@ -251,3 +251,50 @@ test('immersive Expedition realm owns navigation separately from the original NP
   view.hide();
   assert.ok(events.includes('sync'));
 });
+
+test('master farewell timer is drawn over the head, follows NPC and is destroyed on despawn', async () => {
+  const { InteractableSystem } = await import('../src/interactable-system.js');
+  const objects = [];
+  function obj(x, y, type = 'sprite') {
+    const value = {
+      x, y, type, active: true, visible: true, text: '',
+      width: 34, height: 40,
+      setDepth() { return this; }, setOrigin() { return this; },
+      setSize(w, h) { this.width = w; this.height = h; return this; },
+      setScale() { return this; }, setStrokeStyle() { return this; },
+      setText(text) { this.text = String(text); return this; },
+      setPosition(a,b) { this.x = a; this.y = b; return this; },
+      setRotation() { return this; }, setVisible() { return this; },
+      add() { return this; }, setName() { return this; },
+      destroy() { this.active = false; }
+    };
+    objects.push(value);
+    return value;
+  }
+  const scene = {
+    add: {
+      ellipse: (x,y) => obj(x,y,'ellipse'),
+      circle: (x,y) => obj(x,y,'circle'),
+      container: (x,y) => obj(x,y,'container'),
+      text: (x,y,text) => { const el=obj(x,y,'text');el.setText(text);return el; }
+    },
+    tweens: { add() {}, killTweensOf() {} }
+  };
+  const system = new InteractableSystem({ scene, onPrompt() {} });
+  const npc = system.add({
+    id:'master-interactable:timed',type:'master-npc',x:200,y:200,
+    label:'Master',masterTier:'T1',masterEncounterId:'timed',
+    masterRewardAvailable:false,masterRewardState:'claimed',
+    masterExpeditionCompletedAt:1000,expiresAt:31_000
+  });
+  assert.ok(npc._masterExpeditionTimer);
+  assert.equal(npc._masterExpeditionTimer.y,117);
+  assert.match(npc._masterExpeditionTimer.text,/УХОЖУ ЧЕРЕЗ/);
+  system.setItemTransform(npc,{x:250,y:230});
+  assert.equal(npc._masterExpeditionTimer.y,147);
+  system.updateCountdowns(16_000);
+  assert.equal(npc._masterExpeditionTimer.text,'УХОЖУ ЧЕРЕЗ 00:15');
+  const timer=npc._masterExpeditionTimer;
+  assert.equal(system.remove(npc.id),true);
+  assert.equal(timer.active,false);
+});
