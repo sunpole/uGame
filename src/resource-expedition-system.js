@@ -92,7 +92,7 @@ export class ResourceExpeditionSystem {
     if (!candidates.includes(tier)) return { ok: false, reason: 'unsupported-tier' };
     if (!this.config.enabledResourceTiers.includes(tier) || !eligible.includes(tier)) {
       return { ok: false, reason: 'skills-locked', tier, availableTiers: candidates,
-        access: this.getAccess?.(spawn, tier) || null };
+        ...(this.getAccess ? {access:this.getAccess(spawn,tier)} : {}) };
     }
     const initialUnits = roundUnits(this.config.stockKgByTier?.[tier] || this.config.initialStockKg);
     this.state.run = {
