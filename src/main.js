@@ -414,6 +414,7 @@ class ZoneScene extends Phaser.Scene {
       getInteraction: () => this.interactionPanel,
       getInventory: () => this.inventoryPanel,
       getProjectHub: () => projectHubSystem,
+      getExpedition: () => resourceExpeditionView,
       onWorldPrimary: () => playerController?.queueAction()
     });
     actionRouter.bindPointerControls(document);
