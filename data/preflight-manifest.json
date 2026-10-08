@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.43",
+  "version": "0.2.44",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -69,7 +69,10 @@
     "./src/crafting-system.js",
     "./data/resource-expeditions.json",
     "./src/resource-expedition-system.js",
-    "./src/resource-expedition-view.js"
+    "./src/resource-expedition-view.js",
+    "./data/resource-professions.json",
+    "./src/resource-profession-system.js",
+    "./src/resource-profession-view.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -122,6 +125,8 @@
     "./src/daylight-system.js",
     "./src/crafting-system.js",
     "./src/resource-expedition-system.js",
-    "./src/resource-expedition-view.js"
+    "./src/resource-expedition-view.js",
+    "./src/resource-profession-system.js",
+    "./src/resource-profession-view.js"
   ]
 }
