@@ -1,3 +1,20 @@
+# uGame v0.2.41 — QA candidate (2026-10-08)
+
+Patch series v0.2.34–v0.2.41:
+- .34: Phaser indicator and Process countdown visual.
+- .35: persistent Encounter -> idle/running/ready/claimed mapping.
+- .36: regression covers timer, green claim and removal; no orphan sprite.
+- .37: preflight Phaser mock + state migration/zone redraw validation.
+- .38: one recipe transactional CraftingSystem.
+- .39: live T1 recipe (stone 0.4 kg + wood 0.2 kg) and field tool item.
+- .40: desktop/touch workshop action, atomic stored materials and inventory output.
+- .41: regression tests, synchronized versions, release documentation.
+
+No multiplayer shared-claim service is present; "claimed" refers to this character's saved Encounter state. Real-time Process timing unchanged.
+Candidate pending GitHub Actions and browser smoke verification.
+
+---
+
 # uGame versions
 
 Current version: **0.2.33**
