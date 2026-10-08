@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.33",
+  "version": "0.2.41",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -65,7 +65,8 @@
     "./src/daylight-system.js",
     "./data/city-specializations.json",
     "./data/materials-proposal.json",
-    "./data/crafting-prototype.json"
+    "./data/crafting-prototype.json",
+    "./src/crafting-system.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -115,6 +116,7 @@
     "./src/zone-rules-system.js",
     "./src/zone-system.js",
     "./src/step-system.js",
-    "./src/daylight-system.js"
+    "./src/daylight-system.js",
+    "./src/crafting-system.js"
   ]
 }
