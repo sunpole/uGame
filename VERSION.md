@@ -1,3 +1,13 @@
+# uGame v0.2.47 · Shared Expedition Authority (local server QA)
+
+- Отдельный Node.js локальный сервер с общей комнатой, лимитом 12 участников и конечной массой ресурса.
+- Токены/код приглашения, подсчёт по серверному времени, рейтинг/одноразовые призы; снапшот в домашней папке, не в GitHub.
+- Phaser/GameState/StepSystem к нему ещё не подключены — массовую игру в браузере НЕ заявлять готовой.
+- Полный npm test + HTTP integration tests, CI и ручной Security QA. Откат: v0.2.46.
+- См. `docs/releases/v0.2.47.md`.
+
+---
+
 # uGame v0.2.46 · Inventory and Resource Chest QA
 
 - Настоящий ресурсный сундук: 48 ячеек, только physical resources T1–T8, доступ у банкира.
