@@ -1,11 +1,12 @@
 # uGame versions
 
-Current version: **0.2.6**
+Current version: **0.2.7**
 
 `version.json` is the machine-readable current version. This file is the human-readable history.
 
 | Version | Main change |
 |---|---|
+| 0.2.7 | Steps Capacity/Regen: 10k start, 100M max, visible current/max, city +5 Steps/s formula, automatic 100M→1 Attention |
 | 0.2.6 | Steps Economy Audit: accepted source-of-truth docs + Pre-flight validation for Steps formulas and kg/Tier resources |
 | 0.2.5 | Clay Master Line: Clay T1–T4 Masters, sand/south clay direction, clay Process validation and palette |
 | 0.2.4 | Extraction Rewards in kg/Tier: Master Tier fixes resource Tier and persistent random mass uses accepted kg ranges |
@@ -141,6 +142,9 @@ Current version: **0.2.6**
 | 0.0.3 | First visibility pass |
 | 0.0.2 | One-screen shell |
 | 0.0.1 | First playable prototype |
+
+## 0.2.7
+Steps display now shows current/max. Starting baseline remains 10,000; visible maximum is 100,000,000. City regeneration is formula-driven (`flat + max×percent`) with current baseline +5 Steps/s and 0% component. At 100,000,000 positive Steps the game automatically purchases 1 Attention and subtracts the threshold. Manual Attention→Steps remains for debt repayment.
 
 ## 0.2.6
 Зафиксирован UGD-0032 и полный Steps/Resource Economy source of truth. Pre-flight получает отдельные зелёные строки для Steps formulas и Mass-resources/Tiers: 10k reserve, 1.2px/Step, 1%/min, dash 2×/4×, Attention rates, teleport 1000×0.60, Stone/Wood/Water/Clay ranges, 0.1kg unit, 50kg cell, T1–T4 и inactive belt pouch + bag slot.

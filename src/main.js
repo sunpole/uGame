@@ -177,9 +177,11 @@ class ZoneScene extends Phaser.Scene {
 
     stepSystem = new StepSystem({
       eventSystem: this.eventSystem,
-      onChange: (snapshot) => {
+      onChange: (snapshot, detail = {}) => {
         this.gameState.setStepEconomy(snapshot);
         this.stepsDirty = true;
+        const attentionPurchased = Math.max(0, Math.floor(Number(detail.attentionPurchased) || 0));
+        if (attentionPurchased > 0) resourceSystem?.add?.('attention', attentionPurchased);
         this.renderSteps(snapshot);
       }
     });
@@ -504,6 +506,7 @@ class ZoneScene extends Phaser.Scene {
 
       this.zoneSystem.build(zoneId, entryId);
       stepSystem.update(Date.now(), { safeCity: this.zoneSystem.current?.isSafeCity === true, force: true });
+      this.renderSteps();
       this.gameState.setStepEconomy(stepSystem.snapshot());
       this.stepsDirty = true;
       this.worldReady = true;
@@ -534,6 +537,7 @@ class ZoneScene extends Phaser.Scene {
       this.gameState.setZone(zone?.id, entry);
       stepSystem?.resetRegenClock?.(Date.now());
       this.gameState.setStepEconomy(stepSystem?.snapshot?.() || this.gameState.state.stepEconomy);
+      this.renderSteps();
       this.persistGameState();
     });
 
@@ -651,7 +655,7 @@ class ZoneScene extends Phaser.Scene {
       title: 'Шаги / Внимание',
       text: debt > 0
         ? 'Есть Долг Шагов. Обмен Внимания сначала погашает долг; только остаток становится положительными Шагами.'
-        : 'Шаги можно обменивать на Внимание и обратно. Обратный курс намеренно в 10 раз менее выгоден.',
+        : 'При достижении максимума Шагов Внимание покупается автоматически.',
       actions: [
         {
           id: 'attention-to-steps',
@@ -665,23 +669,9 @@ class ZoneScene extends Phaser.Scene {
             this.openStepsEconomy();
             return true;
           }
-        },
-        {
-          id: 'steps-to-attention',
-          label: fmt(toAttention) + ' Шагов → 1 Внимание',
-          disabled: debt > 0 || balance < toAttention,
-          hint: debt > 0 ? 'Сначала нужно закрыть Долг Шагов' : (balance < toAttention ? 'Недостаточно Шагов' : 'Обратный курс ×10'),
-          onSelect: () => {
-            const spent = stepSystem.spendService(toAttention, { source: 'attention-buyback' });
-            if (!spent.ok) return false;
-            resourceSystem?.add?.('attention', 1);
-            this.flushStepPersistence(Date.now(), true);
-            this.openStepsEconomy();
-            return true;
-          }
         }
       ],
-      meta: 'Шаги ' + fmt(balance) + ' · Долг ' + fmt(debt) + ' · Внимание ' + fmt(attention)
+      meta: 'Шаги ' + fmt(balance) + ' / ' + fmt(stepSystem.maxSteps) + ' · Долг ' + fmt(debt) + ' · Внимание ' + fmt(attention) + ' · авто +1 Внимание при ' + fmt(toAttention)
     });
     return true;
   }
@@ -804,12 +794,22 @@ class ZoneScene extends Phaser.Scene {
     if (!snapshot) return;
     const balance = Math.floor(Number(snapshot.balance) || 0);
     const debt = Math.floor(Number(snapshot.debt) || 0);
+    const max = Math.floor(Number(stepSystem?.maxSteps) || 100000000);
+    const safeCity = this.zoneSystem?.current?.isSafeCity === true;
+    const activeRegen = Math.max(0, Number(stepSystem?.regenPerSecond?.({ safeCity })) || 0);
+    const configuredRegen = Math.max(0, Number(stepSystem?.configuredCityRegenPerSecond?.()) || 0);
     const fmt = (value) => Math.abs(value).toLocaleString('ru-RU');
-    const primary = debt > 0 && balance <= 0 ? 'Шаги −' + fmt(debt) : 'Шаги ' + fmt(balance);
-    const detail = debt > 0 && balance > 0 ? primary + ' · долг ' + fmt(debt) : primary;
+    const primary = debt > 0 && balance <= 0
+      ? 'Шаги 0 / ' + fmt(max) + ' · долг ' + fmt(debt)
+      : 'Шаги ' + fmt(balance) + ' / ' + fmt(max) + (debt > 0 ? ' · долг ' + fmt(debt) : '');
+    const regen = activeRegen > 0
+      ? ' · +' + activeRegen.toLocaleString('ru-RU') + '/с'
+      : (debt > 0 ? ' · реген 0/с' : (safeCity ? ' · +0/с' : ' · +0/с вне города'));
+    const detail = primary + regen;
     if (this.stepsSummaryElement) {
       this.stepsSummaryElement.textContent = detail;
       this.stepsSummaryElement.dataset.debt = String(debt > 0);
+      this.stepsSummaryElement.title = 'Городской реген: ' + configuredRegen.toLocaleString('ru-RU') + '/с; формула = flat + max×%';
     }
     if (this.stepsHudElement) {
       this.stepsHudElement.textContent = detail;

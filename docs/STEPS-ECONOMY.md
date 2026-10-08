@@ -1,6 +1,6 @@
 # uGame — Steps / Resource Economy
 
-Current implementation: **v0.2.6**
+Current implementation: **v0.2.7**
 
 ## Stable checkpoint before economy
 
@@ -18,9 +18,9 @@ Steps / «Шаги» are the basic movement/activity resource.
 
 Accepted baseline:
 
-- natural city reserve target = **10,000 Steps**;
-- reserve target is not a hard maximum;
-- exchange/trading/rewards may push balance above 10,000;
+- starting baseline = **10,000 Steps**;
+- visible maximum = **100,000,000 Steps**;
+- reaching the maximum automatically buys **1 Attention** and subtracts 100,000,000 Steps;
 - movement inside safe cities is free;
 - field movement is paid from actual travelled world distance;
 - calibration = **1 Step ≈ 1.2 world px**.
@@ -59,11 +59,12 @@ Special payment always clears debt first; only the remainder enters positive bal
 While the character is in a safe city:
 
 - debt must be 0;
-- positive Steps must be below 10,000;
-- recovery = **+1% of reserve target per REAL TIME minute**;
-- baseline = +100 Steps/minute.
+- regeneration formula is data-driven: **flat Steps/sec + maxSteps × percent/sec**;
+- current flat regeneration = **+5 Steps/sec**;
+- current percentage component = **0%**;
+- therefore current effective city regeneration = **+5 Steps/sec**.
 
-Above 10,000 there is no free regeneration.
+The UI shows current/max Steps and the currently active regeneration rate.
 
 ## Attention exchange
 
@@ -74,13 +75,13 @@ Accepted rates:
 
 Attention → Steps is a special payment and clears debt first.
 
-Steps → Attention:
+Steps → Attention is now automatic:
 
-- requires zero debt;
-- uses only positive Steps;
-- reverse rate is intentionally 10× worse.
+- at **100,000,000 positive Steps**, 1 Attention is purchased automatically;
+- the threshold amount is subtracted from Steps;
+- multiple threshold crossings may purchase multiple Attention units.
 
-The Steps header button opens this exchange at any convenient moment.
+The Steps header button remains the manual Attention → Steps debt-payment entry point.
 
 ## City teleport
 

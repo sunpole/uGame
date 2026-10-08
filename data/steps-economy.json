@@ -1,14 +1,17 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "updated": "2026-10-08",
   "status": "accepted-baseline",
-  "reserveTarget": 10000,
+  "initialSteps": 10000,
+  "maxSteps": 100000000,
   "pixelsPerStep": 1.2,
-  "cityRegenPercentPerRealMinute": 0.01,
+  "cityRegenFlatPerSecond": 5,
+  "cityRegenPercentOfMaxPerSecond": 0,
   "dashSpeedMultiplier": 2,
   "dashSpendRateMultiplier": 4,
   "attentionToSteps": 10000000,
   "stepsToAttention": 100000000,
+  "autoAttentionAtMax": true,
   "teleportWalkStepsPerTransition": 1000,
   "teleportCostFactor": 0.6
 }

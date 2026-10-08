@@ -171,9 +171,12 @@ function validateWorld(world) {
 }
 
 function validateStepsEconomy(config) {
-  if (Number(config?.reserveTarget) !== 10000) throw new Error('Steps reserveTarget must be 10000');
+  if (Number(config?.initialSteps) !== 10000) throw new Error('Initial Steps must be 10000');
+  if (Number(config?.maxSteps) !== 100000000) throw new Error('Max Steps must be 100000000');
   if (Number(config?.pixelsPerStep) !== 1.2) throw new Error('Steps pixelsPerStep must be 1.2');
-  if (Number(config?.cityRegenPercentPerRealMinute) !== 0.01) throw new Error('City regen must be 1%/min');
+  if (Number(config?.cityRegenFlatPerSecond) !== 5) throw new Error('City flat regen must be 5/s');
+  if (Number(config?.cityRegenPercentOfMaxPerSecond) !== 0) throw new Error('City percent regen baseline must be 0');
+  if (config?.autoAttentionAtMax !== true) throw new Error('Auto Attention at max must be enabled');
   if (Number(config?.dashSpeedMultiplier) !== 2 || Number(config?.dashSpendRateMultiplier) !== 4) {
     throw new Error('Dash must be ×2 speed / ×4 spend rate');
   }
@@ -314,7 +317,7 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
   await check('steps-economy', 'Экономика Шагов', async () => {
     const config = await fetchJson('./data/steps-economy.json');
     validateStepsEconomy(config);
-    return '10 000 reserve · 1.2 px/Step · regen 1%/min · Attention/Teleport rates OK';
+    return '10 000 start · 100 000 000 max · 1.2 px/Step · city +5/s · auto Attention OK';
   });
 
   await check('mass-resources', 'Mass-resources / Tiers', async () => {

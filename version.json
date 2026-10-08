@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.6",
-  "stage": "steps-economy-audit",
+  "version": "0.2.7",
+  "stage": "steps-capacity-city-regen",
   "updated": "2026-10-08",
-  "summary": "Document and preflight-validate Steps, debt, Attention, teleport and kg/Tier resource economy"
+  "summary": "100M Steps capacity display, city +5/s formula and automatic Attention purchase at cap"
 }

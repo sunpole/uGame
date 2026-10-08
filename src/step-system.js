@@ -26,9 +26,11 @@ export class StepSystem {
     if (!response.ok) throw new Error('Steps economy config failed: ' + response.status);
     const raw = await response.json();
     this.config = {
-      reserveTarget: Math.max(1, Math.floor(Number(raw.reserveTarget) || 10000)),
+      initialSteps: Math.max(0, Math.floor(Number(raw.initialSteps) || 10000)),
+      maxSteps: Math.max(1, Math.floor(Number(raw.maxSteps) || 100000000)),
       pixelsPerStep: Math.max(0.01, Number(raw.pixelsPerStep) || 1.2),
-      cityRegenPercentPerRealMinute: Math.max(0, Number(raw.cityRegenPercentPerRealMinute) || 0.01),
+      cityRegenFlatPerSecond: Math.max(0, Number(raw.cityRegenFlatPerSecond) || 0),
+      cityRegenPercentOfMaxPerSecond: Math.max(0, Number(raw.cityRegenPercentOfMaxPerSecond) || 0),
       dashSpeedMultiplier: Math.max(1, Number(raw.dashSpeedMultiplier) || 2),
       dashSpendRateMultiplier: Math.max(1, Number(raw.dashSpendRateMultiplier) || 4),
       attentionToSteps: Math.max(1, Math.floor(Number(raw.attentionToSteps) || 10000000)),
@@ -38,7 +40,8 @@ export class StepSystem {
     };
     this.restore(snapshot);
     this.loaded = true;
-    this.publish('load');
+    const attentionPurchased = this.applyAutoAttention();
+    this.publish('load', { attentionPurchased });
     return this;
   }
 
@@ -46,7 +49,7 @@ export class StepSystem {
     const source = snapshot && typeof snapshot === 'object' && !Array.isArray(snapshot) ? snapshot : {};
     this.state = {
       schemaVersion: 1,
-      balance: nonNegative(source.balance, this.config?.reserveTarget || 10000),
+      balance: nonNegative(source.balance, this.config?.initialSteps || 10000),
       debt: nonNegative(source.debt, 0),
       lastRegenAt: Number.isFinite(Number(source.lastRegenAt)) ? Number(source.lastRegenAt) : Date.now()
     };
@@ -56,7 +59,27 @@ export class StepSystem {
   snapshot() { return clone(this.state); }
   get balance() { return this.state.balance; }
   get debt() { return this.state.debt; }
-  get reserveTarget() { return this.config?.reserveTarget || 10000; }
+  get maxSteps() { return this.config?.maxSteps || 100000000; }
+
+  configuredCityRegenPerSecond() {
+    const flat = Math.max(0, Number(this.config?.cityRegenFlatPerSecond) || 0);
+    const percent = Math.max(0, Number(this.config?.cityRegenPercentOfMaxPerSecond) || 0);
+    return flat + this.maxSteps * percent;
+  }
+
+  regenPerSecond({ safeCity = false } = {}) {
+    if (!safeCity || this.state.debt > 0 || this.state.balance >= this.maxSteps) return 0;
+    return this.configuredCityRegenPerSecond();
+  }
+
+  applyAutoAttention() {
+    if (this.config?.autoAttentionAtMax === false || this.state.debt > 0) return 0;
+    const threshold = Math.max(1, this.stepsToAttentionAmount());
+    if (this.state.balance < threshold) return 0;
+    const count = Math.floor(this.state.balance / threshold);
+    this.state.balance -= count * threshold;
+    return count;
+  }
 
   add(amount, { source = 'reward', payDebt = false } = {}) {
     let value = Math.max(0, Math.floor(Number(amount) || 0));
@@ -68,7 +91,8 @@ export class StepSystem {
       value -= debtPaid;
     }
     if (value > 0) this.state.balance += value;
-    this.publish('add', { source, debtPaid, balanceAdded: value });
+    const attentionPurchased = this.applyAutoAttention();
+    this.publish('add', { source, debtPaid, balanceAdded: value, attentionPurchased });
     return this.snapshot();
   }
 
@@ -139,24 +163,22 @@ export class StepSystem {
     if (!force && now < this.nextUpdateAt) return false;
     this.nextUpdateAt = now + 1000;
 
-    if (!safeCity || this.state.debt > 0 || this.state.balance >= this.reserveTarget) {
+    const regenPerSecond = this.regenPerSecond({ safeCity });
+    if (regenPerSecond <= 0) {
       this.state.lastRegenAt = now;
       return false;
     }
 
     const elapsed = Math.max(0, now - Number(this.state.lastRegenAt || now));
-    const stepsPerMinute = this.reserveTarget * this.config.cityRegenPercentPerRealMinute;
-    const stepsPerMs = stepsPerMinute / 60000;
+    const stepsPerMs = regenPerSecond / 1000;
     const gain = Math.floor(elapsed * stepsPerMs);
     if (gain <= 0) return false;
 
-    const before = this.state.balance;
-    this.state.balance = Math.min(this.reserveTarget, this.state.balance + gain);
-    const actual = this.state.balance - before;
-    if (actual <= 0) return false;
-
-    this.state.lastRegenAt = Math.min(now, Number(this.state.lastRegenAt || now) + actual / stepsPerMs);
-    this.publish('city-regen', { amount: actual });
+    this.state.balance += gain;
+    const attentionPurchased = this.applyAutoAttention();
+    const consumedMs = gain / stepsPerMs;
+    this.state.lastRegenAt = Math.min(now, Number(this.state.lastRegenAt || now) + consumedMs);
+    this.publish('city-regen', { amount: gain, regenPerSecond, attentionPurchased });
     return true;
   }
 
@@ -165,7 +187,10 @@ export class StepSystem {
   statusText() {
     const balance = Math.floor(this.balance).toLocaleString('ru-RU');
     const debt = Math.floor(this.debt).toLocaleString('ru-RU');
-    return this.debt > 0 ? 'Шаги ' + balance + ' · долг ' + debt : 'Шаги ' + balance;
+    const max = Math.floor(this.maxSteps).toLocaleString('ru-RU');
+    return this.debt > 0
+      ? 'Шаги ' + balance + ' / ' + max + ' · долг ' + debt
+      : 'Шаги ' + balance + ' / ' + max;
   }
 
   publish(reason, detail = {}) {
