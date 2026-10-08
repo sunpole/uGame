@@ -29,6 +29,42 @@ function fixture({ steps = 1000, save = null, random = () => 0.5 } = {}) {
   return { expedition, grants, refunds, xp, snapshots, getSteps: () => steps };
 }
 
+test('new encounters guarantee Expedition with Tier-specific counts and old saves retain free extraction', async () => {
+  const { MasterCatalog } = await import('../src/master-catalog.js');
+  const { MasterEncounterSystem } = await import('../src/master-encounter-system.js');
+  const { CharacterMasterRelationshipSystem } = await import('../src/character-master-relationship-system.js');
+  const source = JSON.parse(readFileSync(new URL('../data/master-npcs.json', import.meta.url), 'utf8'));
+  const catalog = new MasterCatalog();
+  for (const master of source.masters) catalog.masters.set(master.id, master);
+  for (const module of source.modules) catalog.modules.set(module.id, module);
+  for (const master of source.masters) {
+    for (let i = 0; i < 15; i += 1) {
+      const modules = catalog.rollModules(master.id);
+      assert.ok(modules.includes('expedition'), master.id + ' must guarantee Expedition');
+      assert.equal(new Set(modules).size, modules.length);
+      assert.ok(modules.length >= master.moduleCountMin && modules.length <= master.moduleCountMax);
+      if (master.tier === 'T4') assert.equal(modules.length, 6);
+    }
+  }
+  const oldSpawn = {
+    masterId: 'stone-master-t1', encounterId: 'saved-old',
+    resourceDirectionId:'stone', tier:'T1',
+    activeModules:['extraction', 'dialogue'], expiresAt: Date.now()+100000
+  };
+  let menu = null;
+  const rel = new CharacterMasterRelationshipSystem();rel.initialize();
+  const encounter = new MasterEncounterSystem({
+    worldSpawnStateSystem:{getMasterSpawn:()=>oldSpawn},
+    relationshipSystem:rel,masterCatalog:catalog,
+    interactionPanel:{showActions:value=>{menu=value}}
+  });
+  encounter.activate({masterEncounterId:'saved-old'});
+  assert.ok(menu.actions.some(x=>x.id==='expedition'),'old save should get guaranteed Expedition');
+  assert.ok(menu.actions.some(x=>x.id==='extraction'),'old save should retain free reward');
+  assert.equal(encounter.getRewardMarkerState({...oldSpawn, activeModules:['expedition']}).state,'claimed');
+  assert.equal(encounter.getRewardMarkerState(oldSpawn).state,'idle');
+});
+
 test('four master tiers expose eight resource tiers without prematurely minting locked materials', () => {
   const f = fixture();
   assert.equal(config.maxParticipants, 12);
