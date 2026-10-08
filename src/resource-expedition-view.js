@@ -13,12 +13,14 @@ function clock(ms) {
 function number(value) { return Math.max(0, Number(value) || 0).toLocaleString('ru-RU'); }
 
 export class ResourceExpeditionView {
-  constructor({ expeditionSystem, interactionPanel, onOccupancyChange, getSteps, getRelationship } = {}) {
+  constructor({ expeditionSystem, interactionPanel, onOccupancyChange, getSteps, getRelationship, getProfession, getTierAccess } = {}) {
     this.system = expeditionSystem;
     this.panel = interactionPanel;
     this.onOccupancyChange = onOccupancyChange;
     this.getSteps = getSteps;
     this.getRelationship = getRelationship;
+    this.getProfession = getProfession;
+    this.getTierAccess = getTierAccess;
     this.feedback = '';
     this.lastMode = null;
     this.lastStatus = null;
@@ -74,6 +76,8 @@ export class ResourceExpeditionView {
                 <div><small>ДОБЫТО В ГРУЗ</small><strong data-exp="cargo">0,0 кг</strong></div>
                 <div><small>ПОТРАЧЕНО ШАГОВ</small><strong data-exp="spent">0</strong></div>
                 <div><small>ОПЫТ С NPC</small><strong data-exp="xp">0</strong></div>
+                <div><small>ПРОФЕССИЯ</small><strong data-exp="profession">ур. 1</strong></div>
+                <div><small>УСИЛЕНИЯ</small><strong data-exp="buffs">нет</strong></div>
               </div>
               <div class="expedition-realm-controls" data-exp="active-controls">
                 <button type="button" class="expedition-realm-button exp-auto" data-exp-action="auto">▶ Автодобыча</button>
@@ -126,24 +130,51 @@ export class ResourceExpeditionView {
   put(name, value) { const element = this.field(name); if (element) element.textContent = String(value); }
 
   open(spawn) {
-    const result = this.system.enter(spawn);
-    if (!result.ok) {
-      if (result.reason === 'unclaimed' || result.reason === 'occupied') return this.show();
-      const messages = {
-        'skills-locked': 'Этот Мастер открывает ' + (result.availableTiers || []).join(' / ') +
-          ', но освоение соответствующих навыков пока не реализовано. Для игрового теста доступен T1 у Мастера T1.',
-        expired: 'Встреча уже закончилась.',
-        used: 'Эта ресурсная экспедиция уже завершена или покинута.',
-        invalid: 'Не удалось открыть экспедицию.'
-      };
-      this.panel?.showMessage?.({
-        title: 'Ресурсная экспедиция',
-        text: messages[result.reason] || 'Доступ к экспедиции закрыт.',
-        meta: 'Текущий прототип: локальный T1, без сетевого мультиплеера.'
+    const run=this.system.run;
+    if (!run || (run.status!=='active' && run.claimed)) {
+      const allowed=this.system.allowedTiers(spawn.tier);
+      const actions=allowed.map(tier=>{
+        const condition=this.getTierAccess?.(spawn,tier) || {ok:true};
+        const inCatalog=this.system.config?.enabledResourceTiers?.includes(tier)===true;
+        return {
+          id:'expedition-enter-'+tier.toLowerCase(),
+          label:tier+(condition.ok&&inCatalog?' · войти':' · закрыто'),
+          disabled:!condition.ok||!inCatalog,
+          hint:condition.ok?'Запас конечен, список участников: 1/12 (локально)'
+            :'Нужно: дерево '+tier+' · ур. профессии '+(condition.requiredLevel||'?')
+             +' · репутация NPC '+(condition.requiredReputation||'?'),
+          onSelect:()=>this.enterChosen(spawn,tier)
+        };
+      });
+      this.panel?.showActions?.({
+        title:'Выбор ресурса · Мастер '+spawn.tier,
+        text:'Выбери Tier добываемого ресурса. Уровень Мастера определяет пару Tiers, а профессиональное дерево и репутация открывают доступ.',
+        actions,
+        meta:'T1–T8 доступны только после соответствующей прокачки. При входе откроется отдельная ресурсная зона.'
       });
       return true;
     }
-    this.feedback = '';
+    return this.enterChosen(spawn,null);
+  }
+
+  enterChosen(spawn,tier) {
+    const result=this.system.enter(spawn,Date.now(),tier);
+    if(!result.ok) {
+      if(result.reason==='unclaimed'||result.reason==='occupied')return this.show();
+      const messages={
+        'skills-locked':'Для '+(result.tier||tier)+' нужны навыки и репутация NPC. Выбери доступный Tier.',
+        expired:'Встреча уже закончилась.',
+        used:'Экспедиция этой встречи уже завершена.',
+        invalid:'Невозможно войти в экспедицию.'
+      };
+      this.panel?.showMessage?.({
+        title:'Экспедиция · доступ',
+        text:messages[result.reason]||'Вход закрыт.',
+        meta:'Реальная проверка профессии и отношений, локальный инстанс до 12 участников пока без мультиплеера.'
+      });
+      return true;
+    }
+    this.feedback='';
     return this.show();
   }
 
@@ -242,6 +273,11 @@ export class ResourceExpeditionView {
     this.put('refund', '+' + number(run.refundSteps));
     this.put('steps', number(this.getSteps?.() ?? 0));
     this.put('xp', number(this.getRelationship?.(run.masterId)?.relationshipXp || 0));
+    const progress=this.getProfession?.(run.resourceId);
+    this.put('profession', progress ? 'XP '+number(progress.xp) : '—');
+    const effects=[Number(progress?.buffs?.['gathering-food']||0)>now?'паёк':'',
+      Number(progress?.buffs?.['gathering-tonic']||0)>now?'настой':''].filter(Boolean);
+    this.put('buffs',effects.join(' · ')||'нет');
     this.put('timer', clock(run.endsAt - now));
     this.put('feedback', this.feedback);
     this.put('status', ({ active: 'ДОБЫЧА', depleted: 'РЕСУРС ИСЧЕРПАН', expired: 'ВСТРЕЧА ЗАКОНЧЕНА', left: 'ВЫШЛИ' })[run.status] || '—');
