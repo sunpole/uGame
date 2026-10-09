@@ -73,6 +73,7 @@ let interfaceSettingsSystem = null;
 let uiWindowManager = null;
 let biomeTextureSettingsSystem = new BiomeTextureSettingsSystem();
 let groundTextureSystem = null;
+let availableGroundTextureFiles = null;
 let worldSpawnStateSystem = null;
 let masterCatalog = new MasterCatalog();
 let masterEncounterSystem = null;
@@ -161,7 +162,7 @@ class ZoneScene extends Phaser.Scene {
   }
 
   preload() {
-    preloadGroundTextures(this);
+    preloadGroundTextures(this, availableGroundTextureFiles);
   }
 
   create() {
@@ -1147,7 +1148,8 @@ class ZoneScene extends Phaser.Scene {
   }
 }
 
-export async function bootGame() {
+export async function bootGame({ availableTextureFiles } = {}) {
+  availableGroundTextureFiles = Array.isArray(availableTextureFiles) ? new Set(availableTextureFiles) : null;
   if (window.__ugameBoot) window.__ugameBoot.phase = 'boot-game';
   chromeContextSystem = new ChromeContextSystem({
     versionElement: document.querySelector('#footer-version'),
