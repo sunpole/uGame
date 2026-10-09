@@ -103,7 +103,19 @@ async function checkViewport(profile) {
       phase: window.__ugameBoot?.phase || 'unknown',
       bootError: window.__ugameBoot?.error || null,
       preflight: document.querySelector('#preflight-screen')?.innerText?.slice(-2500) || '',
-      world: document.querySelector('#quest-status')?.textContent || ''
+      world: document.querySelector('#quest-status')?.textContent || '',
+      startButtonHitTest: (() => {
+        const button = document.querySelector('#preflight-start');
+        if (!button) return null;
+        const rect = button.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        return {
+          rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+          topElement: document.elementFromPoint(x, y)?.outerHTML?.slice(0, 200) || null,
+          viewport: { width: innerWidth, height: innerHeight }
+        };
+      })()
     })).catch(() => null);
     console.error('[FAIL] ' + profile.name, { details, errors, serverOutput, screenshot });
     throw error;
