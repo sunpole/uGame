@@ -38,6 +38,11 @@ async function checkViewport(profile) {
     javaScriptEnabled: true
   });
   const page = await context.newPage();
+  const activate = async (selector) => {
+    const locator = page.locator(selector);
+    if (profile.mobile) await locator.tap();
+    else await locator.click();
+  };
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.stack || String(error)));
   // A missing optional user-supplied biome image is allowed: Pre-flight uses a
@@ -69,28 +74,28 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('.preflight-row[data-state="fail"]').count(), 0);
     assert.equal(await page.evaluate(() => window.__ugameBoot?.phase), 'ready-waiting-user');
 
-    await page.locator('#preflight-start').click();
+    await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
     assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');
     assert.ok(await page.locator('#game canvas').count() >= 1, 'Phaser canvas did not mount');
 
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
-    await page.locator('#project-hub-open').click();
+    await activate('#project-hub-open');
     // Project Hub defaults to the Project section, not the Game section.
-    await page.locator('[data-hub-section="game"]').click();
-    await page.locator('[data-hub-item="world-map"]').click();
+    await activate('[data-hub-section="game"]');
+    await activate('[data-hub-item="world-map"]');
     await page.getByText('Мир uGame · 225 локаций').waitFor({ timeout: 10000 });
     assert.equal(await page.locator('[data-world-map-zone]').count(), 225);
     assert.equal(await page.locator('[data-world-map-zone].is-city').count(), 5);
     assert.equal(await page.locator('[data-world-map-zone].is-current').count(), 1);
-    await page.locator('#world-map-find-me').click();
+    await activate('#world-map-find-me');
     assert.equal(await page.locator('[data-world-map-zone].is-current.is-selected').count(), 1);
 
-    await page.locator('#project-hub-back').click();
-    await page.locator('[data-hub-section="tools"]').click();
-    await page.locator('[data-hub-item="world-analyzer"]').click();
+    await activate('#project-hub-back');
+    await activate('[data-hub-section="tools"]');
+    await activate('[data-hub-item="world-analyzer"]');
     await page.locator('#world-analyzer-resource').waitFor({ timeout: 10000 });
-    await page.locator('#project-hub-close').click();
+    await activate('#project-hub-close');
     assert.equal(await page.locator('#project-hub').isHidden(), true);
 
     assert.equal(errors.length, 0, profile.name + ' browser errors:\n' + errors.join('\n'));
@@ -117,7 +122,7 @@ async function checkViewport(profile) {
         };
       })()
     })).catch(() => null);
-    console.error('[FAIL] ' + profile.name, { details, errors, serverOutput, screenshot });
+    console.error('[FAIL] ' + profile.name, JSON.stringify({ details, errors, serverOutput, screenshot }, null, 2));
     throw error;
   } finally {
     await context.close();
