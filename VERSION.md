@@ -1,3 +1,15 @@
+# uGame v0.2.52 · Five outer square world rings (2026-10-09)
+
+- Original 5×5 zones and all 80 old directed gates preserved; five new square rings yield a 15×15 graph, 225 zones, 840 directed transitions.
+- 5 safe cities remain; 220 fields have 12 candidate Event/NPC spots each (2640 possible spots, NOT 2640 simultaneously active NPC).
+- Real nearest-safe-city graph distance bands extend from D1–D2 to D1–D10; cached multi-source BFS removes expensive repeated distance scans.
+- Scrollable world map supports the larger bounds and dynamic zone count; new zones use temporary biome templates rather than finalized lore.
+- Master tier odds, world caps (T4=1/T3=2/T2=3 per resource), real-time clocks, save format and existing 25 IDs unchanged.
+- QA: world graph checks plus npm regression; browser check and CI required before merge/release.
+- Previous rollback checkpoint: v0.2.51. Details: docs/releases/v0.2.52.md.
+
+---
+
 # uGame v0.2.51 · Responsive game header and honest Master rarity (2026-10-09)
 
 - Responsive minmax header row and two-row layout for narrow windows; Steps and material counters stay inside blocks.

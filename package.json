@@ -1,11 +1,11 @@
 {
   "name": "ugame",
-  "version": "0.2.51",
+  "version": "0.2.52",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node tools/dev-server.mjs",
-    "test": "node --test tests/master-loop.test.mjs tests/city-crafting.test.mjs tests/crafting-runtime.test.mjs tests/resource-expedition.test.mjs tests/resource-profession.test.mjs tests/master-activities.test.mjs tests/inventory-organizer.test.mjs tests/expedition-authority.test.mjs tests/world-navigation-ui.test.mjs tests/master-timer-sequence.test.mjs tests/master-rarity-header.test.mjs",
+    "test": "node --test tests/master-loop.test.mjs tests/city-crafting.test.mjs tests/crafting-runtime.test.mjs tests/resource-expedition.test.mjs tests/resource-profession.test.mjs tests/master-activities.test.mjs tests/inventory-organizer.test.mjs tests/expedition-authority.test.mjs tests/world-navigation-ui.test.mjs tests/master-timer-sequence.test.mjs tests/master-rarity-header.test.mjs tests/world-five-rings.test.mjs",
     "expedition:authority": "node server/expedition-authority-server.mjs"
   }
 }

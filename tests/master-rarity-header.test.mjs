@@ -24,7 +24,7 @@ test('distance bands combine with LT NPC tiers; D2 boosts T4 over D1 but neither
   assert.ok(masterChanceByDistance(config,3,'T4')>masterChanceByDistance(config,2,'T4'));
   assert.equal(masterChanceByDistance(config,1000,'T4'),null);
 });
-test('25-zone world has only D1 and D2 fields, so farther-distance boost tables are unused',()=>{
+test('225-zone world contains D1-D10 fields with four resource lines',()=>{
   const graph=new WorldGraph();
   graph.use(world);
   const zones=[...graph.zones.values()].filter(x=>!x.isSafeCity);
@@ -35,9 +35,10 @@ test('25-zone world has only D1 and D2 fields, so farther-distance boost tables 
     actual[d]=(actual[d]||0)+1;
     for(const resource of z.resourceDirections||[])counts[resource]++;
   }
-  assert.deepEqual(actual,{'1':12,'2':8});
-  assert.deepEqual(counts,{stone:20,wood:4,water:8,clay:8});
+  assert.deepEqual(actual,{'1':20,'2':28,'3':28,'4':32,'5':36,'6':32,'7':20,'8':12,'9':8,'10':4});
+  assert.deepEqual(counts,{stone:220,wood:59,water:53,clay:108});
 });
+
 test('audit reports real per-resource T3/T4 cap usage, not imaginary guaranteed NPC',()=>{
   const graph=new WorldGraph();graph.use(world);
   const zones={};
@@ -57,11 +58,11 @@ test('audit reports real per-resource T3/T4 cap usage, not imaginary guaranteed 
   assert.equal(byId.stone.t4Cap,1);
   assert.equal(byId.water.counts.T4,0);
   assert.equal(byId.water.t4Cap,1);
-  assert.equal(byId.wood.eligibleZones,4);
-  assert.ok(Math.abs(byId.wood.expectedT4-.06)<1e-9);
+  assert.equal(byId.wood.eligibleZones,59);
+  assert.ok(Math.abs(byId.wood.expectedT4-.885)<1e-9);
   assert.equal(byId.clay.counts.T3,0);
-  assert.equal(report.byDistance[0].zoneCount,12);
-  assert.equal(report.byDistance[1].zoneCount,8);
+  assert.equal(report.byDistance[0].zoneCount,20);
+  assert.equal(report.byDistance[1].zoneCount,28);
 });
 test('analyzer shows a separate Tier cap report without mutating live Master data',()=>{
   const masters=[{

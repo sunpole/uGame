@@ -1,14 +1,22 @@
-# WorldGraph
+# WorldGraph — расширение v0.2.52
 
-Current implementation: **v0.1.27**
+Мир теперь состоит из **15×15 = 225 стабильных локаций**. Изначальные 25 (5×5) сохранены как внутреннее ядро, вокруг добавлено 5 внешних колец, или 200 новых полей. Пять мирных городов остаются прежними. Всего 840 направленных переходов, 220 полей с 12 кандидатными точками Event/NPC в каждой. **Кандидатные точки не равны числу одновременно активных NPC.**
 
-## Current graph
+Кратчайший путь до ближайшего города теперь охватывает D1–D10. `WorldGraph` один раз строит индекс соседей и кэш ближайших городов многoисточниковым BFS. Только существовавшие NW/NE/SW/SE ворота являются переходами; вся старая система ориентации и вход с противоположной стороны сохранены.
 
-- 25 stable location ids.
+Новые имена и распределение биомов временные, до обсуждения ЛОРа и баланса. Master caps и вероятность T4=1,5% при LT T1 не изменены. Подробности: [v0.2.52](releases/v0.2.52.md).
+
+---
+
+# WorldGraph (историческая архитектура v0.1.27)
+
+## Исходный граф до расширения v0.2.52
+
+- 25 stable location ids in the original core (now preserved within 225).
 - 5 safe cities.
-- 20 field locations.
-- 80 directed transitions.
-- logical 5×5 adjacency.
+- 20 original field locations (now 220).
+- 80 original directed transitions (now 840).
+- original logical 5×5 adjacency (now 15×15).
 - local diamond presentation.
 
 ## Transition rule

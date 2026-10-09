@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.51",
-  "stage": "header-adaptive-master-rarity-audit",
+  "version": "0.2.52",
+  "stage": "five-outer-world-rings",
   "updated": "2026-10-09",
-  "summary": "Auto-height responsive chrome header; live T3/T4 cap and weighted rarity diagnostics (no changes to 1.5% RNG or spawn caps)."
+  "summary": "Expand the 5x5 world to 15x15 with 12 Event/NPC candidate spots per field; keep existing T4 odds and per-resource caps."
 }

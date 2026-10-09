@@ -6,6 +6,8 @@ export class WorldGraph {
     this.zoneAliases = new Map();
     this.transitions = new Map();
     this.transitionsByZone = new Map();
+    this.neighborsByZone = new Map();
+    this.distanceToSafeCity = new Map();
   }
 
   async load(url = './data/world.json') {
@@ -30,6 +32,8 @@ export class WorldGraph {
     this.zoneAliases.clear();
     this.transitions.clear();
     this.transitionsByZone.clear();
+    this.neighborsByZone.clear();
+    this.distanceToSafeCity.clear();
 
     for (const zone of zones) {
       if (!zone || typeof zone.id !== 'string' || !zone.id) {
@@ -38,6 +42,7 @@ export class WorldGraph {
       if (this.zones.has(zone.id)) throw new Error(`Duplicate zone id: ${zone.id}`);
 
       this.zones.set(zone.id, zone);
+      this.neighborsByZone.set(zone.id, new Set());
       this.zoneAliases.set(String(zone.id), zone.id);
       for (const alias of zone.legacyIds || []) {
         this.zoneAliases.set(String(alias), zone.id);
@@ -67,6 +72,26 @@ export class WorldGraph {
       this.transitions.set(normalized.id, normalized);
       if (!this.transitionsByZone.has(fromZoneId)) this.transitionsByZone.set(fromZoneId, []);
       this.transitionsByZone.get(fromZoneId).push(normalized);
+      this.neighborsByZone.get(fromZoneId).add(toZoneId);
+      this.neighborsByZone.get(toZoneId).add(fromZoneId);
+    }
+
+    // Cache nearest-city distances in one multi-source BFS for the expanded world.
+    const queue = [];
+    for (const zone of this.zones.values()) {
+      if (zone.isSafeCity === true) {
+        this.distanceToSafeCity.set(zone.id, 0);
+        queue.push(zone.id);
+      }
+    }
+    for (let index = 0; index < queue.length; index += 1) {
+      const fromId = queue[index];
+      const nextDistance = this.distanceToSafeCity.get(fromId) + 1;
+      for (const adjacentId of this.neighborsByZone.get(fromId) || []) {
+        if (this.distanceToSafeCity.has(adjacentId)) continue;
+        this.distanceToSafeCity.set(adjacentId, nextDistance);
+        queue.push(adjacentId);
+      }
     }
 
     const requestedStartId = this.resolveZoneId(data.start?.zoneId);
@@ -115,14 +140,7 @@ export class WorldGraph {
   getNeighborZoneIds(zoneValue) {
     const zoneId = this.resolveZoneId(zoneValue);
     if (!zoneId) return [];
-    const result = new Set();
-
-    for (const transition of this.transitions.values()) {
-      if (transition.from?.zoneId === zoneId && transition.to?.zoneId) result.add(transition.to.zoneId);
-      if (transition.to?.zoneId === zoneId && transition.from?.zoneId) result.add(transition.from.zoneId);
-    }
-
-    return [...result];
+    return [...(this.neighborsByZone.get(zoneId) || [])];
   }
 
   shortestDistance(fromValue, toValue) {
@@ -154,14 +172,7 @@ export class WorldGraph {
   distanceFromSafeCity(zoneValue) {
     const zoneId = this.resolveZoneId(zoneValue);
     if (!zoneId) return Infinity;
-    const zone = this.getZone(zoneId);
-    if (zone?.isSafeCity === true) return 0;
-
-    let best = Infinity;
-    for (const city of this.getSafeCityZones()) {
-      best = Math.min(best, this.shortestDistance(zoneId, city.id));
-    }
-    return best;
+    return this.distanceToSafeCity.get(zoneId) ?? Infinity;
   }
 
   resourceDirectionsFor(zoneValue) {
