@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { WorldGraph } from '../src/world-graph.js';
 import { validateWorld } from '../src/preflight-system.js';
 import { ProjectHubSystem } from '../src/project-hub-system.js';
+import { GROUND_TEXTURE_ASSETS, preloadGroundTextures } from '../src/ground-texture-system.js';
 
 const world = JSON.parse(readFileSync(new URL('../data/world.json', import.meta.url), 'utf8'));
 const config = JSON.parse(readFileSync(new URL('../data/world-spawn-config.json', import.meta.url), 'utf8'));
@@ -90,4 +91,20 @@ test('browser PRE-FLIGHT refuses old 5x5 topology, truncated zones and broken tr
   const firstField = lostSpot.zones.find(zone => !zone.isSafeCity);
   firstField.eventSpots.pop();
   assert.throws(() => validateWorld(lostSpot), /expected 12 Event Spots/);
+});
+
+test('optional biome assets do not block Phaser preload when missing from clean checkout', () => {
+  const loaded = [];
+  const scene = { load: { image: (key, file) => loaded.push({ key, file }) } };
+  const available = new Set([
+    './assets/textures/biomes/south_256.jpg',
+    './assets/textures/biomes/city_south_512.jpg'
+  ]);
+  preloadGroundTextures(scene, available);
+  assert.deepEqual(loaded.map(({ file }) => file).sort(), [...available].sort());
+  loaded.length = 0;
+  preloadGroundTextures(scene, new Set());
+  assert.equal(loaded.length, 0, 'missing optional files are not queued');
+  preloadGroundTextures(scene);
+  assert.equal(loaded.length, GROUND_TEXTURE_ASSETS.length, 'legacy standalone preload still works');
 });
