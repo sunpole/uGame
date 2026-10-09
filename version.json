@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.50",
-  "stage": "sequential-master-process-farewell-stable-expedition-ui",
+  "version": "0.2.51",
+  "stage": "header-adaptive-master-rarity-audit",
   "updated": "2026-10-09",
-  "summary": "Process countdown first, flashing queued NPC departure, then persisted 30s farewell; fixed-size mining UI prevents vertical shifts"
+  "summary": "Auto-height responsive chrome header; live T3/T4 cap and weighted rarity diagnostics (no changes to 1.5% RNG or spawn caps)."
 }

@@ -2615,3 +2615,92 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .expedition-realm-activity-slot { min-height: 212px; }
   .expedition-realm-activity-placeholder { min-height: 197px; }
 }
+
+
+/* v0.2.51 — grow the chrome row instead of letting min-content buttons protrude. */
+#app {
+  grid-template-rows: minmax(112px,auto) minmax(0,1fr) 38px;
+}
+.game-chrome-header {
+  align-items:stretch;
+  min-width:0;
+  min-height:112px;
+}
+.game-chrome-header > * {
+  min-width:0;
+  box-sizing:border-box;
+}
+.resource-summary-block {
+  min-width:0;
+  overflow:hidden;
+}
+.resource-summary-top {
+  min-width:0;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px 10px;
+}
+.resource-summary-top > * { max-width:100%;min-width:0; }
+#steps-summary {
+  box-sizing:border-box;
+  flex:0 1 auto;
+  max-width:100%;
+  height:auto;
+  min-height:22px;
+  padding:3px 7px;
+  line-height:1.15;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
+}
+#material-wealth {
+  min-width:0;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:right;
+}
+.header-resource-meta { min-width:0; }
+@media (max-width:1150px) {
+  .game-chrome-header {
+    grid-template-columns: minmax(105px,145px) minmax(0,1fr);
+    grid-template-rows: auto auto;
+    gap:7px;
+    padding:7px 9px;
+  }
+  .resource-summary-block { grid-column:2;grid-row:2; }
+  .character-progress-block { grid-column:1;grid-row:2; }
+  .character-identity-block { grid-column:2;grid-row:1; }
+  .chrome-logo-block { grid-column:1;grid-row:1; }
+  .resource-summary-top { justify-content:space-between; }
+}
+@media (max-width:600px) {
+  .game-chrome-header { grid-template-columns:minmax(98px,0.32fr) minmax(0,0.68fr);padding:5px;gap:5px; }
+  .chrome-logo-block { padding:8px; }
+  .chrome-logo { font-size:20px; }
+  .chrome-header-block { padding:7px;gap:2px; }
+  .resource-summary-top { gap:5px; }
+  .pinned-resources { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .header-resource-meta { grid-template-columns:minmax(0,1fr);gap:2px; }
+  #material-wealth { font-size:12px; }
+}
+
+
+/* v0.2.51 — live Master rarity report, expandable rather than crowding filters. */
+.world-analyzer-rarity {
+  grid-column:1/-1;
+  padding:10px 12px;
+  margin:0 0 13px;
+  border:1px solid #3f5263;
+  border-radius:8px;
+  background:#101c29;
+  color:#cbd9e9;
+  font-size:12px;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+}
+.world-analyzer-rarity > strong {display:block;color:#9aceff;font-size:13px;}
+.world-analyzer-rarity b {color:#e6eff8;}
+.world-analyzer-rarity details {margin-top:6px;}
+.world-analyzer-rarity summary {cursor:pointer;color:#b8d9fb;font-weight:700;}
+.world-analyzer-rarity p {margin:7px 0;color:#c0d2e2;}

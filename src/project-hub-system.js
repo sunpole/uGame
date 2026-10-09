@@ -1,4 +1,5 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
+import { masterRarityReport } from './master-rarity-audit.js';
 
 function escapeHtml(value = '') {
   return String(value)
@@ -605,6 +606,31 @@ export class ProjectHubSystem {
       (view.resource===entry.id?' selected':'') + '>' + escapeHtml(entry.label) + ' (' +
       counts[entry.id] + ')</option>').join('');
     const selectionLabel = filtered.length ? (view.selectedIndex+1) + ' из ' + filtered.length : '0 из 0';
+    const rarity=masterRarityReport({masters:allMasters,zones:data.zones,balanceConfig:data.balanceConfig,
+      config:data.balanceConfig});
+    const capLine=rarity.byResource.map(entry=>escapeHtml(entry.label)+': T3 <b>'+
+      entry.counts.T3+'/'+(entry.t3Cap??'—')+'</b> · T4 <b>'+
+      entry.counts.T4+'/'+(entry.t4Cap??'—')+'</b>').join(' · ');
+    const expectedLine=rarity.byResource.map(entry=>escapeHtml(entry.label)+
+      ' ('+entry.eligibleZones+' зон): T4 в среднем '+
+      (entry.expectedT4==null?'—':entry.expectedT4.toFixed(2).replace('.',','))+' NPC').join(' · ');
+    const distanceLine=rarity.byDistance.map(entry=>'D'+entry.distance+' ('+entry.zoneCount+' зон): '+
+      (entry.t4Chance==null?'—':entry.t4Chance.toFixed(2).replace('.',',')+'%')).join(' · ');
+    const rarityHtml=[
+      '<section class="world-analyzer-rarity" aria-label="Аудит редкости Мастеров">',
+      '<strong>Редкие Мастера в текущем мире — количество / мировой максимум</strong>',
+      '<div>'+capLine+'</div>',
+      '<details><summary>Показать шансы и объяснение редкости T4</summary>',
+      '<p>Шанс T4 для одной попытки при Tier локации T1: <b>'+
+        rarity.locationTierT1Chance.toFixed(2).replace('.',',')+'%</b>. Не гарантия одного NPC каждого ресурса.</p>',
+      '<p>Расстояние от города действует через вероятность Tier локации; суммарный расчёт T4 по расстояниям: '+
+        (distanceLine||'Нет данных')+'</p>',
+      '<p>Среднее ожидаемое количество T4 при текущих Tier зон (до мировых ограничений): '+
+        expectedLine+'</p>',
+      '<p>Ограничение 1 T4 / ресурс означает <b>не больше одного</b>, не обязательное появление. '+
+        'Существующие NPC и генерация не меняются.</p>',
+      '</details></section>'
+    ].join('');
 
     const tierOptions = ['ALL','T1','T2','T3','T4'].map((tier) =>
       '<option value="' + tier + '"' + (view.tier === tier ? ' selected' : '') + '>' + (tier === 'ALL' ? 'Все Tier' : tier) + '</option>'
@@ -664,6 +690,7 @@ export class ProjectHubSystem {
       '<span>Активных Мастеров: <b>' + allMasters.length + '</b> · по фильтру: <b>' + filtered.length + '</b> · выбран: <b>' + selectionLabel + '</b></span>',
       '<span class="world-analyzer-resource-counts">' + directions.filter(x=>x.id!=='ALL')
         .map(x=>escapeHtml(x.label)+': <b>'+counts[x.id]+'</b>').join(' · ') + '</span>',
+      rarityHtml,
       '</div>',
       '<div class="world-analyzer-layout"><div class="world-analyzer-list">' + cards + '</div>' + detail + '</div>'
     ].join('');

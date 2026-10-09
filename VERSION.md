@@ -1,3 +1,14 @@
+# uGame v0.2.51 · Responsive game header and honest Master rarity (2026-10-09)
+
+- Responsive minmax header row and two-row layout for narrow windows; Steps and material counters stay inside blocks.
+- DEV World Analyzer: T3/T4 count / world caps for stone, wood, water, clay, per-distance likelihood and current-zone candidate expectation.
+- Verified conditional Master Tier T4 chance at LT T1 is 1.5%, but current 25-zone world has only D1 and D2 fields, so T4 is naturally scarce.
+- NO changes to rarity RNG, caps, spawn rotation, saved encounters, Steps or player inventory.
+- Full Node/CI tests, browser QA still required; rollback v0.2.50.
+- Report: `docs/releases/v0.2.51.md`.
+
+---
+
 # uGame v0.2.50 · Sequential NPC timers and stable expedition layout (2026-10-09)
 
 - Process 60s → blinking departure warning (no digits) → 30s NPC goodbye, then despawn.

@@ -1273,6 +1273,7 @@ export async function bootGame() {
             name: zone.name,
             biome: zone.biome,
             isSafeCity: zone.isSafeCity === true,
+            resourceDirections: Array.isArray(zone.resourceDirections) ? [...zone.resourceDirections] : [],
             location: worldSpawnStateSystem?.getLocationSummary?.(zone.id) || null
           };
         }
@@ -1281,7 +1282,12 @@ export async function bootGame() {
           zones,
           candidatePools: snapshot.candidatePools || {},
           rotations: snapshot.rotations || {},
-          counts: snapshot.activeCountsByResourceAndTier || {}
+          counts: snapshot.activeCountsByResourceAndTier || {},
+          balanceConfig: {
+            distanceBands: worldSpawnStateSystem?.config?.distanceBands || [],
+            masterTierByLocationTier: worldSpawnStateSystem?.config?.masterTierByLocationTier || {},
+            worldCapsPerResource: worldSpawnStateSystem?.config?.worldCapsPerResource || {}
+          }
         };
       },
       teleport: (encounterId) => masterEncounterSystem?.teleportToEncounter?.(encounterId) || false
