@@ -1,0 +1,61 @@
+name: uGame v0.2.48 inventory bulk and safety QA
+
+on:
+  pull_request:
+    paths:
+      - 'src/inventory-*.js'
+      - 'src/container-system.js'
+      - 'src/item-catalog.js'
+      - 'src/style.css'
+      - 'tests/inventory-organizer.test.mjs'
+      - 'package.json'
+      - '.github/workflows/publish-v0248.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.48.md'
+      - '.github/workflows/publish-v0248.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check src/inventory-management.js
+          node --check src/inventory-panel-system.js
+          node --check src/container-system.js
+          node --check src/item-catalog.js
+      - name: Full node regressions
+        run: npm test
+      - name: Preflight version and rollback
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for (const path of ['version.json','package.json','data/preflight-manifest.json']) {
+            if (JSON.parse(fs.readFileSync(path,'utf8')).version !== '0.2.48') throw Error('version mismatch: '+path);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.48'\"))throw Error('preflight mismatch');
+          "
+          gh release view v0.2.47
+      - name: Publish QA prerelease
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.48 >/dev/null 2>&1; then
+            gh release create v0.2.48 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.48 · Inventory bulk moves and safe deletion" \
+              --notes-file docs/releases/v0.2.48.md --prerelease
+          fi
