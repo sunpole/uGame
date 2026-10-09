@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ContainerSystem } from '../src/container-system.js';
 import { InventoryPanelSystem } from '../src/inventory-panel-system.js';
-import { matchesInventoryItem, inventoryCategory, compareInventoryStacks } from '../src/inventory-management.js';
+import { matchesInventoryItem, inventoryCategory, compareInventoryStacks, discardProtection } from '../src/inventory-management.js';
 const data=JSON.parse(readFileSync(new URL('../data/containers.json',import.meta.url),'utf8'));
 const catalog={
   loaded:true,
@@ -120,4 +120,132 @@ test('equipment inventory statistics accept object-shaped slots without .filter 
   ui.statsElement={textContent:''};ui.searchQuery='';ui.categoryFilter='all';ui.tierFilter='all';
   ui.renderStats(c.config('equipment'));
   assert.match(ui.statsElement.textContent,/найдено 0/);
+});
+
+test('bulk move emits a single save, skips non-resources in the chest and retains contents',()=>{
+  const {containers:c,events}=fixture();
+  const pack=c.container('backpack');
+  pack.slots[0]={itemId:'stone-t1',quantity:50};
+  pack.slots[1]={itemId:'stone-t8',quantity:20};
+  pack.slots[2]={itemId:'simple-field-tool',quantity:1};
+  const result=c.transferAll('backpack','resourceChest');
+  assert.deepEqual({moved:result.moved,movedStacks:result.movedStacks,skipped:result.skipped},
+    {moved:70,movedStacks:2,skipped:1});
+  assert.equal(total(c,'stone-t1'),50);
+  assert.equal(total(c,'stone-t8'),20);
+  assert.equal(total(c,'simple-field-tool'),1);
+  assert.equal(pack.slots[2].itemId,'simple-field-tool');
+  assert.equal(events.filter(e=>e.name==='containers:changed').length,1);
+  assert.equal(events[0].payload.detail.reason,'transfer-all');
+  const reverse=c.transferAll('resourceChest','backpack');
+  assert.equal(reverse.moved,70);
+  assert.equal(total(c,'stone-t1'),50);
+});
+test('bulk transfer honors one nearly-full stack and leaves remainder in original slot',()=>{
+  const {containers:c,events}=fixture();
+  const pack=c.container('backpack'),bank=c.container('bank');
+  pack.slots[0]={itemId:'stone-t1',quantity:20};
+  bank.slots.fill(null);
+  for(let i=0;i<bank.slots.length;i++)bank.slots[i]={itemId:'wood-t8',quantity:500};
+  bank.slots[0]={itemId:'stone-t1',quantity:499};
+  const result=c.transferAll('backpack','bank');
+  assert.equal(result.moved,1);
+  assert.equal(result.remaining,19);
+  assert.equal(bank.slots[0].quantity,500);
+  assert.equal(pack.slots[0].quantity,19);
+  assert.equal(total(c,'stone-t1'),519);
+  assert.equal(events.length,1);
+  const retry=c.transferAll('backpack','bank');
+  assert.equal(retry.moved,0);
+  assert.equal(pack.slots[0].quantity,19);
+  assert.equal(events.length,1);
+});
+test('bulk transfer validates source and destination without generating save events',()=>{
+  const {containers:c,events}=fixture();
+  c.container('backpack').slots[0]={itemId:'stone-t1',quantity:5};
+  assert.equal(c.transferAll('backpack','backpack').moved,0);
+  assert.equal(c.transferAll('equipment','bank').moved,0);
+  assert.equal(c.transferAll('backpack','resourcePouch').moved,0);
+  assert.equal(c.transferAll('missing','bank').moved,0);
+  assert.equal(total(c,'stone-t1'),5);
+  assert.equal(events.length,0);
+});
+test('bulk transfer can move only filtered resources while preserving quest items',()=>{
+  const {containers:c}=fixture();
+  const pack=c.container('backpack');
+  pack.slots[0]={itemId:'stone-t3',quantity:10};
+  pack.slots[1]={itemId:'quest-token',quantity:1};
+  const result=c.transferAll('backpack','bank',{filter:item=>item.tags.includes('resource')});
+  assert.equal(result.moved,10);
+  assert.equal(pack.slots[1].itemId,'quest-token');
+  assert.equal(c.container('bank').slots[0].itemId,'stone-t3');
+});
+test('every inventory sorting mode preserves item quantities and total weight',()=>{
+  for(const by of ['name','tier','category','quantity','weight']) {
+    const {containers:c}=fixture(),pack=c.container('backpack');
+    pack.slots[0]={itemId:'stone-t1',quantity:75};
+    pack.slots[1]={itemId:'quest-token',quantity:2};
+    pack.slots[2]={itemId:'wood-t8',quantity:14};
+    pack.slots[3]={itemId:'stone-t1',quantity:15};
+    const before=c.snapshot(),oldKg=c.weightKg('backpack');
+    const result=c.organize('backpack',{by,merge:true});
+    assert.equal(result.ok,true,by);
+    assert.equal(result.freedSlots,1,by);
+    assert.equal(c.weightKg('backpack'),oldKg,by);
+    for(const id of ['stone-t1','quest-token','wood-t8']){
+      const old=before.containers.backpack.slots.filter(x=>x?.itemId===id).reduce((n,x)=>n+x.quantity,0);
+      assert.equal(total(c,id),old,by+' '+id);
+    }
+  }
+});
+test('deleting valuables requires УДАЛИТЬ when value reaches one Attention or is unknown',()=>{
+  const cheap={...catalog.get('stone-t1'),baseValue:1};
+  const costly={...catalog.get('stone-t1'),baseValue:5000};
+  const stacked={...catalog.get('stone-t1'),baseValue:100};
+  assert.equal(discardProtection(cheap,1).typed,false);
+  assert.equal(discardProtection(costly,1).typed,true);
+  assert.equal(discardProtection(stacked,49).typed,false);
+  assert.equal(discardProtection(stacked,50).typed,true);
+  assert.equal(discardProtection(catalog.get('quest-token'),1).typed,true);
+  assert.equal(discardProtection(catalog.get('simple-field-tool'),1).reason,'Цена пока не определена');
+});
+test('deletion UI refuses wrong typed word, cancel and invalid quantities without changes',()=>{
+  const {containers:c}=fixture();
+  const pack=c.container('backpack');pack.slots[0]={itemId:'stone-t8',quantity:10};
+  const ui=Object.create(InventoryPanelSystem.prototype);
+  ui.containerSystem=c;
+  ui.itemCatalog={get:()=>({baseValue:5000})};
+  let status='',calls=0,words=['5','удалить'];
+  ui.setStatus=t=>{status=t;};
+  const former=globalThis.window;
+  globalThis.window={
+    prompt:()=>{calls++;return words.shift()??null;},
+    confirm:()=>{throw Error('should not ask final confirmation without exact typed word');}
+  };
+  try{
+    assert.equal(ui.confirmDiscard('backpack',0,{...catalog.get('stone-t8'),baseValue:5000},10),false);
+    assert.equal(pack.slots[0].quantity,10);
+    assert.equal(calls,2);
+    assert.match(status,/отменено/i);
+    words=['-1'];
+    assert.equal(ui.confirmDiscard('backpack',0,{...catalog.get('stone-t8'),baseValue:5000},10),false);
+    assert.equal(pack.slots[0].quantity,10);
+  }finally{globalThis.window=former;}
+});
+test('deletion UI confirms explicit УДАЛИТЬ and removes exactly the selected units once',()=>{
+  const {containers:c,events}=fixture();
+  const pack=c.container('backpack');pack.slots[0]={itemId:'stone-t8',quantity:50};
+  const item={...catalog.get('stone-t8'),baseValue:5000};
+  const ui=Object.create(InventoryPanelSystem.prototype);
+  ui.containerSystem=c;ui.itemCatalog={get:()=>({baseValue:5000})};
+  ui.setStatus=()=>{};
+  const original=globalThis.window;
+  let confirmed=0;let values=['12','УДАЛИТЬ'];
+  globalThis.window={prompt:()=>values.shift(),confirm:()=>{confirmed++;return true;}};
+  try{
+    assert.equal(ui.confirmDiscard('backpack',0,item,50),true);
+    assert.equal(pack.slots[0].quantity,38);
+    assert.equal(confirmed,1);
+    assert.equal(events.filter(x=>x.payload.detail.reason==='discard-confirmed').length,1);
+  }finally{globalThis.window=original;}
 });
