@@ -703,12 +703,42 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     const entries = Array.isArray(config?.textures) ? config.textures : [];
     if (entries.length < 12) throw new Error('ожидалось минимум 12 texture slots');
     const enabled = entries.filter((entry) => entry.enabled !== false && entry.textureFile);
-    const checks = await Promise.all(enabled.map(async (entry) => {
-      try { await fetchText(entry.textureFile); return true; } catch { return false; }
+    // Extra biome images are user-installed, optional visual enhancements.
+    // Only the assets listed as required in preflight-manifest are mandatory.
+    // Check each unique file once and pass its availability to the Phaser loader,
+    // preventing 404s from missing optional images on a clean GitHub clone.
+    const uniqueFiles = [...new Set(enabled.map((entry) => entry.textureFile))];
+    const checked = await Promise.all(uniqueFiles.map(async (file) => {
+      try {
+        const response = await fetch(file, { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const blob = await response.blob();
+        if (!blob.type.startsWith('image/')) throw new Error('Not an image');
+        // 200 OK alone does not guarantee that Phaser can decode this file.
+        // Reject broken optional images before the game's Phaser preload phase.
+        if (typeof createImageBitmap === 'function') {
+          const bitmap = await createImageBitmap(blob);
+          bitmap.close();
+        } else {
+          const url = URL.createObjectURL(blob);
+          try {
+            const image = new Image();
+            image.src = url;
+            await image.decode();
+          } finally {
+            URL.revokeObjectURL(url);
+          }
+        }
+        return { file, available: true };
+      } catch {
+        return { file, available: false };
+      }
     }));
-    const missing = checks.filter((ok) => !ok).length;
-    if (missing) throw new Error('недоступно texture assets: ' + missing);
-    return enabled.length + ' texture assets доступны';
+    context.availableTextureFiles = checked.filter(({ available }) => available).map(({ file }) => file);
+    const optionalMissing = checked.filter(({ available }) => !available).length;
+    return enabled.length + ' texture slots · ' + context.availableTextureFiles.length +
+      '/' + uniqueFiles.length + ' файлов доступны' +
+      (optionalMissing ? ' · ' + optionalMissing + ' дополнительных отсутствуют (резервный грунт)' : '');
   });
 
   await check('phaser', 'Phaser runtime', async () => {

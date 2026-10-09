@@ -3,9 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.53</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.53" />
+    <title>uGame v0.2.54</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.54" />
     <style>
+      /* The hidden full-size game chrome must not enlarge the mobile layout viewport
+         while Chromium is displaying the startup gate. */
+      #app[aria-hidden="true"]{position:fixed;inset:0;max-width:100vw;overflow:hidden;pointer-events:none}
       .preflight-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#080b0f;color:#e6edf3;font:14px/1.35 Arial,sans-serif}
       .preflight-screen[hidden]{display:none}
       .preflight-card{width:min(720px,calc(100vw - 36px));max-height:calc(100vh - 36px);overflow:auto;background:#0d1117;border:1px solid #30363d;border-radius:14px;padding:22px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,.5)}
@@ -19,7 +22,16 @@
       .preflight-action:hover{background:#21262d}.preflight-action.primary{border-color:#238636;background:#1f6f36;color:#fff}
       .preflight-action.primary:hover{background:#238636}.preflight-action.small{height:26px;padding:0 9px;font-size:12px;font-weight:600}
       .preflight-copy-status{min-height:18px;color:#8b949e;font-size:12px}
-      @media(max-width:640px){.preflight-row{grid-template-columns:18px 1fr}.preflight-detail{grid-column:2;text-align:left}}
+      @media(max-width:640px){
+        .preflight-screen{display:flex;align-items:stretch;justify-content:center;padding:8px;box-sizing:border-box}
+        .preflight-card{display:flex;flex-direction:column;width:100%;height:100%;max-height:none;padding:14px;overflow:hidden}
+        .preflight-list{flex:1 1 auto;min-height:0;overflow-y:auto;align-content:start}
+        .preflight-summary,.preflight-actions{flex-shrink:0}
+        .preflight-card{padding-bottom:92px}
+        .preflight-actions{position:fixed;bottom:8px;left:16px;right:16px;z-index:100;box-sizing:border-box;padding:10px;background:#0d1117;border:1px solid #30363d;border-radius:10px;box-shadow:0 -8px 24px rgba(0,0,0,.4)}
+        .preflight-row{grid-template-columns:18px minmax(0,1fr)}
+        .preflight-detail{grid-column:2;text-align:left}
+      }
     </style>
   </head>
   <body>
@@ -187,7 +199,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.53</strong>
+          <strong id="footer-version">v0.2.54</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -218,7 +230,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.53';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.54';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -235,7 +247,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.53 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.54 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -270,18 +282,18 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.53', root });
+        const result = await runPreflight({ expectedVersion: '0.2.54', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.53');
+        const gameModule = await import('./src/main.js?v=0.2.54');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
         phaseStartedAt = performance.now();
         result.report.set('world-boot', 'Запуск игрового мира', 'running', 'инициализация…');
-        await gameModule.bootGame();
+        await gameModule.bootGame({ availableTextureFiles: result.context.availableTextureFiles });
 
         const deadline = Date.now() + 15000;
         while (window.__ugameBoot?.phase !== 'ready' && Date.now() < deadline) {

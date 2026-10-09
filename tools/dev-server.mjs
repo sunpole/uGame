@@ -179,5 +179,6 @@ server.listen(PORT, HOST, () => {
 
   console.log('If Windows Firewall asks, allow Node.js on Private networks only.');
   console.log('Press Ctrl+C to stop.');
-  openBrowser(LOCAL_URL);
+  // CI owns the headless browser. Do not launch xdg-open/cmd in GitHub Actions.
+  if (!process.env.CI) openBrowser(LOCAL_URL);
 });

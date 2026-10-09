@@ -1,0 +1,78 @@
+name: uGame v0.2.54 browser-verified QA release
+
+on:
+  pull_request:
+    paths:
+      - 'src/preflight-system.js'
+      - 'src/main.js'
+      - 'src/ground-texture-system.js'
+      - 'index.html'
+      - 'tests/browser-boot-smoke.mjs'
+      - 'package.json'
+      - '.github/workflows/publish-v0254.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.54.md'
+      - '.github/workflows/publish-v0254.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and full unit regressions
+        run: |
+          node --check src/preflight-system.js
+          node --check src/ground-texture-system.js
+          node --check tests/browser-boot-smoke.mjs
+          npm test
+      - name: Install Chromium smoke test environment
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser desktop and mobile Pre-flight Phaser map and analyzer
+        run: node tests/browser-boot-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Verify version files and previous rollback release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.54')throw Error('version mismatch '+p);
+          }
+          const html = fs.readFileSync('index.html','utf8');
+          if(!html.includes(\"expectedVersion: '0.2.54'\"))throw Error('Pre-flight boot version mismatch');
+          "
+          gh release view v0.2.53
+          gh release view v0.2.51
+      - name: Publish QA prerelease only after ALL Chromium and Node gates pass
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.54 >/dev/null 2>&1; then
+            gh release create v0.2.54 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.54 · Browser-verified startup and mobile reliability" \
+              --notes-file docs/releases/v0.2.54.md --prerelease
+          fi
+      - name: Save failed browser screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-v0254-qa-failure
+          path: artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 7

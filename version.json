@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.53",
-  "stage": "preflight-15x15-worldgraph-hotfix",
+  "version": "0.2.54",
+  "stage": "browser-boot-gate-and-optional-texture-fallback",
   "updated": "2026-10-09",
-  "summary": "Fix stale PRE-FLIGHT world size checks; validate 15x15 WorldGraph and preserve 225 zones; no balance changes."
+  "summary": "Chromium desktop/mobile E2E QA; optional biome texture fallback and reliable mobile Pre-flight start. No gameplay balance changes."
 }

@@ -94,7 +94,7 @@
         },
         {
           "id": "world-map-doc",
-          "label": "25-location World Map",
+          "label": "История карты 5×5 (архив)",
           "description": "Ромбическая сетка 25 локаций, 5 safe cities, city services, compass и biome layout.",
           "type": "document",
           "target": "./docs/WORLD-MAP-25-LOCATIONS.md"

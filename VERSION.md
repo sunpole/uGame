@@ -1,3 +1,14 @@
+# uGame v0.2.54 · Browser startup and mobile reliability (2026-10-09)
+
+- Startup Chromium smoke QA now covers **desktop and touch-mobile**: Pre-flight, Phaser ready, game canvas, 225-zone map, Find Me and DEV World Analyzer.
+- Optional user-supplied biome textures no longer block a clean GitHub clone. Pre-flight detects valid/decodable images, Phaser queues only available ones and falls back to default ground.
+- Mobile startup: hidden game chrome no longer expands the layout viewport; diagnostic list scrolls, and Start/Copy controls stay clickable.
+- Changes to `src/preflight-system.js`, `src/main.js`, `src/ground-texture-system.js`, `index.html`, dev server and test/CI only. Gameplay balance and saves unchanged.
+- Node 83/83; Chromium desktop/mobile both passed on PR #15 before version bump; new publication workflow reruns on main.
+- Release and rollback details: [docs/releases/v0.2.54.md](docs/releases/v0.2.54.md).
+
+---
+
 # uGame v0.2.53 · Pre-flight WorldGraph 15x15 hotfix (2026-10-09)
 
 - Fix shipped v0.2.52 startup blocker: PRE-FLIGHT was still hardcoded to 25 zones, 20 fields and 80 transitions.
