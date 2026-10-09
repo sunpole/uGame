@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.52",
-  "stage": "five-outer-world-rings",
+  "version": "0.2.53",
+  "stage": "preflight-15x15-worldgraph-hotfix",
   "updated": "2026-10-09",
-  "summary": "Expand the 5x5 world to 15x15 with 12 Event/NPC candidate spots per field; keep existing T4 odds and per-resource caps."
+  "summary": "Fix stale PRE-FLIGHT world size checks; validate 15x15 WorldGraph and preserve 225 zones; no balance changes."
 }

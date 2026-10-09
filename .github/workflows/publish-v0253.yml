@@ -1,0 +1,60 @@
+name: uGame v0.2.53 Pre-flight startup hotfix
+
+on:
+  pull_request:
+    paths:
+      - 'src/preflight-system.js'
+      - 'tests/world-five-rings.test.mjs'
+      - 'data/world.json'
+      - 'package.json'
+      - 'index.html'
+      - '.github/workflows/publish-v0253.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.53.md'
+      - '.github/workflows/publish-v0253.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and real preflight validator
+        run: |
+          node --check src/preflight-system.js
+          node --check src/world-graph.js
+          node --test tests/world-five-rings.test.mjs
+      - name: Full regression suite
+        run: npm test
+      - name: Check versions and rollback release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.53')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.53'\"))throw Error('browser preflight mismatch');
+          "
+          gh release view v0.2.52
+          gh release view v0.2.51
+      - name: Publish v0.2.53 QA prerelease after merge
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.53 >/dev/null 2>&1; then
+            gh release create v0.2.53 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.53 · Pre-flight world 15x15 startup hotfix" \
+              --notes-file docs/releases/v0.2.53.md --prerelease
+          fi

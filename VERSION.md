@@ -1,3 +1,15 @@
+# uGame v0.2.53 · Pre-flight WorldGraph 15x15 hotfix (2026-10-09)
+
+- Fix shipped v0.2.52 startup blocker: PRE-FLIGHT was still hardcoded to 25 zones, 20 fields and 80 transitions.
+- Validate actual square topology from world.json (min 15x15): 225 unique zones, five safe cities, 220 fields, 840 directed transitions.
+- Keep 12 candidate Event/NPC spots per field and city service/geometry QA; reject duplicate/dangling transitions.
+- Pre-flight prints dynamic counts; real validator is covered by regressions including stale/truncated data.
+- No changes to economy, caps, probability, WorldGraph runtime, NPC/Process timers, inventory or saves.
+- Rollback checkpoint: v0.2.52 (shipped but had Pre-flight blocker); v0.2.51 also preserved.
+- Report: docs/releases/v0.2.53.md. Browser/Phaser QA needed after release.
+
+---
+
 # uGame v0.2.52 · Five outer square world rings (2026-10-09)
 
 - Original 5×5 zones and all 80 old directed gates preserved; five new square rings yield a 15×15 graph, 225 zones, 840 directed transitions.

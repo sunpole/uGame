@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { WorldGraph } from '../src/world-graph.js';
+import { validateWorld } from '../src/preflight-system.js';
 import { ProjectHubSystem } from '../src/project-hub-system.js';
 
 const world = JSON.parse(readFileSync(new URL('../data/world.json', import.meta.url), 'utf8'));
@@ -65,4 +66,28 @@ test('large world map uses dynamic count and wide scrollable stage', () => {
   assert.match(hub.contentElement.innerHTML,/225 локаций/);
   assert.match(hub.contentElement.innerHTML,/world-map-stage" style="width:2\d{3}px;height:2\d{3}px"/);
   assert.match(hub.contentElement.innerHTML,/⌖ ВЫ ЗДЕСЬ/);
+});
+
+test('browser PRE-FLIGHT accepts the full 225-zone diamond map', () => {
+  assert.doesNotThrow(() => validateWorld(world));
+});
+
+test('browser PRE-FLIGHT refuses old 5x5 topology, truncated zones and broken transition references', () => {
+  const oldTopology = structuredClone(world);
+  oldTopology.topology.type = 'rotated-square-5x5';
+  oldTopology.topology.locationCount = 25;
+  assert.throws(() => validateWorld(oldTopology), /at least 15x15/);
+
+  const truncated = structuredClone(world);
+  truncated.zones.pop();
+  assert.throws(() => validateWorld(truncated), /225 unique/);
+
+  const badTransition = structuredClone(world);
+  badTransition.transitions[0].to.zoneId = 'missing-zone';
+  assert.throws(() => validateWorld(badTransition), /unknown zone/);
+
+  const lostSpot = structuredClone(world);
+  const firstField = lostSpot.zones.find(zone => !zone.isSafeCity);
+  firstField.eventSpots.pop();
+  assert.throws(() => validateWorld(lostSpot), /expected 12 Event Spots/);
 });
