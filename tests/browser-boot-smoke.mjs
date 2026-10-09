@@ -103,8 +103,49 @@ async function checkViewport(profile) {
     await activate('#project-hub-close');
     assert.equal(await page.locator('#project-hub').isHidden(), true);
 
+    // Regression: a real user-controlled save survives browser F5 in the enlarged
+    // 225-zone world. Playwright uses a fresh isolated origin; no user saves touched.
+    const dev = async (code, expected) => {
+      const input = page.locator('#dev-code-input');
+      await input.fill(code);
+      await activate('#dev-console button[type="submit"]');
+      await page.waitForFunction((message) =>
+        document.querySelector('#dev-code-status')?.textContent?.includes(message),
+      expected, { timeout: 10000 });
+    };
+    await dev('7002', '7002 · Класс: Разведчик');
+    await dev('9001', '9001 · Состояние сохранено');
+    const beforeReload = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('ugame.save.v1') || 'null'));
+    assert.ok(beforeReload, 'DEV 9001 did not create a browser save');
+    assert.equal(beforeReload.schemaVersion, 1);
+    assert.equal(beforeReload.player?.classId, 'scout');
+    assert.equal(beforeReload.world?.zoneId, 'loc-00013');
+    assert.equal(Object.keys(beforeReload.worldSpawnState?.zones || {}).length, 220);
+    assert.equal(beforeReload.containers?.schemaVersion, 1);
+    const sampleZone = beforeReload.worldSpawnState.zones['loc-00026'];
+    assert.ok(sampleZone?.tier, 'outer-ring zone Tier was not saved');
+
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForFunction(() =>
+      document.querySelector('#preflight-start')?.hidden === false ||
+      document.querySelector('#preflight-summary')?.dataset.state === 'fail',
+    null, { timeout: 75000 });
+    assert.equal(await page.locator('#preflight-summary').getAttribute('data-state'), 'ok',
+      'Browser F5 caused Pre-flight failure');
+    await activate('#preflight-start');
+    await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
+    assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
+    const afterReload = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('ugame.save.v1') || 'null'));
+    assert.equal(afterReload?.player?.classId, 'scout', 'class reverted after F5');
+    assert.equal(afterReload?.world?.zoneId, beforeReload.world.zoneId, 'save restored wrong zone');
+    assert.equal(Object.keys(afterReload?.worldSpawnState?.zones || {}).length, 220);
+    assert.deepEqual(afterReload.worldSpawnState.zones['loc-00026'], sampleZone,
+      'F5 unexpectedly rerolled unexpired outer-ring Location Tier');
+
     assert.equal(errors.length, 0, profile.name + ' browser errors:\n' + errors.join('\n'));
-    console.log('[PASS] ' + profile.name + ': Pre-flight, Phaser, 225-zone map, UI interactions and analyzer');
+    console.log('[PASS] ' + profile.name + ': Pre-flight, Phaser, 225-zone map, analyzer and save/F5 restore');
   } catch (error) {
     mkdirSync(artifactDir, { recursive: true });
     const screenshot = artifactDir + profile.name + '-failure.png';
@@ -114,6 +155,8 @@ async function checkViewport(profile) {
       bootError: window.__ugameBoot?.error || null,
       preflight: document.querySelector('#preflight-screen')?.innerText?.slice(-2500) || '',
       world: document.querySelector('#quest-status')?.textContent || '',
+      devStatus: document.querySelector('#dev-code-status')?.textContent || '',
+      devInput: document.querySelector('#dev-code-input')?.value || '',
       startButtonHitTest: (() => {
         const button = document.querySelector('#preflight-start');
         if (!button) return null;
