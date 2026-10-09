@@ -511,11 +511,11 @@ export class ProjectHubSystem {
         this.renderWorldMap(view);
       });
     }
-    this.contentElement.querySelector('#world-map-find-me')?.addEventListener('click', () => {
+    this.contentElement.querySelector?.('#world-map-find-me')?.addEventListener('click', () => {
       if(!currentZoneId)return;
       view.selectedId = currentZoneId;
       this.renderWorldMap(view);
-      this.contentElement.querySelector('[data-world-map-zone].is-current')?.scrollIntoView?.({
+      this.contentElement.querySelector?.('[data-world-map-zone].is-current')?.scrollIntoView?.({
         block: 'center', inline: 'center', behavior: 'smooth'
       });
     });
