@@ -6,6 +6,9 @@
     <title>uGame v0.2.53</title>
     <link rel="stylesheet" href="./src/style.css?v=0.2.53" />
     <style>
+      /* The hidden full-size game chrome must not enlarge the mobile layout viewport
+         while Chromium is displaying the startup gate. */
+      #app[aria-hidden="true"]{position:fixed;inset:0;max-width:100vw;overflow:hidden;pointer-events:none}
       .preflight-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#080b0f;color:#e6edf3;font:14px/1.35 Arial,sans-serif}
       .preflight-screen[hidden]{display:none}
       .preflight-card{width:min(720px,calc(100vw - 36px));max-height:calc(100vh - 36px);overflow:auto;background:#0d1117;border:1px solid #30363d;border-radius:14px;padding:22px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,.5)}
