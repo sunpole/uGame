@@ -409,7 +409,12 @@ class ZoneScene extends Phaser.Scene {
         now,hasTool:this.hasGatheringTool()
       }),
       onEntered: (spawn) => resourceProfessionSystem?.recordExpedition(spawn.resourceDirectionId),
-      onDepleted: ({ encounterId, completedAt }) => worldSpawnStateSystem?.markExpeditionDepleted?.(encounterId, completedAt, 30_000)
+      onDepleted: ({ encounterId, completedAt }) => {
+        const current = worldSpawnStateSystem?.getMasterSpawn?.(encounterId);
+        const active = current && masterRelationshipSystem?.getActiveProcess?.(current.masterId);
+        const processEndsAt = active?.encounterId === encounterId ? Number(active.endsAt) : null;
+        return worldSpawnStateSystem?.markExpeditionDepleted?.(encounterId, completedAt, 30_000, processEndsAt);
+      }
     });
     this.resourceExpeditionSystem = resourceExpeditionSystem;
     resourceExpeditionView = new ResourceExpeditionView({
