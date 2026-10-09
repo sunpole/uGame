@@ -1,0 +1,115 @@
+// Real browser boot-gate smoke test. Run after installing Playwright + Chromium:
+//   npm install --no-save --package-lock=false playwright@1.56.1
+//   npx playwright install chromium --with-deps
+//   node tests/browser-boot-smoke.mjs
+// Unlike node --test unit checks, this tests the exact HTML -> Pre-flight -> Phaser -> World path.
+import assert from 'node:assert/strict';
+import { mkdirSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { chromium } from 'playwright';
+
+const root = fileURLToPath(new URL('../', import.meta.url));
+const baseUrl = 'http://127.0.0.1:5173/';
+const artifactDir = fileURLToPath(new URL('../artifacts/browser-smoke/', import.meta.url));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+let serverOutput = '';
+let browser;
+
+async function waitForServer(child) {
+  const deadline = Date.now() + 20000;
+  while (Date.now() < deadline) {
+    if (child.exitCode !== null) throw new Error('Dev server exited early: ' + serverOutput);
+    try {
+      const response = await fetch(baseUrl + 'version.json', { signal: AbortSignal.timeout(1000) });
+      if (response.ok) return;
+    } catch { /* server has not started yet */ }
+    await delay(200);
+  }
+  throw new Error('Dev server did not start: ' + serverOutput);
+}
+
+async function checkViewport(profile) {
+  const context = await browser.newContext({
+    viewport: profile.viewport,
+    deviceScaleFactor: 1,
+    isMobile: profile.mobile,
+    hasTouch: profile.mobile,
+    javaScriptEnabled: true
+  });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.stack || String(error)));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push('Console: ' + message.text());
+  });
+  try {
+    await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.locator('#preflight-start').waitFor({ state: 'visible', timeout: 75000 });
+    const diagnostic = await page.locator('#preflight-screen').innerText();
+    assert.match(diagnostic, /225 зон · 5 городов · 840 переходов/);
+    assert.match(diagnostic, /ВСЕ ПРОВЕРКИ ЗЕЛЁНЫЕ/);
+    assert.equal(await page.locator('.preflight-row[data-state="fail"]').count(), 0);
+    assert.equal(await page.evaluate(() => window.__ugameBoot?.phase), 'ready-waiting-user');
+
+    await page.locator('#preflight-start').click();
+    await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
+    assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');
+    assert.ok(await page.locator('#game canvas').count() >= 1, 'Phaser canvas did not mount');
+
+    // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
+    await page.locator('#project-hub-open').click();
+    await page.locator('[data-hub-item="world-map"]').click();
+    await page.getByText('Мир uGame · 225 локаций').waitFor({ timeout: 10000 });
+    assert.equal(await page.locator('[data-world-map-zone]').count(), 225);
+    assert.equal(await page.locator('[data-world-map-zone].is-city').count(), 5);
+    assert.equal(await page.locator('[data-world-map-zone].is-current').count(), 1);
+    await page.locator('#world-map-find-me').click();
+    assert.equal(await page.locator('[data-world-map-zone].is-current.is-selected').count(), 1);
+
+    await page.locator('#project-hub-back').click();
+    await page.locator('[data-hub-section="tools"]').click();
+    await page.locator('[data-hub-item="world-analyzer"]').click();
+    await page.locator('#world-analyzer-resource').waitFor({ timeout: 10000 });
+    await page.locator('#project-hub-close').click();
+    assert.equal(await page.locator('#project-hub').isHidden(), true);
+
+    assert.equal(errors.length, 0, profile.name + ' browser errors:\n' + errors.join('\n'));
+    console.log('[PASS] ' + profile.name + ': Pre-flight, Phaser, 225-zone map, UI interactions and analyzer');
+  } catch (error) {
+    mkdirSync(artifactDir, { recursive: true });
+    const screenshot = artifactDir + profile.name + '-failure.png';
+    try { await page.screenshot({ path: screenshot, fullPage: true, timeout: 5000 }); } catch { /* best effort */ }
+    const details = await page.evaluate(() => ({
+      phase: window.__ugameBoot?.phase || 'unknown',
+      bootError: window.__ugameBoot?.error || null,
+      preflight: document.querySelector('#preflight-screen')?.innerText?.slice(-2500) || '',
+      world: document.querySelector('#quest-status')?.textContent || ''
+    })).catch(() => null);
+    console.error('[FAIL] ' + profile.name, { details, errors, serverOutput, screenshot });
+    throw error;
+  } finally {
+    await context.close();
+  }
+}
+
+const server = spawn(process.execPath, ['tools/dev-server.mjs'], {
+  cwd: root,
+  env: { ...process.env, CI: 'true' },
+  stdio: ['ignore', 'pipe', 'pipe']
+});
+server.stdout.on('data', (data) => { serverOutput += String(data).slice(-3000); });
+server.stderr.on('data', (data) => { serverOutput += String(data).slice(-3000); });
+try {
+  await waitForServer(server);
+  browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-dev-shm-usage', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader']
+  });
+  await checkViewport({ name: 'desktop', viewport: { width: 1365, height: 768 }, mobile: false });
+  await checkViewport({ name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true });
+  console.log('[PASS] Browser startup smoke test: both viewports.');
+} finally {
+  await browser?.close();
+  server.kill('SIGTERM');
+}
