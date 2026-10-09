@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const data = (p) => JSON.parse(readFileSync(new URL('../' + p, import.meta.url),'utf8'));
-test('four specialized cities and one neutral Crossroads retain stable 25-zone world', () => {
+test('four specialized cities and one neutral Crossroads remain in expanded 225-zone world', () => {
   const world = data('data/world.json');
   const layout = data('data/city-specializations.json');
   const safe = world.zones.filter((z) => z.isSafeCity);
-  assert.equal(world.zones.length, 25);
+  assert.equal(world.zones.length, 225);
+  assert.equal(world.zones.filter(z => !z.isSafeCity).length, 220);
   assert.equal(safe.length, 5);
   assert.equal(layout.cities.length, 5);
   assert.equal(layout.cities.filter((x) => x.kind === 'neutral').length, 1);
