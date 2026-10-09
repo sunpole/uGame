@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "records": [
     {
       "id": "UGD-0001",
@@ -1119,6 +1119,35 @@
         "UGD-0032",
         "UGD-0034",
         "UGD-0035"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0037",
+      "title": "Пять внешних колец мира: 15×15 и 12 мест на зону",
+      "date": "2026-10-09",
+      "type": "architecture",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "world",
+        "world-map",
+        "locations",
+        "safe-city",
+        "distance",
+        "npc",
+        "rarity",
+        "tier",
+        "performance"
+      ],
+      "path": "records/UGD-0037-five-outer-world-rings.md",
+      "related": [
+        "UGD-0016",
+        "UGD-0029"
       ],
       "supersedes": [],
       "superseded_by": []
