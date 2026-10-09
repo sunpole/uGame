@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.49",
-  "stage": "world-map-location-analyzer-qa",
+  "version": "0.2.50",
+  "stage": "sequential-master-process-farewell-stable-expedition-ui",
   "updated": "2026-10-09",
-  "summary": "Strong world-map player pin and Find Me; DEV Analyzer filters four resources with per-resource counts; does not change master spawn rules or saves."
+  "summary": "Process countdown first, flashing queued NPC departure, then persisted 30s farewell; fixed-size mining UI prevents vertical shifts"
 }

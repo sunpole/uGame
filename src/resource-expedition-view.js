@@ -83,6 +83,11 @@ export class ResourceExpeditionView {
                 <button type="button" class="expedition-realm-button exp-auto" data-exp-action="auto">▶ Автодобыча</button>
                 <button type="button" class="expedition-realm-button exp-manual" data-exp-action="manual">🎯 Ручная добыча</button>
               </div>
+              <div class="expedition-realm-activity-slot" aria-label="Панель добычи — постоянная высота">
+                <div class="expedition-realm-activity-placeholder" data-exp="activity-placeholder">
+                  <strong>⛏ Зона добычи</strong>
+                  <span>Запусти ручную попытку, чтобы открыть шкалу точности. При автодобыче здесь остаётся место для мини-игры.</span>
+                </div>
               <div class="expedition-realm-manual" data-exp="manual-zone" hidden>
                 <div class="expedition-realm-meter" aria-label="Индикатор точности: попасть в зелёный центр"><div data-exp="pointer" class="expedition-realm-meter-pointer"></div></div>
                 <div class="expedition-realm-meter-guide">
@@ -96,6 +101,7 @@ export class ResourceExpeditionView {
                 <p data-exp="result-text">Экспедиция завершена.</p>
                 <button type="button" class="expedition-realm-button exp-claim" data-exp-action="claim">Получить груз</button>
                 <button type="button" class="expedition-realm-button" data-exp-action="surface">Вернуться на поверхность</button>
+              </div>
               </div>
               <p class="expedition-realm-feedback" data-exp="feedback" aria-live="polite"></p>
             </section>
@@ -291,7 +297,10 @@ export class ResourceExpeditionView {
     const progressBar = this.root.querySelector('.expedition-realm-progress');
     progressBar?.setAttribute('aria-valuenow', String(Math.round(100 * fraction)));
     const manualZone = this.field('manual-zone');
-    if (manualZone) manualZone.hidden = !isActive || run.mode !== 'manual';
+    const manualVisible = isActive && run.mode === 'manual';
+    if (manualZone) manualZone.hidden = !manualVisible;
+    const placeholder = this.field('activity-placeholder');
+    if (placeholder) placeholder.hidden = !isActive || manualVisible;
     const pointer = this.field('pointer');
     if (pointer && run.mode === 'manual') pointer.style.top = (100 * this.system.meterPosition(now)).toFixed(1) + '%';
     if (run.mode === 'manual') {

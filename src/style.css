@@ -2548,3 +2548,70 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   max-width:min(240px,100%);
   text-overflow:ellipsis;
 }
+
+
+/* v0.2.50: the active-mining UI never pushes the cave or its controls downward. */
+.expedition-realm {
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.expedition-realm-content {
+  flex: 0 0 auto;
+  align-items: start;
+}
+.expedition-realm-cavern {
+  height: clamp(550px, calc(100dvh - 245px), 740px);
+  min-height: 550px;
+  align-self: start;
+}
+.expedition-realm-column {
+  align-self: start;
+}
+.expedition-realm-activity-slot {
+  min-height: 260px;
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  align-items: start;
+}
+.expedition-realm-activity-slot > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.expedition-realm-activity-placeholder {
+  min-height: 245px;
+  box-sizing: border-box;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  border: 1px dashed #3a5065;
+  border-radius: 10px;
+  color: #b9d5eb;
+  background: rgba(8, 19, 30, .65);
+}
+.expedition-realm-activity-placeholder strong {
+  font-size: 17px;
+  color: var(--exp-accent);
+}
+.expedition-realm-activity-placeholder span {
+  max-width: 330px;
+  font-size: 12px;
+}
+@media (max-width: 880px) {
+  .expedition-realm-cavern {
+    height: 300px;
+    min-height: 300px;
+  }
+}
+@media (max-width: 530px) {
+  .expedition-realm-cavern {
+    height: 250px;
+    min-height: 250px;
+  }
+  .expedition-realm-activity-slot { min-height: 212px; }
+  .expedition-realm-activity-placeholder { min-height: 197px; }
+}

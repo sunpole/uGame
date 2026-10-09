@@ -60,6 +60,18 @@ function countdownText(expiresAt, now = Date.now()) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+// Countdown order: while the free Process is active only its numeric timer runs.
+// The farewell warning flashes without digits until its persisted start deadline.
+export function masterFarewellDisplay(item, now = Date.now()) {
+  const beginsAt = Number(item?.masterFarewellStartsAt) || Number(item?.masterExpeditionCompletedAt) || 0;
+  const processWaiting = item?.masterRewardState === 'running'
+    && Number(item?.masterProcessEndsAt) > now;
+  const waiting = now < beginsAt || processWaiting;
+  return waiting
+    ? { waiting:true, text:'УХОЖУ ПОСЛЕ НАГРАДЫ', visible:Math.floor(now / 500)%2===0 }
+    : { waiting:false, text:'УХОЖУ ЧЕРЕЗ ' + countdownText(item?.expiresAt, now), visible:true };
+}
+
 export class InteractableSystem {
   constructor({ scene, player, eventSystem, audioSystem, onPrompt } = {}) {
     this.scene = scene;
@@ -270,15 +282,16 @@ export class InteractableSystem {
         if (item.masterRewardState === 'running') this.createMasterProcessTimer(item);
       }
       if (item.masterExpeditionCompletedAt > 0) {
-        item._masterExpeditionTimer = scene.add.text(item.x, item.y - 83,
-          'УХОЖУ ЧЕРЕЗ ' + countdownText(item.expiresAt), {
+        const farewell = masterFarewellDisplay(item);
+        item._masterExpeditionTimer = scene.add.text(item.x, item.y - 113,
+          farewell.text, {
             fontFamily: 'Arial, sans-serif',
             fontSize: '13px',
             fontStyle: 'bold',
             color: '#ffb4a9',
             backgroundColor: 'rgba(50, 8, 10, 0.88)',
             padding: { x: 7, y: 4 }
-          }).setOrigin(0.5).setDepth(9);
+          }).setOrigin(0.5).setDepth(9).setVisible(farewell.visible);
       }
       scene.tweens.add({ targets: glow, alpha: { from: 0.15, to: 0.38 }, scale: { from: 0.96, to: 1.08 }, duration: 1600, yoyo: true, repeat: -1 });
     } else if (item.type === 'npc') {
@@ -301,7 +314,10 @@ export class InteractableSystem {
     if (item._masterProcessTimer) displayObjects.push(item._masterProcessTimer);
     if (item._masterExpeditionTimer) displayObjects.push(item._masterExpeditionTimer);
 
-    if (Number.isFinite(Number(item.expiresAt))) {
+    // Master farewell is the sole NPC lifetime countdown. Do not also draw
+    // the generic below-head TTL (which caused a third competing timer).
+    if (Number.isFinite(Number(item.expiresAt))
+      && !(item.type === 'master-npc' && item.masterExpeditionCompletedAt > 0)) {
       const timerLabel = scene.add.text(item.x, item.y + 30, countdownText(item.expiresAt), {
         fontFamily: 'Arial, sans-serif',
         fontSize: '11px',
@@ -362,7 +378,9 @@ export class InteractableSystem {
         item._timerLabel.setText(countdownText(item.expiresAt, now));
       }
       if (item._masterExpeditionTimer) {
-        item._masterExpeditionTimer.setText?.('УХОЖУ ЧЕРЕЗ ' + countdownText(item.expiresAt, now));
+        const farewell = masterFarewellDisplay(item, now);
+        item._masterExpeditionTimer.setText?.(farewell.text);
+        item._masterExpeditionTimer.setVisible?.(farewell.visible);
       }
       if (item._masterProcessTimer && item.masterRewardState === 'running') {
         item._masterProcessTimer.setText?.(countdownText(item.masterProcessEndsAt, now));
@@ -390,7 +408,7 @@ export class InteractableSystem {
       item._timerLabel?.setPosition?.(item.x, item.y + 30);
       item._masterRewardMarker?.setPosition?.(item.x, item.y - 24);
       item._masterProcessTimer?.setPosition?.(item.x, item.y - 65);
-      item._masterExpeditionTimer?.setPosition?.(item.x, item.y - 83);
+      item._masterExpeditionTimer?.setPosition?.(item.x, item.y - 113);
     }
     return true;
   }

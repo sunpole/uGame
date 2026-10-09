@@ -315,14 +315,38 @@ export class WorldSpawnStateSystem {
 
   // A depleted Expedition ends this exact Encounter after its own 30-second farewell.
   // Persist the deadline in WorldSpawn so save/load, countdown and despawn agree.
-  markExpeditionDepleted(encounterId, completedAt = Date.now(), farewellMs = 30_000) {
+  markExpeditionDepleted(encounterId, completedAt = Date.now(), farewellMs = 30_000, processEndsAt = null) {
     if (typeof encounterId !== 'string' || !encounterId || !Number.isFinite(completedAt)) return false;
     const spawn = (this.state.activeMasterSpawns || []).find((item) => item.encounterId === encounterId);
     if (!spawn) return false;
     if (Number.isFinite(Number(spawn.expeditionCompletedAt)) && spawn.expeditionCompletedAt > 0) return false;
-    const deadline = Math.max(0, Math.floor(completedAt)) + Math.max(1000, Math.floor(farewellMs));
-    spawn.expeditionCompletedAt = Math.max(0, Math.floor(completedAt));
-    spawn.expiresAt = deadline;
+    const finishedAt = Math.max(0, Math.floor(completedAt));
+    const processDeadline = Number.isFinite(processEndsAt) && processEndsAt > finishedAt
+      ? Math.floor(processEndsAt) : finishedAt;
+    spawn.expeditionCompletedAt = finishedAt;
+    spawn.masterFarewellStartsAt = processDeadline;
+    spawn.masterFarewellDurationMs = Math.max(1000, Math.floor(farewellMs));
+    spawn.expiresAt = processDeadline + spawn.masterFarewellDurationMs;
+    this.state.updatedAt = Date.now();
+    this.publish();
+    this.eventSystem?.emit('master-spawns:changed', { spawns: this.getActiveMasters() });
+    return true;
+  }
+
+  // A 60-second free Process started after Expedition depletion must also finish
+  // before the farewell's own 30-second countdown is allowed to start.
+  deferMasterFarewell(encounterId, processEndsAt) {
+    if (typeof encounterId !== 'string' || !encounterId || !Number.isFinite(processEndsAt)) return false;
+    const spawn = (this.state.activeMasterSpawns || []).find(item => item.encounterId === encounterId);
+    if (!spawn || !(Number(spawn.expeditionCompletedAt) > 0)) return false;
+    const formerStart = Number(spawn.masterFarewellStartsAt) || Number(spawn.expeditionCompletedAt);
+    const start = Math.max(formerStart, Math.floor(processEndsAt));
+    if (start <= formerStart) return false;
+    const duration = Number(spawn.masterFarewellDurationMs) > 0
+      ? Number(spawn.masterFarewellDurationMs) : 30_000;
+    spawn.masterFarewellStartsAt = start;
+    spawn.masterFarewellDurationMs = duration;
+    spawn.expiresAt = start + duration;
     this.state.updatedAt = Date.now();
     this.publish();
     this.eventSystem?.emit('master-spawns:changed', { spawns: this.getActiveMasters() });

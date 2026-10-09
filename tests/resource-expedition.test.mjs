@@ -288,10 +288,10 @@ test('master farewell timer is drawn over the head, follows NPC and is destroyed
     masterExpeditionCompletedAt:1000,expiresAt:31_000
   });
   assert.ok(npc._masterExpeditionTimer);
-  assert.equal(npc._masterExpeditionTimer.y,117);
+  assert.equal(npc._masterExpeditionTimer.y,87);
   assert.match(npc._masterExpeditionTimer.text,/УХОЖУ ЧЕРЕЗ/);
   system.setItemTransform(npc,{x:250,y:230});
-  assert.equal(npc._masterExpeditionTimer.y,147);
+  assert.equal(npc._masterExpeditionTimer.y,117);
   system.updateCountdowns(16_000);
   assert.equal(npc._masterExpeditionTimer.text,'УХОЖУ ЧЕРЕЗ 00:15');
   const timer=npc._masterExpeditionTimer;

@@ -117,7 +117,10 @@ export class MasterProcessSystem {
     }
 
     const configuredMs = Math.max(1000, Number(profile.durationSeconds || 60) * 1000);
-    const durationMs = Math.max(1000, Math.min(configuredMs, remainingMs));
+    // Expedition-depleted NPC may finish one full free Process before departure.
+    // Its departure deadline will be moved to Process end + 30 seconds below.
+    const departurePending = Number(spawn.expeditionCompletedAt) > 0;
+    const durationMs = departurePending ? configuredMs : Math.max(1000, Math.min(configuredMs, remainingMs));
     const process = {
       processId: 'process:' + spawn.encounterId + ':' + now,
       profileId: profile.id,
@@ -127,7 +130,9 @@ export class MasterProcessSystem {
       resourceDirectionId: spawn.resourceDirectionId || 'stone',
       startedAt: now,
       endsAt: now + durationMs,
-      encounterExpiresAt: Number(spawn.expiresAt),
+      encounterExpiresAt: departurePending
+        ? Math.max(Number(spawn.expiresAt), now + durationMs + 30_000)
+        : Number(spawn.expiresAt),
       status: 'active',
       candidateBaseReward: {
         resourceId: spawn.resourceDirectionId || 'stone',
@@ -140,6 +145,9 @@ export class MasterProcessSystem {
 
     const started = this.relationshipSystem?.startProcess?.(spawn.masterId, process);
     if (!started) return false;
+    // If the expedition was already depleted, freeze the departure countdown
+    // and start a fresh 30 seconds only after this free Process has finished.
+    this.worldSpawnStateSystem?.deferMasterFarewell?.(spawn.encounterId, Number(started.endsAt));
     this.showActive(started);
     return true;
   }

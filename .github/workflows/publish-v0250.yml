@@ -1,0 +1,67 @@
+name: uGame v0.2.50 sequential Master timers QA
+
+on:
+  pull_request:
+    paths:
+      - 'src/world-spawn-state-system.js'
+      - 'src/master-process-system.js'
+      - 'src/master-encounter-system.js'
+      - 'src/interactable-system.js'
+      - 'src/resource-expedition-view.js'
+      - 'src/style.css'
+      - 'src/main.js'
+      - 'tests/master-timer-sequence.test.mjs'
+      - 'tests/resource-expedition.test.mjs'
+      - 'package.json'
+      - '.github/workflows/publish-v0250.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.50.md'
+      - '.github/workflows/publish-v0250.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax
+        run: |
+          node --check src/world-spawn-state-system.js
+          node --check src/master-process-system.js
+          node --check src/master-encounter-system.js
+          node --check src/interactable-system.js
+          node --check src/resource-expedition-view.js
+          node --check src/main.js
+      - name: Full regression suite
+        run: npm test
+      - name: Version consistency and rollback
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.50')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.50'\"))throw Error('index preflight version mismatch');
+          "
+          gh release view v0.2.49
+      - name: Publish QA prerelease
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.50 >/dev/null 2>&1; then
+            gh release create v0.2.50 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.50 · Sequential NPC timers and stable expedition UI" \
+              --notes-file docs/releases/v0.2.50.md --prerelease
+          fi
