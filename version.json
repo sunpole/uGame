@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.48",
-  "stage": "inventory-bulk-and-safe-deletion-qa",
+  "version": "0.2.49",
+  "stage": "world-map-location-analyzer-qa",
   "updated": "2026-10-09",
-  "summary": "Fixed filter overflow, real bulk bank/chest transfers, high-price typed discard protection and 5-way sort regression."
+  "summary": "Strong world-map player pin and Find Me; DEV Analyzer filters four resources with per-resource counts; does not change master spawn rules or saves."
 }
