@@ -40,13 +40,30 @@ async function checkViewport(profile) {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.stack || String(error)));
+  // A missing optional user-supplied biome image is allowed: Pre-flight uses a
+  // built-in flat ground fallback. Other failed app requests still fail the QA.
+  page.on('response', (response) => {
+    if (response.status() < 400) return;
+    const pathname = new URL(response.url()).pathname;
+    if (response.status() === 404 &&
+        (pathname.startsWith('/assets/textures/biomes/') || pathname === '/favicon.ico')) return;
+    errors.push('HTTP ' + response.status() + ': ' + response.url());
+  });
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push('Console: ' + message.text());
+    if (message.type() !== 'error') return;
+    if (/Failed to load resource: the server responded with a status of 404/.test(message.text())) return;
+    errors.push('Console: ' + message.text());
   });
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await page.locator('#preflight-start').waitFor({ state: 'visible', timeout: 75000 });
+    await page.waitForFunction(() =>
+      document.querySelector('#preflight-start')?.hidden === false ||
+      document.querySelector('#preflight-summary')?.dataset.state === 'fail',
+    null, { timeout: 75000 });
     const diagnostic = await page.locator('#preflight-screen').innerText();
+    if (await page.locator('#preflight-summary').getAttribute('data-state') === 'fail') {
+      throw new Error('Browser Pre-flight failed:\\n' + diagnostic);
+    }
     assert.match(diagnostic, /225 зон · 5 городов · 840 переходов/);
     assert.match(diagnostic, /ВСЕ ПРОВЕРКИ ЗЕЛЁНЫЕ/);
     assert.equal(await page.locator('.preflight-row[data-state="fail"]').count(), 0);
