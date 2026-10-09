@@ -1,0 +1,56 @@
+name: uGame Chromium boot and navigation QA
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'data/**'
+      - 'index.html'
+      - 'tests/browser-boot-smoke.mjs'
+      - 'tools/dev-server.mjs'
+      - 'package.json'
+      - '.github/workflows/browser-boot-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'data/**'
+      - 'index.html'
+      - 'tests/browser-boot-smoke.mjs'
+      - 'tools/dev-server.mjs'
+      - 'package.json'
+      - '.github/workflows/browser-boot-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate unit regressions and JS
+        run: |
+          node --check tests/browser-boot-smoke.mjs
+          npm test
+      - name: Install locked-version Playwright for CI only
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Launch real game in headless Chromium at desktop and mobile sizes
+        run: node tests/browser-boot-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Save browser failure screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-browser-boot-failure
+          path: artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 7
