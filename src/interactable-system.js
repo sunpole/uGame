@@ -283,7 +283,7 @@ export class InteractableSystem {
       }
       if (item.masterExpeditionCompletedAt > 0) {
         const farewell = masterFarewellDisplay(item);
-        item._masterExpeditionTimer = scene.add.text(item.x, item.y - 83,
+        item._masterExpeditionTimer = scene.add.text(item.x, item.y - 113,
           farewell.text, {
             fontFamily: 'Arial, sans-serif',
             fontSize: '13px',
@@ -408,7 +408,7 @@ export class InteractableSystem {
       item._timerLabel?.setPosition?.(item.x, item.y + 30);
       item._masterRewardMarker?.setPosition?.(item.x, item.y - 24);
       item._masterProcessTimer?.setPosition?.(item.x, item.y - 65);
-      item._masterExpeditionTimer?.setPosition?.(item.x, item.y - 83);
+      item._masterExpeditionTimer?.setPosition?.(item.x, item.y - 113);
     }
     return true;
   }
