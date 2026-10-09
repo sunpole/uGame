@@ -2462,3 +2462,89 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .inventory-panel .inventory-manager { grid-template-columns:minmax(0,1fr); }
   .inventory-panel .inventory-bulk-actions { grid-template-columns:minmax(0,1fr); }
 }
+
+
+/* v0.2.49 — unmistakable player locator on the 25-zone diamond map. */
+.world-map-current-location {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:7px 11px;
+  margin-top:10px;
+  padding:8px 11px;
+  background:#102d23;
+  border:1px solid #3dcf83;
+  border-radius:8px;
+}
+.world-map-toolbar .world-map-current-location strong {
+  color:#96ffad;
+  font-size:13px;
+  width:auto;
+}
+.world-map-toolbar .world-map-current-location span { color:#a8c4b5; }
+.world-map-current-location button {
+  padding:6px 12px;
+  color:#e8fff0;
+  background:#1e7344;
+  font-size:12px;
+  font-weight:800;
+  border:1px solid #89efa2;
+  border-radius:6px;
+  cursor:pointer;
+}
+.world-map-current-location button:disabled { opacity:.55;cursor:default; }
+.world-map-current-location button:hover:not(:disabled) { background:#248d4f; }
+.world-map-tile.is-current {
+  z-index:12;
+  border-color:#9bff8b !important;
+  box-shadow:0 0 0 5px #0e6e32,0 0 0 9px rgba(149,255,145,.72),
+    0 0 25px 14px rgba(88,255,132,.46);
+}
+.world-map-tile.is-current.is-selected {
+  box-shadow:0 0 0 5px #0e6e32,0 0 0 9px rgba(149,255,145,.8),
+    0 0 25px 14px rgba(88,255,132,.46);
+}
+.world-map-tile-player-icon {
+  display:block;
+  color:#b1ffb0;
+  font:900 21px/1 system-ui,sans-serif;
+  text-shadow:0 0 7px #002e16,0 0 15px #64ff8c;
+}
+.world-map-player-marker {
+  position:absolute;
+  z-index:20;
+  transform:translate(-50%,0);
+  display:grid;
+  justify-items:center;
+  pointer-events:none;
+  filter:drop-shadow(0 1px 3px #000);
+}
+.world-map-player-marker strong {
+  display:block;
+  padding:5px 9px;
+  white-space:nowrap;
+  color:#071b0e;
+  background:#aaff99;
+  border:2px solid #155b27;
+  border-radius:7px;
+  font:900 12px/1.2 system-ui,sans-serif;
+  letter-spacing:.07em;
+  box-shadow:0 0 17px 5px rgba(107,255,120,.50);
+}
+.world-map-player-marker span {
+  color:#aaff99;
+  font-size:20px;
+  line-height:1;
+  text-shadow:0 2px 8px #061b0d;
+}
+.world-analyzer-resource-counts {
+  color:#c0d0da;
+  font-size:11px;
+  padding:6px 10px;
+  border:1px solid #344556;
+  border-radius:7px;
+}
+.world-analyzer-toolbar select {
+  max-width:min(240px,100%);
+  text-overflow:ellipsis;
+}

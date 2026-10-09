@@ -386,7 +386,7 @@ export class ProjectHubSystem {
     }
 
     if (item.type === 'world-analyzer') {
-      this.stack.push({ type: 'world-analyzer', label: item.label, tier: 'ALL', resource: 'stone', selectedIndex: 0 });
+      this.stack.push({ type: 'world-analyzer', label: item.label, tier: 'ALL', resource: 'ALL', selectedIndex: 0 });
       this.renderCurrent();
       return;
     }
@@ -413,6 +413,7 @@ export class ProjectHubSystem {
     }
 
     const currentZoneId = data.currentZoneId || null;
+    const currentZone = zones.find(zone => zone.id === currentZoneId) || null;
     if (!view.selectedId || !zones.some((zone) => zone.id === view.selectedId)) {
       view.selectedId = currentZoneId || zones[0]?.id || null;
     }
@@ -439,6 +440,7 @@ export class ProjectHubSystem {
         ' data-city-key="' + escapeHtml(zone.cityKey || '') + '"',
         ' style="left:' + left + ';top:' + top + '">',
         '<span class="world-map-tile-inner">',
+        zone.id === currentZoneId ? '<span class="world-map-tile-player-icon" aria-hidden="true">⌖</span>' : '',
         '<strong>' + escapeHtml(zone.name || zone.id) + '</strong>',
         '<small>' + escapeHtml(zone.id) + '</small>',
         '<em>' + escapeHtml(typeLabel + ' · ' + (zone.biome || '—')) + '</em>',
@@ -446,6 +448,14 @@ export class ProjectHubSystem {
         '</button>'
       ].join('');
     }).join('');
+    const marker = currentZone ? (() => {
+      const dx = Number(currentZone.worldMap?.diamondX) || 0;
+      const dy = Number(currentZone.worldMap?.diamondY) || 0;
+      const left = 'calc(50% + ' + (dx * 66) + 'px)';
+      const top = (145 + dy * 66 - 92) + 'px';
+      return '<div class="world-map-player-marker" aria-hidden="true" style="left:' + left + ';top:' + top +
+        '"><strong>⌖ ВЫ ЗДЕСЬ</strong><span>▼</span></div>';
+    })() : '';
 
     const selectedCity = selected?.isSafeCity ? this.citySpecializations?.get?.(selected.id) : null;
     const detail = selected ? [
@@ -464,7 +474,10 @@ export class ProjectHubSystem {
 
     this.contentElement.innerHTML = [
       '<div class="world-map-toolbar">',
-      '<div><strong>Мир uGame · 25 локаций</strong><span>4 направления + нейтральный Перекрёсток · расположение специализаций предварительное</span></div>',
+      '<div><strong>Мир uGame · 25 локаций</strong><span>4 направления + нейтральный Перекрёсток · расположение специализаций предварительное</span>',
+      '<div class="world-map-current-location"><strong>⌖ Сейчас: ' + escapeHtml(currentZone?.name || 'Локация не определена') + '</strong>',
+      '<span>' + escapeHtml(currentZone?.id || '—') + '</span>',
+      '<button id="world-map-find-me" type="button"' + (!currentZoneId ? ' disabled' : '') + '>Показать меня на карте</button></div></div>',
       detail,
       '</div>',
       '<div class="world-map-legend">',
@@ -474,7 +487,7 @@ export class ProjectHubSystem {
       '<span data-biome="stone">Камень</span>',
       '<span data-biome="south">Юг</span>',
       '<span data-kind="city">◆ Мирный город</span>',
-      '<span data-kind="current">● Вы здесь</span>',
+      '<span data-kind="current">⌖ ВЫ ЗДЕСЬ — зелёный маяк</span>',
       '</div>',
       '<div class="world-map-scroll">',
       '<div class="world-map-stage">',
@@ -487,6 +500,7 @@ export class ProjectHubSystem {
       '<div class="world-map-compass world-map-compass-w"><b>W</b><span>ЗАПАД</span><i>←</i></div>',
       '<div class="world-map-compass world-map-compass-nw"><b>NW</b><span>СЕВЕРО-ЗАПАД</span><i>↖</i></div>',
       tiles,
+      marker,
       '</div>',
       '</div>'
     ].join('');
@@ -497,6 +511,14 @@ export class ProjectHubSystem {
         this.renderWorldMap(view);
       });
     }
+    this.contentElement.querySelector?.('#world-map-find-me')?.addEventListener('click', () => {
+      if(!currentZoneId)return;
+      view.selectedId = currentZoneId;
+      this.renderWorldMap(view);
+      this.contentElement.querySelector?.('[data-world-map-zone].is-current')?.scrollIntoView?.({
+        block: 'center', inline: 'center', behavior: 'smooth'
+      });
+    });
     this.contentElement.scrollTop = 0;
   }
 
@@ -562,6 +584,16 @@ export class ProjectHubSystem {
     }
 
     const allMasters = Array.isArray(data.masters) ? data.masters : [];
+    const directions = [
+      {id:'ALL',label:'Все'},
+      {id:'stone',label:'Камень'},
+      {id:'wood',label:'Дерево'},
+      {id:'water',label:'Вода'},
+      {id:'clay',label:'Глина'}
+    ];
+    const counts = Object.fromEntries(directions.map(entry=>[entry.id,entry.id==='ALL'
+      ? allMasters.length : allMasters.filter(spawn=>spawn.resourceDirectionId===entry.id).length]));
+    if (!directions.some(entry=>entry.id===view.resource)) view.resource='ALL';
     const filtered = allMasters.filter((spawn) =>
       (!view.resource || view.resource === 'ALL' || spawn.resourceDirectionId === view.resource) &&
       (!view.tier || view.tier === 'ALL' || spawn.tier === view.tier)
@@ -569,6 +601,10 @@ export class ProjectHubSystem {
     if (view.selectedIndex >= filtered.length) view.selectedIndex = Math.max(0, filtered.length - 1);
     if (view.selectedIndex < 0) view.selectedIndex = 0;
     const selected = filtered[view.selectedIndex] || null;
+    const resourceOptions = directions.map(entry=>'<option value="' + entry.id + '"' +
+      (view.resource===entry.id?' selected':'') + '>' + escapeHtml(entry.label) + ' (' +
+      counts[entry.id] + ')</option>').join('');
+    const selectionLabel = filtered.length ? (view.selectedIndex+1) + ' из ' + filtered.length : '0 из 0';
 
     const tierOptions = ['ALL','T1','T2','T3','T4'].map((tier) =>
       '<option value="' + tier + '"' + (view.tier === tier ? ' selected' : '') + '>' + (tier === 'ALL' ? 'Все Tier' : tier) + '</option>'
@@ -620,16 +656,24 @@ export class ProjectHubSystem {
 
     this.contentElement.innerHTML = [
       '<div class="world-analyzer-toolbar">',
-      '<label>Ресурс <select id="world-analyzer-resource"><option value="stone">Stone</option></select></label>',
+      '<label>Ресурс <select id="world-analyzer-resource">' + resourceOptions + '</select></label>',
       '<label>Tier <select id="world-analyzer-tier">' + tierOptions + '</select></label>',
       '<button id="world-analyzer-prev" type="button">← Previous</button>',
       '<button id="world-analyzer-next" type="button">Next →</button>',
       '<button id="world-analyzer-refresh" type="button">Обновить</button>',
-      '<span>Active: <b>' + allMasters.length + '</b> · filtered: <b>' + filtered.length + '</b></span>',
+      '<span>Активных Мастеров: <b>' + allMasters.length + '</b> · по фильтру: <b>' + filtered.length + '</b> · выбран: <b>' + selectionLabel + '</b></span>',
+      '<span class="world-analyzer-resource-counts">' + directions.filter(x=>x.id!=='ALL')
+        .map(x=>escapeHtml(x.label)+': <b>'+counts[x.id]+'</b>').join(' · ') + '</span>',
       '</div>',
       '<div class="world-analyzer-layout"><div class="world-analyzer-list">' + cards + '</div>' + detail + '</div>'
     ].join('');
 
+    const resourceSelect = this.contentElement.querySelector('#world-analyzer-resource');
+    resourceSelect?.addEventListener('change', () => {
+      view.resource = resourceSelect.value;
+      view.selectedIndex = 0;
+      this.renderWorldAnalyzer(view);
+    });
     const tierSelect = this.contentElement.querySelector('#world-analyzer-tier');
     tierSelect?.addEventListener('change', () => { view.tier = tierSelect.value; view.selectedIndex = 0; this.renderWorldAnalyzer(view); });
     this.contentElement.querySelector('#world-analyzer-refresh')?.addEventListener('click', () => this.renderWorldAnalyzer(view));

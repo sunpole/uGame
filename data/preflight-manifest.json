@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.48",
+  "version": "0.2.49",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
