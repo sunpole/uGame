@@ -1,4 +1,4 @@
-import { categoryLabels, matchesInventoryItem } from './inventory-management.js';
+import { categoryLabels, matchesInventoryItem, discardProtection } from './inventory-management.js';
 
 const SLOT_LABELS = {
   helmet: 'Шлем',
@@ -126,6 +126,7 @@ export class InventoryPanelSystem {
       this.currentTab = 'backpack';
     }
     this.renderTabs();
+    this.renderBulkActions();
 
     const config = this.containerSystem.config(this.currentTab);
     const state = this.containerSystem.container(this.currentTab);
@@ -194,12 +195,76 @@ export class InventoryPanelSystem {
       this.render();
     });
     toolbar.append(reset);
+    const bulk=document.createElement('div');
+    bulk.className='inventory-bulk-actions';
+    bulk.setAttribute('aria-label','Массовые действия с предметами');
+    toolbar.append(bulk);
+    this.bulkActions=bulk;
     this.gridElement.before(toolbar);
     const chestTab=document.createElement('button');
     chestTab.type='button';chestTab.dataset.containerTab='resourceChest';
     chestTab.textContent='Ресурсный сундук';
     chestTab.title='Только у городского банкира';
     this.tabsElement?.append(chestTab);
+  }
+
+  renderBulkActions() {
+    const host=this.bulkActions;
+    if (!host) return;
+    host.replaceChildren();
+    if (!this.bankAccess || this.currentTab==='equipment') {
+      host.hidden=true;
+      return;
+    }
+    const source=this.currentTab;
+    const options=source==='backpack'
+      ? [
+        {to:'bank',label:'Поместить всё в банк'},
+        {to:'resourceChest',label:'Поместить все ресурсы в сундук',resources:true}
+      ]
+      : source==='bank'
+        ? [
+          {to:'backpack',label:'Забрать всё в рюкзак'},
+          {to:'resourceChest',label:'Переместить все ресурсы в сундук',resources:true}
+        ]
+        : source==='resourceChest'
+          ? [
+            {to:'backpack',label:'Забрать всё в рюкзак'},
+            {to:'bank',label:'Переместить всё в банк'}
+          ] : [];
+    host.hidden=options.length===0;
+    if(!options.length)return;
+    for(const option of options) {
+      const button=document.createElement('button');
+      button.type='button';
+      button.textContent=option.label;
+      button.addEventListener('click',()=>this.bulkTransfer(source,option.to,{resources:option.resources||false}));
+      host.append(button);
+    }
+    const note=document.createElement('small');
+    note.textContent='«Всё» означает всё содержимое вкладки, даже скрытое фильтрами. Остаток при заполнении остаётся на месте.';
+    host.append(note);
+  }
+
+  bulkTransfer(source,destination,{resources=false}={}) {
+    if (!this.bankAccess || !['bank','resourceChest','backpack'].includes(source) ||
+      !['bank','resourceChest','backpack'].includes(destination)) {
+      this.setStatus('Откройте городского банкира для управления хранилищами','error');
+      return false;
+    }
+    const result=this.containerSystem.transferAll(source,destination,{
+      filter:resources ? item=>item.tags?.includes('resource') : null
+    });
+    if(result.moved>0) {
+      this.setStatus('Перемещено: '+result.moved+' ед. из '+result.movedStacks+' стопок'
+        +(result.remaining>0?' · не поместилось: '+result.remaining+' ед.':'')
+        +(result.skipped>0?' · неподходящих стопок: '+result.skipped:''),'ok');
+    } else {
+      this.setStatus(result.remaining>0?'Нет свободного места в целевом хранилище':
+        'Нет подходящих предметов для переноса','error');
+    }
+    this.render();
+    return result.moved>0;
   }
 
   matches(stack) {
@@ -211,25 +276,42 @@ export class InventoryPanelSystem {
 
   confirmDiscard(containerId,index,item,quantity) {
     const promptText=item.massStorage && item.tier
-      ? 'Количество единиц по '+item.unitKg+' кг для удаления (из '+quantity+'):'
-      : 'Количество предметов для удаления (из '+quantity+'):';
+      ? 'Сколько единиц по '+item.unitKg+' кг удалить (из '+quantity+')?'
+      : 'Сколько предметов удалить (из '+quantity+')?';
     const raw=window.prompt(promptText,String(quantity));
-    if(raw===null)return;
+    if(raw===null)return false;
     const amount=Number(raw);
     if(!Number.isSafeInteger(amount)||amount<1||amount>quantity) {
       this.setStatus('Введите целое число от 1 до '+quantity,'error');
-      return;
+      return false;
     }
-    const caution=item.tags.includes('quest')
-      ? 'ВНИМАНИЕ: квестовый предмет может быть нужен для задания! '
-      : '';
-    if(!window.confirm(caution+'Безвозвратно удалить «'+item.name+'» ×'+amount+
-      '? Действие нельзя отменить.'))return;
+    const protection=discardProtection(item,amount,
+      this.itemCatalog?.get('attention')?.baseValue || 5000);
+    if (protection.typed) {
+      const accepted=window.prompt(
+        'Усиленная защита: '+protection.reason+'.\n' +
+        'Для удаления «'+item.name+'» ×'+amount+
+        ' введите слово УДАЛИТЬ заглавными буквами:','');
+      if(accepted!=='УДАЛИТЬ') {
+        this.setStatus('Удаление отменено: слово УДАЛИТЬ не подтверждено','error');
+        return false;
+      }
+    }
+    if(!window.confirm('Безвозвратно удалить «'+item.name+'» ×'+amount+
+      (protection.totalValue!=null?' (каталожная стоимость '+protection.totalValue+' ед.)':'')+
+      '? Восстановление внутри игры невозможно.'))return false;
+    // Check that the selected stack remains the one reviewed by the player.
+    const live=this.containerSystem.slot(containerId,index);
+    if(live?.itemId!==item.id || live.quantity<amount) {
+      this.setStatus('Содержимое изменилось. Откройте удаление ещё раз.','error');
+      return false;
+    }
     const result=this.containerSystem.discardFrom(containerId,index,amount);
     this.setStatus(result.removed===amount
       ? 'Удалено: '+item.name+' ×'+amount
       : 'Не удалось удалить, содержимое не изменено',
       result.removed===amount?'ok':'error');
+    return result.removed===amount;
   }
 
   installDragAndDrop() {

@@ -389,6 +389,39 @@ export class ContainerSystem {
     return { removed, itemId: stack.itemId };
   }
 
+  /**
+   * Bulk transfer is intentionally capacity-limited, not all-or-nothing:
+   * when the destination fills up, the remainder stays in its ORIGINAL slot.
+   * Only one change event/save is emitted for the whole operation.
+   */
+  transferAll(fromId, toId, { filter = null } = {}) {
+    const source = this.container(fromId), destination = this.container(toId);
+    const fromConfig = this.config(fromId), toConfig = this.config(toId);
+    if (!this.loaded || fromId === toId || !source || !destination ||
+      fromConfig?.kind !== 'grid' || toConfig?.kind !== 'grid' ||
+      fromConfig.enabled === false || toConfig.enabled === false) {
+      return { moved: 0, movedStacks: 0, remaining: 0, skipped: 0, reason: 'unavailable' };
+    }
+    let moved=0,movedStacks=0,remaining=0,skipped=0;
+    for (let index=0;index<source.slots.length;index++) {
+      const stack=source.slots[index];
+      if (!stack) continue;
+      const item=this.item(stack.itemId);
+      if ((typeof filter === 'function' && !filter(item,stack)) ||
+        !this.isAllowed(toId,stack.itemId)) {skipped++;continue;}
+      const amount=stack.quantity;
+      const result=this.addTo(toId,stack.itemId,amount,{atomic:false,silent:true});
+      if (result.added>0) {
+        this.removeFrom(fromId,index,result.added,{silent:true});
+        moved+=result.added;
+        movedStacks++;
+      }
+      remaining+=result.remaining;
+    }
+    if (moved>0) this.emitChange({reason:'transfer-all',fromId,toId,amount:moved,movedStacks,remaining,skipped});
+    return {moved,movedStacks,remaining,skipped,reason:moved>0?'moved':'nothing-moved'};
+  }
+
   transferStack(fromId, toId, ref) {
     const stack = this.slot(fromId, ref);
     if (!stack) return { moved: 0, remaining: 0 };

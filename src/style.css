@@ -2412,3 +2412,53 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .inventory-manager button { flex:1 1 145px; }
   .inventory-grid { grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); }
 }
+
+
+/* v0.2.48 — no overflowing 4th filter; predictable two-column inventory toolbar. */
+.inventory-panel .inventory-manager {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:end;
+  gap:9px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+.inventory-panel .inventory-manager > input,
+.inventory-panel .inventory-manager-field,
+.inventory-panel .inventory-manager-field select,
+.inventory-panel .inventory-manager > button {
+  min-width:0;
+  max-width:100%;
+  width:100%;
+  box-sizing:border-box;
+}
+.inventory-panel .inventory-manager-field select { overflow:hidden;text-overflow:ellipsis; }
+.inventory-panel .inventory-bulk-actions {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  grid-column:1/-1;
+  padding-top:10px;
+  border-top:1px solid #34465a;
+}
+.inventory-panel .inventory-bulk-actions[hidden] { display:none !important; }
+.inventory-panel .inventory-bulk-actions button {
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:38px;
+  padding:7px;
+  background:#1a3d39;
+  border-color:#467c71;
+}
+.inventory-panel .inventory-bulk-actions small {
+  grid-column:1/-1;
+  color:#9dadbd;
+  font-size:11px;
+}
+@media (max-width:480px) {
+  .inventory-panel .inventory-manager { grid-template-columns:minmax(0,1fr); }
+  .inventory-panel .inventory-bulk-actions { grid-template-columns:minmax(0,1fr); }
+}
