@@ -50,6 +50,9 @@ test('Process started after depleted mine receives full 60s and extends saved NP
   assert.equal(world.getMasterSpawn('sequential-late').expiresAt,110_000);
   const process=new MasterProcessSystem({relationshipSystem:relationship,worldSpawnStateSystem:world,
     interactionPanel:{showActions(){},showMessage(){}},grantResource:()=>true});
+  // The test clock is synthetic (milliseconds since epoch). Avoid mounting the
+  // live UI whose metaProvider intentionally reads the actual wall clock.
+  process.showActive=()=>{};
   process.profiles.set('stone-basic',{
     id:'stone-basic',resourceDirectionId:'stone',moduleId:'extraction',
     label:'Бесплатный камень',durationSeconds:60,rewardRangeKg:{min:.1,max:.1}
