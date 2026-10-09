@@ -709,8 +709,30 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
     // preventing 404s from missing optional images on a clean GitHub clone.
     const uniqueFiles = [...new Set(enabled.map((entry) => entry.textureFile))];
     const checked = await Promise.all(uniqueFiles.map(async (file) => {
-      try { await fetchText(file); return { file, available: true }; }
-      catch { return { file, available: false }; }
+      try {
+        const response = await fetch(file, { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const blob = await response.blob();
+        if (!blob.type.startsWith('image/')) throw new Error('Not an image');
+        // 200 OK alone does not guarantee that Phaser can decode this file.
+        // Reject broken optional images before the game's Phaser preload phase.
+        if (typeof createImageBitmap === 'function') {
+          const bitmap = await createImageBitmap(blob);
+          bitmap.close();
+        } else {
+          const url = URL.createObjectURL(blob);
+          try {
+            const image = new Image();
+            image.src = url;
+            await image.decode();
+          } finally {
+            URL.revokeObjectURL(url);
+          }
+        }
+        return { file, available: true };
+      } catch {
+        return { file, available: false };
+      }
     }));
     context.availableTextureFiles = checked.filter(({ available }) => available).map(({ file }) => file);
     const optionalMissing = checked.filter(({ available }) => !available).length;
