@@ -76,6 +76,8 @@ async function checkViewport(profile) {
 
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
     await page.locator('#project-hub-open').click();
+    // Project Hub defaults to the Project section, not the Game section.
+    await page.locator('[data-hub-section="game"]').click();
     await page.locator('[data-hub-item="world-map"]').click();
     await page.getByText('Мир uGame · 225 локаций').waitFor({ timeout: 10000 });
     assert.equal(await page.locator('[data-world-map-zone]').count(), 225);
