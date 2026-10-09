@@ -116,7 +116,7 @@ function validateSyntax(sources) {
   if (problems.length) throw new Error(problems.slice(0, 5).join(' | '));
 }
 
-function validateWorld(world) {
+export function validateWorld(world) {
   const zones = Array.isArray(world?.zones) ? world.zones : [];
   const transitions = Array.isArray(world?.transitions) ? world.transitions : [];
   const ids = new Set(zones.map((zone) => zone.id));
@@ -124,10 +124,34 @@ function validateWorld(world) {
   const fields = zones.filter((zone) => zone.isSafeCity !== true);
   const opposite = { nw: 'se', ne: 'sw', sw: 'ne', se: 'nw' };
 
-  if (zones.length !== 25 || ids.size !== 25) throw new Error('WorldGraph zones must be 25 unique');
+  // Derive the actual grid size from the world metadata; never assume the old 5x5 world.
+  const match = /^rotated-square-(\d+)x(\d+)$/.exec(String(world?.topology?.type || ''));
+  const rows = Number(match?.[1]);
+  const cols = Number(match?.[2]);
+  const expectedZones = rows * cols;
+  const expectedTransitions = 2 * (rows * (cols - 1) + cols * (rows - 1));
+  if (!match || rows !== cols || rows < 15 ||
+      Number(world?.topology?.locationCount) !== expectedZones) {
+    throw new Error('WorldGraph topology must describe a square grid of at least 15x15 zones');
+  }
+  if (zones.length !== expectedZones || ids.size !== expectedZones) {
+    throw new Error('WorldGraph zones must be ' + expectedZones + ' unique');
+  }
   if (Number(world?.worldSize?.width) !== Number(world?.worldSize?.height)) throw new Error('Local world must be square before 45° rotation');
-  if (cities.length !== 5 || fields.length !== 20) throw new Error('Expected 5 cities / 20 fields');
-  if (transitions.length !== 80) throw new Error('Expected 80 directed transitions');
+  if (cities.length !== 5 || fields.length !== expectedZones - 5) {
+    throw new Error('Expected 5 cities / ' + (expectedZones - 5) + ' fields');
+  }
+  if (transitions.length !== expectedTransitions) {
+    throw new Error('Expected ' + expectedTransitions + ' directed transitions');
+  }
+  const transitionIds = new Set();
+  for (const transition of transitions) {
+    if (!transition?.id || transitionIds.has(transition.id)) throw new Error('Missing or repeated WorldGraph transition ID');
+    transitionIds.add(transition.id);
+    if (!ids.has(transition?.from?.zoneId) || !ids.has(transition?.to?.zoneId)) {
+      throw new Error('WorldGraph transition references unknown zone: ' + transition.id);
+    }
+  }
 
   for (const transition of transitions) {
     const side = transition?.from?.side;
@@ -642,7 +666,7 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
   await check('world', 'Целостность WorldGraph', async () => {
     context.world = await fetchJson('./data/world.json');
     validateWorld(context.world);
-    return '25 зон · 5 городов · 80 переходов · 12 spots/field';
+    return context.world.zones.length + ' зон · 5 городов · ' + context.world.transitions.length + ' переходов · 12 spots/field';
   });
 
   await check('masters', 'Master runtime / Process', async () => {
