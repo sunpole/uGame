@@ -61,6 +61,11 @@ async function checkViewport(profile) {
   });
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    if (profile.mobile) {
+      const layoutWidth = await page.evaluate(() => document.documentElement.clientWidth);
+      assert.ok(layoutWidth <= profile.viewport.width + 4,
+        'Mobile content inflated viewport to ' + layoutWidth + 'px (device ' + profile.viewport.width + 'px)');
+    }
     await page.waitForFunction(() =>
       document.querySelector('#preflight-start')?.hidden === false ||
       document.querySelector('#preflight-summary')?.dataset.state === 'fail',
