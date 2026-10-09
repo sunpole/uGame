@@ -140,6 +140,9 @@ export class MasterProcessSystem {
 
     const started = this.relationshipSystem?.startProcess?.(spawn.masterId, process);
     if (!started) return false;
+    // If the expedition was already depleted, freeze the departure countdown
+    // and start a fresh 30 seconds only after this free Process has finished.
+    this.worldSpawnStateSystem?.deferMasterFarewell?.(spawn.encounterId, Number(started.endsAt));
     this.showActive(started);
     return true;
   }
