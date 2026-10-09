@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.50",
+  "version": "0.2.51",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -75,7 +75,8 @@
     "./src/resource-profession-view.js",
     "./data/master-activities.json",
     "./src/master-activity-system.js",
-    "./src/inventory-management.js"
+    "./src/inventory-management.js",
+    "./src/master-rarity-audit.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -132,6 +133,7 @@
     "./src/resource-profession-system.js",
     "./src/resource-profession-view.js",
     "./src/master-activity-system.js",
-    "./src/inventory-management.js"
+    "./src/inventory-management.js",
+    "./src/master-rarity-audit.js"
   ]
 }
