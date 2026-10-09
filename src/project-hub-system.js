@@ -419,12 +419,21 @@ export class ProjectHubSystem {
       view.selectedId = currentZoneId || zones[0]?.id || null;
     }
     const selected = zones.find((zone) => zone.id === view.selectedId) || null;
+    const diamondX = zones.map(zone => Number(zone.worldMap?.diamondX) || 0);
+    const diamondY = zones.map(zone => Number(zone.worldMap?.diamondY) || 0);
+    const minX = Math.min(...diamondX), maxX = Math.max(...diamondX);
+    const minY = Math.min(...diamondY), maxY = Math.max(...diamondY);
+    const centerX = (minX + maxX) / 2, centerY = (minY + maxY) / 2;
+    const mapWidth = Math.max(920, (maxX - minX) * 66 + 280);
+    const mapHeight = Math.max(820, (maxY - minY) * 66 + 292);
+    const pointX = dx => 'calc(50% + ' + ((dx - centerX) * 66) + 'px)';
+    const pointY = dy => (mapHeight / 2 + (dy - centerY) * 66) + 'px';
 
     const tiles = zones.map((zone) => {
       const dx = Number(zone.worldMap?.diamondX) || 0;
       const dy = Number(zone.worldMap?.diamondY) || 0;
-      const left = 'calc(50% + ' + (dx * 66) + 'px)';
-      const top = (145 + dy * 66) + 'px';
+      const left = pointX(dx);
+      const top = pointY(dy);
       const classes = [
         'world-map-tile',
         zone.isSafeCity ? 'is-city' : 'is-field',
@@ -452,8 +461,8 @@ export class ProjectHubSystem {
     const marker = currentZone ? (() => {
       const dx = Number(currentZone.worldMap?.diamondX) || 0;
       const dy = Number(currentZone.worldMap?.diamondY) || 0;
-      const left = 'calc(50% + ' + (dx * 66) + 'px)';
-      const top = (145 + dy * 66 - 92) + 'px';
+      const left = pointX(dx);
+      const top = (mapHeight / 2 + (dy - centerY) * 66 - 92) + 'px';
       return '<div class="world-map-player-marker" aria-hidden="true" style="left:' + left + ';top:' + top +
         '"><strong>⌖ ВЫ ЗДЕСЬ</strong><span>▼</span></div>';
     })() : '';
@@ -475,7 +484,7 @@ export class ProjectHubSystem {
 
     this.contentElement.innerHTML = [
       '<div class="world-map-toolbar">',
-      '<div><strong>Мир uGame · 25 локаций</strong><span>4 направления + нейтральный Перекрёсток · расположение специализаций предварительное</span>',
+      '<div><strong>Мир uGame · ' + zones.length + ' локаций</strong><span>4 направления + нейтральный Перекрёсток · расположение специализаций предварительное</span>',
       '<div class="world-map-current-location"><strong>⌖ Сейчас: ' + escapeHtml(currentZone?.name || 'Локация не определена') + '</strong>',
       '<span>' + escapeHtml(currentZone?.id || '—') + '</span>',
       '<button id="world-map-find-me" type="button"' + (!currentZoneId ? ' disabled' : '') + '>Показать меня на карте</button></div></div>',
@@ -491,7 +500,7 @@ export class ProjectHubSystem {
       '<span data-kind="current">⌖ ВЫ ЗДЕСЬ — зелёный маяк</span>',
       '</div>',
       '<div class="world-map-scroll">',
-      '<div class="world-map-stage">',
+      '<div class="world-map-stage" style="width:' + mapWidth + 'px;height:' + mapHeight + 'px">',
       '<div class="world-map-compass world-map-compass-n"><b>N</b><span>СЕВЕР</span><i>↑</i></div>',
       '<div class="world-map-compass world-map-compass-ne"><b>NE</b><span>СЕВЕРО-ВОСТОК</span><i>↗</i></div>',
       '<div class="world-map-compass world-map-compass-e"><b>E</b><span>ВОСТОК</span><i>→</i></div>',
