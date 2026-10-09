@@ -124,7 +124,7 @@ test('The Phaser NPC shows one numeric Process timer and a flashing nonnumeric d
   assert.equal(npc._masterExpeditionTimer.text,'УХОЖУ ЧЕРЕЗ 00:30');
   assert.equal(npc._masterExpeditionTimer.visible,true);
   sys.setItemTransform(npc,{x:250,y:230});
-  assert.equal(npc._masterExpeditionTimer.y,147);
+  assert.equal(npc._masterExpeditionTimer.y,117);
   const timer=npc._masterExpeditionTimer;
   assert.equal(sys.remove(npc.id),true);
   assert.equal(timer.active,false);
