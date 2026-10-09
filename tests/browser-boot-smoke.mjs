@@ -108,7 +108,7 @@ async function checkViewport(profile) {
     const dev = async (code, expected) => {
       const input = page.locator('#dev-code-input');
       await input.fill(code);
-      await input.press('Enter');
+      await activate('#dev-console button[type="submit"]');
       await page.waitForFunction((message) =>
         document.querySelector('#dev-code-status')?.textContent?.includes(message),
       expected, { timeout: 10000 });
@@ -155,6 +155,8 @@ async function checkViewport(profile) {
       bootError: window.__ugameBoot?.error || null,
       preflight: document.querySelector('#preflight-screen')?.innerText?.slice(-2500) || '',
       world: document.querySelector('#quest-status')?.textContent || '',
+      devStatus: document.querySelector('#dev-code-status')?.textContent || '',
+      devInput: document.querySelector('#dev-code-input')?.value || '',
       startButtonHitTest: (() => {
         const button = document.querySelector('#preflight-start');
         if (!button) return null;
