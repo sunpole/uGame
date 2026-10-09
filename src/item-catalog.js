@@ -80,6 +80,7 @@ export class ItemCatalog {
         weightKg: Math.max(0, Number(item.weightKg) || 0),
         stackLimit: Math.max(1, Number(item.stackLimit) || 1),
         storageMode: item.storageMode || 'physical',
+        baseValue: Number.isFinite(Number(item.baseValue)) && item.baseValue != null ? Math.max(0,Number(item.baseValue)) : null,
         equipSlot: item.equipSlot || null,
         devOnly: Boolean(item.devOnly)
       });
