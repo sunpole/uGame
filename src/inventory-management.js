@@ -39,3 +39,30 @@ export function compareInventoryStacks(a, b, catalog, mode = 'name') {
   }
   return compareName();
 }
+
+/**
+ * The current resource catalog uses baseValue as a provisional price reference.
+ * "Внимание" has baseValue 5000. There is NO live exchange/market pricing yet.
+ * Unknown prices and quest items are deliberately protected.
+ */
+export function discardProtection(item, amount, attentionValue = 5000) {
+  const n = Number(amount);
+  const tags = Array.isArray(item?.tags) ? item.tags : [];
+  const special = item?.type === 'quest' || tags.includes('quest')
+    || item?.storageMode === 'account' || item?.accountBound === true;
+  const declared = Number(item?.baseValue);
+  const hasPrice = Number.isFinite(declared) && declared >= 0 && item?.baseValue != null;
+  const unitValue = hasPrice ? declared : null;
+  const totalValue = hasPrice && Number.isSafeInteger(n) && n > 0 ? unitValue * n : null;
+  const threshold = Number.isFinite(Number(attentionValue)) && Number(attentionValue) > 0
+    ? Number(attentionValue) : 5000;
+  return {
+    typed: special || !hasPrice || unitValue >= threshold || totalValue >= threshold,
+    reason: special ? 'Квестовый или привязанный предмет'
+      : !hasPrice ? 'Цена пока не определена'
+      : unitValue >= threshold ? 'Стоимость одной единицы не ниже 1 Внимания'
+      : totalValue >= threshold ? 'Стоимость удаляемой стопки не ниже 1 Внимания'
+      : 'Обычный предмет',
+    unitValue, totalValue, threshold
+  };
+}
