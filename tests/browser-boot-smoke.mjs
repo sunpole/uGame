@@ -109,7 +109,9 @@ async function checkViewport(profile) {
       const input = page.locator('#dev-code-input');
       await input.fill(code);
       await input.press('Enter');
-      await page.locator('#dev-code-status').getByText(expected).waitFor({ timeout: 10000 });
+      await page.waitForFunction((message) =>
+        document.querySelector('#dev-code-status')?.textContent?.includes(message),
+      expected, { timeout: 10000 });
     };
     await dev('7002', '7002 · Класс: Разведчик');
     await dev('9001', '9001 · Состояние сохранено');
