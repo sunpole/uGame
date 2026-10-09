@@ -152,8 +152,11 @@ export class BiomeTextureSettingsSystem {
   }
 }
 
-export function preloadGroundTextures(scene) {
+export function preloadGroundTextures(scene, availableFiles = null) {
+  // null retains the legacy standalone behaviour; a Set from Pre-flight skips
+  // missing optional assets and lets GroundTextureSystem use flat biome colours.
   for (const asset of GROUND_TEXTURE_ASSETS) {
+    if (availableFiles && !availableFiles.has(asset.file)) continue;
     scene.load.image(asset.key, asset.file);
   }
 }
