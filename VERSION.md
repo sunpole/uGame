@@ -1,3 +1,14 @@
+# uGame v0.2.50 · Sequential NPC timers and stable expedition layout (2026-10-09)
+
+- Process 60s → blinking departure warning (no digits) → 30s NPC goodbye, then despawn.
+- Late free Process extends farewell and preserves its pending reward; saved/offline-compatible.
+- Remove generic third NPC timer during farewell; labels no longer overlap.
+- Stable fullscreen resource expedition with reserved manual-mode slot and fixed cave height.
+- Full Node regression CI + mandatory real browser/Phaser QA; previous rollback v0.2.49.
+- See `docs/releases/v0.2.50.md`.
+
+---
+
 # uGame v0.2.49 — visible player location / full resource analyzer (2026-10-09)
 
 - Заметный независимый «ВЫ ЗДЕСЬ» над текущей зоной, яркое выделение + кнопка «Показать меня на карте».
