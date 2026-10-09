@@ -1,0 +1,61 @@
+name: uGame v0.2.52 five outer rings QA and release
+
+on:
+  pull_request:
+    paths:
+      - 'data/world.json'
+      - 'src/world-graph.js'
+      - 'src/project-hub-system.js'
+      - 'tests/world-five-rings.test.mjs'
+      - 'tests/master-rarity-header.test.mjs'
+      - 'tests/city-crafting.test.mjs'
+      - 'package.json'
+      - '.github/workflows/publish-v0252.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.52.md'
+      - '.github/workflows/publish-v0252.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and world regression
+        run: |
+          node --check src/world-graph.js
+          node --check src/project-hub-system.js
+          node --test tests/world-five-rings.test.mjs
+      - name: Full regression suite
+        run: npm test
+      - name: Version consistency and rollback
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.52')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.52'\"))throw Error('browser preflight version mismatch');
+          "
+          gh release view v0.2.51
+      - name: Publish QA prerelease after merge to main only
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.52 >/dev/null 2>&1; then
+            gh release create v0.2.52 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.52 · Five outer rings and cached world distances" \
+              --notes-file docs/releases/v0.2.52.md --prerelease
+          fi
