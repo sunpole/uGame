@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.47",
-  "stage": "loopback-authoritative-12-player-service-not-integrated-with-main-game",
+  "version": "0.2.48",
+  "stage": "inventory-bulk-and-safe-deletion-qa",
   "updated": "2026-10-09",
-  "summary": "Optional local-only 12-session resource authority: shared finite stock, token sessions, timed manual validation, rankings, durable server snapshot; Phaser client integration pending."
+  "summary": "Fixed filter overflow, real bulk bank/chest transfers, high-price typed discard protection and 5-way sort regression."
 }
