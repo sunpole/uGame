@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.56",
-  "stage": "character-source-three-pass-audit",
+  "version": "0.2.57",
+  "stage": "candidate-character-registry-admin-lab",
   "updated": "2026-10-10",
-  "summary": "Resolve late VYN/LOV correction and audit 394 source lines, 93 owner decisions, system contracts and edge cases. No active game stat changes."
+  "summary": "50-entry source-linked character registry, sticky 1–4 profile comparisons, sandbox coefficient search, checksummed JSON import/export with diff; no gameplay balance or save changes."
 }

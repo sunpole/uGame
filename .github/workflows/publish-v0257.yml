@@ -1,0 +1,94 @@
+name: uGame v0.2.57 Character Admin Lab QA release
+
+on:
+  pull_request:
+    paths:
+      - 'src/character-balance/**'
+      - 'data/character-stat-registry.json'
+      - 'character-lab/**'
+      - 'tests/character-lab-admin*'
+      - 'index.html'
+      - 'version.json'
+      - 'package.json'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0257.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.57.md'
+      - '.github/workflows/publish-v0257.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify version, full Node suite and snapshot schema
+        run: |
+          node --check character-lab/admin.js
+          node --check character-lab/lab.js
+          node --check src/character-balance/snapshot.js
+          node --check tests/character-lab-admin-browser-smoke.mjs
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.57')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.57'\"))throw Error('Pre-flight expectedVersion mismatch');
+          "
+      - name: Install real Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile Character Lab Admin registry/export/import/pins
+        run: node tests/character-lab-admin-browser-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Desktop/mobile previous Character Lab regression
+        run: node tests/character-lab-browser-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Desktop/mobile main game Pre-flight Phaser Save/F5
+        run: node tests/browser-boot-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Verify immutable previous release and rollback
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.56
+          gh release view v0.2.55
+          gh release view v0.2.54-pre-character-lab-20261010
+      - name: Publish QA prerelease only after green CI on main
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.57 >/dev/null 2>&1; then
+            gh release create v0.2.57 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.57 · Character Admin Lab / Registry" \
+              --notes-file docs/releases/v0.2.57.md --prerelease
+          fi
+      - name: Retain screenshots when browser smoke fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-v0257-admin-smoke-errors
+          path: |
+            artifacts/character-admin/
+            artifacts/character-lab/
+            artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 7

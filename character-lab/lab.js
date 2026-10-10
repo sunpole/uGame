@@ -9,6 +9,28 @@ const editGroups = {
   'desireBonuses.positive':'ЖП > 0', 'desireBonuses.zero':'ЖП = 0', caps:'Предлагаемые максимумы'
 };
 let original, rules, profiles, selected='hp';
+const subscribers=new Set();
+export function getLabState(){
+  if(!rules||!profiles)throw Error('Лаборатория ещё не загружена');
+  return {rules:structuredClone(rules),profiles:structuredClone(profiles),selected};
+}
+export function subscribeLab(fn){
+  subscribers.add(fn);
+  if(rules&&profiles)fn(getLabState());
+  return ()=>subscribers.delete(fn);
+}
+export function applyLabState(next){
+  validateRules(next.rules);
+  if(!Array.isArray(next.profiles)||next.profiles.length<1||next.profiles.length>4)throw Error('Импорт: нужно от одного до четырёх профилей');
+  for(const p of next.profiles)calculateCharacter(next.rules,p);
+  if(!METRIC_KEYS.includes(next.selected))throw Error('Импорт: некорректный показатель');
+  rules=structuredClone(next.rules);
+  profiles=structuredClone(next.profiles);
+  selected=next.selected;
+  $('#profile-count').value=String(profiles.length);
+  renderForms();renderRules();renderResults();
+  status('Импорт применён ТОЛЬКО в песочнице — игровой баланс неизменен');
+}
 function status(t,error=false){$('#lab-status').textContent=t;$('#lab-status').dataset.error=String(error);}
 function numberInput(label,path,value){
   return '<label>'+esc(label)+'<input type="number" step="any" data-key="'+esc(path)+'" value="'+esc(value)+'"></label>';
@@ -63,6 +85,7 @@ function renderResults(){
     card.querySelector('[data-warnings]').textContent=r.warnings.join(' ');
   });
   renderTrace(results);
+  for(const subscriber of subscribers)subscriber(getLabState());
 }
 function renderRules(){
   let html='';

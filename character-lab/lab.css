@@ -1,1 +1,43 @@
 :root{color-scheme:dark;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;background:#090d13;color:#dce4ee}*{box-sizing:border-box}body{margin:0}.lab-root{max-width:1700px;margin:auto;padding:18px 22px 54px}.lab-heading{display:flex;justify-content:space-between;align-items:start;gap:16px}.lab-heading h1{margin:2px 0 4px;font-size:clamp(22px,3vw,32px)}.lab-heading p{max-width:850px;color:#9daab8;margin:0 0 15px}.eyebrow{font:11px monospace;color:#79c0ff}.back{flex:none;color:#8cc8ff}.warning{background:#292414;border:1px solid #776332;padding:10px 14px;border-radius:9px;color:#f3d996;margin-bottom:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px;background:#111a24;border:1px solid #253447;border-radius:9px;margin-bottom:17px}h2{font-size:17px;margin:18px 0 8px}.profiles{display:grid;grid-template-columns:repeat(var(--count,4),minmax(0,1fr));gap:10px}.profile{min-width:0;border:1px solid #2c3c4d;border-radius:10px;background:#121c27;padding:12px}.profile h3{font-size:15px;margin:0 0 10px;color:#b8dbfa}.inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.inputs label{font-size:12px;color:#a4b3c4;display:flex;flex-direction:column;gap:3px}.inputs label.wide{grid-column:1/-1}select,input{width:100%;min-width:0;border-radius:6px;border:1px solid #344454;background:#08121b;color:#eaf2fb;padding:7px;font:inherit}input:focus,select:focus{outline:2px solid #559ddd;outline-offset:1px}button{cursor:pointer;background:#24394d;border:1px solid #385472;color:#f0f6ff;border-radius:7px;padding:8px 12px;font:inherit}button:hover{background:#31536f}.points{font:12px/1.5 monospace;color:#9fe5bd;margin-top:8px}.points.invalid{color:#ff8b7e}.hint{color:#94a3b3;font-size:12px;margin:2px 0 12px}.table-scroll{overflow-x:auto;border:1px solid #2a3a49;border-radius:10px}table{width:100%;border-collapse:collapse;min-width:600px;background:#0e1720}th,td{padding:9px 10px;border-bottom:1px solid #263440;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}th:first-child,td:first-child{text-align:left;min-width:190px;position:sticky;left:0;background:#15202c}th{color:#b6cae0;background:#1a2b3a;position:sticky;top:0}tbody tr{cursor:pointer}tbody tr:hover td{background:#1c3244}tbody tr:hover td:first-child{background:#1c3244}tbody tr[aria-selected="true"] td{color:#a8ecbf;background:#24342f}tbody tr[aria-selected="true"] td:first-child{background:#24342f}.panel{padding:12px;background:#101923;border:1px solid #2b3a49;border-radius:10px;margin-top:14px}.panel summary{cursor:pointer;font-weight:700;color:#dbe8ff}.trace-grid{display:grid;grid-template-columns:repeat(var(--count,4),minmax(0,1fr));gap:10px;margin-top:12px}.trace-card{border:1px solid #324456;background:#0b141e;border-radius:7px;padding:12px;overflow-wrap:anywhere}.trace-card h3{font-size:13px;margin:0 0 7px}.trace-card ol{padding-left:17px;color:#b3c7d8;font-size:12px}.trace-card li{margin:4px 0}.trace-card strong{font-size:16px;color:#b1f3c1}.rules-section{margin-top:13px;border-top:1px solid #283747;padding-top:10px}.rules-section h3{margin:0 0 8px;font-size:14px}.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px}.rules-grid label{display:flex;align-items:center;justify-content:space-between;gap:7px;color:#aabccc;font-size:12px}.rules-grid input{width:90px;flex:none;text-align:right}.rules-grid select{width:120px}.warning-line{color:#ff968a;font-size:12px;margin-top:7px}.profile details{margin-top:9px}.profile details summary{font-size:12px;cursor:pointer;color:#a5d3fa}.base-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}.base-grid label{display:flex;flex-direction:column;color:#aeb9c5;font-size:11px}.profile .base-grid input{font-size:12px;padding:5px}.note-list{color:#b7c6d7;font-size:12px;max-width:1050px}#lab-status{font-size:12px;color:#b1ecbf}#lab-status[data-error="true"]{color:#ff9788}@media(max-width:1100px){.profiles,.trace-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.lab-root{padding:11px}.profiles,.trace-grid{grid-template-columns:1fr}.lab-heading{flex-direction:column}.back{align-self:start}.inputs{gap:7px}.warning{font-size:12px}}
+
+
+/* Character Lab v0.2.57: source registry, sticky comparison and import review. */
+.pinned-panel{position:sticky;top:0;z-index:25;background:#192737;border:1px solid #506d84;border-radius:9px;margin:0 0 16px;padding:8px 12px;box-shadow:0 6px 24px #0009}
+.pinned-heading{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin-bottom:5px}
+.pinned-heading strong{font-size:13px;color:#d9efff}
+.pinned-heading .hint{margin:0;flex:1}
+.pinned-heading button{padding:4px 10px;font-size:12px}
+.pin-table-scroll{overflow:auto;max-height:37vh;overscroll-behavior:contain}
+.pin-empty{margin:7px 0;color:#91a9bd;font-size:12px}
+.pinned-grid{display:grid;grid-template-columns:minmax(170px,1.5fr) repeat(var(--profiles,4), minmax(105px,1fr));min-width:max-content}
+.pinned-grid>div{border-bottom:1px solid #375068;padding:6px 10px;min-width:110px;text-align:right;font-variant-numeric:tabular-nums}
+.pinned-grid>div:first-child{text-align:left}
+.pinned-grid>.pin-head{background:#253e50;color:#c0daf2;font-weight:700;position:sticky;top:0}
+.pinned-grid .pin-label{display:flex;gap:6px;align-items:center}
+.pin-toggle,.pin-remove{display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid #476079;color:#b6d7f1;border-radius:6px;min-width:30px;height:29px;padding:2px 5px;font-size:15px;line-height:1}
+.pin-toggle:hover,.pin-remove:hover{background:#36546b}
+.pin-toggle[aria-pressed="true"]{background:#3a635b;border-color:#75b39b;color:#d4ffe9}
+.registry-panel{padding:14px;margin:18px 0}
+.registry-panel h2{margin-top:0}.registry-panel small{font-size:12px;font-weight:400;color:#8da5bb}
+.registry-controls{display:flex;flex-wrap:wrap;gap:10px;padding-bottom:12px}
+.registry-controls label{display:flex;flex-direction:column;min-width:170px;flex:1;color:#a8bcd0;font-size:12px;gap:4px}
+.registry-controls label:first-child{flex:2}
+.registry-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;gap:8px;max-height:480px;overflow-y:auto;overscroll-behavior:contain}
+.registry-entry{border:1px solid #33475b;border-radius:8px;background:#101d29;padding:10px;min-width:0}
+.registry-entry summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;font-weight:500;list-style:revert}
+.registry-entry summary::marker{color:#91b4d5}
+.registry-entry summary strong{font-size:13px;flex:1;min-width:0}
+.registry-status{font-size:10px;background:#2a3c4c;border:1px solid #3a5365;padding:3px 6px;border-radius:5px;flex:none}
+.registry-entry p{font-size:12px;color:#b9cbdb;margin:8px 0;line-height:1.45}
+.registry-entry .registry-meta{color:#9aadc0;font-size:11px;overflow-wrap:anywhere}
+.registry-entry code{font-size:11px;white-space:normal;overflow-wrap:anywhere}
+.import-dialog{border:1px solid #4b6987;border-radius:12px;background:#13212e;color:#e4f1ff;max-width:min(780px,95vw);width:95vw;max-height:85vh}
+.import-dialog::backdrop{background:#000b}
+.import-dialog h2{margin:0 0 8px}
+.diff-preview{max-height:44vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 ui-monospace,monospace;background:#08121d;border-radius:7px;padding:12px;border:1px solid #30495c}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}
+#registry-search{width:100%}
+@media(max-width:600px){.pinned-panel{padding:6px;top:0}.pinned-heading{gap:6px}.pinned-heading .hint{width:100%;flex-basis:100%}.pin-table-scroll{max-height:28vh}.registry-list{grid-template-columns:1fr;max-height:460px}.registry-controls label{min-width:100%;}.pinned-grid{grid-template-columns:minmax(145px,1fr) repeat(var(--profiles,4),minmax(100px,1fr));font-size:11px}.pinned-grid>div{padding:5px}.lab-root .toolbar button{font-size:12px}}
+
+.rule-search-label{display:flex;flex-direction:column;gap:4px;max-width:480px;margin:8px 0;color:#aebdd0;font-size:12px}
+.rules-section[hidden],.rules-section label[hidden]{display:none!important}
