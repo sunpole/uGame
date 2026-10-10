@@ -1,3 +1,13 @@
+# uGame v0.2.56 · Three-pass Character Source Audit (2026-10-10)
+
+- Corrected the isolated Character Balance Lab candidate mapping: VYN +0.1 DEF, LOV +1 DODGE and no DEF. Owner explicitly prioritized late original correction (line 383) and UGD-0038. Original author file untouched.
+- 20 source line categories spanning all 394 lines (276 nonempty), 93 decisions in 10 chronological groups, 16 architectural subsystems cross-checked, and 21×65×4 adversarial arithmetic cases.
+- No improvements to Character Balance Lab UI/feature scope; no changes to Phaser runtime, GameState, SaveSystem, steps economy, gameplay probabilities, items or new character stats.
+- New Node regressions and Chromium desktop/mobile must pass before v0.2.56 QA prerelease. Previous rollback: v0.2.55; independent earlier checkpoint v0.2.54-pre-character-lab-20261010.
+- Details: [triple audit](docs/work-reports/2026-10-10-character-three-pass-audit.md) and [release QA](docs/releases/v0.2.56.md).
+
+---
+
 # uGame v0.2.55 · Isolated Character Balance Lab DEV (2026-10-10)
 
 - Standalone Character Balance Lab (reachable via Project Hub / Tools), 1–4 builds and 24 inspectable derived metrics with formula traces.
