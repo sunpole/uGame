@@ -49,7 +49,23 @@ function renderRegistry(){
   $('#registry-list').innerHTML=rows.map(x=>'<details class="registry-entry"><summary><strong>'+esc(x.abbreviation)+' · '+esc(x.name)+'</strong><span class="registry-status">'+esc(badgeText(x.implementation))+'</span></summary>'+
     '<p>'+esc(x.meaning)+'</p><p class="registry-meta"><b>Единица:</b> '+esc(x.unit)+'<br><b>Формула / правило:</b> '+esc(x.formula)+'<br><b>Источники начисления:</b> '+esc(x.sourceRules.length?x.sourceRules.join(', '):'сценарий или событие')+'<br>'+
     '<b>Статус решения:</b> '+esc(x.decisionStatus)+'<br><b>В действующей игре:</b> '+(x.gameActive?'собственная отдельная реализация':'нет')+
-    '<br><b>Документы:</b> '+x.sourceRefs.map(esc).join('; ')+'</p><p>'+esc(x.notes||'')+'</p></details>').join('')||'<p class="hint">Совпадений нет. Измените запрос или фильтр.</p>';
+    '<br><b>Документы:</b> '+x.sourceRefs.map(esc).join('; ')+'</p><p>'+esc(x.notes||'')+'</p>'+ (x.kind==='derived'?'<button type="button" data-reg-pin="'+esc(x.id)+'">📌 Закрепить показатель</button>':'')+'</details>').join('')||'<p class="hint">Совпадений нет. Измените запрос или фильтр.</p>';
+}
+function filterRules(){
+ const q=$('#rule-search').value.trim().toLocaleLowerCase('ru-RU');
+ let visible=0;
+ for(const section of $('#rule-editor').querySelectorAll('.rules-section')){
+   const header=section.querySelector('h3')?.textContent.toLocaleLowerCase('ru-RU')||'';
+   const matchAll=header.includes(q);
+   let shown=0;
+   for(const label of section.querySelectorAll('label')){
+     const haystack=label.textContent.toLocaleLowerCase('ru-RU')+' '+(label.querySelector('input')?.dataset.rule||'').toLocaleLowerCase('ru-RU');
+     const yes=!q||matchAll||haystack.includes(q);
+     label.hidden=!yes;if(yes)shown++;
+   }
+   section.hidden=shown===0;visible+=shown;
+ }
+ $('#rule-search-count').textContent='Показано параметров: '+visible;
 }
 function togglePin(key){
   if(!METRIC_KEYS.includes(key))return;
@@ -114,6 +130,8 @@ async function init(){
     $('#registry-search').addEventListener('input',renderRegistry);
     $('#registry-kind').addEventListener('change',renderRegistry);
     $('#registry-status').addEventListener('change',renderRegistry);
+    $('#registry-list').addEventListener('click',e=>{const button=e.target.closest('[data-reg-pin]');if(button){togglePin(button.dataset.regPin);notice('Показатель закреплён или откреплён.');}});
+    $('#rule-search').addEventListener('input',filterRules);
     $('#comparison-body').addEventListener('click',e=>{
       const button=e.target.closest('button[data-pin]');
       if(!button)return;
@@ -143,7 +161,7 @@ async function init(){
     });
     renderRegistry();
     subscribeLab(next=>{
-      state=next;pinButtons();renderPinned();
+      state=next;pinButtons();renderPinned();filterRules();
     });
     notice('Реестр и админ-инструменты готовы · безопасная песочница');
   }catch(e){notice('Не удалось загрузить реестр/админку: '+e.message,true);}
