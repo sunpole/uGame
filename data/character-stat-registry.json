@@ -1,0 +1,1148 @@
+{
+  "schemaVersion": 1,
+  "release": "0.2.57",
+  "status": "source-referenced-candidate",
+  "sourceBaselineCommit": "62f1a66c59456f5c7c4b36cd8499cf3e24365bce",
+  "priority": "Поздние решения владельца > UGD-0038 > поздние исправления автора > ранние черновики",
+  "records": [
+    {
+      "id": "vyn",
+      "abbreviation": "ВЫН",
+      "name": "Выносливость",
+      "kind": "input",
+      "unit": "Очки развития",
+      "meaning": "Увеличивает ХП, ХПС, ЗАЩ, физическую атаку, Шаги и ячейки.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Управляемый вход/правило сценария; не меняет действующее сохранение",
+      "sourceRefs": [
+        "ugame_anton_info.txt:15",
+        "UGD-0038"
+      ],
+      "implementation": "sandbox-input",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Игровая выдача очков/ОТВ ещё не интегрирована."
+    },
+    {
+      "id": "lov",
+      "abbreviation": "ЛОВ",
+      "name": "Ловкость",
+      "kind": "input",
+      "unit": "Очки развития",
+      "meaning": "Даёт УКЛ, ТОЧ, движение, атаку по скорости, криты и модификатор ХПС; ЗАЩ не повышает.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Управляемый вход/правило сценария; не меняет действующее сохранение",
+      "sourceRefs": [
+        "ugame_anton_info.txt:17,383",
+        "UGD-0038"
+      ],
+      "implementation": "sandbox-input",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Игровая выдача очков/ОТВ ещё не интегрирована."
+    },
+    {
+      "id": "intel",
+      "abbreviation": "ИНТ",
+      "name": "Интеллект",
+      "kind": "input",
+      "unit": "Очки развития",
+      "meaning": "Даёт РП/РПС, ПП/ППС, УВМ, УСУ, ТОЧ и экономические параметры.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Управляемый вход/правило сценария; не меняет действующее сохранение",
+      "sourceRefs": [
+        "ugame_anton_info.txt:19",
+        "UGD-0038"
+      ],
+      "implementation": "sandbox-input",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Игровая выдача очков/ОТВ ещё не интегрирована."
+    },
+    {
+      "id": "level",
+      "abbreviation": "ЗРЛ",
+      "name": "Уровень Зрелости",
+      "kind": "input",
+      "unit": "1–65",
+      "meaning": "Выдаёт фиксированные бонусы и распределяемые очки, отдельно от ЗРП.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Управляемый вход/правило сценария; не меняет действующее сохранение",
+      "sourceRefs": [
+        "UGD-0038 №39–43",
+        "UGD-0038"
+      ],
+      "implementation": "sandbox-input",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Игровая выдача очков/ОТВ ещё не интегрирована."
+    },
+    {
+      "id": "otv",
+      "abbreviation": "ОТВ",
+      "name": "Ответственность",
+      "kind": "input",
+      "unit": "Рейтинг, бонусы по 100",
+      "meaning": "Рейтинг решений персонажа, бонусы только за полные сотни; отрицательные случаи открыты.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Управляемый вход/правило сценария; не меняет действующее сохранение",
+      "sourceRefs": [
+        "ugame_anton_info.txt:23–31,371–375",
+        "UGD-0038"
+      ],
+      "implementation": "sandbox-input",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Игровая выдача очков/ОТВ ещё не интегрирована."
+    },
+    {
+      "id": "hp",
+      "abbreviation": "ХП",
+      "name": "Здоровье",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Максимальная прочность персонажа; PvE-урон идёт прямо в ХП.",
+      "sourceRules": [
+        "ВЫН",
+        "ОТВ / полные сотни"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:1–3, 15–19, 36, 126–140",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "От здоровья зависит жизнеспособность; минимальная стартовая база и первые пассивы не утверждены.",
+      "cap": null
+    },
+    {
+      "id": "hps",
+      "abbreviation": "ХПС",
+      "name": "Восстановление здоровья",
+      "kind": "derived",
+      "unit": "ед./сек",
+      "meaning": "Скорость восстановления здоровья во время открытой сессии.",
+      "sourceRules": [
+        "ВЫН",
+        "Столица: Сила",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:15–17, 69–98, 179",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Зависит от ВЫН, ЛОВ как процентного модификатора, Желания и ГЛР.",
+      "cap": null
+    },
+    {
+      "id": "rp",
+      "abbreviation": "РП",
+      "name": "Основной ресурс",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Запас одного из четырёх родных ресурсов: СИЛ/КОН/ТЕМП/ВДОХ.",
+      "sourceRules": [
+        "ИНТ",
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Сила",
+        "Столица: Концентрация",
+        "Столица: Темп",
+        "Столица: Вдохновение"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:7–10, 104–112",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Родной тип закрепляется за столицей. Возможна оплата умений после Желания.",
+      "cap": null
+    },
+    {
+      "id": "rps",
+      "abbreviation": "РПС",
+      "name": "Регенерация основного ресурса",
+      "kind": "derived",
+      "unit": "ед./сек",
+      "meaning": "Скорость восполнения основного ресурса.",
+      "sourceRules": [
+        "ИНТ",
+        "ЗРЛ",
+        "Столица: Сила",
+        "Столица: Концентрация",
+        "Столица: Темп",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:19, 41–45, 109–112",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Темп: % от максимального РП за секунду; другие столицы имеют свои модификаторы.",
+      "cap": null
+    },
+    {
+      "id": "pp",
+      "abbreviation": "ПП",
+      "name": "Покров",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Отдельный PvP-запас: первым принимает урон игроков, PvE повреждает ХП.",
+      "sourceRules": [
+        "ИНТ",
+        "ЗРЛ"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:3, 19, 205–207",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Прямые +5 ПП уже с первого ЗРЛ, нулевой стартовый итоговый Покров отменён.",
+      "cap": null
+    },
+    {
+      "id": "pps",
+      "abbreviation": "ППС",
+      "name": "Регенерация Покрова",
+      "kind": "derived",
+      "unit": "ед./сек",
+      "meaning": "Покров восстанавливается даже во время PvP.",
+      "sourceRules": [
+        "ИНТ",
+        "ЗРЛ",
+        "Столица: Темп",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:19, 91–98",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Зависит от ИНТ, ЗРЛ, Желания и глобальной регенерации.",
+      "cap": null
+    },
+    {
+      "id": "jp",
+      "abbreviation": "ЖП",
+      "name": "Желание",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Запас Желания для усиления и первичной оплаты умений.",
+      "sourceRules": [
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Вдохновение"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:5, 69–98",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Желание 1+ активирует один набор пассивов, 0 — другой.",
+      "cap": null
+    },
+    {
+      "id": "jps",
+      "abbreviation": "ЖПС",
+      "name": "Регенерация Желания",
+      "kind": "derived",
+      "unit": "ед./сек",
+      "meaning": "Восстановление Желания после полного восстановления РП и задержки 3 секунды.",
+      "sourceRules": [
+        "ЗРЛ"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:69–73",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Итоговая ЖПС рассчитывается, но временная модель ещё отсутствует.",
+      "cap": null
+    },
+    {
+      "id": "atk",
+      "abbreviation": "АТК",
+      "name": "Атака",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Базовое атакующее значение, будущий компонент физического урона.",
+      "sourceRules": [
+        "ВЫН",
+        "ЗРЛ",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:47, 148–149",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Боевой калькулятор урона ещё не создан.",
+      "cap": 99999
+    },
+    {
+      "id": "def",
+      "abbreviation": "ЗАЩ",
+      "name": "Защита",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Снижение получаемого урона; точное событие боя не моделируется.",
+      "sourceRules": [
+        "ВЫН",
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Сила",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:15, 17, 172–173, 383",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "ВЫН +0,1; ЛОВ не добавляет защиту (поздняя авторская поправка).",
+      "cap": 9999
+    },
+    {
+      "id": "ukl",
+      "abbreviation": "УКЛ",
+      "name": "Уклонение",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Вероятность избежать урона от разных источников.",
+      "sourceRules": [
+        "ЛОВ",
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Темп",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:17, 175–176, 383",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "ЛОВ +1 УКЛ; боевой шанс не реализован.",
+      "cap": 8500
+    },
+    {
+      "id": "toch",
+      "abbreviation": "ТОЧ",
+      "name": "Точность",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Способность преодолевать уклонение.",
+      "sourceRules": [
+        "ЛОВ",
+        "ИНТ",
+        "ОТВ / полные сотни",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:17–25, 169–170",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "От ЛОВ, ИНТ, ОТВ и Желания; процедура попадания не реализована.",
+      "cap": 8500
+    },
+    {
+      "id": "ska",
+      "abbreviation": "СКА",
+      "name": "Скорость атаки",
+      "kind": "derived",
+      "unit": "баллы (100=1 удар/сек по черновику)",
+      "meaning": "Частота атак; реальная базовая скорость и тип анимации не определены.",
+      "sourceRules": [
+        "ЛОВ",
+        "ОТВ / полные сотни",
+        "Столица: Концентрация",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:48, 151–152",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Значение можно сравнивать, но нельзя выдавать за измеренную скорость игры.",
+      "cap": 9999
+    },
+    {
+      "id": "skp",
+      "abbreviation": "СКП",
+      "name": "Скорость передвижения",
+      "kind": "derived",
+      "unit": "баллы (100=1 px/сек по черновику)",
+      "meaning": "Предлагаемый модификатор движения персонажа.",
+      "sourceRules": [
+        "ЛОВ",
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Вдохновение",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:65, 193–194",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Нужен проверяемый контракт с действующим Phaser-перемещением.",
+      "cap": 49999
+    },
+    {
+      "id": "kru",
+      "abbreviation": "КРУ",
+      "name": "Критический урон",
+      "kind": "derived",
+      "unit": "баллы (100=+100% по исходнику)",
+      "meaning": "Дополнительный урон при срабатывании критической атаки.",
+      "sourceRules": [
+        "ЛОВ",
+        "ОТВ / полные сотни",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:49, 154–155",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Формулы реального боевого события ещё нет.",
+      "cap": 99999
+    },
+    {
+      "id": "krsh",
+      "abbreviation": "КРШ",
+      "name": "Критический шанс",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Предложенная вероятность критической атаки.",
+      "sourceRules": [
+        "ЛОВ",
+        "ОТВ / полные сотни",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:50, 157–158, 385–386",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Автор подтвердил, что ОТВ сознательно даёт больше, чем ЛОВ.",
+      "cap": 8500
+    },
+    {
+      "id": "uvm",
+      "abbreviation": "УВМ",
+      "name": "Уменьшение времени восстановления умений",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Сокращает КД способностей при применении.",
+      "sourceRules": [
+        "ИНТ",
+        "ОТВ / полные сотни",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:52, 160–161",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Пример «10→9 секунд при 100 УВМ» неверен; 100 =1%, значит 10→9,9.",
+      "cap": 9999
+    },
+    {
+      "id": "ust",
+      "abbreviation": "УСТ",
+      "name": "Уменьшение стоимости умений",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Снижает стоимость применения способности.",
+      "sourceRules": [
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:53, 163–164",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Позднее правило +1 УСТ за ЗРЛ заменяет исторические −0,01.",
+      "cap": 9999
+    },
+    {
+      "id": "usu",
+      "abbreviation": "УСУ",
+      "name": "Усиление умений",
+      "kind": "derived",
+      "unit": "баллы (100=1%)",
+      "meaning": "Усиливает показатели способности; полная оплата Желанием даёт дополнительный эффект.",
+      "sourceRules": [
+        "ИНТ",
+        "ЗРЛ"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:54, 76, 166–167",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Нет действующего расчёта стоимости умения и активного Желания.",
+      "cap": 9999
+    },
+    {
+      "id": "glr",
+      "abbreviation": "ГЛР",
+      "name": "Глобальная регенерация",
+      "kind": "derived",
+      "unit": "баллы (100=+1%)",
+      "meaning": "Мультипликативно увеличивает скорости восстановления ресурсов.",
+      "sourceRules": [
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Столица: Вдохновение",
+        "Желание = 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:60, 178–179",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Не является прибавкой плоских единиц/сек; значение из candidate Lab.",
+      "cap": 9999
+    },
+    {
+      "id": "steps",
+      "abbreviation": "ШАГ",
+      "name": "Максимум Шагов",
+      "kind": "derived",
+      "unit": "ед.",
+      "meaning": "Предлагаемый лимит Шагов из будущих характеристик.",
+      "sourceRules": [
+        "ВЫН",
+        "ЛОВ",
+        "ИНТ",
+        "ЗРЛ"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:61, 181–182",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Не равен действующему runtime-максимуму 100 000 000; пока независимый калькулятор.",
+      "cap": 999999999999999
+    },
+    {
+      "id": "rgs",
+      "abbreviation": "РГШ",
+      "name": "Регенерация Шагов в городе",
+      "kind": "derived",
+      "unit": "ед./сек",
+      "meaning": "Предлагаемая скорость начисления Шагов в городе.",
+      "sourceRules": [
+        "ВЫН",
+        "ЛОВ",
+        "ИНТ",
+        "ЗРЛ",
+        "ОТВ / полные сотни",
+        "Желание > 0"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:62, 184–185",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Действующий StepSystem имеет собственный контракт +5/сек и debt.",
+      "cap": 999999
+    },
+    {
+      "id": "slots",
+      "abbreviation": "МКЯ",
+      "name": "Дополнительные ячейки",
+      "kind": "derived",
+      "unit": "ячейки, дробно",
+      "meaning": "Дробные бонусы суммируются; целая дополнительная ячейка появляется при накоплении 1.",
+      "sourceRules": [
+        "ВЫН",
+        "ЗРЛ",
+        "ОТВ / полные сотни"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:63, 187–188, 389–391",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "Новый бонус не подключён к существующему инвентарю.",
+      "cap": 999
+    },
+    {
+      "id": "slotWeight",
+      "abbreviation": "МВЯ",
+      "name": "Вес на ячейку",
+      "kind": "derived",
+      "unit": "кг",
+      "meaning": "Предлагаемый максимальный вес ресурсной ячейки.",
+      "sourceRules": [
+        "ВЫН",
+        "ЛОВ",
+        "ИНТ",
+        "ЗРЛ",
+        "ОТВ / полные сотни"
+      ],
+      "dependencies": [],
+      "formula": "baseline + flat(ВЫН, ЛОВ, ИНТ, ЗРЛ, ОТВ, столица, ЖП, внешние) → проценты столицы/ЛОВ → ГЛР → предложенный кап",
+      "sourceRefs": [
+        "ugame_anton_info.txt:64, 190–191",
+        "UGD-0038 (решения №1–93, поздние исправления)"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "candidate",
+      "gameActive": false,
+      "notes": "50 кг — действующий прототип; будущие приросты не подключены к контейнерам.",
+      "cap": 999999
+    },
+    {
+      "id": "city-force",
+      "abbreviation": "СИЛ",
+      "name": "Происхождение: Сила",
+      "kind": "origin",
+      "unit": "тип ресурса",
+      "meaning": "Родной ресурс и врождённые бонусы; 10 стартовых очков распределены по списку допустимых вариантов.",
+      "sourceRules": [
+        "origin",
+        "city.flat",
+        "city.percent"
+      ],
+      "dependencies": [
+        "level",
+        "vyn",
+        "lov",
+        "intel"
+      ],
+      "formula": "стартовые ВЫН/ЛОВ/ИНТ + city.flat + city.percent",
+      "sourceRefs": [
+        "ugame_anton_info.txt:104–112,126–140",
+        "UGD-0038 №10–15, №19, №28, №52"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Генератор на основе последних 1000 созданий и стартовый пассив пока отсутствуют."
+    },
+    {
+      "id": "city-focus",
+      "abbreviation": "КОН",
+      "name": "Происхождение: Концентрация",
+      "kind": "origin",
+      "unit": "тип ресурса",
+      "meaning": "Родной ресурс и врождённые бонусы; 10 стартовых очков распределены по списку допустимых вариантов.",
+      "sourceRules": [
+        "origin",
+        "city.flat",
+        "city.percent"
+      ],
+      "dependencies": [
+        "level",
+        "vyn",
+        "lov",
+        "intel"
+      ],
+      "formula": "стартовые ВЫН/ЛОВ/ИНТ + city.flat + city.percent",
+      "sourceRefs": [
+        "ugame_anton_info.txt:104–112,126–140",
+        "UGD-0038 №10–15, №19, №28, №52"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Генератор на основе последних 1000 созданий и стартовый пассив пока отсутствуют."
+    },
+    {
+      "id": "city-tempo",
+      "abbreviation": "ТЕМП",
+      "name": "Происхождение: Темп",
+      "kind": "origin",
+      "unit": "тип ресурса",
+      "meaning": "Родной ресурс и врождённые бонусы; 10 стартовых очков распределены по списку допустимых вариантов.",
+      "sourceRules": [
+        "origin",
+        "city.flat",
+        "city.percent"
+      ],
+      "dependencies": [
+        "level",
+        "vyn",
+        "lov",
+        "intel"
+      ],
+      "formula": "стартовые ВЫН/ЛОВ/ИНТ + city.flat + city.percent",
+      "sourceRefs": [
+        "ugame_anton_info.txt:104–112,126–140",
+        "UGD-0038 №10–15, №19, №28, №52"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Генератор на основе последних 1000 созданий и стартовый пассив пока отсутствуют."
+    },
+    {
+      "id": "city-inspire",
+      "abbreviation": "ВДОХ",
+      "name": "Происхождение: Вдохновение",
+      "kind": "origin",
+      "unit": "тип ресурса",
+      "meaning": "Родной ресурс и врождённые бонусы; 10 стартовых очков распределены по списку допустимых вариантов.",
+      "sourceRules": [
+        "origin",
+        "city.flat",
+        "city.percent"
+      ],
+      "dependencies": [
+        "level",
+        "vyn",
+        "lov",
+        "intel"
+      ],
+      "formula": "стартовые ВЫН/ЛОВ/ИНТ + city.flat + city.percent",
+      "sourceRefs": [
+        "ugame_anton_info.txt:104–112,126–140",
+        "UGD-0038 №10–15, №19, №28, №52"
+      ],
+      "implementation": "calculated-only",
+      "decisionStatus": "principle-accepted",
+      "gameActive": false,
+      "notes": "Генератор на основе последних 1000 созданий и стартовый пассив пока отсутствуют."
+    },
+    {
+      "id": "desire-spend",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Оплата Желанием",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Умение оплачивается сначала ЖП, затем РП; активное усиление при полной оплате из ЖП.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "ugame_anton_info.txt:69–98, UGD-0038 №2–7"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "desire-regeneration",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Условия восстановления Желания",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Начать ЖПС после 100% РП и 3 секунд; временная машина состояний отсутствует.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "ugame_anton_info.txt:69–73"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "start-passive",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Стартовые пассивы",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Четыре обязательных бесплатных узла; бонусы должны гарантировать жизнеспособность 21 вариантов.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №31–43, №52, №92"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "passive-tree",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Связанное дерево пассивов",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Связность, временные очки экипировки, мгновенное отключение и восстановление.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №31–43, №53, №63, №71–72, №92–93"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "experience",
+      "abbreviation": "ПРАВИЛО",
+      "name": "ЗРП/ЗРЛ",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Четыре фазы опыта; цель 1,1 млрд только для 64→65, после 65 опыта нет.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №18, №44–46, №87"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "monster-xp",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Монстры и чемпионы",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "База ЗРП по максимальному HP на spawn; сложности перемножаются, чемпион не задаёт XP множитель напрямую.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №54–65, №69, №79–82"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "party-xp",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Групповой опыт",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "До 12 участников; eligibility, победившая группа, деление пула и личные штрафы уровней.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №56–59, №66–70, №76–78, №83–86"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "death-penalty",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Штраф при смерти",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Процент стоимости полного следующего уровня, без уменьшения ЗРЛ.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №88–89"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "session-regeneration",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Онлайн-регенерация",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "ХП/ПП/РП/ЖП регенерируют при открытой сессии, даже AFK и background, но не offline.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №73–75"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "pvp-shroud",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Покров в PvP",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Урон игроков сначала ПП, монстров сразу ХП; ППС действует в PvP.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "ugame_anton_info.txt:205–207, UGD-0038 №50, №62"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "flat-increased-more",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Аддитивные и мультипликативные бонусы",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Сначала flat, затем суммируемые increased, затем последовательные more.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №30"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "group-boss",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Мировые боссы",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "ЗРП ведущей по суммарному урону группе, отдельные условия квестового события.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №58–59, №67–68"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "session-xp-efficiency",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Антигринд ЗРП",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Цель — не поощрять многочасовой гринд, точные коэффициенты не определены.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "ugame_anton_info.txt:291–318, UGD-0038 №22"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "otv-gain",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Рейтинг ОТВ",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Ориентир 6 вводных квестов по +100, отрицательные штрафы не утверждены.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №21"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "steps-contract",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Экономика Шагов",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Существующий StepSystem: старт 10000, cap 100млн, город +5/сек, долг отдельно.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "docs/STEPS-ECONOMY.md"
+      ],
+      "implementation": "separate-runtime",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": true,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "container-contract",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Весовые контейнеры",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "Действующие 50 кг/ячейка, бонусы нового МКЯ/МВЯ не подключены.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "docs/CONTAINER-SYSTEM.md"
+      ],
+      "implementation": "separate-runtime",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": true,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    },
+    {
+      "id": "spawn-balance",
+      "abbreviation": "ПРАВИЛО",
+      "name": "Редкость стартовых комбинаций",
+      "kind": "system",
+      "unit": "условия/события",
+      "meaning": "21 стартовая комбинация; выбор с мягкой редкостью по последним 1000 персонажам.",
+      "sourceRules": [],
+      "dependencies": [],
+      "formula": "Не реализовано как вычислительный модуль, точные параметры могут быть открыты",
+      "sourceRefs": [
+        "UGD-0038 №10–15"
+      ],
+      "implementation": "documented-only",
+      "decisionStatus": "mixed-approved-and-open",
+      "gameActive": false,
+      "notes": "Не включено в будущий CharacterSystem автоматически."
+    }
+  ],
+  "knownConflicts": [
+    {
+      "id": "C02",
+      "title": "Ошибка примера УВМ (100 =1%, 10сек→9,9сек, не 9сек)",
+      "status": "source-example-error",
+      "source": "ugame_anton_info.txt:161"
+    },
+    {
+      "id": "C10",
+      "title": "Отрицательное ОТВ: способ округления/штрафа открыт",
+      "status": "unresolved",
+      "source": "ugame_anton_info.txt:25,31"
+    },
+    {
+      "id": "C08",
+      "title": "Базовые 100 ХП и 10 РП только эксперимент",
+      "status": "candidate-inputs",
+      "source": "UGD-0038 №20"
+    },
+    {
+      "id": "C09",
+      "title": "ШАГ Lab и StepSystem не интегрированы",
+      "status": "unresolved-integration",
+      "source": "docs/STEPS-ECONOMY.md"
+    },
+    {
+      "id": "C11",
+      "title": "ЖП/Пассивы/ЗРП/Скорости не реализованы в живом персонаже",
+      "status": "unimplemented",
+      "source": "UGD-0038 №1–93"
+    }
+  ]
+}
