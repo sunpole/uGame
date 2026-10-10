@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.54",
-  "stage": "browser-boot-gate-and-optional-texture-fallback",
-  "updated": "2026-10-09",
-  "summary": "Chromium desktop/mobile E2E QA; optional biome texture fallback and reliable mobile Pre-flight start. No gameplay balance changes."
+  "version": "0.2.55",
+  "stage": "isolated-character-balance-lab-dev",
+  "updated": "2026-10-10",
+  "summary": "Independent 1–4 character build calculator and temporary coefficient editor. No changes to gameplay balance, runtime stats or saves."
 }
