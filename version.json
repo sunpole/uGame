@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.55",
-  "stage": "isolated-character-balance-lab-dev",
+  "version": "0.2.56",
+  "stage": "character-source-three-pass-audit",
   "updated": "2026-10-10",
-  "summary": "Independent 1–4 character build calculator and temporary coefficient editor. No changes to gameplay balance, runtime stats or saves."
+  "summary": "Resolve late VYN/LOV correction and audit 394 source lines, 93 owner decisions, system contracts and edge cases. No active game stat changes."
 }

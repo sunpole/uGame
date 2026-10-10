@@ -1,0 +1,88 @@
+name: uGame v0.2.56 source audit and regression release
+
+on:
+  pull_request:
+    paths:
+      - 'data/character-balance-candidate.json'
+      - 'data/character-source-audit-register.json'
+      - 'tests/character-source-triple-audit.test.mjs'
+      - 'tests/character-balance.test.mjs'
+      - 'docs/project-journal/**'
+      - 'docs/work-reports/2026-10-10-character-three-pass-audit.md'
+      - 'version.json'
+      - 'package.json'
+      - 'index.html'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0256.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.56.md'
+      - '.github/workflows/publish-v0256.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify immutable source, decisions, syntax and all Node regressions
+        run: |
+          node --check src/character-balance/engine.js
+          node --check tests/character-source-triple-audit.test.mjs
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.56')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.56'\"))throw Error('Pre-flight boot version mismatch');
+          "
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Character Lab desktop/mobile regression smoke
+        run: node tests/character-lab-browser-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Game Pre-flight Phaser desktop/mobile Save/F5 regression smoke
+        run: node tests/browser-boot-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Preserve previous checkpoint tags
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.55
+          gh release view v0.2.54-pre-character-lab-20261010
+      - name: Publish QA prerelease only when full CI is green
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.56 >/dev/null 2>&1; then
+            gh release create v0.2.56 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.56 · Character source triple audit" \
+              --notes-file docs/releases/v0.2.56.md --prerelease
+          fi
+      - name: Preserve failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-v0256-qa-failure
+          path: |
+            artifacts/character-lab/
+            artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 7

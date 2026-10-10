@@ -79,3 +79,15 @@ test('hard cap is visible in trace',()=>{
   assert.equal(x.values.ska,9999);assert.ok(x.capped.includes('ska'));
   assert.match(x.trace.ska.at(-1).source,/Верхний предел/);
 });
+
+test('newer author correction and owner confirmation: LOV gives UKL but no DEF',()=>{
+  assert.equal(rules.perVyn.def,0.1);
+  assert.equal(rules.perLov.ukl,1);
+  assert.equal(Object.hasOwn(rules.perLov,'def'),false);
+  const before=defaultProfile(rules,10,'force',3);
+  const a=calculateCharacter(rules,before);
+  const b=calculateCharacter(rules,{...before,lov:before.lov+1});
+  assert.equal(a.values.def,b.values.def,'LOV must not add defensive points');
+  assert.equal(b.values.ukl-a.values.ukl,1,'LOV must add one dodge point');
+  assert.equal(b.values.ska-a.values.ska,1);
+});

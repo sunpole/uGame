@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-10-10",
+  "mainBefore": "474ae23debb18b57de31235330419c99bd2f8da3",
+  "primaryFile": "ugame_anton_info.txt",
+  "originalLines": 394,
+  "originalNonEmptyLines": 276,
+  "priority": [
+    "explicit owner correction 2026-10-10",
+    "UGD-0038 latest accepted decision/supersession",
+    "later author correction in original file",
+    "earlier author wording",
+    "historical hypothesis/example"
+  ],
+  "sourceSegments": [
+    {
+      "first": 1,
+      "last": 12,
+      "subject": "основные полосы: здоровье/Покров/Желание/4 ресурса",
+      "status": "partial"
+    },
+    {
+      "first": 13,
+      "last": 25,
+      "subject": "ВЫН/ЛОВ/ИНТ, устаревшая ранняя ЗРЕЛ, 100 ОТВ",
+      "status": "partial,superseded"
+    },
+    {
+      "first": 26,
+      "last": 32,
+      "subject": "бейджи/шкала ОТВ/цель 50000",
+      "status": "documented"
+    },
+    {
+      "first": 33,
+      "last": 40,
+      "subject": "каталог характеристик и полос",
+      "status": "mapped"
+    },
+    {
+      "first": 41,
+      "last": 45,
+      "subject": "ранние бонусы 4 столиц",
+      "status": "superseded"
+    },
+    {
+      "first": 46,
+      "last": 66,
+      "subject": "24 производных значения: аббревиатуры",
+      "status": "mapped"
+    },
+    {
+      "first": 67,
+      "last": 101,
+      "subject": "Желание: активное, пассивное, расход и реген",
+      "status": "partial"
+    },
+    {
+      "first": 102,
+      "last": 113,
+      "subject": "детальные бонусы столиц",
+      "status": "partial"
+    },
+    {
+      "first": 114,
+      "last": 124,
+      "subject": "ОТВ: рейтинг, начальный 1, квесты и штрафы",
+      "status": "partial"
+    },
+    {
+      "first": 125,
+      "last": 143,
+      "subject": "стартовые базы, 10 очков, 4 столицы",
+      "status": "partial"
+    },
+    {
+      "first": 144,
+      "last": 196,
+      "subject": "формулы/капы и единицы всех показателей",
+      "status": "partial"
+    },
+    {
+      "first": 197,
+      "last": 223,
+      "subject": "боевые правила и описание ЗРП/ЗРЛ",
+      "status": "documented"
+    },
+    {
+      "first": 224,
+      "last": 255,
+      "subject": "старый четырёхфазный ЗРП",
+      "status": "superseded,unimplemented"
+    },
+    {
+      "first": 256,
+      "last": 272,
+      "subject": "монстры и ранние множители чемпионов",
+      "status": "superseded,unimplemented"
+    },
+    {
+      "first": 273,
+      "last": 290,
+      "subject": "мировые/эндгейм боссы",
+      "status": "partial,unimplemented"
+    },
+    {
+      "first": 291,
+      "last": 320,
+      "subject": "антигринд XP/время сессии/ОТВ/пати",
+      "status": "partial,unimplemented"
+    },
+    {
+      "first": 321,
+      "last": 354,
+      "subject": "штраф смерти/сохранение уровня",
+      "status": "partial,unimplemented"
+    },
+    {
+      "first": 355,
+      "last": 370,
+      "subject": "flat/increased/more и окончательные бонусы родного ресурса",
+      "status": "partial"
+    },
+    {
+      "first": 371,
+      "last": 378,
+      "subject": "поздняя шкала ОТВ",
+      "status": "documented"
+    },
+    {
+      "first": 379,
+      "last": 394,
+      "subject": "поздние авторские исправления ВЫН/ЛОВ, ОТВ, ячейки",
+      "status": "resolved"
+    }
+  ],
+  "discussionFile": "docs/project-journal/records/UGD-0038-anton-character-stats-draft.md",
+  "discussionDecisionBlocks": [
+    {
+      "first": 1,
+      "last": 15,
+      "subject": "старт, Желание, 4 ресурса, редкость 21 сочетания",
+      "labCoverage": "partial"
+    },
+    {
+      "first": 16,
+      "last": 23,
+      "subject": "ЗРП/4 фазы/столицы/ОТВ/смерть",
+      "labCoverage": "partial"
+    },
+    {
+      "first": 24,
+      "last": 30,
+      "subject": "пассивный старт, очки, ресурс и flat/increased/more",
+      "labCoverage": "partial"
+    },
+    {
+      "first": 31,
+      "last": 38,
+      "subject": "единое дерево, бесплатный старт, гибриды",
+      "labCoverage": "partial"
+    },
+    {
+      "first": 39,
+      "last": 43,
+      "subject": "ЗРЛ/УСТ/очки/стартовый Покров/пути",
+      "labCoverage": "partial"
+    },
+    {
+      "first": 44,
+      "last": 53,
+      "subject": "финальные 1,1 млрд ЗРП, чемпионы, PvP, экипировка",
+      "labCoverage": "documented"
+    },
+    {
+      "first": 54,
+      "last": 63,
+      "subject": "разница уровней, антиабуз групп и PvP-Покров",
+      "labCoverage": "documented"
+    },
+    {
+      "first": 64,
+      "last": 73,
+      "subject": "пул XP, 12 участников, чемпион, реген/пассивы",
+      "labCoverage": "documented"
+    },
+    {
+      "first": 74,
+      "last": 83,
+      "subject": "AFK, online, eligibility, базы XP, зоны",
+      "labCoverage": "documented"
+    },
+    {
+      "first": 84,
+      "last": 93,
+      "subject": "заслуженность XP, overflow, смерть, экипировка",
+      "labCoverage": "documented"
+    }
+  ],
+  "decisionNumbers": {
+    "from": 1,
+    "to": 93
+  },
+  "systems": [
+    {
+      "id": "character-stats",
+      "coverage": "partial",
+      "actual": [
+        "data/character-balance-candidate.json",
+        "src/character-balance/engine.js"
+      ],
+      "notes": "24 вычисляемые метрики, но часть игровых эффектов не моделируется"
+    },
+    {
+      "id": "rpg-resource-bars",
+      "coverage": "partial",
+      "actual": [],
+      "notes": "Нет состояния текущего/макс ХП/РП/ЖП/ПП и расходования"
+    },
+    {
+      "id": "desire-payment",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "ЖП→РП, отказ при недостатке, активный +10 УСУ и 30%"
+    },
+    {
+      "id": "desire-timer",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "после 100% РП 3 секунды, pause/reset, 0 и 1+"
+    },
+    {
+      "id": "xp-progression",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "ЗРП 4 фазы, 1,1 млрд на 64→65, запрет after 65"
+    },
+    {
+      "id": "combat-monsters",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "мобы, champion, сложность и правильный HP snapshot"
+    },
+    {
+      "id": "xp-party-12",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "группы 1..12, eligible alive/location/from first hit, штраф уровня"
+    },
+    {
+      "id": "pvp-shroud",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "Покров только vs players, regen PvP, PvE сразу HP"
+    },
+    {
+      "id": "xp-death",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "штраф процент от полной стоимости уровня, no delevel"
+    },
+    {
+      "id": "session-regen",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "on open/AFK/background, no offline catchup"
+    },
+    {
+      "id": "passive-graph",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "4 fixed auto node, связность, temporary points and reactivation"
+    },
+    {
+      "id": "start-rarity",
+      "coverage": "missing",
+      "actual": [],
+      "notes": "window last 1000 creations, 21 variant weights"
+    },
+    {
+      "id": "otv-rating-quests",
+      "coverage": "partial",
+      "actual": [],
+      "notes": "ОТВ 600 на 3 уровне только пример 6 квестов по +100"
+    },
+    {
+      "id": "steps-economy",
+      "coverage": "separate-runtime",
+      "actual": [
+        "src/step-system.js",
+        "docs/STEPS-ECONOMY.md"
+      ],
+      "notes": "10000 balance, max100000000, 5/sec city; новые ШАГ от уровня не подключены"
+    },
+    {
+      "id": "inventory-cells",
+      "coverage": "separate-runtime",
+      "actual": [
+        "docs/CONTAINER-SYSTEM.md"
+      ],
+      "notes": "весовые ячейки существуют, новых МКЯ/МВЯ пока нет"
+    },
+    {
+      "id": "resource-master-idle",
+      "coverage": "separate-runtime",
+      "actual": [
+        "src/resource-expedition-system.js",
+        "docs/project-journal/ACTIVE-IDLE-CORE.md"
+      ],
+      "notes": "автономные Encounter-тиры и real-time idle не путать с offline regen героя"
+    }
+  ],
+  "ruleResolutions": [
+    {
+      "id": "lov-dodge",
+      "status": "resolved",
+      "source": "ugame_anton_info.txt:383",
+      "previous": "ugame_anton_info.txt:17",
+      "current": "perVyn.def=0.1, perLov.ukl=1, perLov.def absent"
+    },
+    {
+      "id": "pp-at-start",
+      "status": "resolved",
+      "source": "UGD-0038 №39–43 + explicit 2026-10-10 correction",
+      "current": "perLevel.pp=5 from level1"
+    },
+    {
+      "id": "level-point-rewards",
+      "status": "resolved",
+      "source": "UGD-0038 №39–43",
+      "current": "3 ordinary; 5 on 10/20/30; 10 on 40/50/55; 15 on 60; 20 on 65"
+    },
+    {
+      "id": "otv-600",
+      "status": "scenario",
+      "source": "UGD-0038 №21 + later 2026-10-10 note",
+      "current": "start low, six +100 quests; level3 600 sandbox example, not gameplay rule"
+    },
+    {
+      "id": "hp-base",
+      "status": "open",
+      "source": "UGD-0038 №20/24/38/52/92",
+      "current": "baseline.hp=100 is only a demonstration; startup nodes need arithmetic"
+    },
+    {
+      "id": "steps-base",
+      "status": "open",
+      "source": "docs/STEPS-ECONOMY.md",
+      "current": "lab base steps=0, runtime start10000/max100000000"
+    },
+    {
+      "id": "lov-def",
+      "status": "resolved",
+      "source": "ugame_anton_info.txt:383; owner reconfirmed",
+      "current": "only VYN gives direct DEF among base stats"
+    },
+    {
+      "id": "negative-otv",
+      "status": "open",
+      "source": "ugame_anton_info.txt:25,31,178",
+      "current": "trunc negative is temporary, user says round down, direction under review"
+    },
+    {
+      "id": "xp64to65",
+      "status": "resolved-target",
+      "source": "UGD-0038 №44",
+      "current": "required XP exactly target about 1.1bn, old 8000*64^4.5 superseded"
+    }
+  ]
+}

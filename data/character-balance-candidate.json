@@ -2,38 +2,330 @@
   "schemaVersion": 1,
   "status": "discussing",
   "title": "UGD-0038 · Character Balance Lab · расчётный кандидат (НЕ игровой баланс)",
-  "source": ["ugame_anton_info.txt", "docs/project-journal/records/UGD-0038-anton-character-stats-draft.md"],
+  "source": [
+    "ugame_anton_info.txt",
+    "docs/project-journal/records/UGD-0038-anton-character-stats-draft.md"
+  ],
   "notes": [
     "Стартовые базы 100 ХП и 10 РП — демонстрационные входы пользователя, не принятые параметры игры.",
     "Пассивный стартовый узел, экипировка и реальные умения пока не имеют числовых коэффициентов; можно моделировать дополнительные flat-модификаторы.",
     "ОТВ 600 с ЗРЛ 3 — сценарий обсуждения, а не автоматически присваиваемый рейтинг реального персонажа.",
     "Базовая частота атаки и фактическая скорость движения не утверждены: СКА/СКП показаны в условных единицах.",
     "Нулевой базовый ПП в расчёте не означает нулевого итогового ПП: ЗРЛ 1 гарантирует прямые +5 ПП без отрицательных эффектов.",
-    "Все изменения коэффициентов в браузере временные. Нет записи в localStorage, SaveSystem, сервер и игровой персонаж."
+    "Все изменения коэффициентов в браузере временные. Нет записи в localStorage, SaveSystem, сервер и игровой персонаж.",
+    "Уточнение 10.10.2026: поздняя строка 383 авторского файла и повторное подтверждение владельца отменяют ранние +0,01 ЗАЩ/ЛОВ из строки 17. ЛОВ +1 УКЛ, ВЫН +0,1 ЗАЩ."
   ],
-  "levelPoints": {"ordinary": 3, "milestones": {"10": 5, "20": 5, "30": 5, "40": 10, "50": 10, "55": 10, "60": 15, "65": 20}},
+  "levelPoints": {
+    "ordinary": 3,
+    "milestones": {
+      "10": 5,
+      "20": 5,
+      "30": 5,
+      "40": 10,
+      "50": 10,
+      "55": 10,
+      "60": 15,
+      "65": 20
+    }
+  },
   "cities": {
-    "force": {"name": "Сила", "mainResource": "СИЛ", "start": [[5,0,5],[5,1,4],[5,2,3],[5,3,2],[5,4,1],[5,5,0]], "flat": {"rp": 10, "rps": 1, "def": 10}, "percent": {"hps": 1}},
-    "focus": {"name": "Концентрация", "mainResource": "КОН", "start": [[0,5,5],[1,5,4],[2,5,3],[3,5,2],[4,5,1],[5,5,0]], "flat": {"rp": 60, "ska": 10}, "percent": {"rps": 1}},
-    "tempo": {"name": "Темп", "mainResource": "ТЕМП", "start": [[0,5,5],[1,4,5],[2,3,5],[3,2,5],[4,1,5],[5,0,5]], "flat": {"rp": 10, "ukl": 10}, "percent": {"pps": 1}, "regenFromMaxRpPercent": 1},
-    "inspire": {"name": "Вдохновение", "mainResource": "ВДОХ", "start": [[4,3,3],[3,4,3],[3,3,4]], "flat": {"rp": 5, "jp": 10, "glr": 1, "skp": 5}, "percent": {"rp": 20}}
+    "force": {
+      "name": "Сила",
+      "mainResource": "СИЛ",
+      "start": [
+        [
+          5,
+          0,
+          5
+        ],
+        [
+          5,
+          1,
+          4
+        ],
+        [
+          5,
+          2,
+          3
+        ],
+        [
+          5,
+          3,
+          2
+        ],
+        [
+          5,
+          4,
+          1
+        ],
+        [
+          5,
+          5,
+          0
+        ]
+      ],
+      "flat": {
+        "rp": 10,
+        "rps": 1,
+        "def": 10
+      },
+      "percent": {
+        "hps": 1
+      }
+    },
+    "focus": {
+      "name": "Концентрация",
+      "mainResource": "КОН",
+      "start": [
+        [
+          0,
+          5,
+          5
+        ],
+        [
+          1,
+          5,
+          4
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          3,
+          5,
+          2
+        ],
+        [
+          4,
+          5,
+          1
+        ],
+        [
+          5,
+          5,
+          0
+        ]
+      ],
+      "flat": {
+        "rp": 60,
+        "ska": 10
+      },
+      "percent": {
+        "rps": 1
+      }
+    },
+    "tempo": {
+      "name": "Темп",
+      "mainResource": "ТЕМП",
+      "start": [
+        [
+          0,
+          5,
+          5
+        ],
+        [
+          1,
+          4,
+          5
+        ],
+        [
+          2,
+          3,
+          5
+        ],
+        [
+          3,
+          2,
+          5
+        ],
+        [
+          4,
+          1,
+          5
+        ],
+        [
+          5,
+          0,
+          5
+        ]
+      ],
+      "flat": {
+        "rp": 10,
+        "ukl": 10
+      },
+      "percent": {
+        "pps": 1
+      },
+      "regenFromMaxRpPercent": 1
+    },
+    "inspire": {
+      "name": "Вдохновение",
+      "mainResource": "ВДОХ",
+      "start": [
+        [
+          4,
+          3,
+          3
+        ],
+        [
+          3,
+          4,
+          3
+        ],
+        [
+          3,
+          3,
+          4
+        ]
+      ],
+      "flat": {
+        "rp": 5,
+        "jp": 10,
+        "glr": 1,
+        "skp": 5
+      },
+      "percent": {
+        "rp": 20
+      }
+    }
   },
   "baseline": {
-    "hp": 100, "hps": 0, "rp": 10, "rps": 0, "pp": 0, "pps": 0, "jp": 0, "jps": 0,
-    "atk": 0, "def": 0, "ukl": 0, "toch": 0, "ska": 0, "skp": 0, "kru": 0, "krsh": 0,
-    "uvm": 0, "ust": 0, "usu": 0, "glr": 0, "steps": 0, "rgs": 5,
-    "slots": 0, "slotWeight": 50
+    "hp": 100,
+    "hps": 0,
+    "rp": 10,
+    "rps": 0,
+    "pp": 0,
+    "pps": 0,
+    "jp": 0,
+    "jps": 0,
+    "atk": 0,
+    "def": 0,
+    "ukl": 0,
+    "toch": 0,
+    "ska": 0,
+    "skp": 0,
+    "kru": 0,
+    "krsh": 0,
+    "uvm": 0,
+    "ust": 0,
+    "usu": 0,
+    "glr": 0,
+    "steps": 0,
+    "rgs": 5,
+    "slots": 0,
+    "slotWeight": 50
   },
-  "perVyn": {"hp": 10, "hps": 0.001, "def": 0.1, "steps": 1, "rgs": 0.0001, "slots": 0.01, "slotWeight": 0.01, "atk": 1},
-  "perLov": {"def": 0.01, "steps": 5, "rgs": 0.001, "slotWeight": 0.001, "ska": 1, "skp": 1, "kru": 1, "krsh": 0.001, "ukl": 1, "toch": 0.1},
-  "perInt": {"rps": 0.01, "pp": 1, "pps": 0.1, "steps": 0.1, "rgs": 0.01, "slotWeight": 0.001, "uvm": 10, "usu": 1, "toch": 0.3, "rp": 10},
-  "perLevel": {"rp": 10, "pp": 5, "jp": 3, "rps": 0.08, "pps": 0.08, "jps": 0.08, "slots": 0.1, "slotWeight": 0.1, "ust": 1, "glr": 0.05, "steps": 10, "rgs": 0.1, "skp": 0.5, "def": 0.5, "ukl": 0.5, "atk": 1, "usu": 1.2},
-  "perOtvBlock": {"hp": 1, "rp": 1, "jp": 1, "def": 0.1, "ukl": 0.1, "toch": 0.1, "ska": 0.1, "skp": 0.1, "uvm": 1, "ust": 0.1, "kru": 0.1, "krsh": 0.01, "slots": 0.01, "slotWeight": 0.001, "rgs": 0.1, "glr": 1},
+  "perVyn": {
+    "hp": 10,
+    "hps": 0.001,
+    "def": 0.1,
+    "steps": 1,
+    "rgs": 0.0001,
+    "slots": 0.01,
+    "slotWeight": 0.01,
+    "atk": 1
+  },
+  "perLov": {
+    "steps": 5,
+    "rgs": 0.001,
+    "slotWeight": 0.001,
+    "ska": 1,
+    "skp": 1,
+    "kru": 1,
+    "krsh": 0.001,
+    "ukl": 1,
+    "toch": 0.1
+  },
+  "perInt": {
+    "rps": 0.01,
+    "pp": 1,
+    "pps": 0.1,
+    "steps": 0.1,
+    "rgs": 0.01,
+    "slotWeight": 0.001,
+    "uvm": 10,
+    "usu": 1,
+    "toch": 0.3,
+    "rp": 10
+  },
+  "perLevel": {
+    "rp": 10,
+    "pp": 5,
+    "jp": 3,
+    "rps": 0.08,
+    "pps": 0.08,
+    "jps": 0.08,
+    "slots": 0.1,
+    "slotWeight": 0.1,
+    "ust": 1,
+    "glr": 0.05,
+    "steps": 10,
+    "rgs": 0.1,
+    "skp": 0.5,
+    "def": 0.5,
+    "ukl": 0.5,
+    "atk": 1,
+    "usu": 1.2
+  },
+  "perOtvBlock": {
+    "hp": 1,
+    "rp": 1,
+    "jp": 1,
+    "def": 0.1,
+    "ukl": 0.1,
+    "toch": 0.1,
+    "ska": 0.1,
+    "skp": 0.1,
+    "uvm": 1,
+    "ust": 0.1,
+    "kru": 0.1,
+    "krsh": 0.01,
+    "slots": 0.01,
+    "slotWeight": 0.001,
+    "rgs": 0.1,
+    "glr": 1
+  },
   "desireBonuses": {
-    "positive": {"hps": 3, "atk": 3, "ska": 30, "kru": 3, "krsh": 3, "def": 10, "toch": 10, "rgs": 5, "ust": 1000},
-    "zero": {"rps": 3, "pps": 3, "skp": 10, "glr": 1, "uvm": 1000, "ukl": 10}
+    "positive": {
+      "hps": 3,
+      "atk": 3,
+      "ska": 30,
+      "kru": 3,
+      "krsh": 3,
+      "def": 10,
+      "toch": 10,
+      "rgs": 5,
+      "ust": 1000
+    },
+    "zero": {
+      "rps": 3,
+      "pps": 3,
+      "skp": 10,
+      "glr": 1,
+      "uvm": 1000,
+      "ukl": 10
+    }
   },
-  "caps": {"atk": 99999, "ska": 9999, "kru": 99999, "krsh": 8500, "uvm": 9999, "ust": 9999, "usu": 9999, "toch": 8500, "def": 9999, "ukl": 8500, "glr": 9999, "steps": 999999999999999, "rgs": 999999, "slots": 999, "slotWeight": 999999, "skp": 49999},
+  "caps": {
+    "atk": 99999,
+    "ska": 9999,
+    "kru": 99999,
+    "krsh": 8500,
+    "uvm": 9999,
+    "ust": 9999,
+    "usu": 9999,
+    "toch": 8500,
+    "def": 9999,
+    "ukl": 8500,
+    "glr": 9999,
+    "steps": 999999999999999,
+    "rgs": 999999,
+    "slots": 999,
+    "slotWeight": 999999,
+    "skp": 49999
+  },
   "interpretations": {
     "globRegeneration": "100 ГЛР = 1%; итоговая скорость × (1 + ГЛР / 10000)",
     "lovHps": "+0,01% к ХПС за единицу ЛОВ, складывается с процентом столицы",
