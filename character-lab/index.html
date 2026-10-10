@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>uGame · Character Balance Lab · DEV</title>
+  <link rel="stylesheet" href="./lab.css" />
+</head>
+<body>
+  <main class="lab-root">
+    <header class="lab-heading">
+      <div>
+        <div class="eyebrow">uGame / Инструменты / DEV</div>
+        <h1>Character Balance Lab</h1>
+        <p>Изолированная лаборатория характеристик. Не читает и не изменяет реального персонажа, баланс игры, сохранения или сервер.</p>
+      </div>
+      <a class="back" href="../">← В игру</a>
+    </header>
+    <div class="warning" role="note"><strong>КАНДИДАТ БАЛАНСА · UGD-0038 discussing</strong> · Результаты гипотетические; тестируем коэффициенты, но не утверждаем их автоматически. Изменения не сохраняются.</div>
+    <section class="toolbar" aria-label="Настройки сравнения">
+      <label>Количество профилей <select id="profile-count"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></label>
+      <button id="reset-profiles" type="button">Сбросить профили</button>
+      <button id="reset-rules" type="button">Восстановить формулы</button>
+      <span id="lab-status" role="status"></span>
+    </section>
+    <section aria-labelledby="profiles-heading"><h2 id="profiles-heading">Входные данные персонажей</h2><div id="profiles" class="profiles"></div></section>
+    <section aria-labelledby="results-heading"><h2 id="results-heading">Сравнение показателей</h2><p class="hint">Значения показывают максимумы/скорости/модификаторы, а не расход ресурсов. Нажмите на строку, чтобы открыть точную цепочку расчёта для каждого персонажа.</p>
+      <div class="table-scroll"><table id="comparison"><thead id="comparison-head"></thead><tbody id="comparison-body"></tbody></table></div>
+      <details id="formula-detail" class="panel"><summary>Формула выбранного показателя и все источники</summary><div id="formula-trace"></div></details>
+    </section>
+    <section class="panel"><details id="coefficients"><summary>Редактор ВСЕХ коэффициентов (временно, пересчёт сразу)</summary><p class="hint">Каждый параметр редактируется отдельно, без eval и без сохранения в игру. Статус исходных значений — кандидат UGD-0038.</p><div id="rule-editor"></div></details></section>
+    <section class="panel"><details><summary>Базовые сценарии, спорные формулы, ограничения</summary><div id="assumptions"></div></details></section>
+  </main>
+  <script type="module" src="./lab.js"></script>
+</body>
+</html>
