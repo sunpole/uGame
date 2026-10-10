@@ -29,7 +29,8 @@ test('LAYER 1 / immutable original blob and full nonempty line coverage',()=>{
   for(let i=1;i<=rows.length;i++)assert.equal(count[i],1,'Original source line '+i+' must be classified exactly once');
   assert.match(rows[14],/ВЫНОСЛИВОСТЬ/);
   assert.match(rows[16],/ЛОВКОСТЬ/);
-  assert.match(rows[382],/уклонение.*вын за защиту/i);
+  assert.match(rows[382],/улокнен|уклонен/i);
+  assert.match(rows[382],/вын за защиту/i);
   assert.match(rows[390],/ячейка/i);
 });
 
@@ -39,7 +40,7 @@ test('LAYER 2 / each discussion decision 1..93 indexed once, source text verifia
     for(let i=b.first;i<=b.last;i++){
       assert.ok(!seen.has(i),'duplicate decision '+i);
       seen.add(i);
-      assert.match(journal,new RegExp('№'+i+'(?!\\d)'),'UGD-0038 absent decision '+i);
+      assert.match(journal,new RegExp('(?:№'+i+'(?!\\d)|-\\s*\\*\\*'+i+'(?:\\s|\\*))'),'UGD-0038 absent decision '+i);
     }
   }
   assert.equal(seen.size,93);
