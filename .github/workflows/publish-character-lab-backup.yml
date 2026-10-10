@@ -1,0 +1,35 @@
+name: uGame v0.2.54 pre-character-lab backup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-character-lab-backup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-backup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify immutable pre-development commit
+        run: |
+          test "$(git show 5aa19e23240c392b9572d0dd64e2ddfb5e5545fa:version.json | grep -c '"version": "0.2.54"')" = 1
+          git merge-base --is-ancestor 5aa19e23240c392b9572d0dd64e2ddfb5e5545fa "$GITHUB_SHA"
+      - name: Publish one-time prerelease at original SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.54-pre-character-lab-20261010 >/dev/null 2>&1; then
+            gh release create v0.2.54-pre-character-lab-20261010 \
+              --target 5aa19e23240c392b9572d0dd64e2ddfb5e5545fa \
+              --title "uGame v0.2.54 · pre-Character Balance Lab backup" \
+              --notes-file docs/releases/v0.2.54-pre-character-lab-20261010.md \
+              --prerelease
+          fi
