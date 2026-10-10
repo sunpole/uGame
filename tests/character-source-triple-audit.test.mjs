@@ -40,7 +40,7 @@ test('LAYER 2 / each discussion decision 1..93 indexed once, source text verifia
     for(let i=b.first;i<=b.last;i++){
       assert.ok(!seen.has(i),'duplicate decision '+i);
       seen.add(i);
-      assert.match(journal,new RegExp('(?:№'+i+'(?!\\d)|-\\s*\\*\\*'+i+'(?:\\s|\\*))'),'UGD-0038 absent decision '+i);
+      assert.match(journal,new RegExp('(?:№'+i+'(?!\\d)|-\\s*\\*\\*'+i+'(?:\\s|:|\\*))'),'UGD-0038 absent decision '+i);
     }
   }
   assert.equal(seen.size,93);
