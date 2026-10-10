@@ -1,3 +1,14 @@
+# uGame v0.2.55 · Isolated Character Balance Lab DEV (2026-10-10)
+
+- Standalone Character Balance Lab (reachable via Project Hub / Tools), 1–4 builds and 24 inspectable derived metrics with formula traces.
+- Data-driven candidate coefficients, four capital start distributions, levels 1–65, OTV blocks, Desire states, GLR and temporary live editing; no gameplay/state imports.
+- Existing gameplay, stat calculations, items, steps, classes, WorldGraph, save format, Phaser boot and probability tables unchanged.
+- Regression: Node Character Balance tests; separate desktop/mobile Chromium lab E2E in release gate plus existing game Pre-flight browser smoke.
+- Backup before work: [v0.2.54-pre-character-lab-20261010](https://github.com/sunpole/uGame/releases/tag/v0.2.54-pre-character-lab-20261010).
+- Details: [docs/CHARACTER-BALANCE-LAB.md](docs/CHARACTER-BALANCE-LAB.md) and [docs/releases/v0.2.55.md](docs/releases/v0.2.55.md).
+
+---
+
 # uGame v0.2.54 · Browser startup and mobile reliability (2026-10-09)
 
 - Startup Chromium smoke QA now covers **desktop and touch-mobile**: Pre-flight, Phaser ready, game canvas, 225-zone map, Find Me and DEV World Analyzer.
