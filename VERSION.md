@@ -1,3 +1,13 @@
+# uGame v0.2.57 · Character Balance Registry and Admin Lab · QA (2026-10-10)
+
+- Fourth independent cross-check confirmed late numeric decision precedence; author example UVM corrected semantically (100 points = 1% cooldown, 10 sec → 9.9 sec). Original ugame_anton_info.txt untouched.
+- Candidate Admin Lab: 50 source-backed registry entries (24 derived, 5 input, 4 origin, 17 system), search/filter/source/status, pinned up to 24 stats across 1–4 builds, searchable rule editor, SHA-256 checked JSON export/import of formulas, profiles, traces, warnings, registry, pins, with before/after diff.
+- Import affects memory of separate Character Lab tab only. No new character combat, skill, save, balance, admin backend or production publication controls.
+- QA: Node registry/snapshot tests, real Chromium desktop/mobile lab and Phaser/Pre-flight/Save/F5 tests. Release only after verified green checks. Rollback v0.2.56, older v0.2.55 and pre-lab backup remain immutable.
+- Docs: [admin manual](docs/CHARACTER-LAB-ADMIN.md), [fourth audit](docs/work-reports/2026-10-10-character-fourth-pass-audit.md), [release report](docs/releases/v0.2.57.md).
+
+---
+
 # uGame v0.2.56 · Three-pass Character Source Audit (2026-10-10)
 
 - Corrected the isolated Character Balance Lab candidate mapping: VYN +0.1 DEF, LOV +1 DODGE and no DEF. Owner explicitly prioritized late original correction (line 383) and UGD-0038. Original author file untouched.
