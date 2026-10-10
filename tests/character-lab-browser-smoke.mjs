@@ -34,7 +34,7 @@ async function smoke(profile){
   });
   try{
     await page.goto(url,{waitUntil:'domcontentloaded',timeout:20000});
-    await page.getByText('Изолированная лаборатория готова').waitFor({timeout:12000});
+    await page.locator('.profile').first().waitFor({timeout:12000}); // Wait for real state, not transient status copy.
     assert.equal(await page.locator('.profile').count(),4);
     assert.equal(await page.locator('tbody tr[data-metric]').count(),24);
     const hp=page.locator('tr[data-metric="hp"] td').nth(1);
