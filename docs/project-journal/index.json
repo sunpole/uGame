@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-09",
+  "updated": "2026-10-10",
   "records": [
     {
       "id": "UGD-0001",
@@ -1148,6 +1148,40 @@
       "related": [
         "UGD-0016",
         "UGD-0029"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0038",
+      "title": "Авторская идея характеристик, ресурсов и Зрелости героя",
+      "date": "2026-10-10",
+      "type": "system",
+      "status": "discussing",
+      "flags": [
+        "needs-calculation",
+        "needs-test",
+        "needs-prototype"
+      ],
+      "tags": [
+        "character-build",
+        "progression",
+        "resources",
+        "skills",
+        "combat",
+        "economy",
+        "steps",
+        "multiplayer"
+      ],
+      "path": "records/UGD-0038-anton-character-stats-draft.md",
+      "related": [
+        "UGD-0009",
+        "UGD-0011",
+        "UGD-0012",
+        "UGD-0014",
+        "UGD-0015",
+        "UGD-0020",
+        "UGD-0035"
       ],
       "supersedes": [],
       "superseded_by": []
