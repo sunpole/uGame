@@ -180,6 +180,13 @@
           "type": "spawn-zone-debug"
         },
         {
+          "id": "character-balance-lab",
+          "label": "Character Balance Lab · DEV",
+          "description": "Изолированный расчёт 1–4 билдов, ЗРЛ 1–65, ОТВ, ГЛР, все формулы и живой редактор коэффициентов. Не изменяет персонажа.",
+          "type": "external",
+          "target": "./character-lab/"
+        },
+        {
           "id": "simulation-doc",
           "label": "Simulation Lab",
           "description": "Техническое описание headless-симулятора и отчётов.",
