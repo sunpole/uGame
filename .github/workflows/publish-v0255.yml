@@ -1,0 +1,88 @@
+name: uGame v0.2.55 Character Balance Lab QA release
+
+on:
+  pull_request:
+    paths:
+      - 'src/character-balance/**'
+      - 'data/character-balance-candidate.json'
+      - 'character-lab/**'
+      - 'data/project-hub.json'
+      - 'tests/character-balance.test.mjs'
+      - 'tests/character-lab-browser-smoke.mjs'
+      - 'index.html'
+      - 'version.json'
+      - 'package.json'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0255.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.55.md'
+      - '.github/workflows/publish-v0255.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate versions, syntax and all Node regressions
+        run: |
+          node --check src/character-balance/engine.js
+          node --check character-lab/lab.js
+          node --check tests/character-balance.test.mjs
+          node --check tests/character-lab-browser-smoke.mjs
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.55')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.55'\"))throw Error('Pre-flight boot version mismatch');
+          "
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile Character Lab Chromium smoke
+        run: node tests/character-lab-browser-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Desktop/mobile game Pre-flight Phaser and Save/F5 smoke
+        run: node tests/browser-boot-smoke.mjs
+        env:
+          CI: 'true'
+      - name: Verify independent rollback release still exists
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.54
+          gh release view v0.2.54-pre-character-lab-20261010
+      - name: Publish QA prerelease after green tests
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.55 >/dev/null 2>&1; then
+            gh release create v0.2.55 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.55 · Isolated Character Balance Lab DEV" \
+              --notes-file docs/releases/v0.2.55.md --prerelease
+          fi
+      - name: Upload failed browser screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-v0255-browser-failures
+          path: |
+            artifacts/character-lab/
+            artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 7
