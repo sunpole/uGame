@@ -38,3 +38,6 @@
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}
 #registry-search{width:100%}
 @media(max-width:600px){.pinned-panel{padding:6px;top:0}.pinned-heading{gap:6px}.pinned-heading .hint{width:100%;flex-basis:100%}.pin-table-scroll{max-height:28vh}.registry-list{grid-template-columns:1fr;max-height:460px}.registry-controls label{min-width:100%;}.pinned-grid{grid-template-columns:minmax(145px,1fr) repeat(var(--profiles,4),minmax(100px,1fr));font-size:11px}.pinned-grid>div{padding:5px}.lab-root .toolbar button{font-size:12px}}
+
+.rule-search-label{display:flex;flex-direction:column;gap:4px;max-width:480px;margin:8px 0;color:#aebdd0;font-size:12px}
+.rules-section[hidden],.rules-section label[hidden]{display:none!important}
