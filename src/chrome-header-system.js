@@ -52,9 +52,9 @@ export class ChromeHeaderSystem {
     if (this.specializationElement) this.specializationElement.textContent = `Специализация ${specialization}`;
   }
 
-  setClass(classData) {
+  setClass(classData, heroName='—') {
     this.setIdentity({
-      name: '—',
+      name: heroName,
       className: classData?.name || '—',
       profession: '—',
       specialization: '—'
