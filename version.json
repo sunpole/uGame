@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.63",
-  "stage": "qa-map-city-label-fit",
+  "version": "0.2.64",
+  "stage": "qa-character-draft-runtime-phase-1",
   "updated": "2026-10-11",
-  "summary": "World Map city labels wrap and compact inside the diamond at 100-225% CSS zoom without changing map geometry, mechanics or saves."
+  "summary": "First phased character stats: read-only candidate metric calculation in in-game Project Hub, explicit optional saved profile in GameState v1, Lab JSON export unchanged. No live gameplay effects."
 }
