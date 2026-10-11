@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.60",
+  "version": "0.2.61",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -82,8 +82,8 @@
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
-    "./assets/textures/biomes/south_256.jpg",
-    "./assets/textures/biomes/city_south_512.jpg"
+    "./assets/textures/biomes/ground_1024.jpg",
+    "./assets/textures/biomes/city_ground_1024.jpg"
   ],
   "moduleFiles": [
     "./src/action-router.js",

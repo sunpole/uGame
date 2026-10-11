@@ -1,0 +1,113 @@
+name: uGame v0.2.61 Original South Texture Names QA and Release
+
+on:
+  pull_request:
+    paths:
+      - 'Update-uGame.ps1'
+      - 'src/ground-texture-system.js'
+      - 'data/biome-textures.json'
+      - 'tests/south-texture-names.test.mjs'
+      - 'assets/textures/biomes/**'
+      - 'tests/browser-boot-smoke.mjs'
+      - 'tests/Test-Texture-Publish.ps1'
+      - 'docs/releases/v0.2.61.md'
+      - 'version.json'
+      - 'package.json'
+      - 'index.html'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0261.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.61.md'
+      - '.github/workflows/publish-v0261.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-updater:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows PowerShell 5.1 previous updater regression
+        shell: powershell
+        run: ./tests/Test-Updater.ps1
+      - name: Windows PowerShell 5.1 texture publisher isolated Git regression
+        shell: powershell
+        run: ./tests/Test-Texture-Publish.ps1
+
+  chromium-and-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify version and full Node suite
+        run: |
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.61')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.61'\"))throw Error('Pre-flight version mismatch');
+          "
+      - name: Install real Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile Phaser Pre-flight world map and save/F5
+        env:
+          CI: 'true'
+        run: node tests/browser-boot-smoke.mjs
+      - name: Desktop/mobile Character Lab and Admin
+        env:
+          CI: 'true'
+        run: |
+          node tests/character-lab-browser-smoke.mjs
+          node tests/character-lab-admin-browser-smoke.mjs
+      - name: Preserve browser screenshots on error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v0261-browser-failures
+          path: |
+            artifacts/browser-smoke/
+            artifacts/character-lab/
+            artifacts/character-admin/
+          if-no-files-found: ignore
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    needs: [windows-updater, chromium-and-node]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify byte-identical artist originals and missing legacy files
+        run: |
+          test "$(git rev-parse HEAD:assets/textures/biomes/ground_1024.jpg)" = "3104ad3bc4e1b226f3126411d23bd126444594ce"
+          test "$(git rev-parse HEAD:assets/textures/biomes/city_ground_1024.jpg)" = "04e2ca4b0f4b8d2f2cc352e5c8adb078c9cb2b23"
+          test ! -e assets/textures/biomes/south_256.jpg
+          test ! -e assets/textures/biomes/city_south_512.jpg
+      - name: Confirm previous immutable release rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.60
+          git fetch origin tag v0.2.60
+          test "$(git rev-parse v0.2.60^{commit})" = "0abe5613b5f986be21272e28aa33f5c32e39e23e"
+      - name: Publish QA prerelease after both test platforms pass
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.61 >/dev/null 2>&1; then
+            gh release create v0.2.61 --target "$GITHUB_SHA" --title "uGame v0.2.61 · Original South JPEG filenames" --notes-file docs/releases/v0.2.61.md --prerelease
+          fi
+          gh release view v0.2.61

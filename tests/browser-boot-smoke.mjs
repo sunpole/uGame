@@ -79,6 +79,25 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('.preflight-row[data-state="fail"]').count(), 0);
     assert.equal(await page.evaluate(() => window.__ugameBoot?.phase), 'ready-waiting-user');
 
+    // Real Chromium image decoding: exact artist filenames at original resolution.
+    // This catches missing South-city textures that earlier preflight tolerated.
+    const southTextures=await page.evaluate(async()=>{
+      const names=['ground_1024.jpg','city_ground_1024.jpg'];
+      return Promise.all(names.map(async(name)=>{
+        const response=await fetch('./assets/textures/biomes/'+name,{cache:'no-store'});
+        if(!response.ok)return {name,status:response.status};
+        const image=await createImageBitmap(await response.blob());
+        const result={name,status:response.status,width:image.width,height:image.height};
+        image.close?.();
+        return result;
+      }));
+    });
+    for(const asset of southTextures){
+      assert.equal(asset.status,200,'South texture missing: '+asset.name);
+      assert.equal(asset.width,1024,'Incorrect original texture width: '+asset.name);
+      assert.equal(asset.height,1024,'Incorrect original texture height: '+asset.name);
+    }
+
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
     assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');

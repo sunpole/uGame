@@ -170,17 +170,14 @@ function Publish-SouthTextures {
     if (-not (Test-Path -LiteralPath $dir -PathType Container)) { throw 'Missing assets/textures/biomes.' }
     if ((Get-Item -LiteralPath $dir).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Symlink directories cannot be uploaded.' }
     $pairs = @(
-        @{ Label='South field'; Original='ground_1024.jpg'; Target='south_256.jpg' },
-        @{ Label='South city'; Original='city_ground_1024.jpg'; Target='city_south_512.jpg' }
+        @{ Label='South field'; Original='ground_1024.jpg'; Target='ground_1024.jpg' },
+        @{ Label='South city'; Original='city_ground_1024.jpg'; Target='city_ground_1024.jpg' }
     )
     $items = @()
     foreach ($pair in $pairs) {
         $original = Join-Path $dir $pair.Original
-        $current = Join-Path $dir $pair.Target
-        $source = if (Test-Path -LiteralPath $original -PathType Leaf) { $original }
-            elseif (Test-Path -LiteralPath $current -PathType Leaf) { $current }
-            else { $null }
-        if (-not $source) { Write-Host ('Missing ' + $pair.Label + ': ' + $pair.Original + ' or ' + $pair.Target); continue }
+        $source = if (Test-Path -LiteralPath $original -PathType Leaf) { $original } else { $null }
+        if (-not $source) { Write-Host ('Missing ' + $pair.Label + ': ' + $pair.Original); continue }
         $info = Get-Item -LiteralPath $source
         if ($info.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw ('Symlink not allowed: ' + $source) }
         if ($info.Length -lt 1024 -or $info.Length -gt 20MB) { throw ('Invalid JPEG size: ' + $source) }
@@ -195,13 +192,13 @@ function Publish-SouthTextures {
             try {
                 $width = $picture.Width
                 $height = $picture.Height
-                if ($width -lt 256 -or $height -lt 256) { throw ('JPEG resolution is too small: ' + $source) }
+                if ($width -lt 1024 -or $height -lt 1024) { throw ('JPEG resolution is too small: ' + $source) }
             } finally { $picture.Dispose() }
         } finally { $stream.Dispose() }
         $items += @{ Source=$source; Target=$pair.Target; Hash=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash }
         Write-Host ('Ready: ' + $pair.Label + ' ' + [IO.Path]::GetFileName($source) + ' (' + $width + 'x' + $height + ') -> ' + $pair.Target)
     }
-    if (-not $items.Count) { Write-Log 'No South JPEGs found.'; return }
+    if ($items.Count -ne 2) { throw 'Both original 1024-pixel JPEGs are required. Nothing will be uploaded.' }
     Write-Host 'The images will be copied byte-for-byte, not compressed. No code, PNGs, or saves are uploaded.'
     Write-Host 'Publishing makes a GitHub branch and PR, not an automatic merge into main.'
     if ((Read-Host 'Type UPLOAD to publish these exact files') -cne 'UPLOAD') { Write-Host 'Canceled.'; return }
