@@ -1,5 +1,5 @@
 import { GameState } from './game-state.js';
-import { normalizeHeroIdentity, heroPortraitPath, HERO_GENDERS } from './hero-identity.js';
+import { normalizeHeroIdentity, heroPortraitPath, HERO_CAPITAL_BY_ARCHETYPE } from './hero-identity.js';
 
 export const HERO_SAVE_KEY = 'ugame.save.v1';
 export const HERO_BACKUP_PREFIX = 'ugame.save.v1.hero-backup.';
@@ -10,7 +10,8 @@ export const HERO_ARCHETYPES = Object.freeze([
   Object.freeze({id:'hybrid',name:'Воин духовного сана',subtitle:'Вера, ткань и броня'})
 ]);
 export function makeNewHeroState(identity) {
-  const checked=normalizeHeroIdentity({...identity,schemaVersion:1});
+  const checked=normalizeHeroIdentity({...identity,schemaVersion:1,
+    capitalId: identity?.capitalId ?? HERO_CAPITAL_BY_ARCHETYPE[identity?.archetype]});
   if(!checked)throw Error('Имя: от 2 до 24 символов; выберите образ и пол');
   const game=new GameState();
   game.setHeroIdentity(checked);
@@ -79,16 +80,18 @@ export function openHeroEntrance({root=document,storage}={}) {
   const continueButton=gate.querySelector('#hero-continue');
   const restoreButton=gate.querySelector('#hero-restore');
   const nameInput=gate.querySelector('#hero-name');
-  const portrait=gate.querySelector('#hero-preview');
-  const namePreview=gate.querySelector('#hero-preview-name');
+  const portraits=[...gate.querySelectorAll('[data-hero-image]')];
   const status=gate.querySelector('#hero-message');
   const consent=gate.querySelector('#hero-replace-confirm');
   let archetype='plate', gender='male';
   const preview=()=>{
-    portrait.src=heroPortraitPath(archetype,gender);
-    portrait.alt=HERO_ARCHETYPES.find(item=>item.id===archetype)?.name+
-      (gender==='female'?' — женский образ':' — мужской образ');
-    namePreview.textContent=(nameInput.value.trim()||'Будущий герой');
+    // All four portraits update together; no per-card gender mismatch.
+    for(const portrait of portraits){
+      const target=heroPortraitPath(portrait.dataset.heroImage,gender);
+      if(target&&portrait.getAttribute('src')!==target)portrait.src=target;
+      const name=HERO_ARCHETYPES.find(item=>item.id===portrait.dataset.heroImage)?.name||'Герой';
+      portrait.alt=name+(gender==='female'?' — женский образ':' — мужской образ');
+    }
     for(const button of gate.querySelectorAll('[data-hero-archetype]'))
       button.setAttribute('aria-pressed',String(button.dataset.heroArchetype===archetype));
     for(const button of gate.querySelectorAll('[data-hero-gender]'))
@@ -130,7 +133,7 @@ export function openHeroEntrance({root=document,storage}={}) {
       button.onclick=()=>{archetype=button.dataset.heroArchetype;preview();};
     for(const button of gate.querySelectorAll('[data-hero-gender]'))
       button.onclick=()=>{gender=button.dataset.heroGender;preview();};
-    nameInput.oninput=()=>{preview();status.textContent='';};
+    nameInput.oninput=()=>{status.textContent='';};
     gate.querySelector('#hero-create-form').onsubmit=(event)=>{
       event.preventDefault();
       try{
