@@ -1,4 +1,5 @@
 import { normalizeCharacterDraft } from './character-draft.js';
+import { normalizeHeroIdentity } from './hero-identity.js';
 import { normalizeCharacterResponsibility } from './dev-character-tools.js';
 import { normalizeCharacterProgress, normalizeCharacterPools } from './character-runtime.js';
 
@@ -166,6 +167,7 @@ export function createDefaultGameState() {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
     player: {
       classId: 'wanderer',
+      heroIdentity: null,
       characterDraft: null,
       characterProgress: normalizeCharacterProgress(null),
       characterResponsibility: null,
@@ -206,6 +208,7 @@ export function normalizeGameState(input) {
   return {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
     player: {
+      heroIdentity: normalizeHeroIdentity(input.player?.heroIdentity),
       classId: typeof input.player?.classId === 'string' && input.player.classId
         ? input.player.classId
         : defaults.player.classId,
@@ -244,6 +247,10 @@ export class GameState {
     return typeof structuredClone === 'function'
       ? structuredClone(this.state)
       : JSON.parse(JSON.stringify(this.state));
+  }
+
+  setHeroIdentity(identity) {
+    this.state.player.heroIdentity=normalizeHeroIdentity(identity);
   }
 
   setCharacterDraft(draft) {
