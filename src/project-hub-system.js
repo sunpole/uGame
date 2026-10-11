@@ -441,6 +441,7 @@ export class ProjectHubSystem {
       const rules=this.characterDraftRules ||= await fetchJson('./data/character-balance-candidate.json');
       if(this.stack[this.stack.length-1]!==view)return;
       const saved=normalizeCharacterDraft(this.characterDraft?.get?.());
+      const runtime=this.characterDraft?.getRuntime?.() || null;
       const profile=normalizeCharacterDraft(view.draft) || saved ||
         {schemaVersion:1,cityId:'force',startIndex:3};
       const calculated=characterDraftResult(rules,profile);
@@ -474,12 +475,24 @@ export class ProjectHubSystem {
           'Это только предварительный просмотр. Он ещё не записан в сохранение.',
         '</p>',
         '<div class="character-draft-summary">',
-        '<span>ЗРЛ <strong>1</strong> (условный старт)</span>',
+        '<span>ЗРЛ <strong>'+escapeHtml(String(runtime?.progress?.zrl ?? 1))+' / 65</strong></span>',
+        '<span>ЗРП <strong>'+escapeHtml(fmt(runtime?.progress?.zrp ?? 0))+'</strong> (начисление пока не включено)</span>',
         '<span>ОТВ <strong>1</strong> (временный сценарий)</span>',
         '<span>ЖП <strong>&gt; 0</strong> (условие расчёта)</span>',
         '<span>Основной ресурс <strong>'+escapeHtml(calculated.mainResource)+'</strong></span>',
         '</div>',
-        '<div class="character-draft-grid">',
+        '<h3>Текущие запасы · ХП / Покров / РП / Желание</h3>',
+        '<div class="character-draft-summary" id="character-runtime-pools">',
+        ...[['hp','ХП'],['pp','ПП'],['rp','РП'],['jp','ЖП']].map(([key,label])=>
+          '<span data-runtime-pool="'+key+'">'+label+' <strong>'+(
+            runtime?.pools && isSaved
+              ? escapeHtml(fmt(runtime.pools.current[key])+' / '+fmt(runtime.values[key]))
+              : '— · выберите и сохраните профиль')+'</strong></span>'),
+        '</div>',
+        '<p class="character-draft-note">Зелёная Stamina работает по прежним правилам. ',
+        'ПП подсвечен золотым кольцом над красным шаром, ЖП — фиолетовым кольцом над синим. ',
+        'Новые ХП/ПП/РП/ЖП сохранены, но их расход, регенерация и ЗРП ещё не подключены к игровым событиям.</p>',
+        '<div class="character-draft-grid">'
         ...METRIC_KEYS.map(key=>{
           const value=calculated.values[key];
           const interpretation=metricInterpretation(key,value);
