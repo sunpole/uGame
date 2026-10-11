@@ -31,6 +31,7 @@ async function check(label,viewport,isMobile){
    assert.equal(await page.locator('#registry-list .registry-entry').count(),50);
    assert.equal(await page.locator('#profiles .profile').count(),4);
    await page.locator('#validation-run').click({timeout:20000});
+   await page.waitForFunction(()=>!document.querySelector('#validation-run')?.disabled && document.querySelector('#validation-state')?.textContent.includes('Проверено на текущих'),null,{timeout:20000});
    assert.equal(await page.locator('[data-check="grid"]').getAttribute('data-state'),'pass');
    assert.equal(await page.locator('[data-check="otv-new"]').getAttribute('data-state'),'open');
    assert.equal(await page.locator('[data-check="runtime"]').getAttribute('data-state'),'open');
@@ -40,7 +41,9 @@ async function check(label,viewport,isMobile){
    const validatorRule=page.locator('input[data-rule="perVyn.hp"]');
    await validatorRule.fill('21');
    assert.match(await page.locator('#validation-state').innerText(),/устарела/);
+   assert.equal(await page.locator('#validation-checks .validation-check').count(),0,'Old green results must be cleared');
    await page.locator('#validation-run').click({timeout:20000});
+   await page.waitForFunction(()=>!document.querySelector('#validation-run')?.disabled && document.querySelector('#validation-state')?.textContent.includes('Проверено на текущих'),null,{timeout:20000});
    assert.equal(await page.locator('[data-check="grid"]').getAttribute('data-state'),'pass');
    await validatorRule.fill('10');
    assert.match(await page.locator('#validation-state').innerText(),/устарела/);
