@@ -1,0 +1,41 @@
+name: uGame pre-stat-names immutable backup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-pre-stat-names-backup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify immutable target and branch ancestry
+        run: |
+          git merge-base --is-ancestor d0a120de23589c2476eb38ba55de48ea4ece6034 "$GITHUB_SHA"
+          test "$(git show d0a120de23589c2476eb38ba55de48ea4ece6034:version.json | grep -c '"version": "0.2.57"')" = 1
+      - name: Publish immutable backup prerelease (idempotent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.57-pre-stat-names-20261011 >/dev/null 2>&1; then
+            gh release create v0.2.57-pre-stat-names-20261011 \
+              --target d0a120de23589c2476eb38ba55de48ea4ece6034 \
+              --title "uGame v0.2.57 · backup before stat name normalization" \
+              --notes-file docs/releases/v0.2.57-pre-stat-names-20261011.md --prerelease
+          fi
+      - name: Verify published release target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.57-pre-stat-names-20261011
+          test "$(git rev-parse v0.2.57-pre-stat-names-20261011^{commit})" = "d0a120de23589c2476eb38ba55de48ea4ece6034"
