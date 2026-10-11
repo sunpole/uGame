@@ -35,6 +35,7 @@ async function smoke(profile){
   try{
     await page.goto(url,{waitUntil:'domcontentloaded',timeout:20000});
     await page.locator('.profile').first().waitFor({timeout:12000}); // Wait for real state, not transient status copy.
+    await page.locator('#registry-list .registry-entry').first().waitFor({timeout:12000}); // Admin registry / pinned listeners ready.
     assert.equal(await page.locator('.profile').count(),4);
     assert.equal(await page.locator('tbody tr[data-metric]').count(),24);
     const hp=page.locator('tr[data-metric="hp"] td').nth(1);
@@ -61,7 +62,8 @@ async function smoke(profile){
     assert.match(await evasion.innerText(),/^24\s+=\s+0,24%/);
     const attackSpeed=await setCandidateScore('ska',420);
     assert.match(await attackSpeed.innerText(),/^420\s+=\s+4,2 атак\/с/);
-    await page.locator('tr[data-metric="ukl"] .pin-toggle').click();
+    await page.locator('#pin-add-select').selectOption('ukl');
+    await page.locator('#pin-add').click();
     const evasionPin=page.locator('[data-pin-value="ukl"][data-pin-profile="0"]');
     assert.match(await evasionPin.innerText(),/24\s+=\s+0,24%/);
     await evasionPin.click();
