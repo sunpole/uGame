@@ -6,7 +6,7 @@ const docs=readFileSync(new URL('../docs/DEV-CODES.md',import.meta.url),'utf8');
 const fromDocumentation=[...docs.matchAll(/^\|\s*`(\d{4})`\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|/gm)]
   .map(m=>({code:m[1],ru:m[2].trim().replace(/\*\*|`/g,''),en:m[3].trim().replace(/\*\*|`/g,'')}));
 test('every active DEV code has Russian and English exact typed aliases from documentation',()=>{
-  assert.equal(DEV_CODE_LABELS.length,67);
+  assert.equal(DEV_CODE_LABELS.length,71);
   assert.deepEqual(DEV_CODE_LABELS,fromDocumentation,
     'Update the shared alias registry whenever docs/DEV-CODES.md changes');
   for(const {code,ru,en} of DEV_CODE_LABELS){
@@ -25,6 +25,9 @@ test('short commands work in both languages and accept minus sign/whitespace var
    ['отв','2299'],['OTV','2299'],['персонаж','2299'],
    ['ТП','2399'],['teleport','2399'],['city tp','2399'],
    ['сохранить','9001'],['SAVE','9001'],
+   ['без кд','8671'],['NO CD','8671'],['бессмертие','8672'],['god mode','8672'],
+   ['бесплатные скилы','8673'],['free casts','8673'],
+   ['восстановить все','8674'],['full refill','8674'],
    ['помощь','9999'],['help','9999'],['справка','9999'],
    ['удалить сохранение','9002'],['delete save','9002']
  ];
