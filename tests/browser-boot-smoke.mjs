@@ -103,6 +103,25 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');
     assert.ok(await page.locator('#game canvas').count() >= 1, 'Phaser canvas did not mount');
 
+    // Real in-game Character Draft: never auto-create a profile in an old save.
+    assert.equal(await page.locator('#character-stats-open').count(),1);
+    await activate('#character-stats-open');
+    await page.locator('#character-draft-panel').waitFor({timeout:10000});
+    assert.equal(await page.locator('[data-character-stat]').count(),24);
+    assert.match(await page.locator('#character-draft-status').innerText(),/не записан/);
+    assert.match(await page.locator('#character-draft-panel').innerText(),/НЕ ВЛИЯЕТ НА ИГРУ/);
+    await page.selectOption('#character-draft-city','focus');
+    await page.locator('#character-draft-start').waitFor();
+    await page.selectOption('#character-draft-start','2');
+    await activate('#character-draft-save');
+    assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
+    const candidateSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null'));
+    assert.deepEqual(candidateSaved?.player?.characterDraft,
+      {schemaVersion:1,cityId:'focus',startIndex:2});
+    assert.equal(candidateSaved.player.classId,'wanderer','Draft must not change actual class');
+    assert.equal(candidateSaved.schemaVersion,1,'Old SaveSystem schema preserved');
+    await activate('#project-hub-close');
+
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
     await activate('#project-hub-open');
     // Project Hub defaults to the Project section, not the Game section.
@@ -325,6 +344,13 @@ async function checkViewport(profile) {
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
     assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
+    // Draft survives F5 independently from the live class and old world save.
+    await activate('#character-stats-open');
+    await page.locator('#character-draft-panel').waitFor({timeout:10000});
+    assert.equal(await page.locator('#character-draft-city').inputValue(),'focus');
+    assert.equal(await page.locator('#character-draft-start').inputValue(),'2');
+    assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
+    await activate('#project-hub-close');
     const afterReload = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('ugame.save.v1') || 'null'));
     assert.equal(afterReload?.player?.classId, 'scout', 'class reverted after F5');
