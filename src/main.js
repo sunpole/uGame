@@ -584,7 +584,7 @@ class ZoneScene extends Phaser.Scene {
     this.bindPersistenceEvents();
 
     if (!classSystem.apply(restoredState.player.classId)) classSystem.apply('wanderer');
-    chromeHeaderSystem?.setClass(classSystem.current);
+    chromeHeaderSystem?.setClass(classSystem.current,restoredState.player.heroIdentity?.name || '—');
     this.renderResourceHud(resourceSystem.snapshot());
     this.initializeWorld(restoredState);
 
@@ -683,7 +683,7 @@ class ZoneScene extends Phaser.Scene {
   bindPersistenceEvents() {
     this.eventSystem.on('class:changed', ({ id, classData }) => {
       this.gameState.setClassId(id);
-      chromeHeaderSystem?.setClass(classData || classSystem?.current);
+      chromeHeaderSystem?.setClass(classData || classSystem?.current,this.gameState.state.player.heroIdentity?.name || '—');
       this.persistGameState();
     });
 
