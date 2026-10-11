@@ -19,13 +19,13 @@ Current implementation: **v0.1.10**
 | snow | snow | no | snow_1024.png |
 | forest | forest | no | grass_1024.png prototype fallback |
 | stone | stone | no | grass_1024.png prototype fallback |
-| south | south | no | south_256.jpg |
+| south | south | no | ground_1024.jpg |
 | city-grass | grass | yes | city_grass_1024.png |
 | city-sand | sand | yes | city_sand_1024.png |
 | city-snow | snow | yes | city_snow_1024.png |
 | city-forest | forest | yes | city_grass_1024.png prototype fallback |
 | city-stone | stone | yes | city_grass_1024.png prototype fallback |
-| city-south | south | yes | city_south_512.jpg |
+| city-south | south | yes | city_ground_1024.jpg |
 
 Default baseline remains **40% scale + 40% opacity** unless a browser-local override exists.
 
@@ -33,7 +33,7 @@ Default baseline remains **40% scale + 40% opacity** unless a browser-local over
 
 Texture pixels repeat in world space; sources are not stretched to the browser viewport.
 
-At scale 100% a 1024 source repeats every 1024 world units, the south city 512 source every 512, and the south field 256 source every 256.
+At scale 100% a 1024 source repeats every 1024 world units, both South JPEG textures also repeat every 1024 world units.
 
 ## Current world mapping
 
@@ -66,3 +66,7 @@ The approved South prototype JPEGs are tracked with the project because the curr
 ## Safe reverse sync (v0.2.60)
 
 Updater menu **12** proposes a review PR to replace exactly the two tracked South JPEGs from full local originals. It does not send ignored PNGs or arbitrary project files, and **does not change in-game texture scale or opacity**. See [`v0.2.60`](releases/v0.2.60.md) for first-use steps when local tracked JPEGs prevent menu 1 Update.
+
+## v0.2.61: исходные имена художника
+
+В проекте и GitHub используются только `ground_1024.jpg` (южная земля) и `city_ground_1024.jpg` (южный город), без смены имени и компрессии. Устаревшие имена удалены. Ранее сохранённые браузерные настройки Biome Lab со старыми путями автоматически перенаправляются на новые, без сброса масштаба/прозрачности.
