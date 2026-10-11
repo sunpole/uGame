@@ -105,6 +105,11 @@ async function checkViewport(profile) {
 
     // Real in-game Character Draft: never auto-create a profile in an old save.
     assert.equal(await page.locator('#character-stats-open').count(),1);
+    assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'false');
+    assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'false');
+    assert.match(await page.locator('#character-level').innerText(),/ЗРЛ 1 \/ 65/);
+    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 0/);
+    assert.match(await page.locator('#header-stamina').innerText(),/Stamina/);
     await activate('#character-stats-open');
     await page.locator('#character-draft-panel').waitFor({timeout:10000});
     assert.equal(await page.locator('[data-character-stat]').count(),24);
@@ -120,6 +125,31 @@ async function checkViewport(profile) {
       {schemaVersion:1,cityId:'focus',startIndex:2});
     assert.equal(candidateSaved.player.classId,'wanderer','Draft must not change actual class');
     assert.equal(candidateSaved.schemaVersion,1,'Old SaveSystem schema preserved');
+    assert.equal(candidateSaved.player.characterProgress.zrl,1);
+    assert.equal(candidateSaved.player.characterProgress.zrp,0);
+    await page.waitForFunction(()=>document.querySelector('#character-orb-hp')?.dataset.ready==='true');
+    for(const key of ['hp','rp']){
+      const o=page.locator('#character-orb-'+key);
+      assert.equal(await o.getAttribute('data-ready'),'true');
+      assert.ok(Number(await o.getAttribute('data-max'))>0,'Missing max '+key);
+      assert.ok(Number(await o.getAttribute('data-current'))>0,'Missing current '+key);
+      assert.ok(await o.locator('.orb-shell').isVisible(),'Orb hidden '+key);
+      assert.ok((await o.locator('.orb-overlay-number').innerText()).length>3);
+    }
+    for(const key of ['hp','pp','rp','jp']){
+      assert.ok(Number.isFinite(candidateSaved.player.characterPools.current[key]),'Invalid pool '+key);
+    }
+    const orbLayout=await page.evaluate(()=>{
+      const left=document.querySelector('#character-orb-hp .orb-shell').getBoundingClientRect();
+      const right=document.querySelector('#character-orb-rp .orb-shell').getBoundingClientRect();
+      const shell=document.querySelector('.character-progress-block').getBoundingClientRect();
+      return {left:{l:left.left,r:left.right,w:left.width},right:{l:right.left,r:right.right,w:right.width},
+        shell:{l:shell.left,r:shell.right}};
+    });
+    assert.ok(orbLayout.left.w>=35&&orbLayout.right.w>=35,'Orbs too small');
+    assert.ok(orbLayout.left.r<=orbLayout.right.l,'Orbs overlap');
+    assert.ok(orbLayout.left.l>=orbLayout.shell.l-3 && orbLayout.right.r<=orbLayout.shell.r+3,
+      'Orbs exceed progress panel '+JSON.stringify(orbLayout));
     await activate('#project-hub-close');
 
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
@@ -349,6 +379,10 @@ async function checkViewport(profile) {
     await page.locator('#character-draft-panel').waitFor({timeout:10000});
     assert.equal(await page.locator('#character-draft-city').inputValue(),'focus');
     assert.equal(await page.locator('#character-draft-start').inputValue(),'2');
+    assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'true');
+    assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'true');
+    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 1 / 65');
+    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 0/);
     assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
     await activate('#project-hub-close');
     const afterReload = await page.evaluate(() =>
