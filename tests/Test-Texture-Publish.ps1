@@ -1,5 +1,6 @@
 # Isolated Windows PowerShell 5.1 uploader QA. No network access, no GitHub push.
 $ErrorActionPreference='Stop'
+Add-Type -AssemblyName System.Drawing
 Set-StrictMode -Version 2
 $source=Join-Path (Split-Path $PSScriptRoot -Parent) 'Update-uGame.ps1'
 $tokens=$null; $errors=$null
