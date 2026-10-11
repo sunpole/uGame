@@ -317,6 +317,26 @@ export const DEV_CODE_LABELS = Object.freeze([
     "Refill all four character pools"
   ],
   [
+    "8671",
+    "Без перезарядки навыков (переключатель)",
+    "No skill cooldowns (toggle)"
+  ],
+  [
+    "8672",
+    "Бессмертие: ХП не ниже 1 (переключатель)",
+    "Immortal: HP never below 1 (toggle)"
+  ],
+  [
+    "8673",
+    "Навыки без расхода ресурсов (переключатель)",
+    "Free skills: no resource costs (toggle)"
+  ],
+  [
+    "8674",
+    "Полностью восстановить ХП, ПП, РП, ЖП и Stamina",
+    "Fully refill HP, PP, RP, JP and Stamina"
+  ],
+  [
     "9001",
     "Сохранить игру",
     "Save current game state"
@@ -464,6 +484,10 @@ const SHORT_ALIASES = Object.freeze({
     "восполнить ресурсы",
     "refill pools"
   ],
+  "8671": ["без кд","нет кд","no cd","no cooldown"],
+  "8672": ["бессмертие","immortal","god mode"],
+  "8673": ["бесплатные скилы","бесплатные навыки","free skills","free casts"],
+  "8674": ["восстановить все","полное восстановление","refill all","full refill"],
   "9001": [
     "сохранить",
     "сохранить игру",

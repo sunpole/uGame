@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.68",
-  "stage": "qa-ru-en-command-entry",
+  "version": "0.2.69",
+  "stage": "qa-dev-anomaly-buffs",
   "updated": "2026-10-11",
-  "summary": "Accept Russian and English text aliases for all 67 existing DEV numeric codes plus safe short commands (xp/zrp, tp/тп, save/сохранить). No gameplay, XP curve, teleport cost or save schema changes."
+  "summary": "Session-only DEV codes for no skill cooldown, HP floor at 1, free skill casts, and instant full vitals+Stamina restore, with removable character header buffs."
 }

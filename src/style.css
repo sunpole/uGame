@@ -3015,3 +3015,27 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   #dev-code-input,#dev-code-input:focus {width:clamp(90px,27vw,142px);font-size:10px;}
   .workspace-control-strip .dev-console {right:0;gap:3px;}
 }
+
+/* v0.2.69: session-only DEV buffs in the persistent character header. */
+.dev-anomaly-bar[hidden]{display:none!important;}
+.dev-anomaly-bar{display:flex;gap:4px;flex-wrap:wrap;align-items:center;
+  max-width:100%;padding-top:4px;}
+.dev-anomaly-buff{position:relative;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:1px;width:47px;height:44px;box-sizing:border-box;
+  border:1px solid #998052;border-radius:5px;background:linear-gradient(#293343,#131b28);
+  color:#ffe2a6;box-shadow:inset 0 0 8px #d9b55c18;font-size:11px;}
+.dev-anomaly-icon{font:700 19px/1 Arial,sans-serif;color:#f9da88;}
+.dev-anomaly-label{font:700 8px/1.1 Arial,sans-serif;white-space:nowrap;color:#e7d8b0;}
+.dev-anomaly-remove{position:absolute;top:-3px;right:-3px;display:grid;place-items:center;
+  width:17px;height:17px;min-width:17px;padding:0;line-height:1;
+  border:1px solid #a0acbb;border-radius:50%;background:#26303f;color:white;
+  font-size:13px;cursor:pointer;touch-action:manipulation;z-index:2;}
+.dev-anomaly-remove:hover,.dev-anomaly-remove:focus-visible{background:#7a2b2b;
+  outline:1px solid #f4c3c3;}
+@media(max-width:750px){.dev-anomaly-buff{width:42px;height:40px;}
+  .dev-anomaly-icon{font-size:16px;}.dev-anomaly-remove{width:20px;height:20px;}}
+
+/* Override header's generic span typography for readable DEV buff glyphs. */
+.character-identity-block span.dev-anomaly-icon{font:700 19px/1 Arial,sans-serif;color:#f9da88;}
+.character-identity-block span.dev-anomaly-label{font:700 8px/1.1 Arial,sans-serif;color:#e7d8b0;}
+@media(max-width:750px){.character-identity-block span.dev-anomaly-icon{font-size:16px;}}

@@ -1,3 +1,13 @@
+# uGame v0.2.69 · Removable DEV anomaly buffs (2026-10-11)
+
+- DEV 8671: toggle no skill cooldown, 8672: toggle immortality (HP minimum 1), 8673: toggle free skill casting (no JP/RP spend), 8674: one-time 100% HP/PP/RP/JP + Stamina refill.
+- Session-only DEV flags reset after reload and never become character-save fields. Repeated codes toggle, or dismiss each active buff in the character header via ×; one-time refill is not a persistent buff.
+- Gameplay skill cost/cooldown are unchanged with flags off. No combat enemies/player-damage pipeline are live yet; immortality guard can be unit-tested but full PvE combat QA is pending future content.
+- Existing 8662 remains 4-pool restore; Steps/Attention currencies unchanged. Save schema v1, WorldGraph and candidate balance unchanged.
+- [Release notes](docs/releases/v0.2.69.md); previous rollback [v0.2.68](https://github.com/sunpole/uGame/releases/tag/v0.2.68) commit ff094ba5f444b9e36eb58bfe134fd4d20f9821eb.
+
+---
+
 # uGame v0.2.68 · RU/EN input for all DEV codes (2026-10-11)
 
 - Existing v0.2.67 XP ±5/10/50%, ZRL 1–65, signed OTV and free five-city teleport remain intact.

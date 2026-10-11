@@ -205,6 +205,38 @@ async function checkViewport(profile) {
     await activate('#dev-console button[type="submit"]');
     await page.waitForFunction(()=>
       document.querySelector('#dev-code-status')?.textContent?.includes('8662'),null,{timeout:10000});
+    // Session-only DEV anomaly buffs: enable by code or RU/EN alias, remove with ×.
+    const submitSkillDev=async(text,id)=>{
+      await probeInput.fill(text);
+      await activate('#dev-console button[type="submit"]');
+      await page.waitForFunction(code=>document.querySelector('#dev-code-status')
+        ?.textContent?.includes(code),id,{timeout:10000});
+    };
+    await submitSkillDev('без кд','8671');
+    await page.locator('[data-dev-anomaly="noCooldown"]').waitFor();
+    await submitSkillDev('free casts','8673');
+    await page.locator('[data-dev-anomaly="freeSkills"]').waitFor();
+    assert.equal(await first.getAttribute('data-free-skills'),'true');
+    assert.equal(await first.getAttribute('data-cooldown-ms'),'0');
+    const freeBefore=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    await page.keyboard.press('1');
+    await page.keyboard.press('1');
+    const freeAfter=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    assert.ok(freeAfter.rp>=freeBefore.rp-0.001&&freeAfter.jp>=freeBefore.jp-0.001,
+      'DEV free casts must not spend JP/RP');
+    await activate('[data-dev-anomaly-remove="freeSkills"]');
+    assert.equal(await page.locator('[data-dev-anomaly="freeSkills"]').count(),0);
+    await submitSkillDev('бессмертие','8672');
+    await page.locator('[data-dev-anomaly="immortal"]').waitFor();
+    await activate('[data-dev-anomaly-remove="immortal"]');
+    assert.equal(await page.locator('[data-dev-anomaly="immortal"]').count(),0);
+    await submitSkillDev('полное восстановление','8674');
+    await submitSkillDev('no cd','8671');
+    assert.equal(await page.locator('[data-dev-anomaly]').count(),0,
+      'Repeated code must disable no cooldown buff');
+
 
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
     await activate('#project-hub-open');
@@ -407,7 +439,7 @@ async function checkViewport(profile) {
     };
     // Bilingual DEV controls: live XP %, ZRL, signed OTV, free 5-city travel.
     // Actual RU/EN command entry (not just bilingual labels); numeric API remains.
-    assert.equal(await page.locator('#dev-code-suggestions option').count(),134);
+    assert.equal(await page.locator('#dev-code-suggestions option').count(),142);
     const inputBox=await page.locator('#dev-code-input').boundingBox();
     assert.ok(inputBox.width>=85&&inputBox.x+inputBox.width<=profile.viewport.width+4,
       'DEV bilingual input must remain visible on '+profile.name);

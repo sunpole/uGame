@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {GameState} from '../src/game-state.js';
 import {currentCharacterVitals} from '../src/character-runtime.js';
 import {SKILL_SLOT_COUNT,RADIAL_IMPULSE,spendImpulse,regenerateVitals,pulseRadius,
-  applyPulseHits,CharacterSkillSystem} from '../src/character-skills.js';
+  applyPulseHits,applyPlayerDamage,CharacterSkillSystem} from '../src/character-skills.js';
 
 const rules=JSON.parse(readFileSync(new URL('../data/character-balance-candidate.json',import.meta.url)));
 const gs=()=>{const g=new GameState();g.setCharacterDraft({schemaVersion:1,cityId:'focus',startIndex:2});return g;};
@@ -85,4 +85,60 @@ test('closed game gives zero offline regen; DEV 8661/8662 affect only isolated s
  before=currentCharacterVitals(rules,state.state.player);
  for(const key of ['hp','pp','rp','jp'])assert.equal(before.pools.current[key],Math.max(0,full.values[key]));
  assert.equal(state.state.player.characterProgress.zrp,0);
+});
+
+test('DEV anomaly toggles are session-only; no cooldown and free casting retain exact damage',()=>{
+ const game=gs(),events=[];
+ const sys=new CharacterSkillSystem({root,getGameState:()=>game,getRules:()=>rules,
+   canCast:()=>true,animate:config=>{events.push(config);return {x:0,y:0};}});
+ const before=currentCharacterVitals(rules,game.state.player).pools.current;
+ assert.equal(sys.executeDevCode('8671').state,'ok');
+ assert.equal(sys.executeDevCode('8673').state,'ok');
+ assert.equal(sys.anomalies.noCooldown,true);
+ assert.equal(sys.anomalies.freeSkills,true);
+ assert.equal(sys.cast(1,1000).ok,true);
+ assert.equal(sys.cast(1,1001).ok,true,'one millisecond is legal with no cooldown');
+ const after=currentCharacterVitals(rules,game.state.player).pools.current;
+ assert.deepEqual(after,before,'free skill casts may not debit RP/JP');
+ assert.equal(events.length,2,'both real impulse animations run');
+ assert.equal(events[0].damage,50,'existing damage unchanged');
+ assert.equal(sys.executeDevCode('8671').message.includes('ВЫКЛ'),true);
+ assert.equal(sys.anomalies.noCooldown,false);
+ assert.equal(sys.cast(1,1100).reason,'cooldown');
+ assert.equal(sys.executeDevCode('8673').message.includes('ВЫКЛ'),true);
+ assert.equal(sys.anomalies.freeSkills,false);
+ assert.deepEqual(new CharacterSkillSystem({root}).anomalies,
+   {noCooldown:false,immortal:false,freeSkills:false},'F5/new runtime resets flags');
+ assert.equal(game.snapshot().player.devAnomalies,undefined,'flags must not enter saves');
+});
+test('HP guard clamps to 1 only while immortal; full refill includes Stamina',()=>{
+ assert.equal(applyPlayerDamage(40,100,{immortal:true}),1);
+ assert.equal(applyPlayerDamage(40,100),0);
+ assert.equal(applyPlayerDamage(40,5,{immortal:true}),35);
+ const game=gs(),calls=[];
+ const sys=new CharacterSkillSystem({root,getGameState:()=>game,getRules:()=>rules,
+   refillStamina:()=>calls.push('stamina'),save:()=>calls.push('saved')});
+ assert.equal(sys.executeDevCode('8672').state,'ok');
+ assert.equal(sys.damagePlayer(99999),1);
+ assert.equal(currentCharacterVitals(rules,game.state.player).pools.current.hp,1);
+ assert.equal(sys.executeDevCode('8661').state,'ok');
+ assert.equal(currentCharacterVitals(rules,game.state.player).pools.current.hp,1,
+   'Immortality must also protect from DEV diagnostics');
+ const full=sys.executeDevCode('8674');
+ assert.equal(full.state,'ok');
+ assert.deepEqual(calls.filter(v=>v==='stamina'),['stamina']);
+ const vitals=currentCharacterVitals(rules,game.state.player);
+ for(const k of ['hp','pp','rp','jp'])assert.equal(vitals.pools.current[k],vitals.values[k]);
+ sys.setAnomaly('immortal',false);
+ assert.equal(sys.damagePlayer(99999),0);
+ assert.equal(sys.anomalies.immortal,false);
+});
+
+test('8674 refills Stamina even before a character profile exists',()=>{
+ const game=new GameState(),calls=[];
+ const sys=new CharacterSkillSystem({root,getGameState:()=>game,getRules:()=>rules,
+   refillStamina:()=>calls.push('stamina')});
+ assert.equal(sys.executeDevCode('8674').state,'warn');
+ assert.deepEqual(calls,['stamina']);
+ assert.equal(game.state.player.characterPools,null);
 });
