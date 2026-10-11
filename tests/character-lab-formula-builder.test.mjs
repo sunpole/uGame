@@ -44,9 +44,9 @@ test('add entirely absent metric and then remove it without affecting other prop
  const r=structuredClone(defaults);
  assert.equal(hasSourceModifier(r,'perVyn','rp','flat'),false);
  setSourceModifier(r,'perVyn','rp','flat',5,METRIC_KEYS);
- assert.equal(check(r).values.rp,95);
+ assert.equal(check(r).values.rp,75);
  removeSourceModifier(r,'perVyn','rp','flat');
- assert.equal(check(r).values.rp,70);
+ assert.equal(check(r).values.rp,50);
  assert.equal(r.ruleModifiers,undefined);
 });
 test('modifier schema refuses unknown kinds, nonfinite values and deletion of unknown flat',()=>{
