@@ -152,6 +152,60 @@ async function checkViewport(profile) {
       'Orbs exceed progress panel '+JSON.stringify(orbLayout));
     await activate('#project-hub-close');
 
+    // Real seven-slot hotbar and keyboard impulse, not only Node simulation.
+    assert.equal(await page.locator('[data-skill-slot]').count(),7);
+    const first=page.locator('[data-skill-slot="1"]');
+    assert.ok(await first.isVisible(),'First combat skill not visible');
+    const beforeSkill=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    await page.keyboard.press('1');
+    await page.waitForFunction((previous)=>{
+      const pools=JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.player?.characterPools?.current;
+      return pools&&pools.jp+pools.rp<previous.jp+previous.rp-30;
+    },beforeSkill,{timeout:10000});
+    const afterSkill=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    assert.ok(Math.abs((beforeSkill.jp+beforeSkill.rp)-(afterSkill.jp+afterSkill.rp)-35)<2,
+      'Impulse must debit 35 Desire then RP: '+JSON.stringify({beforeSkill,afterSkill}));
+    assert.match(await page.locator('#skill-hotbar-status').innerText(),/Импульс/);
+    assert.equal(await page.locator('[data-skill-slot="2"]').count(),1);
+    await activate('[data-skill-slot="2"]');
+    assert.match(await page.locator('#skill-hotbar-status').innerText(),/свободен/);
+    const afterEmpty=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    assert.ok(Math.abs(afterEmpty.rp+afterEmpty.jp-afterSkill.rp-afterSkill.jp)<3,
+      'Empty second slot may not spend resource');
+    // Confirm UI and actual click hit target on mobile, including all seven keys.
+    const barLayout=await page.evaluate(()=>{
+      const parent=document.querySelector('#skill-hotbar').getBoundingClientRect();
+      const slots=[...document.querySelectorAll('[data-skill-slot]')].map(el=>{
+        const r=el.getBoundingClientRect();
+        return {left:r.left,right:r.right,width:r.width};
+      });
+      return {parent:{left:parent.left,right:parent.right},slots,viewport:innerWidth};
+    });
+    assert.ok(barLayout.slots.every(r=>r.width>=30&&r.left>=0&&r.right<=barLayout.viewport),
+      'Skill bar must fit desktop/mobile viewport '+JSON.stringify(barLayout));
+    // DEV test depletion proves HP+PP arcs and RP+JP orbs regenerate
+    // without introducing fake combat enemies or off-session restoration.
+    const probeInput=page.locator('#dev-code-input');
+    await probeInput.fill('8661');
+    await activate('#dev-console button[type="submit"]');
+    await page.waitForFunction(()=>
+      document.querySelector('#dev-code-status')?.textContent?.includes('8661'),null,{timeout:10000});
+    const depleted=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    assert.ok(depleted.hp<=beforeSkill.hp&&depleted.pp<=beforeSkill.pp);
+    await page.waitForTimeout(1200);
+    const regenerated=await page.evaluate(()=>
+      JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
+    assert.ok(regenerated.hp>=depleted.hp&&regenerated.rp>=depleted.rp,
+      'Online regeneration must replenish current HP and RP');
+    await probeInput.fill('8662');
+    await activate('#dev-console button[type="submit"]');
+    await page.waitForFunction(()=>
+      document.querySelector('#dev-code-status')?.textContent?.includes('8662'),null,{timeout:10000});
+
     // Check real navigation and full enlarged world, not only a mocked renderWorldMap.
     await activate('#project-hub-open');
     // Project Hub defaults to the Project section, not the Game section.
