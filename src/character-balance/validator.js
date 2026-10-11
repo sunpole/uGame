@@ -1,3 +1,4 @@
+import {availableModifiers} from './modifiers.js';
 // Candidate-only evidence validator. This module NEVER applies gameplay balance.
 import {METRIC_KEYS, METRICS, validateRules, pointsAt, defaultProfile, calculateCharacter} from './engine.js';
 
@@ -83,7 +84,8 @@ export function validateBalanceCandidate({rules,profiles,registry}) {
     assert(near(a.values.hp,b.values.hp)&&near(a.values.rp,b.values.rp),'ГЛР не должен менять ёмкость');
     return '+100 ГЛР = +1% к рассчитанным скоростям, но не к максимумам ХП/РП.';
   });
-  const acceptedLov=rules.perVyn?.def===0.1 && rules.perLov?.ukl===1 && !Object.hasOwn(rules.perLov||{},'def');
+  const vyn=availableModifiers(rules,'perVyn'),lov=availableModifiers(rules,'perLov');
+  const acceptedLov=vyn.def?.flat===0.1 && lov.ukl?.flat===1 && lov.def===undefined;
   checks.push(reference('lov','Согласованная зависимость ЛОВ/ВЫН',acceptedLov,
     acceptedLov?'ВЫН +0,1 ЗАЩ; ЛОВ +1 УКЛ, без ЛОВ→ЗАЩ.':'Текущая кандидатная правка отличается от подтверждённого правила; обсудить до утверждения.'));
   const milestone=Object.entries({'10':5,'20':5,'30':5,'40':10,'50':10,'55':10,'60':15,'65':20}).every(([l,x])=>
