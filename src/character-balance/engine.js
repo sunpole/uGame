@@ -1,3 +1,4 @@
+import { availableModifiers, validateSourceModifiers } from './modifiers.js';
 // Character Balance Lab — independent pure calculator. No GameState, SaveSystem or runtime imports.
 const NAMES = {
   hp: 'ХП · здоровье', hps: 'ХПС · здоровье/сек', rp: 'РП · основной ресурс', rps: 'РПС · ресурс/сек',
@@ -43,6 +44,7 @@ export function validateRules(rules) {
     for (const [key, value] of Object.entries(city.percent || {})) { if (!['hp','rp','hps','rps','pps'].includes(key)) throw Error(id + '.percent.' + key); assertNumber(value, id + '.percent.' + key); }
     if (city.regenFromMaxRpPercent != null) assertNumber(city.regenFromMaxRpPercent, id + '.regenFromMaxRpPercent');
   }
+  validateSourceModifiers(rules,METRIC_KEYS);
   return true;
 }
 export function pointsAt(level, rules) {
@@ -78,23 +80,37 @@ export function calculateCharacter(rules, profile) {
     assertNumber(delta,label); values[key]+=delta;
     if (delta!==0 || label.startsWith('База')) trace[key].push({source:label, amount:round(delta), accumulated:round(values[key])});
   }
-  const addGroup=(data,mult,label)=>{for(const [key,rate] of Object.entries(data||{})) add(key,rate*mult,label + ': ' + mult + ' × ' + rate)};
-  for (const key of METRIC_KEYS) add(key, rules.baseline[key],'База: ' + rules.baseline[key]);
+  const increased=Object.fromEntries(METRIC_KEYS.map(key=>[key,0]));
+  const more=[];
+  function addGroup(path,mult,label){
+    for (const [key,types] of Object.entries(availableModifiers(rules,path))) {
+      if(types.flat!==undefined)add(key,types.flat*mult,label+': '+mult+' × '+types.flat);
+      if(types.increased!==undefined)increased[key]+=mult*types.increased;
+      if(types.more!==undefined)more.push({key,factor:1+mult*types.more/100,label:label+': more '+mult+' × '+types.more+'%'});
+    }
+  }
+  const base=availableModifiers(rules,'baseline');
+  for (const key of METRIC_KEYS) add(key,base[key]?.flat??0,'База: '+(base[key]?.flat??0));
   for (const [key,value] of Object.entries(profile.baseOverrides||{})) {
     if(!METRIC_KEYS.includes(key)) throw Error('baseOverrides.' + key);
     assertNumber(value,'baseOverrides.' + key);
-    add(key, value-rules.baseline[key],'Переопределение базы: ' + value + ' − ' + rules.baseline[key]);
+    const starting=base[key]?.flat??0;
+    add(key,value-starting,'Переопределение базы: '+value+' − '+starting);
   }
-  addGroup(rules.perVyn,profile.vyn,'ВЫН');
-  addGroup(rules.perLov,profile.lov,'ЛОВ');
-  addGroup(rules.perInt,profile.intel,'ИНТ');
-  addGroup(rules.perLevel,level,'ЗРЛ');
+  for(const [key,types] of Object.entries(base)){
+    if(types.increased!==undefined)increased[key]+=types.increased;
+    if(types.more!==undefined)more.push({key,factor:1+types.more/100,label:'База: more '+types.more+'%'});
+  }
+  addGroup('perVyn',profile.vyn,'ВЫН');
+  addGroup('perLov',profile.lov,'ЛОВ');
+  addGroup('perInt',profile.intel,'ИНТ');
+  addGroup('perLevel',level,'ЗРЛ');
   // Truncate toward zero for negative OTV pending an explicit negative-rating rule.
   const blocks=Math.trunc(profile.otv/100);
-  addGroup(rules.perOtvBlock,blocks,'Полные сотни ОТВ');
-  addGroup(city.flat,1,'Столица ' + city.name);
-  addGroup(rules.desireBonuses[desireMode],1,desireMode==='positive'?'ЖП > 0':'ЖП = 0');
-  addGroup(profile.extraFlat,1,'Пробные внешние бонусы');
+  addGroup('perOtvBlock',blocks,'Полные сотни ОТВ');
+  addGroup('cities.'+cityId+'.flat',1,'Столица '+city.name);
+  addGroup('desireBonuses.'+desireMode,1,desireMode==='positive'?'ЖП > 0':'ЖП = 0');
+  for(const [key,rate] of Object.entries(profile.extraFlat||{}))add(key,rate,'Пробные внешние бонусы');
   const applyPct=(key,pct,label)=>{
     if (!pct) return;
     const base=values[key], delta=base*pct/100;
@@ -107,6 +123,15 @@ export function calculateCharacter(rules, profile) {
   applyPct('pps',city.percent?.pps||0,'Бонус столицы к ППС');
   const glrPct=values.glr/100;
   for (const key of ['hps','rps','pps','jps','rgs']) applyPct(key,glrPct,'ГЛР: ' + round(values.glr) + ' / 100 = ' + round(glrPct) + '%');
+  // All increased sources for one metric add their percentages first.
+  // Different more sources multiply sequentially AFTER the increased step.
+  for (const key of METRIC_KEYS)if(increased[key]!==0)applyPct(key,increased[key],'Суммарные increased (конструктор)');
+  for (const part of more){
+    assertNumber(part.factor,part.label);
+    const before=values[part.key],next=before*part.factor;
+    assertNumber(next,part.label);
+    add(part.key,next-before,part.label+' × '+round(part.factor));
+  }
   const capped=[];
   for (const [key,cap] of Object.entries(rules.caps)) {
     if (values[key]>cap){add(key,cap-values[key],'Верхний предел ' + cap);capped.push(key);}
