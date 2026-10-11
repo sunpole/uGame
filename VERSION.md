@@ -1,3 +1,15 @@
+# uGame v0.2.65 · Character resource orbs and maturity (2026-10-11)
+
+- Original CSS glass ARPG-style red HP / blue RP orbs; PP shield shows as gold ring over HP, JP desire as purple ring over RP; green Stamina bar stays independent.
+- User-visible ZRL 1–65 and current ZRP (starts 0) stored in existing GameState schema v1; no unapproved XP threshold, combat reward, offline regen or level-up code.
+- HP/PP/RP/JP persistent current pool snapshot initializes from the **saved** player Character Draft and shared Lab candidate formula; no forced city of origin on legacy saves.
+- In-game 24-stat panel shows saved current resource values and candidate calculated maxima; Character Balance Lab / Admin Lab JSON import/export unchanged.
+- No combat effects, damage, skill costs, regen or XP awarding in this patch.
+- Previous immutable rollback: [v0.2.64](https://github.com/sunpole/uGame/releases/tag/v0.2.64), SHA `408aa31ab997895858074c2cc2b06f370c94d13d`.
+- [QA and release notes](docs/releases/v0.2.65.md).
+
+---
+
 # uGame v0.2.64 · Character stats in game, phase 1 (2026-10-11)
 
 - Read-only in-game Character Draft displays 24 candidate-derived metrics using the exact same pure Character Balance Lab engine.

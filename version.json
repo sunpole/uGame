@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.64",
-  "stage": "qa-character-draft-runtime-phase-1",
+  "version": "0.2.65",
+  "stage": "qa-character-hp-rp-orbs",
   "updated": "2026-10-11",
-  "summary": "First phased character stats: read-only candidate metric calculation in in-game Project Hub, explicit optional saved profile in GameState v1, Lab JSON export unchanged. No live gameplay effects."
+  "summary": "ARPG-style original red HP and blue RP orbs; PP and JP overlay rings, separate green Stamina, persisted character pool state and ZRL/ZRP with no unauthorized XP or combat effects."
 }

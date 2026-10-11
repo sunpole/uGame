@@ -20,6 +20,7 @@ import { RewardGenerator } from './reward-generator.js';
 import { EventSpotSystem } from './event-spot-system.js';
 import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
+import { CharacterVitalsHUD } from './character-runtime.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
@@ -68,6 +69,7 @@ let gameClockSystem = null;
 let daylightSystem = null;
 let activeZoneScene = null;
 let chromeHeaderSystem = null;
+let characterVitalsHUD = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
 let uiWindowManager = null;
@@ -230,6 +232,7 @@ class ZoneScene extends Phaser.Scene {
       .setDepth(10);
 
     activeZoneScene = this;
+    characterVitalsHUD?.render();
     visionSystem = new VisionSystem({
       host: this.gameElement,
       canvas: this.game.canvas,
@@ -1192,6 +1195,11 @@ export async function bootGame({ availableTextureFiles } = {}) {
   chromeHeaderSystem.load()
     .then(() => chromeHeaderSystem?.setResources(resourceSystem?.snapshot?.() || {}))
     .catch(() => {});
+  characterVitalsHUD = new CharacterVitalsHUD({
+    getState: () => activeZoneScene?.gameState,
+    persist: () => activeZoneScene?.persistGameState()
+  });
+  characterVitalsHUD.load().catch(error => console.warn('Character HUD unavailable',error));
   
   uiWindowManager = new UIWindowManager({
     host: document.querySelector('#game'),
@@ -1232,11 +1240,13 @@ export async function bootGame({ availableTextureFiles } = {}) {
     interfaceSettings: interfaceSettingsSystem,
     biomeTextureSettings: biomeTextureSettingsSystem,
     characterDraft: {
+      getRuntime: () => characterVitalsHUD?.render() || null,
       get: () => activeZoneScene?.gameState?.state?.player?.characterDraft || null,
       set: (draft) => {
         if (!activeZoneScene?.gameState) return;
         activeZoneScene.gameState.setCharacterDraft(draft);
         activeZoneScene.persistGameState();
+        characterVitalsHUD?.render();
       }
     },
     worldMap: {

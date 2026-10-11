@@ -2849,3 +2849,57 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .character-draft-warning { color:#f7cf85; font-size:12px; line-height:1.4; }
 @media(max-width:600px) { .character-draft-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
   .character-draft-controls label { flex:1 1 170px; } }
+
+/* uGame v0.2.65 · ARPG-inspired orbs, drawn in CSS with no third-party art. */
+.character-progress-block {align-items:center;justify-content:center;gap:5px;}
+.character-maturity {display:flex;justify-content:center;flex-wrap:wrap;gap:5px 10px;align-items:center;text-align:center;}
+.character-maturity strong {font-size:13px;color:#e6edf3;}
+.character-maturity span {font-size:10px;color:#9facbd;}
+.character-orb-pair {width:100%;display:flex;justify-content:center;align-items:start;gap:clamp(8px,1vw,20px);padding:2px 0;}
+.character-orb {--orb-percent:0%;--overlay-angle:0deg;--orb-dark:#2d090e;--orb-bright:#f63f48;--orb-deep:#7e1227;
+ display:grid;justify-items:center;gap:3px;width:clamp(62px,5.2vw,86px);min-width:0;text-align:center;
+ font-variant-numeric:tabular-nums;}
+.character-orb.rp {--orb-dark:#071c38;--orb-bright:#3ca9ff;--orb-deep:#1451b0;}
+.character-orb[data-ready="false"] {filter:saturate(.45);opacity:.82;}
+.character-orb .orb-shell {position:relative;width:clamp(56px,5vw,78px);height:clamp(56px,5vw,78px);border-radius:50%;
+ isolation:isolate;overflow:hidden;background:radial-gradient(circle at 35% 25%,#212f3a,#080c15 72%);
+ border:3px solid #687587;box-sizing:border-box;
+ box-shadow:0 0 0 2px #0b0e15,0 0 0 3px #414d5a,inset 0 0 12px #030609,0 4px 9px #0009;}
+.character-orb .orb-liquid {position:absolute;inset:0;z-index:1;border-radius:50%;
+ background:radial-gradient(ellipse at 36% 70%,var(--orb-bright) 1%,var(--orb-deep) 55%,var(--orb-dark) 100%);
+ clip-path:inset(calc(100% - var(--orb-percent)) 0 0 0);
+ transition:clip-path .2s ease;}
+.character-orb .orb-glass {position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:50%;
+ background:radial-gradient(ellipse at 28% 16%,#ffffff69 0%,#ffffff24 15%,#ffffff00 43%),
+ linear-gradient(145deg,#ffffff1e 4%,transparent 35%,#00000088 97%);
+ box-shadow:inset 2px 3px 6px #ffffff24,inset -6px -9px 12px #0009;}
+.character-orb .orb-ring {position:absolute;inset:0;z-index:3;border-radius:50%;
+ background:conic-gradient(from -90deg,#ffd47b 0deg,#ffb44f var(--overlay-angle),#ffffff23 var(--overlay-angle),#ffffff23 360deg);
+ -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));
+ mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));
+ pointer-events:none;}
+.character-orb.rp .orb-ring {background:conic-gradient(from -90deg,#db9dff 0deg,#ad79ef var(--overlay-angle),#ffffff23 var(--overlay-angle),#ffffff23 360deg);}
+.character-orb .orb-mark {position:absolute;z-index:4;left:50%;top:49%;transform:translate(-50%,-50%);
+ font-size:17px;font-weight:900;color:#fff;text-shadow:0 1px 4px #000,0 0 8px #000b;letter-spacing:.025em;}
+.character-orb .orb-number {font-size:10px;line-height:1.1;white-space:nowrap;color:#e8eef5;font-weight:700;}
+.character-orb .orb-overlay-number {font-size:10px;line-height:1.1;white-space:nowrap;color:#ffd586;font-weight:700;}
+.character-orb.rp .orb-overlay-number {color:#d7b1ff;}
+.character-hud-provisional {font-size:8px;letter-spacing:.045em;color:#b39a67;text-align:center;}
+.character-progress-block #header-stamina {font-size:10px;color:#7fe08f;}
+.character-progress-block .chrome-progress-track {width:min(100%,170px);}
+@media(max-width:1150px) {
+ .character-progress-block {align-items:stretch;}
+ .character-orb-pair {gap:7px;}
+ .character-orb {width:calc(50% - 4px);}
+ .character-orb .orb-shell {width:clamp(41px,6vw,63px);height:clamp(41px,6vw,63px);margin:auto;}
+ .character-orb .orb-mark {font-size:12px;}
+ .character-orb .orb-number,.character-orb .orb-overlay-number {font-size:9px;}
+}
+@media(max-width:600px) {
+ .character-orb .orb-shell {width:42px;height:42px;}
+ .character-orb .orb-mark {font-size:10px;}
+ .character-orb .orb-number,.character-orb .orb-overlay-number {font-size:8px;}
+ .character-maturity strong {font-size:11px;}
+ .character-maturity span {font-size:9px;}
+ .character-hud-provisional {font-size:7px;}
+}

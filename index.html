@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.64</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.64" />
+    <title>uGame v0.2.65</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.65" />
     <style>
       /* The hidden full-size game chrome must not enlarge the mobile layout viewport
          while Chromium is displaying the startup gate. */
@@ -67,8 +67,29 @@
 
         <div class="chrome-header-block character-progress-block">
           <span class="chrome-label">ПРОГРЕСС</span>
-          <strong id="character-level">LV —</strong>
-          <span id="character-xp">XP —</span>
+          <div class="character-maturity">
+            <strong id="character-level">ЗРЛ 1 / 65</strong>
+            <span id="character-xp">ЗРП 0 · порог позже</span>
+          </div>
+          <div class="character-orb-pair" aria-label="Ресурсы персонажа: здоровье, Покров, основной ресурс и Желание">
+            <div class="character-orb hp" id="character-orb-hp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">ХП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ПП —</span>
+            </div>
+            <div class="character-orb rp" id="character-orb-rp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">РП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ЖП —</span>
+            </div>
+          </div>
+          <span class="character-hud-provisional">БАЛАНС · ПРОТОТИП</span>
           <span id="header-stamina">Stamina 100 / 100</span>
           <div class="chrome-progress-track" aria-hidden="true"><i id="header-stamina-bar" style="width:100%"></i></div>
         </div>
@@ -200,7 +221,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.64</strong>
+          <strong id="footer-version">v0.2.65</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -231,7 +252,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.64';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.65';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -248,7 +269,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.64 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.65 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -283,12 +304,12 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.64', root });
+        const result = await runPreflight({ expectedVersion: '0.2.65', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.64');
+        const gameModule = await import('./src/main.js?v=0.2.65');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
