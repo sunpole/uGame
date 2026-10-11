@@ -3034,3 +3034,8 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   outline:1px solid #f4c3c3;}
 @media(max-width:750px){.dev-anomaly-buff{width:42px;height:40px;}
   .dev-anomaly-icon{font-size:16px;}.dev-anomaly-remove{width:20px;height:20px;}}
+
+/* Override header's generic span typography for readable DEV buff glyphs. */
+.character-identity-block span.dev-anomaly-icon{font:700 19px/1 Arial,sans-serif;color:#f9da88;}
+.character-identity-block span.dev-anomaly-label{font:700 8px/1.1 Arial,sans-serif;color:#e7d8b0;}
+@media(max-width:750px){.character-identity-block span.dev-anomaly-icon{font-size:16px;}}
