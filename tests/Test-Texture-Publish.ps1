@@ -66,6 +66,10 @@ $beforeStatus=Native $script:Root @('status','--porcelain=v1','--untracked-files
 Set-Item Function:GitReal (Get-Command Git).ScriptBlock
 function Git([string[]]$Arguments){
   $redirect=@($Arguments | ForEach-Object {if($_ -ceq $script:Remote){$bare}else{$_}})
+  # Only the isolated fixture uses local file transport; production still permits HTTPS only.
+  if($Arguments -contains 'fetch' -or $Arguments -contains 'push'){
+    $redirect=@('-c','protocol.file.allow=always') + $redirect
+  }
   return GitReal $redirect
 }
 # GH may be installed on the CI runner: never create a real PR in unit tests.
