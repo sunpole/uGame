@@ -12,5 +12,5 @@ export function normalizeHeroIdentity(input){
 }
 export function heroPortraitPath(archetype,gender){
   if(!HERO_ARCHETYPES.includes(archetype)||!HERO_GENDERS.includes(gender))return null;
-  return './assets/characters/'+archetype+'-'+gender+'.webp';
+  return './assets/characters/'+archetype+'-'+gender+'.jpg';
 }
