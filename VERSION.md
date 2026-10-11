@@ -1,3 +1,15 @@
+# uGame v0.2.59 · Readable Candidate Character Units · QA (2026-10-11)
+
+- Added percent equivalents and conditional rates beside raw derived scores in Character Balance Lab, pinned comparison and formula trace.
+- Grounded units in registry: 100 DEF/EVA/ACC/CRIT CHANCE/CDR/COST RED/SKILL POWER/GLOBAL REGEN = 1%; Attack Speed 100=1 attack/sec and Move Speed 100=1 px/sec are only candidate notation, not proven Phaser performance; Critical Power 100=+100% critical damage by original source.
+- Plain HP/resource, attack points, slots/weight/Steps remain raw: no invented conversions or fake percentages.
+- Engine, candidate coefficients, game economy, saves, public JSON v2 IDs/import/export are unchanged.
+- Rollback to immutable released v0.2.58 SHA ddeee3cc9f557552a930f51f32a7b89387d9e6a0.
+- Requires 135+ Node tests and desktop/mobile Chromium lab/admin + main game Pre-flight Phaser Save/F5 before publishing.
+- [Release QA](docs/releases/v0.2.59.md).
+
+---
+
 # uGame v0.2.58 · World Map Camera UX · QA (2026-10-11)
 
 - Pan by pointer/touch, zoom by wheel under cursor or mobile pinch, viewport zoom buttons and keyboard alternatives.
