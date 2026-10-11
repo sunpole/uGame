@@ -1,0 +1,164 @@
+import { GameState } from './game-state.js';
+
+export const HERO_SAVE_KEY = 'ugame.save.v1';
+export const HERO_BACKUP_PREFIX = 'ugame.save.v1.hero-backup.';
+export const HERO_ARCHETYPES = Object.freeze([
+  Object.freeze({id:'plate',name:'Латный воин',subtitle:'Латы и меч'}),
+  Object.freeze({id:'leather',name:'Бретёр',subtitle:'Кожа и сталь'}),
+  Object.freeze({id:'cloth',name:'Служитель',subtitle:'Ткань и посох'}),
+  Object.freeze({id:'hybrid',name:'Воин духовного сана',subtitle:'Вера, ткань и броня'})
+]);
+export const HERO_GENDERS = Object.freeze(['male','female']);
+const validArchetype = id => HERO_ARCHETYPES.some(item=>item.id===id);
+export function normalizeHeroIdentity(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const name = typeof input.name === 'string' ? input.name.trim().replace(/\s+/g,' ') : '';
+  if (input.schemaVersion !== 1 || name.length < 2 || name.length > 24 ||
+      /[<>\u0000-\u001f\u007f]/.test(name) || !HERO_GENDERS.includes(input.gender) ||
+      !validArchetype(input.archetype)) return null;
+  return {schemaVersion:1,name,gender:input.gender,archetype:input.archetype};
+}
+export function heroPortraitPath(archetype,gender) {
+  if(!validArchetype(archetype)||!HERO_GENDERS.includes(gender)) return null;
+  return './assets/characters/'+archetype+'-'+gender+'.webp';
+}
+export function makeNewHeroState(identity) {
+  const checked=normalizeHeroIdentity({...identity,schemaVersion:1});
+  if(!checked)throw Error('Имя: от 2 до 24 символов; выберите образ и пол');
+  const game=new GameState();
+  game.setHeroIdentity(checked);
+  return game.snapshot(); // no stat/city/profile changes; SaveSystem v1 schema retained
+}
+export function storedHero(storage) {
+  let raw;
+  try{raw=storage?.getItem(HERO_SAVE_KEY);}catch{return {kind:'unavailable'};}
+  if(raw==null)return {kind:storage?'empty':'unavailable'};
+  try{
+    const data=JSON.parse(raw);
+    if(!data || data.schemaVersion!==1 || !data.player || typeof data.player!=='object')
+      return {kind:'invalid'};
+    return {kind:'existing',raw,identity:normalizeHeroIdentity(data.player.heroIdentity),
+      savedAt:data.savedAt||null};
+  }catch{return {kind:'invalid'};}
+}
+function stamp() {
+  return new Date().toISOString().replace(/[:.]/g,'-');
+}
+export function archiveAndReplace(storage,originalRaw,replacementState) {
+  if(!storage)throw Error('Хранилище браузера недоступно — сохранение невозможно');
+  const before=storage.getItem(HERO_SAVE_KEY);
+  if(before!==originalRaw)throw Error('Сохранение изменилось. Перезагрузите страницу.');
+  let backupKey=null;
+  if(before!==null) {
+    backupKey=HERO_BACKUP_PREFIX+stamp();
+    if(storage.getItem(backupKey)!==null)throw Error('Имя резервной копии уже существует');
+    // Backup first. If storage is full, do not replace the original save.
+    storage.setItem(backupKey,before);
+  }
+  try{
+    const record={...replacementState,schemaVersion:1,savedAt:new Date().toISOString()};
+    storage.setItem(HERO_SAVE_KEY,JSON.stringify(record));
+    return {backupKey,record};
+  }catch(error){
+    if(before!==null)storage.setItem(HERO_SAVE_KEY,before);
+    else storage.removeItem(HERO_SAVE_KEY);
+    throw error;
+  }
+}
+function latestBackup(storage){
+  try{
+    const keys=[];
+    for(let i=0;i<storage.length;i++){
+      const key=storage.key(i);
+      if(key?.startsWith(HERO_BACKUP_PREFIX))keys.push(key);
+    }
+    return keys.sort().at(-1)||null;
+  }catch{return null;}
+}
+function setText(root,selector,text) {
+  const el=root.querySelector(selector);if(el)el.textContent=text;
+}
+export function openHeroEntrance({root=document,storage=globalThis.localStorage}={}) {
+  const gate=root.querySelector('#hero-entrance');
+  if(!gate)return Promise.reject(new Error('Не найден экран выбора героя'));
+  const saved=storedHero(storage);
+  const originalRaw=saved.raw??null;
+  const panel=gate.querySelector('#hero-create-panel');
+  const chooser=gate.querySelector('#hero-choose-panel');
+  const continueButton=gate.querySelector('#hero-continue');
+  const restoreButton=gate.querySelector('#hero-restore');
+  const nameInput=gate.querySelector('#hero-name');
+  const portrait=gate.querySelector('#hero-preview');
+  const namePreview=gate.querySelector('#hero-preview-name');
+  const status=gate.querySelector('#hero-message');
+  const consent=gate.querySelector('#hero-replace-confirm');
+  let archetype='plate', gender='male';
+  const preview=()=>{
+    portrait.src=heroPortraitPath(archetype,gender);
+    portrait.alt=HERO_ARCHETYPES.find(item=>item.id===archetype)?.name+
+      (gender==='female'?' — женский образ':' — мужской образ');
+    namePreview.textContent=(nameInput.value.trim()||'Будущий герой');
+    for(const button of gate.querySelectorAll('[data-hero-archetype]'))
+      button.setAttribute('aria-pressed',String(button.dataset.heroArchetype===archetype));
+    for(const button of gate.querySelectorAll('[data-hero-gender]'))
+      button.setAttribute('aria-pressed',String(button.dataset.heroGender===gender));
+  };
+  setText(gate,'#hero-existing-name',saved.kind==='existing'?
+    (saved.identity?.name||'Герой из предыдущей версии'):'Новый герой');
+  setText(gate,'#hero-last-save',saved.savedAt?
+    'Сохранено: '+new Date(saved.savedAt).toLocaleString('ru-RU'):'');
+  setText(gate,'#hero-help',saved.kind==='existing'?
+    'Текущая игра останется без изменений, если выбрать «Продолжить».':
+    'Создайте героя один раз. Позже игра будет предлагать продолжить.');
+  continueButton.hidden=saved.kind!=='existing';
+  restoreButton.hidden=!latestBackup(storage);
+  chooser.hidden=saved.kind==='empty';
+  panel.hidden=saved.kind!=='empty';
+  if(saved.kind==='invalid'||saved.kind==='unavailable'){
+    panel.hidden=true;chooser.hidden=false;continueButton.hidden=true;
+    gate.querySelector('#hero-new').hidden=true;
+    setText(gate,'#hero-help','Сохранение повреждено или хранилище недоступно. Данные не изменялись. Сделайте резервную копию перед дальнейшими действиями.');
+  }
+  gate.hidden=false;
+  preview();
+  const showCreate=()=>{
+    chooser.hidden=true;panel.hidden=false;nameInput.focus();
+    consent.checked=false;
+    gate.querySelector('#hero-consent-line').hidden=saved.kind!=='existing';
+    status.textContent='';
+  };
+  if(saved.kind==='empty')gate.querySelector('#hero-consent-line').hidden=true;
+  const showChoose=()=>{panel.hidden=true;chooser.hidden=false;status.textContent='';};
+  return new Promise(resolve=>{
+    const finish=(mode)=>{gate.hidden=true;resolve(mode);};
+    continueButton.onclick=()=>finish('continue');
+    gate.querySelector('#hero-new').onclick=showCreate;
+    gate.querySelector('#hero-back').onclick=showChoose;
+    for(const button of gate.querySelectorAll('[data-hero-archetype]'))
+      button.onclick=()=>{archetype=button.dataset.heroArchetype;preview();};
+    for(const button of gate.querySelectorAll('[data-hero-gender]'))
+      button.onclick=()=>{gender=button.dataset.heroGender;preview();};
+    nameInput.oninput=()=>{preview();status.textContent='';};
+    gate.querySelector('#hero-create-form').onsubmit=(event)=>{
+      event.preventDefault();
+      try{
+        if(saved.kind==='existing'&&!consent.checked)
+          throw Error('Подтвердите создание нового героя вместо текущего');
+        const state=makeNewHeroState({name:nameInput.value,archetype,gender});
+        archiveAndReplace(storage,originalRaw,state);
+        finish('created');
+      }catch(error){status.textContent=error.message||String(error);}
+    };
+    restoreButton.onclick=()=>{
+      try{
+        const key=latestBackup(storage);
+        if(!key||!confirm('Восстановить предыдущего героя? Текущая игра будет сохранена в резервную копию.'))return;
+        const backup=storage.getItem(key);
+        const parsed=JSON.parse(backup);
+        if(parsed?.schemaVersion!==1)throw Error('Архив имеет неподдерживаемую версию');
+        archiveAndReplace(storage,originalRaw,parsed);
+        finish('restored');
+      }catch(error){setText(gate,'#hero-help',error.message||String(error));}
+    };
+  });
+}
