@@ -36,6 +36,7 @@ async function check(label,viewport,isMobile){
    assert.equal(await page.locator('[data-check="runtime"]').getAttribute('data-state'),'open');
    assert.equal(await page.locator('#validation-metric-rows tr').count(),24);
    assert.match(await page.locator('#validation-summary').innerText(),/0\/24 подключены/);
+   await page.locator('#coefficients').evaluate(e=>e.open=true);
    const validatorRule=page.locator('input[data-rule="perVyn.hp"]');
    await validatorRule.fill('21');
    assert.match(await page.locator('#validation-state').innerText(),/устарела/);
