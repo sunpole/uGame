@@ -164,7 +164,20 @@ async function checkViewport(profile) {
             transform:getComputedStyle(tile.querySelector('.world-map-tile-inner')).transform},
           innerHtml:tile.querySelector('.world-map-tile-inner').outerHTML.slice(0,260),
           viewport:{x:viewportRect.x,y:viewportRect.y,width:viewportRect.width,height:viewportRect.height},
-          connected:tile.querySelector('.world-map-tile-inner').isConnected};
+          connected:tile.querySelector('.world-map-tile-inner').isConnected,
+          ancestorClasses:(()=>{
+            const classes=[];let parent=tile.parentElement;while(parent&&classes.length<10){
+              classes.push(parent.tagName+'.'+parent.className);parent=parent.parentElement;
+            }return classes;
+          })(),
+          cssDisplayRules:(()=>{
+            const inner=tile.querySelector('.world-map-tile-inner');
+            return [...document.styleSheets].flatMap(sheet=>{
+              try{return [...sheet.cssRules].filter(rule=>rule.selectorText &&
+                rule.style?.getPropertyValue('display')&&inner.matches(rule.selectorText))
+                .map(rule=>rule.selectorText+' = '+rule.style.getPropertyValue('display'));}catch{return [];}
+            });
+          })()};
       });
     });
     async function checkCrispTiles(){
