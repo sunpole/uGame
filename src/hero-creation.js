@@ -1,4 +1,5 @@
 import { GameState } from './game-state.js';
+import { normalizeHeroIdentity, heroPortraitPath, HERO_GENDERS } from './hero-identity.js';
 
 export const HERO_SAVE_KEY = 'ugame.save.v1';
 export const HERO_BACKUP_PREFIX = 'ugame.save.v1.hero-backup.';
@@ -8,20 +9,6 @@ export const HERO_ARCHETYPES = Object.freeze([
   Object.freeze({id:'cloth',name:'Служитель',subtitle:'Ткань и посох'}),
   Object.freeze({id:'hybrid',name:'Воин духовного сана',subtitle:'Вера, ткань и броня'})
 ]);
-export const HERO_GENDERS = Object.freeze(['male','female']);
-const validArchetype = id => HERO_ARCHETYPES.some(item=>item.id===id);
-export function normalizeHeroIdentity(input) {
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
-  const name = typeof input.name === 'string' ? input.name.trim().replace(/\s+/g,' ') : '';
-  if (input.schemaVersion !== 1 || name.length < 2 || name.length > 24 ||
-      /[<>\u0000-\u001f\u007f]/.test(name) || !HERO_GENDERS.includes(input.gender) ||
-      !validArchetype(input.archetype)) return null;
-  return {schemaVersion:1,name,gender:input.gender,archetype:input.archetype};
-}
-export function heroPortraitPath(archetype,gender) {
-  if(!validArchetype(archetype)||!HERO_GENDERS.includes(gender)) return null;
-  return './assets/characters/'+archetype+'-'+gender+'.webp';
-}
 export function makeNewHeroState(identity) {
   const checked=normalizeHeroIdentity({...identity,schemaVersion:1});
   if(!checked)throw Error('Имя: от 2 до 24 символов; выберите образ и пол');
