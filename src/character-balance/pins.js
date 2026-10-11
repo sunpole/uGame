@@ -1,6 +1,7 @@
 // UI-only pinned comparison helpers. No game state, saves or balance changes.
 import {METRICS, METRIC_KEYS} from './engine.js';
 import {labelForStat} from './terminology.js';
+import {metricInterpretation} from './display-units.js';
 export const PIN_INPUTS=Object.freeze({
   level:'ЗРЛ · уровень',
   vyn:labelForStat('vyn'),
@@ -31,8 +32,10 @@ export function pinInfo(key,profile,result){
     return {label:PIN_LABELS[key],value:input[key],lines};
   }
   const value=result.values[key],traces=result.trace[key]||[];
+  const interpretation=metricInterpretation(key,value);
   return {label:PIN_LABELS[key],value,lines:[
     METRICS[key]+': '+value,
+    ...(interpretation?['Расшифровка баллов: '+interpretation.text+'. '+interpretation.description]:[]),
     ...traces.map(entry=>entry.source+'; изменение '+entry.amount+' → '+entry.accumulated),
     ...(result.capped.includes(key)?['Внимание: действует верхний предел.']:[]),
     'Модель: кандидатная Character Balance Lab, НЕ живой игровой баланс.'
