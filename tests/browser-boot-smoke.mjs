@@ -115,24 +115,66 @@ async function checkViewport(profile) {
     const mapViewport=page.locator('#world-map-viewport');
     const metrics=async()=>mapViewport.evaluate(el=>{
       const stage=el.querySelector('.world-map-stage');
+      const layer=el.querySelector('.world-map-camera-layer');
       const a=stage.getBoundingClientRect(),b=el.getBoundingClientRect();
-      const m=new DOMMatrixReadOnly(getComputedStyle(stage).transform);
-      return {scale:m.a,x:m.e,y:m.f,stageWidth:a.width,stageHeight:a.height,
+      const style=getComputedStyle(stage);
+      return {scale:Number(style.zoom),x:a.left-b.left,y:a.top-b.top,
+        transform:style.transform,willChange:style.willChange,
+        wrapperZoom:getComputedStyle(layer).zoom,
+        stageWidth:a.width,stageHeight:a.height,
         viewportWidth:b.width,viewportHeight:b.height,
         scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
         scrollHeight:el.scrollHeight,clientHeight:el.clientHeight};
     });
+    // Every diamond and its upright labels must use the *same layout zoom*.
+    // Check true browser screen coordinates rather than class names alone.
+    const assertSharedGeometry=async()=>mapViewport.evaluate(el=>{
+      const stage=el.querySelector('.world-map-stage');
+      const bounds=stage.getBoundingClientRect();
+      const scale=Number(getComputedStyle(stage).zoom);
+      const tiles=[...stage.querySelectorAll('[data-world-map-zone]')];
+      const candidates=[tiles[0],tiles[Math.floor(tiles.length/2)],tiles[tiles.length-1],
+        stage.querySelector('[data-world-map-zone].is-current')].filter(Boolean);
+      return candidates.map(tile=>{
+        const r=tile.getBoundingClientRect();
+        const label=tile.querySelector('.world-map-tile-inner').getBoundingClientRect();
+        const css=getComputedStyle(tile);
+        const expectedX=bounds.left+parseFloat(css.left)*scale;
+        const expectedY=bounds.top+parseFloat(css.top)*scale;
+        return {id:tile.dataset.worldMapZone,
+          errorX:Math.abs((r.left+r.width/2)-expectedX),
+          errorY:Math.abs((r.top+r.height/2)-expectedY),
+          labelX:Math.abs((label.left+label.width/2)-(r.left+r.width/2)),
+          labelY:Math.abs((label.top+label.height/2)-(r.top+r.height/2))};
+      });
+    });
+    async function checkCrispTiles(){
+      const info=await metrics();
+      assert.equal(info.transform,'none','No cached transform bitmap on the entire map');
+      assert.notEqual(info.willChange,'transform','No pre-rasterized will-change transform layer');
+      assert.equal(info.wrapperZoom,'1','Pan wrapper must not scale');
+      const samples=await assertSharedGeometry();
+      for(const p of samples){
+        assert.ok(p.errorX<2&&p.errorY<2,
+          'Tile detached from shared camera at '+p.id+': '+JSON.stringify(p));
+        assert.ok(p.labelX<2&&p.labelY<2,
+          'Tile label drifts away from diamond '+p.id+': '+JSON.stringify(p));
+      }
+    }
     const initial=await metrics();
     assert.ok(initial.scale>0.6&&initial.scale<1.5,'Start at medium-scale current location');
+    await checkCrispTiles();
     assert.equal(await page.locator('.world-map-scroll').count(),0,'Old scroll container still exists');
     assert.equal(await mapViewport.evaluate(el=>getComputedStyle(el).overflow),'hidden');
     await activate('#world-map-fit');
     const overview=await metrics();
+    await checkCrispTiles();
     assert.ok(overview.scale<initial.scale,'Overview must zoom out');
     assert.ok(overview.stageWidth<=overview.viewportWidth+2,'Fit does not fit map width');
     assert.ok(overview.stageHeight<=overview.viewportHeight+2,'Fit does not fit map height');
     await activate('#world-map-find-me');
     const focused=await metrics();
+    await checkCrispTiles();
     assert.ok(focused.scale>overview.scale,'Find Me must zoom back to medium scale');
     const centre=await mapViewport.boundingBox();
     if(!centre)throw Error('Map viewport not measurable');
@@ -141,6 +183,7 @@ async function checkViewport(profile) {
       await page.mouse.wheel(0,-600);
       await page.waitForTimeout(160);
       const zoomed=await metrics();
+      await checkCrispTiles();
       assert.ok(zoomed.scale>focused.scale,'Mouse wheel must zoom in');
       await page.mouse.down();
       await page.mouse.move(centre.x+centre.width/2+80,centre.y+centre.height/2+36,{steps:8});
@@ -160,6 +203,7 @@ async function checkViewport(profile) {
       await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
       await page.waitForTimeout(120);
       const pinched=await metrics();
+      await checkCrispTiles();
       assert.ok(pinched.scale>focused.scale,'Two-finger pinch must zoom on mobile');
       await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(cx,cy,1)]});
       await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touch(cx-42,cy-30,1)]});
