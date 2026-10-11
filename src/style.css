@@ -2942,3 +2942,67 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .skill-slot kbd {font-size:8px;}
   #skill-hotbar-status {font-size:9px;}
 }
+
+/* v0.2.67 · bilingual QA-only character and five-city teleport console. */
+.dev-character-panel {position:absolute;z-index:125;inset:0;display:grid;align-items:center;justify-items:center;
+  padding:12px;background:#02050bcc;overflow:auto;}
+.dev-character-panel[hidden]{display:none!important;}
+.dev-character-shell {width:min(620px,100%);max-height:min(85dvh,700px);min-height:140px;
+  display:flex;flex-direction:column;color:#d8e5f0;background:#101923;
+  border:1px solid #68809b;border-radius:12px;box-shadow:0 18px 55px #000a;overflow:hidden;}
+.dev-character-header {display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:11px 15px;background:linear-gradient(90deg,#26394e,#17202f);border-bottom:1px solid #35445b;}
+.dev-character-header strong {font-size:15px;color:#f1f7ff;}
+.dev-character-header small {display:block;color:#9fbad3;font-size:11px;}
+.dev-character-header button,.dev-character-content button {background:#1a2d3e;color:#d4e8fa;
+  border:1px solid #4b617b;border-radius:7px;padding:8px 10px;cursor:pointer;font-size:12px;}
+.dev-character-header button:hover,.dev-character-content button:hover {background:#284964;border-color:#82b8ea;}
+.dev-character-header button:focus-visible,.dev-character-content button:focus-visible,
+.dev-character-content input:focus-visible {outline:2px solid #b8dbff;outline-offset:2px;}
+.dev-character-content {padding:12px 15px;overflow:auto;min-height:0;font-size:13px;line-height:1.45;}
+.dev-character-content p {margin:6px 0 12px;}
+.dev-character-content small {font-size:11px;color:#95a9bd;}
+.dev-tool-pct {display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 15px;}
+.dev-tool-pct button {flex:1 1 70px;white-space:nowrap;}
+.dev-tool-pct button small {color:#8dbce8;font-size:10px;}
+.dev-tool-fields {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:9px 8px;}
+.dev-tool-fields label {display:grid;min-width:0;gap:4px;font-weight:700;}
+.dev-tool-fields input {box-sizing:border-box;width:100%;min-width:0;
+  font-size:14px;color:#f1f8ff;background:#0a1421;border:1px solid #576b84;border-radius:7px;
+  padding:8px 10px;}
+.dev-tool-note {color:#abbdc9;}
+.dev-tool-city-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+.dev-tool-city-list button {min-height:49px;text-align:left;font-weight:700;overflow-wrap:anywhere;}
+.dev-tool-city-list small {white-space:nowrap;}
+#dev-character-result {display:block;min-height:24px;margin:0 15px 12px;color:#ffcf7c;font-size:12px;}
+#dev-character-result[data-state="ok"] {color:#94e5ac;}
+@media(max-width:600px) {
+  .dev-character-panel {padding:5px;}
+  .dev-character-shell {max-height:96dvh;}
+  .dev-character-header {padding:8px;gap:5px;}
+  .dev-character-header strong {font-size:12px;}
+  .dev-character-header button {font-size:11px;padding:7px 6px;}
+  .dev-character-content {padding:9px;}
+  .dev-tool-city-list {grid-template-columns:1fr;}
+  .dev-tool-fields {grid-template-columns:minmax(0,1fr);}
+  .dev-tool-fields button {width:100%;}
+}
+
+/* Browser QA: prevent a tall DEV dialog centering above the playfield and
+   behind the global header (especially with large font/short viewports). */
+#dev-character-panel.dev-character-panel {
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  overflow:hidden;
+}
+#dev-character-panel .dev-character-shell {
+  box-sizing:border-box;
+  max-height:100%;
+  min-height:0;
+  flex-shrink:1;
+  overflow:hidden;
+}
+#dev-character-panel .dev-character-content {flex:1 1 auto;min-height:0;overflow-y:auto;}

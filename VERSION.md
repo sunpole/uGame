@@ -1,3 +1,15 @@
+# uGame v0.2.67 · Bilingual DEV character tools and city travel (2026-10-11)
+
+- Bilingual Russian/English **all existing DEV codes** reference; Project Hub execution buttons bilingual.
+- **2101–2103** +5/+10/+50% ZRP and **2111–2113** −5/−10/−50% of existing held ZRP (zero remains zero; no approved threshold to next ZRL); **2201/2202** maturity ±1 clamped to 1–65; **2299** exact ZRP, direct ZRL, signed OTV.
+- **2399** choose one of five WorldGraph safe cities and travel by native ZoneSystem without service Step spend; ordinary paid teleporter unchanged.
+- Old GameState schema v1 preserved, new optional characterResponsibility = null unless explicitly assigned; existing Lab engine re-used for candidate projected ZRL/OTV stats, no automatic level-up/points or bonus acceptance.
+- Node, Chromium desktop/mobile Preflight/Phaser/Save/F5, five-city TP, Windows updater QA and Labs JSON regressions.
+- Immutable rollback v0.2.66 SHA `617a0aee404d1a2135b5b722124553cfb1bbb2d5`.
+- [Release detail](docs/releases/v0.2.67.md).
+
+---
+
 # uGame v0.2.66 · Seven-slot hotbar + radial impulse (2026-10-11)
 
 - Seven accessible slots, keyboard 1–7 and matching mouse/touch buttons; slot 1 is a red radial impulse.

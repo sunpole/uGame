@@ -1,13 +1,13 @@
 const GROUPS = {
-  '1': 'Vision',
-  '2': 'Player',
-  '3': 'Movement',
-  '4': 'Combat',
-  '5': 'Items',
-  '6': 'World',
-  '7': 'Classes',
-  '8': 'Events',
-  '9': 'Dev / Service'
+  '1': 'Видимость / Vision',
+  '2': 'Персонаж / Character',
+  '3': 'Движение / Movement',
+  '4': 'Бой / Combat',
+  '5': 'Предметы / Items',
+  '6': 'Мир / World',
+  '7': 'Классы / Classes',
+  '8': 'События / Events',
+  '9': 'DEV / Сервис / Service'
 };
 
 function showStatus(element, text, state) {
@@ -37,13 +37,13 @@ export function initDevConsole({ execute } = {}) {
     const code = input.value.trim();
 
     if (!/^\d{4}$/.test(code)) {
-      showStatus(status, 'Нужно 4 цифры', 'error');
+      showStatus(status, 'Нужно 4 цифры / Enter four digits', 'error');
       return;
     }
 
     if (code === '9999') {
       window.open('https://github.com/sunpole/uGame/blob/main/docs/DEV-CODES.md', '_blank');
-      showStatus(status, '9999 · справочник открыт', 'ok');
+      showStatus(status, '9999 · справочник открыт / Reference opened', 'ok');
       releaseGameFocus(input, form);
       return;
     }
@@ -55,8 +55,8 @@ export function initDevConsole({ execute } = {}) {
       return;
     }
 
-    const group = GROUPS[code[0]] || 'Unknown';
-    showStatus(status, `${code} · ${group} · пока не активен`, 'reserved');
+    const group = GROUPS[code[0]] || 'Неизвестно / Unknown';
+    showStatus(status, `${code} · ${group} · пока не активен / reserved`, 'reserved');
     releaseGameFocus(input, form);
   });
 }

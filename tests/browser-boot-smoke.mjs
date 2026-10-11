@@ -405,6 +405,49 @@ async function checkViewport(profile) {
         document.querySelector('#dev-code-status')?.textContent?.includes(message),
       expected, { timeout: 10000 });
     };
+    // Bilingual DEV controls: live XP %, ZRL, signed OTV, free 5-city travel.
+    await dev('2299','2299');
+    const devPanel=page.locator('#dev-character-panel');
+    assert.equal(await devPanel.isVisible(),true);
+    await page.locator('[data-dev-input="zrp"]').fill('1000');
+    await activate('[data-dev-action="zrp"]');
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
+      ?.player?.characterProgress?.zrp===1000);
+    await activate('[data-dev-code="2101"]');
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
+      ?.player?.characterProgress?.zrp===1050);
+    await page.locator('[data-dev-input="zrl"]').fill('30');
+    await activate('[data-dev-action="zrl"]');
+    await page.locator('[data-dev-input="otv"]').fill('600');
+    await activate('[data-dev-action="otv"]');
+    assert.equal(await page.locator('[data-dev-input="zrl"]').inputValue(),'30');
+    assert.equal(await page.locator('[data-dev-input="otv"]').inputValue(),'600');
+    assert.equal((await page.locator('#dev-character-content').innerText()).includes('English'),false);
+    await activate('[data-dev-close]');
+    await dev('2201','ЗРЛ');
+    await dev('2113','ЗРП');
+    const afterDev=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null'));
+    assert.equal(afterDev.player.characterProgress.zrl,31);
+    assert.equal(afterDev.player.characterProgress.zrp,525);
+    assert.equal(afterDev.player.characterResponsibility,600);
+    assert.equal(afterDev.schemaVersion,1);
+    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
+    assert.match(await page.locator('#character-xp').innerText(),/525/);
+    await dev('2399','2399');
+    assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
+    const priorSteps=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.stepEconomy);
+    await activate('[data-dev-city-id="loc-00025"]');
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
+      ?.world?.zoneId==='loc-00025');
+    assert.equal(await devPanel.isHidden(),true);
+    const stepsAfterTp=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.stepEconomy);
+    assert.equal(stepsAfterTp.debt,priorSteps.debt,'DEV teleport must not create Step debt');
+    assert.ok(stepsAfterTp.balance>=priorSteps.balance,'DEV teleport must cost no Steps');
+    await dev('2399','2399');
+    await activate('[data-dev-city-id="loc-00013"]');
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
+      ?.world?.zoneId==='loc-00013');
+
     await dev('7002', '7002 · Класс: Разведчик');
     await dev('9001', '9001 · Состояние сохранено');
     const beforeReload = await page.evaluate(() =>
@@ -435,13 +478,17 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('#character-draft-start').inputValue(),'2');
     assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'true');
     assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'true');
-    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 1 / 65');
-    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 0/);
+    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
+    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 525/);
     assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
     await activate('#project-hub-close');
     const afterReload = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('ugame.save.v1') || 'null'));
     assert.equal(afterReload?.player?.classId, 'scout', 'class reverted after F5');
+    assert.equal(afterReload?.player?.characterProgress?.zrl,31);
+    assert.equal(afterReload?.player?.characterProgress?.zrp,525);
+    assert.equal(afterReload?.player?.characterResponsibility,600);
+    assert.match(await page.locator('#character-level').innerText(),/31 \/ 65/);
     assert.equal(afterReload?.world?.zoneId, beforeReload.world.zoneId, 'save restored wrong zone');
     assert.equal(Object.keys(afterReload?.worldSpawnState?.zones || {}).length, 220);
     assert.deepEqual(afterReload.worldSpawnState.zones['loc-00026'], sampleZone,
