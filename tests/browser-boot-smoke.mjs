@@ -159,7 +159,12 @@ async function checkViewport(profile) {
           labelRect:{left:label.left,top:label.top,width:label.width,height:label.height},
           innerStyle:{left:getComputedStyle(tile.querySelector('.world-map-tile-inner')).left,
             width:getComputedStyle(tile.querySelector('.world-map-tile-inner')).width,
-            transform:getComputedStyle(tile.querySelector('.world-map-tile-inner')).transform}};
+            display:getComputedStyle(tile.querySelector('.world-map-tile-inner')).display,
+            visibility:getComputedStyle(tile.querySelector('.world-map-tile-inner')).visibility,
+            transform:getComputedStyle(tile.querySelector('.world-map-tile-inner')).transform},
+          innerHtml:tile.querySelector('.world-map-tile-inner').outerHTML.slice(0,260),
+          viewport:{x:viewportRect.x,y:viewportRect.y,width:viewportRect.width,height:viewportRect.height},
+          connected:tile.querySelector('.world-map-tile-inner').isConnected};
       });
     });
     async function checkCrispTiles(){
