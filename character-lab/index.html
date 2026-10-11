@@ -30,6 +30,15 @@
       <input type="file" id="snapshot-file" accept=".json,application/json" hidden aria-label="Выбрать файл лаборатории" />
       <span id="lab-status" role="status"></span>
     </section>
+    <section id="validation-panel" class="panel validation-panel" aria-labelledby="validation-heading">
+      <h2 id="validation-heading">Валидатор баланса · доказательства и пробелы</h2>
+      <p class="hint">Три независимые оценки: <b>технический расчёт</b> (конечные числа и трассы), <b>решение владельца</b> (кандидат / принцип / открыто) и <b>внедрение</b> (Lab или реальная игра). Зелёная проверка НЕ означает утверждённый баланс.</p>
+      <div class="validation-actions"><button id="validation-run" type="button" disabled>Проверить 5 460 сценариев</button><span id="validation-state" role="status" aria-live="polite">Загрузка реестра и профилей…</span></div>
+      <div id="validation-summary" class="validation-summary" aria-live="polite"></div>
+      <div id="validation-checks" class="validation-checks"></div>
+      <details id="validation-metrics"><summary>Все 24 показателя: расчёт / согласование / интеграция</summary><div class="table-scroll"><table class="validation-table"><thead><tr><th>Показатель</th><th>Технический расчёт</th><th>Статус правила</th><th>В действующей игре</th></tr></thead><tbody id="validation-metric-rows"></tbody></table></div></details>
+      <p class="hint">Проверка выполняется в браузере для текущих данных. При изменении коэффициентов её нужно запустить заново. Исторические CI: <a href="https://github.com/sunpole/uGame/actions/runs/38051963593" target="_blank" rel="noopener noreferrer">v0.2.57 (110/110)</a>. Это отдельное доказательство, не результат текущих коэффициентов.</p>
+    </section>
     <section aria-labelledby="profiles-heading"><h2 id="profiles-heading">Входные данные персонажей</h2><div id="profiles" class="profiles"></div></section>
     <section class="panel registry-panel" aria-labelledby="registry-heading">
       <h2 id="registry-heading">Реестр характеристик и систем <small id="registry-count"></small></h2>
@@ -56,5 +65,6 @@
   </dialog>
   <script type="module" src="./lab.js"></script>
   <script type="module" src="./admin.js"></script>
+  <script type="module" src="./validator.js"></script>
 </body>
 </html>
