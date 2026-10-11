@@ -7,13 +7,13 @@ export const HERO_CAPITAL_BY_ARCHETYPE=Object.freeze({
 });
 export const HERO_CAPITAL_BONUSES=Object.freeze([
   Object.freeze({number:1,archetype:'plate',capitalId:'force',resource:'Сила',
-    primary:'+1 РПС',details:'+10 СИЛ · +10 ЗАЩ · +1% ХПС'}),
+    primary:'+1 РПС',details:'+10 СИЛ · +10 ЗАЩ · +1% ХПС',start:'Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ'}),
   Object.freeze({number:2,archetype:'leather',capitalId:'focus',resource:'Концентрация',
-    primary:'+50 РП',details:'+10 КОН · +10 СКА · +1% РПС'}),
+    primary:'+50 РП',details:'+10 КОН · +10 СКА · +1% РПС',start:'Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ'}),
   Object.freeze({number:3,archetype:'cloth',capitalId:'tempo',resource:'Темп',
-    primary:'+1% РПС',details:'+10 ТЕМП · +10 УКЛ · +1% ППС'}),
+    primary:'+1% РПС',details:'+10 ТЕМП · +10 УКЛ · +1% ППС',start:'Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ'}),
   Object.freeze({number:4,archetype:'hybrid',capitalId:'inspire',resource:'Вдохновение',
-    primary:'+20% максимума РП',details:'+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП'})
+    primary:'+20% максимума РП',details:'+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП',start:'Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно'})
 ]);
 export function normalizeHeroIdentity(input){
   if(!input||typeof input!=='object'||Array.isArray(input))return null;
