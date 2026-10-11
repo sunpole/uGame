@@ -1,6 +1,7 @@
 import { METRICS, METRIC_KEYS, validateRules, pointsAt, defaultProfile, calculateCharacter } from '../src/character-balance/engine.js';
 import {SOURCE_GROUPS, GROUP_LABELS, availableModifiers, hasSourceModifier, setSourceModifier, removeSourceModifier, sourceGroup} from '../src/character-balance/modifiers.js';
 import {labelForStat} from '../src/character-balance/terminology.js';
+import {metricInterpretation} from '../src/character-balance/display-units.js';
 
 const $ = (q) => document.querySelector(q);
 const esc = (x) => String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -63,7 +64,8 @@ function renderTrace(results){
   $('#formula-detail').open=true;
   const box=$('#formula-trace');box.className='trace-grid';box.style.setProperty('--count',String(results.length));
   box.innerHTML=results.map((r,i)=>'<article class="trace-card"><h3>Профиль '+(i+1)+' · ЗРЛ '+profiles[i].level+'</h3><strong>'+
-    esc(labelForStat(selected,METRICS[selected]))+': '+fmt(r.values[selected])+'</strong><ol>'+
+    esc(labelForStat(selected,METRICS[selected]))+': '+fmt(r.values[selected])+
+    (metricInterpretation(selected,r.values[selected])?'<small class="stat-interpretation" title="'+esc(metricInterpretation(selected,r.values[selected]).description)+'"> = '+esc(metricInterpretation(selected,r.values[selected]).text)+'</small>':'')+'</strong><ol>'+
     r.trace[selected].map(t=>'<li>'+esc(t.source)+': <b>'+fmt(t.amount)+'</b> → '+fmt(t.accumulated)+'</li>').join('')+
     '</ol><p class="hint">База + плоские значения → проценты → ГЛР → кап. Округление только для показа.</p></article>').join('');
 }
@@ -74,7 +76,11 @@ function renderResults(){
     '<th scope="col">Профиль '+(i+1)+'<small style="display:block">'+esc(r.city)+' · ЗРЛ '+profiles[i].level+'</small></th>').join('')+'</tr>';
   $('#comparison-body').innerHTML=METRIC_KEYS.map(k=>
     '<tr role="button" tabindex="0" aria-selected="'+String(selected===k)+'" data-metric="'+k+'"><td>'+esc(labelForStat(k,METRICS[k]))+'</td>'+
-    results.map(r=>'<td>'+fmt(r.values[k])+'</td>').join('')+'</tr>').join('')+
+    results.map(r=>{
+      const interpreted=metricInterpretation(k,r.values[k]);
+      return '<td>'+fmt(r.values[k])+(interpreted?
+        ' <small class="stat-interpretation" title="'+esc(interpreted.description)+'">= '+esc(interpreted.text)+'</small>':'')+'</td>';
+    }).join('')+'</tr>').join('')+
     '<tr><td>Нераспределённые очки ВЫН/ЛОВ/ИНТ</td>'+results.map(r=>'<td>'+fmt(r.unspent)+'</td>').join('')+'</tr>'+
     '<tr><td>Свободных пассивных очков (без стартового)</td>'+results.map(r=>'<td>'+r.passivePoints+'</td>').join('')+'</tr>'+
     '<tr><td>Целых дополнительных ячеек</td>'+results.map(r=>'<td>'+r.extra.usableBonusSlots+'</td>').join('')+'</tr>';
