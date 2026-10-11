@@ -1,0 +1,40 @@
+name: uGame v0.2.58 pre-map immutable backup
+
+on:
+  push:
+    branches: [chore/v0258-pre-map-backup]
+    paths:
+      - '.github/workflows/publish-v0258-pre-map-backup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish-backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify frozen parent main commit
+        run: |
+          test "$(git rev-parse HEAD^)" = "ca82dc32c7f4212c37d646e34b82ce8d04505561"
+          test "$(git show ca82dc32c7f4212c37d646e34b82ce8d04505561:version.json | grep -c '"version": "0.2.57"')" = 1
+      - name: Publish immutable backup as prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.57-pre-world-map-v0258-20261011 >/dev/null 2>&1; then
+            gh release create v0.2.57-pre-world-map-v0258-20261011 \
+              --target ca82dc32c7f4212c37d646e34b82ce8d04505561 \
+              --title "uGame v0.2.57 · pre-map navigation backup" \
+              --notes "Immutable rollback of the exact main commit ca82dc32c7f4212c37d646e34b82ce8d04505561, including the normalized character-stat JSON identifiers. Before v0.2.58 world map pan and zoom changes. Code snapshot only; local browser saves are not backed up." --prerelease
+          fi
+      - name: Verify tag points to immutable baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.57-pre-world-map-v0258-20261011
+          git fetch origin "refs/tags/v0.2.57-pre-world-map-v0258-20261011:refs/tags/v0.2.57-pre-world-map-v0258-20261011"
+          test "$(git rev-parse v0.2.57-pre-world-map-v0258-20261011^{commit})" = "ca82dc32c7f4212c37d646e34b82ce8d04505561"
