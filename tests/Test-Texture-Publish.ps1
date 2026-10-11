@@ -32,7 +32,7 @@ $relative='assets\textures\biomes'
 $seedTextures=Join-Path $seed $relative
 [void][IO.Directory]::CreateDirectory($seedTextures)
 function JPEG([string]$path,[int]$red,[int]$green,[int]$blue){
-  $bitmap=New-Object System.Drawing.Bitmap -ArgumentList 512,512
+  $bitmap=New-Object System.Drawing.Bitmap -ArgumentList 1024,1024
   try{
     $color=[System.Drawing.Color]::FromArgb($red,$green,$blue)
     $g=[System.Drawing.Graphics]::FromImage($bitmap)
@@ -40,8 +40,8 @@ function JPEG([string]$path,[int]$red,[int]$green,[int]$blue){
     $bitmap.Save($path,[System.Drawing.Imaging.ImageFormat]::Jpeg)
   }finally{$bitmap.Dispose()}
 }
-JPEG (Join-Path $seedTextures 'south_256.jpg') 105 80 25
-JPEG (Join-Path $seedTextures 'city_south_512.jpg') 190 190 185
+JPEG (Join-Path $seedTextures 'ground_1024.jpg') 105 80 25
+JPEG (Join-Path $seedTextures 'city_ground_1024.jpg') 190 190 185
 'initial' | Set-Content (Join-Path $seed 'safe.txt')
 [void](Native $seed @('add','.'))
 [void](Native $seed @('commit','-m','test fixture'))
@@ -95,8 +95,8 @@ Check ((Native $bare @('rev-parse','main')) -eq $before) 'remote main is unchang
 Check ((Native $script:Root @('rev-parse','HEAD')) -eq $before) 'local main HEAD is unchanged'
 Check ((Native $script:Root @('status','--porcelain=v1','--untracked-files=all')) -eq $beforeStatus) 'local dirty and staged files are unchanged'
 $paths=@((Native $bare @('diff-tree','--no-commit-id','--name-only','-r',$refs[0])) -split '\r?\n' | Where-Object {$_})
-Check ($paths.Count -eq 2 -and $paths -contains 'assets/textures/biomes/south_256.jpg' -and $paths -contains 'assets/textures/biomes/city_south_512.jpg') 'upload allowlist enforces exactly two JPEG paths'
-foreach($mapping in @(@('ground_1024.jpg','south_256.jpg'),@('city_ground_1024.jpg','city_south_512.jpg'))){
+Check ($paths.Count -eq 2 -and $paths -contains 'assets/textures/biomes/ground_1024.jpg' -and $paths -contains 'assets/textures/biomes/city_ground_1024.jpg') 'upload allowlist enforces exactly two JPEG paths'
+foreach($mapping in @(@('ground_1024.jpg','ground_1024.jpg'),@('city_ground_1024.jpg','city_ground_1024.jpg'))){
   $hash=Native $script:Root @('hash-object',(Join-Path $clientTextures $mapping[0]))
   $remoteHash=Native $bare @('rev-parse',($refs[0]+':assets/textures/biomes/'+$mapping[1]))
   Check ($hash -eq $remoteHash) ('exact JPEG bytes preserved: '+$mapping[1])
