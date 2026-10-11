@@ -52,7 +52,7 @@ async function smoke(profile){
     await page.locator('#coefficients').evaluate(el=>{el.open=true;});
     await page.locator('input[data-rule="perVyn.hp"]').fill('20');
     assert.equal((await hp.innerText()).trim(),'207');
-    await page.getByRole('button',{name:'Восстановить формулы'}).click();
+    await page.getByRole('button',{name:'Вернуть стандарт'}).click();
     assert.equal((await hp.innerText()).trim(),'150');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth+4),true,
       'Unexpected horizontal overflow outside scrollable results table');
