@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.68</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.68" />
+    <title>uGame v0.2.69</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.69" />
     <style>
       /* The hidden full-size game chrome must not enlarge the mobile layout viewport
          while Chromium is displaying the startup gate. */
@@ -250,7 +250,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.68</strong>
+          <strong id="footer-version">v0.2.69</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -281,7 +281,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.68';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.69';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -298,7 +298,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.68 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.69 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -333,12 +333,12 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.68', root });
+        const result = await runPreflight({ expectedVersion: '0.2.69', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.68');
+        const gameModule = await import('./src/main.js?v=0.2.69');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
