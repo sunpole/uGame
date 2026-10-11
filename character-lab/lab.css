@@ -41,3 +41,25 @@
 
 .rule-search-label{display:flex;flex-direction:column;gap:4px;max-width:480px;margin:8px 0;color:#aebdd0;font-size:12px}
 .rules-section[hidden],.rules-section label[hidden]{display:none!important}
+
+
+/* Candidate balance evidence panel: text status always conveys meaning without color. */
+.validation-panel{display:grid;gap:12px}
+.validation-panel h2{margin-bottom:0}
+.validation-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.validation-actions button{font-weight:700}
+#validation-state{font-size:13px}
+#validation-state[data-state="fail"]{font-weight:700}
+.validation-summary{font-size:14px;font-weight:700;padding:8px 0}
+.validation-checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px}
+.validation-check{display:flex;gap:9px;align-items:start;border:1px solid var(--line,#465361);border-radius:8px;padding:10px;min-width:0}
+.validation-check strong{font-size:13px}
+.validation-check p{font-size:12px;line-height:1.5;margin:5px 0 0;overflow-wrap:anywhere}
+.validation-mark{flex:0 0 18px;text-align:center;font-weight:900}
+.validation-kind{display:inline-block;font-size:11px;font-weight:600;margin-left:8px}
+.validation-table{width:100%;border-collapse:collapse;font-size:12px}
+.validation-table th,.validation-table td{padding:9px;text-align:left;border-bottom:1px solid var(--line,#465361);vertical-align:top}
+.validation-table th{white-space:normal;min-width:100px}
+.validation-table td small{display:block;font-size:11px;line-height:1.4;opacity:.8;margin-top:4px;overflow-wrap:anywhere}
+.validation-panel details>summary{cursor:pointer;font-weight:700;margin-bottom:8px}
+@media(max-width:640px){.validation-checks{grid-template-columns:1fr}.validation-table{min-width:640px}.validation-actions button{max-width:100%}}
