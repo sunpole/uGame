@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {GameState,createDefaultGameState,normalizeGameState} from '../src/game-state.js';
 import {normalizeHeroIdentity,heroPortraitPath,HERO_ARCHETYPES,HERO_GENDERS} from '../src/hero-identity.js';
-import {HERO_SAVE_KEY,HERO_BACKUP_PREFIX,makeNewHeroState,storedHero,archiveAndReplace} from '../src/hero-creation.js';
+import {HERO_SAVE_KEY,HERO_BACKUP_PREFIX,makeNewHeroState,storedHero,archiveAndReplace,openHeroEntrance} from '../src/hero-creation.js';
 
 const memory=()=>{
  const map=new Map();
@@ -77,4 +77,18 @@ test('storage failure never overwrites existing user save',()=>{
  assert.equal(storage.getItem(HERO_SAVE_KEY),old);
  storage.setItem(HERO_SAVE_KEY,'not json');
  assert.equal(storedHero(storage).kind,'invalid');
+});
+
+test('privacy restricted localStorage getter is handled before onboarding',async()=>{
+ const descriptor=Object.getOwnPropertyDescriptor(globalThis,'localStorage');
+ try {
+   Object.defineProperty(globalThis,'localStorage',{
+     configurable:true,get(){throw new Error('SecurityError');}
+   });
+   await assert.rejects(openHeroEntrance({root:{querySelector:()=>null}}),
+     /Не найден экран выбора героя/);
+ }finally{
+   if(descriptor)Object.defineProperty(globalThis,'localStorage',descriptor);
+   else delete globalThis.localStorage;
+ }
 });
