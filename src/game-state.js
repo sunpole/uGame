@@ -1,3 +1,5 @@
+import { normalizeCharacterDraft } from './character-draft.js';
+
 export const GAME_STATE_SCHEMA_VERSION = 1;
 
 function cleanCounts(value) {
@@ -161,7 +163,8 @@ export function createDefaultGameState() {
   return {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
     player: {
-      classId: 'wanderer'
+      classId: 'wanderer',
+      characterDraft: null
     },
     world: {
       zoneId: 'zone-001',
@@ -200,7 +203,8 @@ export function normalizeGameState(input) {
     player: {
       classId: typeof input.player?.classId === 'string' && input.player.classId
         ? input.player.classId
-        : defaults.player.classId
+        : defaults.player.classId,
+      characterDraft: normalizeCharacterDraft(input.player?.characterDraft)
     },
     world: {
       zoneId: validZoneId ? zoneId : defaults.world.zoneId,
@@ -232,6 +236,10 @@ export class GameState {
     return typeof structuredClone === 'function'
       ? structuredClone(this.state)
       : JSON.parse(JSON.stringify(this.state));
+  }
+
+  setCharacterDraft(draft) {
+    this.state.player.characterDraft = normalizeCharacterDraft(draft);
   }
 
   setClassId(classId) {
