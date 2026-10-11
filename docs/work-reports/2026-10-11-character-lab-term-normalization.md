@@ -1,6 +1,6 @@
 # uGame · Безопасная нормализация названий характеристик
 
-**Дата:** 2026-10-11. **Статус при создании:** в PR, QA/merge проверяются отдельно.
+**Дата:** 2026-10-11. **Фактический итог:** [PR #63](https://github.com/sunpole/uGame/pull/63) объединён в main, squash commit [1ab4927](https://github.com/sunpole/uGame/commit/1ab492753752697f92a8429c2075862cab92de0a). **131/131 Node PASS, Chromium desktop/mobile Character Lab/Admin PASS, основной Phaser/Pre-flight/Save-F5 PASS, Pages опубликован.** Релиз v0.2.57 не переиздавался.
 
 ## Резервная точка отката — создана ДО изменений
 
@@ -23,7 +23,14 @@
 
 Тест `tests/character-lab-named-ids.test.mjs`: уникальность всех идентификаторов, двуязычные названия, schema v2 без транслит-ключей, JSON export→import с сохранением ruleModifiers и расчётных трасс, приём исходных JSON v1, отказ от подделанного checksum и неподдерживаемых версий. Chromium `tests/character-lab-admin-browser-smoke.mjs`: все прежние сценарии + экспорт v2, новый имя/код, восстановление, отклонение tamper. Обязателен полный `npm test`, Chromium desktop/mobile + Phaser/Save/F5.
 
-**Итоги тестов и merged commit обновить после финального CI.** Не считать обычный текст этого отчёта доказательством прошедшего тестирования.
+**Проверенный QA после merge:**
+- Node suite: **131/131 PASS, fail 0**. Новые тесты публичных названий, всего 28 параметров (24 выхода+4 входа), проверки v2, защищённого JSON, legacy v1 и roundtrip.
+- [PR CI Character Admin](https://github.com/sunpole/uGame/actions/runs/38104022070) — PASS (Chromium desktop/mobile Lab Admin, предыдущая Lab, Phaser Pre-flight / Save-F5).
+- [PR CI source audit](https://github.com/sunpole/uGame/actions/runs/38104022101) и [Chromium navigation smoke](https://github.com/sunpole/uGame/actions/runs/38104022054) — PASS. Все проверки PR #63 завершились успешно.
+- [Проверка объединённого main](https://github.com/sunpole/uGame/actions/runs/38104115690) — PASS; [дополнительный Chrome smoke](https://github.com/sunpole/uGame/actions/runs/38104115780) — PASS.
+- [Публикация GitHub Pages](https://github.com/sunpole/uGame/actions/runs/38104115571) — success.
+- Ручной Windows QA этой версии **ещё не проводился**. GitHub Release backup создан строго до изменений; игровой баланс и сохранения не мигрировали.
+
 
 ## Проверка пользователю после merge
 
