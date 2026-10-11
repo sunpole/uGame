@@ -2987,3 +2987,22 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .dev-tool-fields {grid-template-columns:minmax(0,1fr);}
   .dev-tool-fields button {width:100%;}
 }
+
+/* Browser QA: prevent a tall DEV dialog centering above the playfield and
+   behind the global header (especially with large font/short viewports). */
+#dev-character-panel.dev-character-panel {
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  overflow:hidden;
+}
+#dev-character-panel .dev-character-shell {
+  box-sizing:border-box;
+  max-height:100%;
+  min-height:0;
+  flex-shrink:1;
+  overflow:hidden;
+}
+#dev-character-panel .dev-character-content {flex:1 1 auto;min-height:0;overflow-y:auto;}
