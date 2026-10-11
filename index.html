@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.65</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.65" />
+    <title>uGame v0.2.66</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.66" />
     <style>
       /* The hidden full-size game chrome must not enlarge the mobile layout viewport
          while Chromium is displaying the startup gate. */
@@ -175,6 +175,22 @@
           </div>
         </main>
 
+        <div id="skill-hotbar" class="skill-hotbar" role="group" aria-label="Семь слотов умений · клавиши 1–7">
+          <div class="skill-hotbar-slots">
+            <button class="skill-slot active" type="button" data-skill-slot="1" data-affordable="false"
+              title="1 · Красный импульс: −35 ЖП/РП, КД 0,3 с, радиус 75 px, 50 урона">
+              <kbd>1</kbd><span class="skill-icon">◉</span><span class="skill-slot-name">Импульс</span>
+              <span class="skill-slot-cost">35 · 0,3с</span><i class="skill-cooldown-mask" aria-hidden="true"></i>
+            </button>
+            <button class="skill-slot empty" type="button" data-skill-slot="2" title="2 · свободный слот"><kbd>2</kbd><span>＋</span></button>
+            <button class="skill-slot empty" type="button" data-skill-slot="3" title="3 · свободный слот"><kbd>3</kbd><span>＋</span></button>
+            <button class="skill-slot empty" type="button" data-skill-slot="4" title="4 · свободный слот"><kbd>4</kbd><span>＋</span></button>
+            <button class="skill-slot empty" type="button" data-skill-slot="5" title="5 · свободный слот"><kbd>5</kbd><span>＋</span></button>
+            <button class="skill-slot empty" type="button" data-skill-slot="6" title="6 · свободный слот"><kbd>6</kbd><span>＋</span></button>
+            <button class="skill-slot empty" type="button" data-skill-slot="7" title="7 · свободный слот"><kbd>7</kbd><span>＋</span></button>
+          </div>
+          <output id="skill-hotbar-status" aria-live="polite">1–7 · Выбери и сохрани профиль для использования</output>
+        </div>
         <div id="workspace-control-strip" class="workspace-control-strip" aria-label="Удалённое управление и DEV">
           <div class="mouse-controls" aria-label="Управление мышью">
             <button id="arrow-left" class="mouse-control arrow-key" type="button" data-control="left" title="Влево">←</button>
@@ -221,7 +237,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.65</strong>
+          <strong id="footer-version">v0.2.66</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -252,7 +268,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.65';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.66';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -269,7 +285,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.65 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.66 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -304,12 +320,12 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.65', root });
+        const result = await runPreflight({ expectedVersion: '0.2.66', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.65');
+        const gameModule = await import('./src/main.js?v=0.2.66');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 

@@ -1,3 +1,15 @@
+# uGame v0.2.66 · Seven-slot hotbar + radial impulse (2026-10-11)
+
+- Seven accessible slots, keyboard 1–7 and matching mouse/touch buttons; slot 1 is a red radial impulse.
+- Cost **35 total** from Desire JP first, then RP (atomic payment), **0.3s cooldown**. Phaser graphic expanding **1→75 px in 0.3s**, anchored at character's feet. **50 damage** once for each explicitly registered enemy target in radius. No actual PvE HP targets currently; masters/city NPC not damaged.
+- Candidate HP/PP/RP/JP per-second regeneration while game session is open (AFK/background allowed), desire only after **RP fully charged for 3s** and RP stays full. No offline catch-up, no XP or gameplay economy rebalance. Casts persisted immediately.
+- DEV 8661 drains 4 pools for QA; 8662 restores them. Previous independent green Stamina unaffected.
+- Existing 24 stat panel, Character Balance Lab/Admin Lab and export JSON untouched; UGD-0038 remains `discussing`.
+- Rollback: [v0.2.65](https://github.com/sunpole/uGame/releases/tag/v0.2.65) SHA `dae0746b116ff1acfec5fc866965600e72584813`.
+- [Tests and release notes](docs/releases/v0.2.66.md).
+
+---
+
 # uGame v0.2.65 · Character resource orbs and maturity (2026-10-11)
 
 - Original CSS glass ARPG-style red HP / blue RP orbs; PP shield shows as gold ring over HP, JP desire as purple ring over RP; green Stamina bar stays independent.

@@ -2903,3 +2903,42 @@ html.ugame-text-selection-enabled .chrome-logo-block {
  .character-maturity span {font-size:9px;}
  .character-hud-provisional {font-size:7px;}
 }
+
+/* v0.2.66: seven-slot ARPG test hotbar, original uGame dark styling. */
+.skill-hotbar { position:absolute;z-index:35;bottom:55px;left:50%;transform:translateX(-50%);
+  display:grid;justify-items:center;gap:3px;max-width:calc(100% - 8px);pointer-events:none;
+  color:#b5bdc8;font-size:10px; }
+.skill-hotbar-slots {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:4px;padding:5px;background:#070c13e8;border:1px solid #405069;
+  box-shadow:0 3px 15px #000b;border-radius:10px;pointer-events:auto;}
+.skill-slot {position:relative;isolation:isolate;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:2px;width:50px;height:52px;
+  border:1px solid #394453;border-radius:7px;background:linear-gradient(#202631,#0a1018);
+  box-sizing:border-box;color:#aeb5bd;font:700 12px/1 Arial,sans-serif;cursor:pointer;
+  user-select:none;touch-action:manipulation;overflow:hidden; }
+.skill-slot kbd {position:absolute;z-index:3;top:3px;left:4px;color:#aab8c9;
+  font:700 10px/1 monospace; }
+.skill-slot.active {border-color:#c55357;background:radial-gradient(circle at 50% 40%,#7c2434,#291421 70%);color:#ffe5e5;}
+.skill-slot.active[data-affordable="false"] {border-color:#5b4347;filter:saturate(.55);}
+.skill-slot.active .skill-icon {font-size:20px;line-height:18px;color:#ff7b80;text-shadow:0 0 6px #c61b35;}
+.skill-slot-name {font-size:9px;line-height:1;}
+.skill-slot-cost {font-size:8px;color:#ffd199;line-height:1;}
+.skill-slot.empty>span {font-size:17px;color:#788392;}
+.skill-slot:focus-visible {outline:2px solid #9fd3ff;outline-offset:2px;}
+.skill-slot:hover {border-color:#8ba6bd;}
+.skill-cooldown-mask {position:absolute;z-index:2;inset:0;pointer-events:none;
+  background:#05080bbd;clip-path:inset(calc(100% - var(--skill-cooldown,0%)) 0 0 0);}
+#skill-hotbar-status {pointer-events:none;max-width:min(560px,88vw);
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:#e3bd8a;background:#070c13c9;padding:2px 8px;border:1px solid #343c4b;border-radius:6px;}
+#skill-hotbar-status[data-ok="true"] {color:#9aeeb2;}
+@media(max-width:750px) {
+  .skill-hotbar {bottom:146px;}
+  .skill-hotbar-slots {gap:2px;padding:4px;}
+  .skill-slot {width:clamp(32px,10vw,41px);height:43px;}
+  .skill-slot.active .skill-icon {font-size:15px;}
+  .skill-slot-name {font-size:7px;}
+  .skill-slot-cost {font-size:7px;}
+  .skill-slot kbd {font-size:8px;}
+  #skill-hotbar-status {font-size:9px;}
+}
