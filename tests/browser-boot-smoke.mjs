@@ -478,8 +478,8 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('#character-draft-start').inputValue(),'2');
     assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'true');
     assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'true');
-    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 1 / 65');
-    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 0/);
+    assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
+    assert.match(await page.locator('#character-xp').innerText(),/ЗРП 525/);
     assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
     await activate('#project-hub-close');
     const afterReload = await page.evaluate(() =>
