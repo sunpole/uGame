@@ -1,6 +1,6 @@
 # uGame — Character Balance Evidence Validator (11.10.2026)
 
-**Статус на момент создания записи:** кандидатная функция в PR #59, ещё требуется дождаться финального CI и объединить в main. **Последний опубликованный релиз v0.2.57 не содержит этого валидатора**; для текущей задачи намеренно не создаём новый тег, оставляем совместимость 0.2.57 JSON snapshot. После merge инструмент доступен в main/GitHub Pages и через Updater→1/11.
+**Фактический итог:** [PR #59](https://github.com/sunpole/uGame/pull/59) объединён в main, squash-коммит [14b9b91](https://github.com/sunpole/uGame/commit/14b9b911334c1e5d8831fffd414b3973918c4c02). Все ключевые CI на PR и main зелёные, Pages опубликован. **Последний релиз v0.2.57 не содержит валидатора**: это проверенная main-only функция без нового тега, с сохранением совместимости JSON snapshot формата 0.2.57. Доступно на GitHub Pages и через Updater→1/11.
 
 ## Цель
 
@@ -15,13 +15,14 @@
 - `tests/character-balance-validator.test.mjs`: тесты штатных/поврежденных коэффициентов, 5 460 сценариев, отсутствие ложного 24/24 при ошибке, намеренно изменённая исходная база.
 - `tests/character-lab-admin-browser-smoke.mjs`: desktop/mobile Chromium, запуск валидатора, отсутствие «зеленого» на нерешённых механиках, повторный прогон и инвалидирование результатов при правке коэффициента.
 
-## Статус QA
+## Фактический QA и ссылки
 
-**Официальные результаты** смотреть в CI PR #59: https://github.com/sunpole/uGame/pull/59 .
-
-Запуск `npm test` в первом прогоне CI дал **114/114 PASS**. Первый Chromium QA выявил гонку при повторной проверке на мобильном экране, исправлена в ветке (сокрытие старого результата + ожидание завершения аудита в smoke). **Повторный Chromium QA необходимо дождаться и зафиксировать по свежему SHA; считать эту задачу завершенной до этого запрещено.**
-
-Предыдущий релиз v0.2.57: https://github.com/sunpole/uGame/releases/tag/v0.2.57, прямой откат для лаборатории. Ручной Windows QA не выполнен.
+- **PR Node** — **114/114 PASS**, лог на [GitHub Actions PR #59](https://github.com/sunpole/uGame/actions/runs/38098891148); ещё [независимый source audit](https://github.com/sunpole/uGame/actions/runs/38098891095) PASS.
+- **Chromium на PR** — новая админка/валидатор desktop 1365×768 и mobile 390×844 PASS, включая 5 460 профилей, открытые статусы, корректное скрытие устаревших результатов после правок и предыдущие pin/export/import. Прежний Character Lab regression PASS. Основная игра Pre-flight → Phaser → Save/F5 PASS.
+- **Chromium и тесты main** — [основной CI](https://github.com/sunpole/uGame/actions/runs/38098979735) PASS, [дополнительный boot/navigation smoke](https://github.com/sunpole/uGame/actions/runs/38098979752) PASS, [Pages](https://github.com/sunpole/uGame/actions/runs/38098979562) success.
+- В первой итерации тест поймал гонку на mobile: старые зелёные результаты могли быть прочитаны до конца новой проверки. Исправлено скрытием результатов при изменении данных, проверкой ревизии и ожиданием окончания audit в Chromium E2E. Повторные PR + main браузерные тесты PASS.
+- **Ручной Windows QA не проводился** и не подменяется CI.
+- В игре новые расчёты не применены, релиз v0.2.57 и предыдущие точки отката не изменялись.
 
 ## Как проверить после merge
 
