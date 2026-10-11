@@ -13,15 +13,10 @@ on:
       - 'src/game-state.js'
       - 'src/character-draft.js'
       - 'src/character-runtime.js'
-      - 'src/character-skills.js'
       - 'src/dev-character-tools.js'
       - 'src/dev-console.js'
-      - 'src/dev-code-aliases.js'
       - 'tests/dev-code-aliases.test.mjs'
-      - 'src/project-hub-system.js'
-      - 'docs/DEV-CODES.md'
       - 'tests/dev-character-tools.test.mjs'
-      - 'tests/character-skills.test.mjs'
       - 'tests/character-runtime-orbs.test.mjs'
       - 'data/project-hub.json'
       - 'tests/character-draft-runtime.test.mjs'
@@ -32,12 +27,12 @@ on:
       - 'package.json'
       - 'index.html'
       - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0268.yml'
+      - '.github/workflows/publish-v0269.yml'
   push:
     branches: [main]
     paths:
       - 'docs/releases/v0.2.69.md'
-      - '.github/workflows/publish-v0268.yml'
+      - '.github/workflows/publish-v0269.yml'
   workflow_dispatch:
 
 permissions:
