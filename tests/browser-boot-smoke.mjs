@@ -113,21 +113,6 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('[data-world-map-zone].is-city').count(), 5);
     assert.equal(await page.locator('[data-world-map-zone].is-current').count(), 1);
     const mapViewport=page.locator('#world-map-viewport');
-    if(profile.mobile){
-      await mapViewport.evaluate(el=>{
-        window.__ugMapTouchTrace=[];
-        for(const type of ['pointerdown','pointermove','pointerup','pointercancel','gotpointercapture','lostpointercapture']){
-          el.addEventListener(type,e=>{
-            const trace=window.__ugMapTouchTrace;
-            if(trace.length<60)trace.push({
-              type,id:e.pointerId,x:e.clientX,y:e.clientY,
-              target:e.target?.className,
-              cameraZoom:getComputedStyle(el.querySelector('.world-map-stage')).zoom
-            });
-          },true);
-        }
-      });
-    }
     const metrics=async()=>mapViewport.evaluate(el=>{
       const stage=el.querySelector('.world-map-stage');
       const layer=el.querySelector('.world-map-camera-layer');
@@ -243,6 +228,25 @@ async function checkViewport(profile) {
       // CDP synthesizes real multi-touch input through Chromium, not a JS mock.
       const session=await context.newCDPSession(page);
       const cx=centre.x+centre.width/2,cy=centre.y+centre.height/2;
+      // Find Me has rebuilt the viewport; attach trace to the current DOM.
+      await page.evaluate(()=>{
+        const el=document.querySelector('#world-map-viewport');
+        window.__ugMapTouchTrace=[];
+        for(const type of ['pointerdown','pointermove','pointerup','pointercancel','touchstart','touchmove']){
+          document.addEventListener(type,e=>{
+            const trace=window.__ugMapTouchTrace;
+            if(trace.length<80)trace.push({type,id:e.pointerId,x:e.clientX,y:e.clientY,
+              target:String(e.target?.className).slice(0,90),
+              contained:el.contains(e.target),
+              cameraZoom:getComputedStyle(el.querySelector('.world-map-stage')).zoom});
+          },true);
+        }
+      });
+      const hitBefore=await page.evaluate(({x,y})=>{
+        const el=document.elementFromPoint(x,y);
+        return {tag:el?.tagName,cls:el?.className,
+          inMap:Boolean(el?.closest('#world-map-viewport'))};
+      },{x:cx,y:cy});
       const touch=(x,y,id)=>({x,y,id});
       await session.send('Input.dispatchTouchEvent',{type:'touchStart',
         touchPoints:[touch(cx-38,cy,1),touch(cx+38,cy,2)]});
@@ -253,7 +257,7 @@ async function checkViewport(profile) {
       const pinched=await metrics();
       await checkCrispTiles();
       assert.ok(pinched.scale>focused.scale,'Two-finger pinch must zoom on mobile: '+JSON.stringify({
-        focused, pinched,
+        focused, pinched,hitBefore,
         events:await page.evaluate(()=>window.__ugMapTouchTrace)
       }));
       await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(cx,cy,1)]});
