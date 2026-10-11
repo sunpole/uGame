@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.61",
-  "stage": "qa-original-south-texture-names",
+  "version": "0.2.62",
+  "stage": "qa-world-map-crisp-layout-zoom",
   "updated": "2026-10-11",
-  "summary": "Restore original 1024x1024 South field and city JPEG names across tracked assets, runtime, preflight and PC-to-GitHub uploader without reencoding; preserve browser texture overrides."
+  "summary": "World Map renders all 225 DOM diamonds and text with CSS layout zoom under a separate pan wrapper instead of a composited scaled layer. No world/save/gameplay changes."
 }
