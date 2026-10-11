@@ -38,6 +38,8 @@ jobs:
           node --check character-lab/admin.js
           node --check character-lab/lab.js
           node --check src/character-balance/snapshot.js
+          node --check src/character-balance/validator.js
+          node --check character-lab/validator.js
           node --check tests/character-lab-admin-browser-smoke.mjs
           npm test
           node --input-type=module -e "
