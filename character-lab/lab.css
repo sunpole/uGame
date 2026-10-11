@@ -82,3 +82,5 @@
 .dependency-dialog-actions{flex-wrap:wrap}
 .dependency-dialog-actions #dependency-delete{margin-right:auto;border-color:#80555a}
 @media(max-width:600px){.dependency-list{grid-template-columns:1fr}.dependency-row label{grid-template-columns:minmax(0,1fr) 78px}.dependency-edit{font-size:11px}}
+
+.dependency-row[hidden]{display:none!important}
