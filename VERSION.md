@@ -1,3 +1,13 @@
+# uGame v0.2.61 · Original South Texture Filenames (2026-10-11)
+
+- Canonical images: `ground_1024.jpg` (South ground), `city_ground_1024.jpg` (South city), exact original user-uploaded JPEG blobs from PR #67.
+- Remove incorrectly renamed JPG files; update default config, Phaser preloading, Pre-flight, and Updater menu 12 to exact original source+target filenames.
+- Browser-local overrides created earlier using legacy paths are transparently migrated in-memory (no SaveSystem rewrite), retaining texture scale/opacity.
+- Previous immutable release rollback: v0.2.60 at 0abe5613b5f986be21272e28aa33f5c32e39e23e.
+- See [patch documentation](docs/releases/v0.2.61.md).
+
+---
+
 # uGame v0.2.60 · Safe South Texture Publisher · QA (2026-10-11)
 
 - Menu 12 publishes local South field/city JPEGs into a GitHub PR via a disposable worktree from fetched main; leaves local checkout intact.
