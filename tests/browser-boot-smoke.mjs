@@ -132,9 +132,17 @@ async function checkViewport(profile) {
       const stage=el.querySelector('.world-map-stage');
       const bounds=stage.getBoundingClientRect();
       const scale=Number(getComputedStyle(stage).zoom);
+      const viewportRect=el.getBoundingClientRect();
+      // Chromium may skip the contents of tiles outside the viewport.
+      // Inspect only painted, fully visible diamonds; offscreen child spans
+      // can legitimately report a zero-sized bounding box.
       const tiles=[...stage.querySelectorAll('[data-world-map-zone]')];
-      const candidates=[tiles[0],tiles[Math.floor(tiles.length/2)],tiles[tiles.length-1],
-        stage.querySelector('[data-world-map-zone].is-current')].filter(Boolean);
+      const candidates=tiles.filter(tile=>{
+        const r=tile.getBoundingClientRect();
+        const cx=r.left+r.width/2,cy=r.top+r.height/2;
+        return cx>viewportRect.left+12&&cx<viewportRect.right-12&&
+          cy>viewportRect.top+12&&cy<viewportRect.bottom-12;
+      }).slice(0,8);
       return candidates.map(tile=>{
         const r=tile.getBoundingClientRect();
         const label=tile.querySelector('.world-map-tile-inner').getBoundingClientRect();
@@ -160,6 +168,7 @@ async function checkViewport(profile) {
       assert.notEqual(info.willChange,'transform','No pre-rasterized will-change transform layer');
       assert.equal(info.wrapperZoom,'1','Pan wrapper must not scale');
       const samples=await assertSharedGeometry();
+      assert.ok(samples.length>0,'At least one visible tile must retain its label');
       for(const p of samples){
         assert.ok(p.errorX<2&&p.errorY<2,
           'Tile detached from shared camera at '+p.id+': '+JSON.stringify(p));
