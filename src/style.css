@@ -3006,3 +3006,12 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   overflow:hidden;
 }
 #dev-character-panel .dev-character-content {flex:1 1 auto;min-height:0;overflow-y:auto;}
+
+/* v0.2.68 · bilingual DEV command input, retaining original compact footer */
+#dev-code-input {width:clamp(124px,13vw,200px);min-width:0;text-align:left;
+  font:11px/1.2 system-ui,sans-serif;padding:2px 6px;}
+#dev-code-input:focus {width:clamp(155px,19vw,250px);}
+@media (max-width:720px) {
+  #dev-code-input,#dev-code-input:focus {width:clamp(90px,27vw,142px);font-size:10px;}
+  .workspace-control-strip .dev-console {right:0;gap:3px;}
+}

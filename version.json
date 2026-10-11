@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.67",
-  "stage": "qa-dev-character-codes-and-free-city-travel",
+  "version": "0.2.68",
+  "stage": "qa-ru-en-command-entry",
   "updated": "2026-10-11",
-  "summary": "Bilingual DEV reference; XP ±5/10/50% of currently held ZRP plus exact input; ZRL 1–65; explicit persisted OTV; safe free 5-city DEV teleport. No XP curve or normal travel economy changes."
+  "summary": "Accept Russian and English text aliases for all 67 existing DEV numeric codes plus safe short commands (xp/zrp, tp/тп, save/сохранить). No gameplay, XP curve, teleport cost or save schema changes."
 }
