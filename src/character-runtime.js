@@ -25,7 +25,10 @@ export function currentCharacterVitals(rules, player) {
   const draft=normalizeCharacterDraft(player?.characterDraft);
   const progress=normalizeCharacterProgress(player?.characterProgress);
   if (!draft || !rules) return {progress,draft:null,values:null,pools:null,mainResource:null};
-  const computed=characterDraftResult(rules,draft); // original shared Lab engine
+  const computed=characterDraftResult(rules,draft,{
+    level:progress.zrl,
+    otv:player?.characterResponsibility
+  }); // original shared Lab engine, including DEV-only candidate ZRL and OTV
   const values=computed.values;
   const profileKey=draft.cityId+':'+draft.startIndex;
   const saved=normalizeCharacterPools(player?.characterPools);
