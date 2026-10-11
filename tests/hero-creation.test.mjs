@@ -17,7 +17,7 @@ test('cosmetic identity has eight separate real portrait names, with no stat bon
  const names=new Set();
  for(const archetype of HERO_ARCHETYPES)for(const gender of HERO_GENDERS){
    const path=heroPortraitPath(archetype,gender);
-   assert.match(path,/^\.\/assets\/characters\/[a-z-]+\.jpg$/);
+   assert.match(path,/^\.\/assets\/characters\/Изображение ChatGPT 11 окт\. 2026 г\., 22_45_5[1-8]-[1-8]\.png$/);
    names.add(path);
  }
  assert.equal(names.size,8);
