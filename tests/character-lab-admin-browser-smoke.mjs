@@ -148,7 +148,9 @@ async function check(label,viewport,isMobile){
    for(const [key,without,withBoost] of boosted.regens)
      assert.ok(withBoost>without,key+' not amplified by increased GLR');
    await page.locator('#reset-rules').click();
-   assert.equal((await page.locator('[data-pin-value="glr"][data-pin-profile="0"]').innerText()).trim(),'0,05');
+   const glrPin=page.locator('[data-pin-value="glr"][data-pin-profile="0"]');
+   assert.equal((await glrPin.evaluate(el=>el.firstChild?.textContent||'')).trim(),'0,05');
+   assert.match(await glrPin.innerText(),/0,0005%/);
    await page.locator('#registry-search').fill('глобальная регенерация');
    assert.equal(await page.locator('#registry-list .registry-entry').count(),1);
    assert.match(await page.locator('#registry-list').innerText(),/ГЛР/);
