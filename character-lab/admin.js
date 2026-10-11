@@ -4,6 +4,7 @@ import {createNamedSnapshot,parseNamedSnapshot,toEnglishFieldPath} from '../src/
 import {STAT_TERMS,labelForStat} from '../src/character-balance/terminology.js';
 import { subscribeLab, getLabState, applyLabState } from './lab.js';
 import {PIN_KEYS,PIN_LABELS,pinInfo} from '../src/character-balance/pins.js';
+import {metricInterpretation} from '../src/character-balance/display-units.js';
 
 const $=(s)=>document.querySelector(s);
 const esc=(x)=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -46,7 +47,8 @@ function renderPinned(){
   const rows=pins.map(k=>'<div class="pin-label"><button type="button" class="pin-remove" data-unpin="'+esc(k)+'" aria-label="Убрать '+esc(PIN_LABELS[k])+'">×</button><span>'+esc(PIN_LABELS[k])+'</span></div>'+
     results.map((r,i)=>{
       const info=pinInfo(k,state.profiles[i],r),textValue=typeof info.value==='number'?fmt(info.value):String(info.value);
-      return '<div class="pin-data"><button type="button" class="pin-value" data-pin-value="'+esc(k)+'" data-pin-profile="'+i+'" aria-label="Профиль '+(i+1)+': '+esc(info.label)+': '+esc(textValue)+'. Показать источники" title="'+esc(info.lines.join(' | '))+'">'+esc(textValue)+'</button></div>';
+      const interpreted=metricInterpretation(k,typeof info.value==='number'?info.value:NaN);
+      return '<div class="pin-data"><button type="button" class="pin-value" data-pin-value="'+esc(k)+'" data-pin-profile="'+i+'" aria-label="Профиль '+(i+1)+': '+esc(info.label)+': '+esc(textValue)+(interpreted?', '+esc(interpreted.text):'')+'. Показать источники" title="'+esc(info.lines.join(' | '))+'">'+esc(textValue)+(interpreted?' <small class="stat-interpretation" title="'+esc(interpreted.description)+'">= '+esc(interpreted.text)+'</small>':'')+'</button></div>';
     }).join('')).join('');
   body.innerHTML='<div class="pinned-grid" style="--profiles:'+state.profiles.length+'">'+headers+rows+'</div>';
 }
