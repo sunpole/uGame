@@ -1,4 +1,6 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
+import { normalizeCharacterDraft, characterDraftResult, METRICS, METRIC_KEYS } from './character-draft.js';
+import { metricInterpretation } from './character-balance/display-units.js';
 import { masterRarityReport } from './master-rarity-audit.js';
 import { WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera, worldMapClampCamera, worldMapZoomAt, worldMapPan } from './world-map-camera.js';
 
@@ -170,6 +172,7 @@ export class ProjectHubSystem {
     biomeTextureSettings,
     worldAnalyzer,
     worldMap,
+    characterDraft,
     spawnZoneDebug,
     devCodeRunner
   }) {
@@ -186,6 +189,8 @@ export class ProjectHubSystem {
     this.biomeTextureSettings = biomeTextureSettings;
     this.worldAnalyzer = worldAnalyzer;
     this.worldMap = worldMap;
+    this.characterDraft = characterDraft;
+    this.characterDraftRules = null;
     this.spawnZoneDebug = spawnZoneDebug;
     this.devCodeRunner = devCodeRunner;
     this.config = null;
@@ -290,6 +295,11 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (view.type === 'character-draft') {
+      this.renderCharacterDraft(view);
+      return;
+    }
+
     if (view.type === 'world-map') {
       this.renderWorldMap(view);
       return;
@@ -357,6 +367,12 @@ export class ProjectHubSystem {
     this.contentElement.scrollTop = 0;
   }
 
+  openCharacterDraft() {
+    this.open();
+    this.stack.push({type:'character-draft',label:'Характеристики персонажа'});
+    this.renderCurrent();
+  }
+
   activateItem(item) {
     if (item.type === 'close') {
       this.close();
@@ -399,6 +415,12 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (item.type === 'character-draft') {
+      this.stack.push({type:'character-draft',label:item.label});
+      this.renderCurrent();
+      return;
+    }
+
     if (item.type === 'world-map') {
       this.stack.push({ type: 'world-map', label: item.label, selectedId: null });
       this.renderCurrent();
@@ -408,6 +430,96 @@ export class ProjectHubSystem {
     if (item.type === 'spawn-zone-debug') {
       this.stack.push({ type: 'spawn-zone-debug', label: item.label });
       this.renderCurrent();
+    }
+  }
+
+
+  async renderCharacterDraft(view) {
+    this.setSubViewHeader('Характеристики персонажа','uGame / Игра / Характеристики');
+    this.contentElement.innerHTML='<div class="project-hub-loading">Читаем расчётные коэффициенты…</div>';
+    try {
+      const rules=this.characterDraftRules ||= await fetchJson('./data/character-balance-candidate.json');
+      if(this.stack[this.stack.length-1]!==view)return;
+      const saved=normalizeCharacterDraft(this.characterDraft?.get?.());
+      const profile=normalizeCharacterDraft(view.draft) || saved ||
+        {schemaVersion:1,cityId:'force',startIndex:3};
+      const calculated=characterDraftResult(rules,profile);
+      const city=rules.cities[profile.cityId];
+      const isSaved=Boolean(saved && saved.cityId===profile.cityId &&
+        saved.startIndex===profile.startIndex);
+      const fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:6}).format(n);
+      this.contentElement.innerHTML=[
+        '<section class="character-draft-panel" id="character-draft-panel">',
+        '<h2>Характеристики персонажа <span class="character-draft-chip">ПРОТОТИП · НЕ ВЛИЯЕТ НА ИГРУ</span></h2>',
+        '<p class="character-draft-note">Расчёт по тем же формулам, что Character Balance Lab. ',
+        'Коэффициенты — обсуждаемые, не утверждённый баланс. ',
+        'Выбор здесь сохраняет <b>только черновик</b>, не меняет класс, родной город, ',
+        'Stamina, скорость, бой, Шаги, инвентарь и реальные ресурсы.</p>',
+        '<div class="character-draft-controls">',
+        '<label>Модель столицы<select id="character-draft-city">',
+        ...Object.entries(rules.cities).map(([id,record])=>
+          '<option value="'+escapeHtml(id)+'"'+(profile.cityId===id?' selected':'')+'>'+
+          escapeHtml(record.name)+'</option>'),
+        '</select></label>',
+        '<label>Стартовые 10 очков<select id="character-draft-start">',
+        ...city.start.map((allocation,index)=>
+          '<option value="'+index+'"'+(profile.startIndex===index?' selected':'')+'>'+
+          escapeHtml('ВЫН '+allocation[0]+' / ЛОВ '+allocation[1]+' / ИНТ '+allocation[2])+'</option>'),
+        '</select></label>',
+        '<button id="character-draft-save" type="button">Сохранить черновик</button>',
+        '<button id="character-draft-clear" type="button"'+(saved?'':' disabled')+'>Убрать черновик</button>',
+        '</div>',
+        '<p id="character-draft-status" class="character-draft-status">',
+        isSaved ? 'Сохранён в локальном GameState v1 · совместим с существующими сейвами' :
+          'Это только предварительный просмотр. Он ещё не записан в сохранение.',
+        '</p>',
+        '<div class="character-draft-summary">',
+        '<span>ЗРЛ <strong>1</strong> (условный старт)</span>',
+        '<span>ОТВ <strong>1</strong> (временный сценарий)</span>',
+        '<span>ЖП <strong>&gt; 0</strong> (условие расчёта)</span>',
+        '<span>Основной ресурс <strong>'+escapeHtml(calculated.mainResource)+'</strong></span>',
+        '</div>',
+        '<div class="character-draft-grid">',
+        ...METRIC_KEYS.map(key=>{
+          const value=calculated.values[key];
+          const interpretation=metricInterpretation(key,value);
+          return '<article class="character-draft-stat" data-character-stat="'+escapeHtml(key)+'">'+
+            '<span>'+escapeHtml(METRICS[key])+'</span>'+
+            '<strong>'+escapeHtml(fmt(value))+'</strong>'+
+            (interpretation?'<small>'+escapeHtml(interpretation.text)+'</small>':'')+
+            '</article>';
+        }),
+        '</div>',
+        calculated.warnings.length
+          ? '<p class="character-draft-warning">'+escapeHtml(calculated.warnings.join(' · '))+'</p>':'',
+        '<p class="character-draft-note">Лаборатория и её экспорт JSON остаются независимыми. ',
+        '<a href="./character-lab/" target="_blank" rel="noopener noreferrer">Открыть Character Balance Lab ↗</a>. ',
+        'Сведения из экспортированного JSON не применяются к игре автоматически.</p>',
+        '</section>'
+      ].join('');
+      this.contentElement.querySelector('#character-draft-city')?.addEventListener('change',event=>{
+        view.draft={schemaVersion:1,cityId:event.target.value,startIndex:0};
+        this.renderCharacterDraft(view);
+      });
+      this.contentElement.querySelector('#character-draft-start')?.addEventListener('change',event=>{
+        view.draft={...profile,startIndex:Number(event.target.value)};
+        this.renderCharacterDraft(view);
+      });
+      this.contentElement.querySelector('#character-draft-save')?.addEventListener('click',()=>{
+        this.characterDraft?.set?.(profile);
+        view.draft=profile;
+        this.renderCharacterDraft(view);
+      });
+      this.contentElement.querySelector('#character-draft-clear')?.addEventListener('click',()=>{
+        this.characterDraft?.set?.(null);
+        view.draft=null;
+        this.renderCharacterDraft(view);
+      });
+      this.contentElement.scrollTop=0;
+    }catch(error){
+      if(this.stack[this.stack.length-1]===view)
+        this.contentElement.innerHTML='<div class="project-hub-error">Характеристики не загружены: '+
+          escapeHtml(error.message)+'</div>';
     }
   }
 
