@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.66",
+  "version": "0.2.67",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -84,7 +84,8 @@
     "./src/character-balance/modifiers.js",
     "./data/character-balance-candidate.json",
     "./src/character-runtime.js",
-    "./src/character-skills.js"
+    "./src/character-skills.js",
+    "./src/dev-character-tools.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -148,6 +149,7 @@
     "./src/character-balance/modifiers.js",
     "./src/character-balance/display-units.js",
     "./src/character-runtime.js",
-    "./src/character-skills.js"
+    "./src/character-skills.js",
+    "./src/dev-character-tools.js"
   ]
 }
