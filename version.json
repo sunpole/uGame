@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.57",
-  "stage": "candidate-character-registry-admin-lab",
-  "updated": "2026-10-10",
-  "summary": "50-entry source-linked character registry, sticky 1–4 profile comparisons, sandbox coefficient search, checksummed JSON import/export with diff; no gameplay balance or save changes."
+  "version": "0.2.58",
+  "stage": "qa-candidate-world-map-viewport",
+  "updated": "2026-10-11",
+  "summary": "World map presentation: drag pan, anchored wheel/pinch zoom, find-me focus and full-world overview; no world, gameplay balance or save changes."
 }
