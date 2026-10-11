@@ -1,6 +1,7 @@
 import { METRICS, METRIC_KEYS, calculateCharacter } from '../src/character-balance/engine.js';
 import { createSnapshot, parseSnapshot, diffSnapshot } from '../src/character-balance/snapshot.js';
 import { subscribeLab, getLabState, applyLabState } from './lab.js';
+import {PIN_KEYS,PIN_LABELS,pinInfo} from '../src/character-balance/pins.js';
 
 const $=(s)=>document.querySelector(s);
 const esc=(x)=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -25,16 +26,55 @@ function pinButtons(){
     button.setAttribute('aria-label',(pins.includes(k)?'Открепить: ':'Закрепить: ')+METRICS[k]);
   }
 }
+function renderPinOptions(){
+  const picker=$('#pin-add-select'),was=picker.value;
+  const choices=PIN_KEYS.filter(k=>!pins.includes(k));
+  picker.innerHTML=choices.map(k=>'<option value="'+esc(k)+'">'+esc(PIN_LABELS[k])+'</option>').join('');
+  if(choices.includes(was))picker.value=was;
+  $('#pin-add').disabled=choices.length===0;
+}
 function renderPinned(){
   const body=$('#pinned-comparison'),count=$('#pin-count');
   count.textContent=pins.length+' показателей · '+(state?.profiles.length||0)+' профилей';
+  renderPinOptions();
   if(!state){body.innerHTML='<p class="pin-empty">Загрузка профилей…</p>';return;}
-  if(!pins.length){body.innerHTML='<p class="pin-empty">Выбери 📌 рядом с любой характеристикой в таблице. Доступны все 24 показателя.</p>';return;}
+  if(!pins.length){body.innerHTML='<p class="pin-empty">Выбери 📌 в таблице или нажми + Добавить. Доступны 24 расчётных и 9 входных характеристик.</p>';return;}
   const results=state.profiles.map(p=>calculateCharacter(state.rules,p));
   const headers='<div class="pin-head">Показатель</div>'+state.profiles.map((p,i)=>'<div class="pin-head">Профиль '+(i+1)+' · ЗРЛ '+p.level+'</div>').join('');
-  const rows=pins.map(k=>'<div class="pin-label"><button type="button" class="pin-remove" data-unpin="'+esc(k)+'" aria-label="Убрать '+esc(METRICS[k])+'">×</button><span>'+esc(METRICS[k])+'</span></div>'+
-      results.map(r=>'<div>'+fmt(r.values[k])+'</div>').join('')).join('');
+  const rows=pins.map(k=>'<div class="pin-label"><button type="button" class="pin-remove" data-unpin="'+esc(k)+'" aria-label="Убрать '+esc(PIN_LABELS[k])+'">×</button><span>'+esc(PIN_LABELS[k])+'</span></div>'+
+    results.map((r,i)=>{
+      const info=pinInfo(k,state.profiles[i],r),textValue=typeof info.value==='number'?fmt(info.value):String(info.value);
+      return '<div class="pin-data"><button type="button" class="pin-value" data-pin-value="'+esc(k)+'" data-pin-profile="'+i+'" aria-label="Профиль '+(i+1)+': '+esc(info.label)+': '+esc(textValue)+'. Показать источники" title="'+esc(info.lines.join(' | '))+'">'+esc(textValue)+'</button></div>';
+    }).join('')).join('');
   body.innerHTML='<div class="pinned-grid" style="--profiles:'+state.profiles.length+'">'+headers+rows+'</div>';
+}
+let activePin=null;
+function pinAt(button){
+  if(!state||!button)return null;
+  const key=button.dataset.pinValue,index=Number(button.dataset.pinProfile);
+  if(!PIN_KEYS.includes(key)||!Number.isInteger(index)||!state.profiles[index])return null;
+  return {index,info:pinInfo(key,state.profiles[index],calculateCharacter(state.rules,state.profiles[index]))};
+}
+function hidePinHover(){activePin=null;$('#pin-hover-card').hidden=true;}
+function showPinHover(button){
+  const item=pinAt(button);if(!item)return;
+  const box=$('#pin-hover-card');
+  box.innerHTML='<strong>Профиль '+(item.index+1)+' · '+esc(item.info.label)+'</strong>'+
+    '<ol>'+item.info.lines.map(line=>'<li>'+esc(line)+'</li>').join('')+'</ol>'+
+    '<p>Нажми на значение для полного просмотра.</p>';
+  box.hidden=false;
+  const rect=button.getBoundingClientRect(),width=Math.min(390,window.innerWidth-24);
+  box.style.width=width+'px';
+  box.style.left=Math.max(12,Math.min(rect.left,window.innerWidth-width-12))+'px';
+  box.style.top=Math.max(8,rect.bottom+8+box.offsetHeight>window.innerHeight?rect.top-box.offsetHeight-8:rect.bottom+8)+'px';
+  activePin=button;
+}
+function showPinDetails(button){
+  const item=pinAt(button);if(!item)return;
+  hidePinHover();
+  $('#pin-detail-heading').textContent='Профиль '+(item.index+1)+' · '+item.info.label;
+  $('#pin-detail-list').innerHTML=item.info.lines.map(line=>'<li>'+esc(line)+'</li>').join('');
+  $('#pin-detail-dialog').showModal();
 }
 function badgeText(status){
   return ({'calculated-only':'Расчёт в Lab','sandbox-input':'Вход Lab','documented-only':'Не реализовано','separate-runtime':'Отдельно в игре'})[status]||status;
@@ -71,7 +111,7 @@ function filterRules(){
  $('#rule-search-count').textContent='Показано параметров: '+visible;
 }
 function togglePin(key){
-  if(!METRIC_KEYS.includes(key))return;
+  if(!PIN_KEYS.includes(key))return;
   pins=pins.includes(key)?pins.filter(x=>x!==key):[...pins,key];
   pinButtons();renderPinned();
 }
@@ -141,11 +181,31 @@ async function init(){
       e.stopImmediatePropagation();e.preventDefault();
       togglePin(button.dataset.pin);
     },true);
+    $('#pin-add').addEventListener('click',()=>{const key=$('#pin-add-select').value;if(PIN_KEYS.includes(key))togglePin(key);});
     $('#pinned-comparison').addEventListener('click',e=>{
-      const button=e.target.closest('button[data-unpin]');
-      if(button)togglePin(button.dataset.unpin);
+      const remove=e.target.closest('button[data-unpin]');
+      if(remove){hidePinHover();togglePin(remove.dataset.unpin);return;}
+      const value=e.target.closest('[data-pin-value]');
+      if(value)showPinDetails(value);
     });
-    $('#clear-pins').addEventListener('click',()=>{pins=[];pinButtons();renderPinned();});
+    $('#pinned-comparison').addEventListener('mouseover',e=>{
+      const button=e.target.closest('[data-pin-value]');
+      if(button&&button!==activePin)showPinHover(button);
+    });
+    $('#pinned-comparison').addEventListener('mouseout',e=>{
+      const button=e.target.closest('[data-pin-value]');
+      if(button&&!button.contains(e.relatedTarget))hidePinHover();
+    });
+    $('#pinned-comparison').addEventListener('focusin',e=>{
+      const button=e.target.closest('[data-pin-value]');if(button)showPinHover(button);
+    });
+    $('#pinned-comparison').addEventListener('focusout',e=>{
+      if(e.target.closest('[data-pin-value]'))hidePinHover();
+    });
+    $('#pin-detail-close').addEventListener('click',()=>$('#pin-detail-dialog').close());
+    document.addEventListener('scroll',hidePinHover,{passive:true,capture:true});
+    window.addEventListener('resize',hidePinHover);
+    $('#clear-pins').addEventListener('click',()=>{hidePinHover();pins=[];pinButtons();renderPinned();});
     $('#export-snapshot').addEventListener('click',exportAll);
     $('#import-snapshot').addEventListener('click',()=>$('#snapshot-file').click());
     $('#snapshot-file').addEventListener('change',async e=>{
@@ -164,7 +224,7 @@ async function init(){
     });
     renderRegistry();
     subscribeLab(next=>{
-      state=next;pinButtons();renderPinned();filterRules();
+      hidePinHover();state=next;pinButtons();renderPinned();filterRules();
     });
     notice('Реестр и админ-инструменты готовы · безопасная песочница');
   }catch(e){notice('Не удалось загрузить реестр/админку: '+e.message,true);}
