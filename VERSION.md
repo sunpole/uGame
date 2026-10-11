@@ -1,3 +1,14 @@
+# uGame v0.2.60 · Safe South Texture Publisher · QA (2026-10-11)
+
+- Menu 12 publishes local South field/city JPEGs into a GitHub PR via a disposable worktree from fetched main; leaves local checkout intact.
+- Prefers original `ground_1024.jpg` and `city_ground_1024.jpg` without re-encoding; only stages configured South JPEG destination paths.
+- Requires explicit UPLOAD, valid JPEG, no symlink, Git authentication; PR review/merge needed before game/Pages use new images.
+- No balance, map topology, code/runtime texture scale, saves or snapshot formats changed.
+- Previous rollback v0.2.59 SHA e9727a3547240d26d4f74695bfb623ab9752ab1d.
+- [Instructions and QA](docs/releases/v0.2.60.md).
+
+---
+
 # uGame v0.2.59 · Readable Candidate Character Units · QA (2026-10-11)
 
 - Added percent equivalents and conditional rates beside raw derived scores in Character Balance Lab, pinned comparison and formula trace.

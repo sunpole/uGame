@@ -62,3 +62,7 @@ The approved South prototype JPEGs are tracked with the project because the curr
 6. scale changes do not alter player/NPC proportions;
 7. Apply/Reset still work;
 8. camera movement across 1920×1080 keeps the tile floor continuous.
+
+## Safe reverse sync (v0.2.60)
+
+Updater menu **12** proposes a review PR to replace exactly the two tracked South JPEGs from full local originals. It does not send ignored PNGs or arbitrary project files, and **does not change in-game texture scale or opacity**. See [`v0.2.60`](releases/v0.2.60.md) for first-use steps when local tracked JPEGs prevent menu 1 Update.

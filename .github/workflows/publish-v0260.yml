@@ -1,0 +1,102 @@
+name: uGame v0.2.60 Safe Texture Upload QA and Release
+
+on:
+  pull_request:
+    paths:
+      - 'Update-uGame.ps1'
+      - 'tests/Test-Texture-Publish.ps1'
+      - 'docs/releases/v0.2.60.md'
+      - 'version.json'
+      - 'package.json'
+      - 'index.html'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0260.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.60.md'
+      - '.github/workflows/publish-v0260.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-updater:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows PowerShell 5.1 previous updater regression
+        shell: powershell
+        run: ./tests/Test-Updater.ps1
+      - name: Windows PowerShell 5.1 texture publisher isolated Git regression
+        shell: powershell
+        run: ./tests/Test-Texture-Publish.ps1
+
+  chromium-and-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify version and full Node suite
+        run: |
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.60')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.60'\"))throw Error('Pre-flight version mismatch');
+          "
+      - name: Install real Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile Phaser Pre-flight world map and save/F5
+        env:
+          CI: 'true'
+        run: node tests/browser-boot-smoke.mjs
+      - name: Desktop/mobile Character Lab and Admin
+        env:
+          CI: 'true'
+        run: |
+          node tests/character-lab-browser-smoke.mjs
+          node tests/character-lab-admin-browser-smoke.mjs
+      - name: Preserve browser screenshots on error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v0260-browser-failures
+          path: |
+            artifacts/browser-smoke/
+            artifacts/character-lab/
+            artifacts/character-admin/
+          if-no-files-found: ignore
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    needs: [windows-updater, chromium-and-node]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Confirm previous immutable release rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.59
+          git fetch origin tag v0.2.59
+          test "$(git rev-parse v0.2.59^{commit})" = "e9727a3547240d26d4f74695bfb623ab9752ab1d"
+      - name: Publish QA prerelease after both test platforms pass
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.60 >/dev/null 2>&1; then
+            gh release create v0.2.60 --target "$GITHUB_SHA" --title "uGame v0.2.60 · Safe South JPEG upload" --notes-file docs/releases/v0.2.60.md --prerelease
+          fi
+          gh release view v0.2.60

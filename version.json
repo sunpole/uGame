@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.59",
-  "stage": "qa-character-lab-readable-units",
+  "version": "0.2.60",
+  "stage": "qa-safe-south-jpeg-publishing",
   "updated": "2026-10-11",
-  "summary": "Character Lab display-only translations of candidate raw ratings into percent and per-second units in comparison, pinned values and traces; no balance or saved JSON schema changes."
+  "summary": "Updater menu 12 creates a reviewable PR with local South JPEG textures via isolated Git worktree; no source file, gameplay or saves changed."
 }
