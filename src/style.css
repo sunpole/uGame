@@ -2704,3 +2704,67 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .world-analyzer-rarity details {margin-top:6px;}
 .world-analyzer-rarity summary {cursor:pointer;color:#b8d9fb;font-weight:700;}
 .world-analyzer-rarity p {margin:7px 0;color:#c0d2e2;}
+
+
+/* v0.2.58 — interactive map viewport. The diamond tiles remain unchanged. */
+.world-map-viewport-tools {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px 14px;
+  margin:0 0 8px;
+  color:#9aaec2;
+  font-size:11px;
+}
+.world-map-zoom-controls { display:flex;align-items:center;gap:5px;flex-wrap:wrap; }
+.world-map-zoom-controls button {
+  min-width:34px;
+  min-height:32px;
+  padding:5px 11px;
+  color:#e9f5ff;
+  background:#182433;
+  border:1px solid #3b5269;
+  border-radius:7px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.world-map-zoom-controls button:hover { background:#263c52; }
+.world-map-zoom-controls button:focus-visible,
+.world-map-viewport:focus-visible { outline:2px solid #80c8ff;outline-offset:2px; }
+#world-map-scale { min-width:47px;text-align:center;font-variant-numeric:tabular-nums;color:#b4e2ff;font-weight:700; }
+.world-map-viewport {
+  position:relative;
+  width:100%;
+  height:clamp(300px,60vh,710px);
+  max-width:100%;
+  overflow:hidden;
+  touch-action:none;
+  overscroll-behavior:contain;
+  user-select:none;
+  cursor:grab;
+  border:1px solid #314356;
+  border-radius:12px;
+  box-sizing:border-box;
+  background:radial-gradient(circle at 50% 50%,#142232,#070b12 78%);
+}
+.world-map-viewport:active { cursor:grabbing; }
+.world-map-viewport .world-map-stage {
+  position:absolute;
+  left:0;top:0;
+  margin:0;
+  transform-origin:0 0;
+  border:none;
+  border-radius:0;
+  background:transparent;
+  overflow:visible;
+  will-change:transform;
+}
+.world-map-viewport .world-map-tile { touch-action:none; }
+@media (max-width:800px) {
+  .world-map-viewport { height:clamp(250px,52dvh,550px); }
+  .world-map-viewport-tools { align-items:flex-start; }
+  .world-map-zoom-controls { width:100%; }
+  .world-map-zoom-controls button { min-height:38px; }
+}

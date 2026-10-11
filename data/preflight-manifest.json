@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.57",
+  "version": "0.2.58",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -55,6 +55,7 @@
     "./src/spawn-zone-debug-system.js",
     "./src/ui-window-manager.js",
     "./src/vision-system.js",
+    "./src/world-map-camera.js",
     "./src/world-graph.js",
     "./src/world-spawn-state-system.js",
     "./src/zone-rules-system.js",
