@@ -24,7 +24,8 @@ export function normalizeCharacterPools(raw) {
 export function currentCharacterVitals(rules, player) {
   const draft=normalizeCharacterDraft(player?.characterDraft);
   const progress=normalizeCharacterProgress(player?.characterProgress);
-  if (!draft || !rules) return {progress,draft:null,values:null,pools:null,mainResource:null};
+  if (!draft || !rules) return {progress,draft:null,values:null,pools:null,mainResource:null,
+    responsibility:player?.characterResponsibility ?? null};
   const computed=characterDraftResult(rules,draft,{
     level:progress.zrl,
     otv:player?.characterResponsibility
@@ -38,6 +39,7 @@ export function currentCharacterVitals(rules, player) {
     current[key]=saved?.profileKey===profileKey ? Math.min(max,saved.current[key]) : max;
   }
   return {progress,draft,values,mainResource:computed.mainResource,
+    responsibility:player?.characterResponsibility ?? null,
     pools:{schemaVersion:1,profileKey,current}};
 }
 export function poolRatio(current,max) {
