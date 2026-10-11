@@ -38,6 +38,7 @@ test('four accepted capital bonus cards match UGD-0038 decisions, without live s
    '+10 ТЕМП · +10 УКЛ · +1% ППС',
    '+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП'
  ]);
+ assert.deepEqual(HERO_CAPITAL_BONUSES.map(x=>x.start),["Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ","Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ","Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ","Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно"]);
  for(const capital of HERO_CAPITAL_BONUSES)
    assert.equal(HERO_CAPITAL_BY_ARCHETYPE[capital.archetype],capital.capitalId);
  assert.equal(normalizeHeroIdentity({...identity,capitalId:'force'}),null,
