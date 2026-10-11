@@ -7,7 +7,7 @@ const esc=x=>String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replac
 const label={pass:'Проверено',fail:'Ошибка',open:'Не покрыто'};
 const decision={'principle-accepted':'Принцип принят, числа могут быть открыты',candidate:'Кандидат, не утверждено','mixed-approved-and-open':'Частично принято; есть открытые правила'};
 const implementation={'calculated-only':'Только формула Lab','documented-only':'Только документация','separate-runtime':'Отдельная реализация, не связана с Lab','sandbox-input':'Только вход Lab'};
-let current=null,registry=null,verified=false,working=false;
+let current=null,registry=null,verified=false,working=false,revision=0;
 function state(message,flag){const box=$('validation-state');box.textContent=message;box.dataset.state=flag||'open';}
 function render(result){
  const s=result.summary;
@@ -21,7 +21,10 @@ function render(result){
 }
 function markStale(){
  verified=false;
- if(!working){state('Данные изменены. Предыдущая проверка устарела — нажмите «Проверить».','open');$('validation-summary').textContent='Результаты ниже относятся к предыдущему набору коэффициентов. Перезапустите проверки.';}
+ state('Данные изменены. Предыдущая проверка устарела — нажмите «Проверить».','open');
+ $('validation-summary').textContent='Старые результаты скрыты: необходимо повторить проверку текущего набора коэффициентов.';
+ $('validation-checks').replaceChildren();
+ $('validation-metric-rows').replaceChildren();
 }
 async function run(){
  if(!registry||!current||working)return;
@@ -29,22 +32,23 @@ async function run(){
  state('Выполняются расчёты: 21 × 65 × 4…','open');
  // Permit paint before the synchronous audit; do not save or change input values.
  await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));
- const input=current;
+ const input=current,startedAt=revision;
  try{
    const result=validateBalanceCandidate({...input,registry});
+   if(revision!==startedAt){ markStale();return; }
    render(result);
    verified=true;
    state(result.summary.failed?'Есть ошибки в технических проверках.':'Проверено на текущих данных; открытые вопросы показаны отдельно.',result.summary.failed?'fail':'pass');
  }catch(e){
    verified=false;state('Сбой валидатора: '+e.message,'fail');$('validation-summary').textContent='Нельзя считать формулы проверенными.';
- }finally{working=false;$('validation-run').disabled=false;if(input!==current)markStale();}
+ }finally{working=false;$('validation-run').disabled=false;if(startedAt!==revision)markStale();}
 }
 $('validation-run').addEventListener('click',run);
 subscribeLab(next=>{
- current=next;
+ current=next;revision++;
  $('validation-run').disabled=!registry||working;
- if(verified)markStale();
- else if(registry&&!working)state('Готово к проверке текущих коэффициентов.','open');
+ if(verified||working)markStale();
+ else if(registry&&!working && !$('validation-summary').textContent.includes('Старые результаты'))state('Готово к проверке текущих коэффициентов.','open');
 });
 (async()=>{
  try{
