@@ -88,7 +88,7 @@
       "biome": "south",
       "city": false,
       "textureName": "Южный коричневый песок",
-      "textureFile": "./assets/textures/biomes/south_256.jpg",
+      "textureFile": "./assets/textures/biomes/ground_1024.jpg",
       "enabled": true,
       "scalePercent": 40,
       "opacityPercent": 40
@@ -118,7 +118,7 @@
       "biome": "south",
       "city": true,
       "textureName": "Южный город · белый мрамор",
-      "textureFile": "./assets/textures/biomes/city_south_512.jpg",
+      "textureFile": "./assets/textures/biomes/city_ground_1024.jpg",
       "enabled": true,
       "scalePercent": 40,
       "opacityPercent": 40
