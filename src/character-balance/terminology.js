@@ -37,7 +37,7 @@ export const PUBLIC_RULE_GROUPS=Object.freeze({
 });
 export const PUBLIC_SPECIAL_IDS=Object.freeze({
   lovHps:'dexterityHealthRegeneration',
-  globRegeneration:'globalRegeneration',
+  globRegeneration:'globalRegenerationRule',
   cityRpsPps:'cityResourceAndWardRegeneration'
 });
 export const TERM_LABELS=Object.freeze(Object.fromEntries(
