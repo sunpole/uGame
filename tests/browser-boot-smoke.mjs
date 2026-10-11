@@ -406,6 +406,23 @@ async function checkViewport(profile) {
       expected, { timeout: 10000 });
     };
     // Bilingual DEV controls: live XP %, ZRL, signed OTV, free 5-city travel.
+    // Actual RU/EN command entry (not just bilingual labels); numeric API remains.
+    assert.equal(await page.locator('#dev-code-suggestions option').count(),134);
+    const inputBox=await page.locator('#dev-code-input').boundingBox();
+    assert.ok(inputBox.width>=85&&inputBox.x+inputBox.width<=profile.viewport.width+4,
+      'DEV bilingual input must remain visible on '+profile.name);
+    await dev('тп','2399');
+    assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
+    await activate('[data-dev-close]');
+    await dev('teleport','2399');
+    assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
+    await activate('[data-dev-close]');
+    await dev('персонаж','2299');
+    await activate('[data-dev-close]');
+    await dev('xp +5%','2101');
+    await dev('зрп -10%','2112');
+    await dev('save','9001');
+    await dev('сохранить','9001');
     await dev('2299','2299');
     const devPanel=page.locator('#dev-character-panel');
     assert.equal(await devPanel.isVisible(),true);
