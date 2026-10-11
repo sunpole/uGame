@@ -1,4 +1,5 @@
 import { METRICS, METRIC_KEYS, validateRules, pointsAt, defaultProfile, calculateCharacter } from '../src/character-balance/engine.js';
+import {SOURCE_GROUPS, GROUP_LABELS, availableModifiers, hasSourceModifier, setSourceModifier, removeSourceModifier, sourceGroup} from '../src/character-balance/modifiers.js';
 
 const $ = (q) => document.querySelector(q);
 const esc = (x) => String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -87,20 +88,34 @@ function renderResults(){
   renderTrace(results);
   for(const subscriber of subscribers)subscriber(getLabState());
 }
+const kindLabels={flat:'Плоский',increased:'Складываемый %',more:'Умножающий %'};
 function renderRules(){
   let html='';
-  for(const [path,name] of Object.entries(editGroups)){
-    const group=path.split('.').reduce((obj,k)=>obj[k],rules);
-    html+='<div class="rules-section"><h3>'+esc(name)+'</h3><div class="rules-grid">'+
-      Object.entries(group).map(([k,v])=>'<label>'+esc(METRICS[k]||k)+'<input type="number" step="any" data-rule="'+esc(path+'.'+k)+'" value="'+v+'"></label>').join('')+'</div></div>';
+  for(const path of SOURCE_GROUPS){
+    const entries=availableModifiers(rules,path),native=sourceGroup(rules,path);
+    const cards=Object.entries(entries).flatMap(([metric,types])=>Object.entries(types).map(([kind,value])=>{
+      const direct=kind==='flat'&&Object.hasOwn(native,metric)&&!Object.hasOwn(rules.ruleModifiers?.[path]?.[metric]||{},'flat');
+      const attrs=direct?'data-rule="'+esc(path+'.'+metric)+'"':
+        'data-mod-group="'+esc(path)+'" data-mod-metric="'+esc(metric)+'" data-mod-kind="'+esc(kind)+'"';
+      return '<div class="dependency-row" data-dependency="'+esc(path+'.'+metric+'.'+kind)+'">'+
+        '<label><span class="dependency-name">'+esc(METRICS[metric])+'</span><small>'+esc(kindLabels[kind])+'</small>'+
+        '<input type="number" step="any" '+attrs+' value="'+esc(value)+'" aria-label="'+esc(METRICS[metric]+' '+kindLabels[kind])+'"></label>'+
+        '<button type="button" class="dependency-edit" data-dep-edit data-group="'+esc(path)+'" data-metric="'+esc(metric)+'" data-kind="'+esc(kind)+'" aria-label="Изменить или удалить '+esc(METRICS[metric]+' '+kindLabels[kind])+'">⋯ Изменить</button></div>';
+    })).join('');
+    html+='<div class="rules-section dependency-section" data-dependency-group="'+esc(path)+'">'+
+      '<div class="dependency-section-heading"><h3>'+esc(GROUP_LABELS[path])+'</h3>'+
+      '<button type="button" data-dep-add="'+esc(path)+'">+ Добавить характеристику</button></div>'+
+      '<div class="dependency-list">'+(cards||'<p class="hint">Нет бонусов · можно добавить</p>')+'</div></div>';
   }
-  html+='<div class="rules-section"><h3>Очки ЗРЛ</h3><div class="rules-grid"><label>Обычный уровень<input type="number" step="1" data-rule="levelPoints.ordinary" value="'+rules.levelPoints.ordinary+'"></label>'+
-    Object.entries(rules.levelPoints.milestones).map(([k,v])=>'<label>ЗРЛ '+k+'<input type="number" step="1" data-rule="levelPoints.milestones.'+k+'" value="'+v+'"></label>').join('')+'</div></div>';
+  html+='<div class="rules-section"><h3>Предлагаемые максимумы (это пределы, не зависимости)</h3><div class="rules-grid">'+
+    Object.entries(rules.caps).map(([k,v])=>'<label>'+esc(METRICS[k])+'<input type="number" step="any" data-rule="caps.'+esc(k)+'" value="'+esc(v)+'"></label>').join('')+'</div></div>';
+  html+='<div class="rules-section"><h3>Очки ЗРЛ</h3><div class="rules-grid">'+
+    '<label>Обычный уровень<input type="number" step="1" data-rule="levelPoints.ordinary" value="'+esc(rules.levelPoints.ordinary)+'"></label>'+
+    Object.entries(rules.levelPoints.milestones).map(([k,v])=>'<label>ЗРЛ '+esc(k)+'<input type="number" step="1" data-rule="levelPoints.milestones.'+esc(k)+'" value="'+esc(v)+'"></label>').join('')+'</div></div>';
   for(const [id,city] of Object.entries(rules.cities)){
-    html+='<div class="rules-section"><h3>Столица · '+esc(city.name)+'</h3><div class="rules-grid">'+
-      Object.entries(city.flat).map(([k,v])=>'<label>'+esc(METRICS[k])+' (flat)<input type="number" step="any" data-rule="cities.'+id+'.flat.'+k+'" value="'+v+'"></label>').join('')+
-      Object.entries(city.percent||{}).map(([k,v])=>'<label>'+esc(METRICS[k])+' (%)<input type="number" step="any" data-rule="cities.'+id+'.percent.'+k+'" value="'+v+'"></label>').join('')+
-      (city.regenFromMaxRpPercent!=null?'<label>% макс. РП/сек<input type="number" step="any" data-rule="cities.'+id+'.regenFromMaxRpPercent" value="'+city.regenFromMaxRpPercent+'"></label>':'')+'</div></div>';
+    html+='<div class="rules-section"><h3>Другие процентные бонусы · '+esc(city.name)+'</h3><div class="rules-grid">'+
+      Object.entries(city.percent||{}).map(([k,v])=>'<label>'+esc(METRICS[k])+' (%)<input type="number" step="any" data-rule="cities.'+esc(id)+'.percent.'+esc(k)+'" value="'+esc(v)+'"></label>').join('')+
+      (city.regenFromMaxRpPercent!=null?'<label>% макс. РП/сек<input type="number" step="any" data-rule="cities.'+esc(id)+'.regenFromMaxRpPercent" value="'+esc(city.regenFromMaxRpPercent)+'"></label>':'')+'</div></div>';
   }
   $('#rule-editor').innerHTML=html;
 }
@@ -133,14 +148,69 @@ function onProfileChange(e){
     status('Пересчитано · без сохранения');
   }catch(err){profiles[i]=previous;status(err.message,true);}
 }
+function applyCandidate(next,message){
+  validateRules(next);
+  for(const p of profiles)calculateCharacter(next,p);
+  rules=next;renderResults();status(message||'Зависимость изменена только в лаборатории');
+}
 function onRuleChange(e){
-  const input=e.target;if(!(input instanceof HTMLInputElement)||!input.dataset.rule||input.value.trim()==='')return;
+  const input=e.target;
+  if(!(input instanceof HTMLInputElement)||input.value.trim()===''||!(input.dataset.rule||input.dataset.modGroup))return;
   const value=Number(input.value);if(!Number.isFinite(value))return;
-  const next=structuredClone(rules),keys=input.dataset.rule.split('.');
-  let obj=next;for(const key of keys.slice(0,-1)) obj=obj[key];
-  obj[keys.at(-1)]=value;
-  try{validateRules(next);profiles.forEach(p=>calculateCharacter(next,p));rules=next;renderResults();status('Коэффициент изменён только в DEV-лаборатории');}
-  catch(err){status('Некорректное правило: '+err.message,true);}
+  const next=structuredClone(rules);
+  try{
+    if(input.dataset.modGroup){
+      setSourceModifier(next,input.dataset.modGroup,input.dataset.modMetric,input.dataset.modKind,value,METRIC_KEYS);
+    }else{
+      const keys=input.dataset.rule.split('.');let obj=next;
+      for(const key of keys.slice(0,-1))obj=obj[key];
+      obj[keys.at(-1)]=value;
+    }
+    applyCandidate(next,'Пересчитано с новым коэффициентом · только Lab');
+  }catch(err){status('Некорректное правило: '+err.message,true);}
+}
+let dialogEdit=null;
+function showDependencyDialog(path,metric=null,kind='flat'){
+  const opts=Object.entries(METRICS);
+  dialogEdit={path,metric,kind};
+  const adding=metric===null;
+  const candidate=adding?opts.flatMap(([id])=>['flat','increased','more'].map(t=>[id,t])).find(([id,t])=>!hasSourceModifier(rules,path,id,t)):null;
+  if(adding&&!candidate){status('Все 72 сочетания характеристики и типа уже добавлены');return;}
+  $('#dependency-dialog-title').textContent=(adding?'Добавить зависимость':'Изменить или удалить зависимость')+' · '+GROUP_LABELS[path];
+  $('#dependency-metric').innerHTML=opts.map(([id,name])=>'<option value="'+esc(id)+'">'+esc(name)+'</option>').join('');
+  $('#dependency-metric').value=adding?candidate[0]:metric;
+  $('#dependency-kind').value=adding?candidate[1]:kind;
+  $('#dependency-value').value=adding?'1':availableModifiers(rules,path)[metric]?.[kind]??0;
+  $('#dependency-delete').hidden=adding;
+  $('#dependency-message').textContent=adding?'Можно добавить любой ещё не занятый тип для той же характеристики.':'Замена удалит старую связь и создаст выбранную. Удаление обратимо кнопкой «Вернуть стандарт».';
+  $('#dependency-dialog').showModal();
+}
+function saveDependency(){
+  if(!dialogEdit)return;
+  const metric=$('#dependency-metric').value,kind=$('#dependency-kind').value,value=Number($('#dependency-value').value);
+  if($('#dependency-value').value.trim()===''||!Number.isFinite(value)){
+    $('#dependency-message').textContent='Введите конечное число.';return;
+  }
+  const old=dialogEdit,duplicate=hasSourceModifier(rules,old.path,metric,kind);
+  if(duplicate&&(old.metric!==metric||old.kind!==kind)){
+    $('#dependency-message').textContent='Такая связь уже существует. Измените её числовое значение в строке или выберите другой тип.';return;
+  }
+  const next=structuredClone(rules);
+  try{
+    if(old.metric!==null)removeSourceModifier(next,old.path,old.metric,old.kind);
+    setSourceModifier(next,old.path,metric,kind,value,METRIC_KEYS);
+    applyCandidate(next);
+    renderRules();$('#dependency-dialog').close();dialogEdit=null;
+  }catch(err){$('#dependency-message').textContent=err.message;}
+}
+function deleteDependency(){
+  if(!dialogEdit||dialogEdit.metric===null)return;
+  const next=structuredClone(rules);
+  try{
+    removeSourceModifier(next,dialogEdit.path,dialogEdit.metric,dialogEdit.kind);
+    applyCandidate(next,'Связь удалена в лаборатории');
+    renderRules();$('#dependency-dialog').close();dialogEdit=null;
+  }catch(err){$('#dependency-message').textContent=err.message;}
 }
 async function boot(){
   try{
@@ -157,12 +227,22 @@ async function boot(){
       renderForms();renderResults();
     });
     $('#reset-profiles').addEventListener('click',()=>{resetProfiles();$('#profile-count').value='4';status('Сценарии сброшены');});
-    $('#reset-rules').addEventListener('click',()=>{rules=structuredClone(original);resetProfiles();renderRules();status('Формулы сброшены');});
+    $('#reset-rules').addEventListener('click',()=>{rules=structuredClone(original);resetProfiles();renderRules();status('Вернулись стандартные формулы и профили');});
     $('#profiles').addEventListener('change',onProfileChange);
     $('#profiles').addEventListener('input',e=>{
       if(e.target instanceof HTMLInputElement && e.target.type==='number' && e.target.dataset.key!=='level')onProfileChange(e);
     });
     $('#rule-editor').addEventListener('input',onRuleChange);
+    $('#rule-editor').addEventListener('click',e=>{
+      const add=e.target.closest('[data-dep-add]');
+      if(add){showDependencyDialog(add.dataset.depAdd);return;}
+      const edit=e.target.closest('[data-dep-edit]');
+      if(edit)showDependencyDialog(edit.dataset.group,edit.dataset.metric,edit.dataset.kind);
+    });
+    $('#dependency-save').addEventListener('click',saveDependency);
+    $('#dependency-delete').addEventListener('click',deleteDependency);
+    $('#dependency-cancel').addEventListener('click',()=>{$('#dependency-dialog').close();dialogEdit=null;});
+    $('#dependency-dialog').addEventListener('close',()=>{dialogEdit=null;});
     $('#comparison-body').addEventListener('click',e=>{
       const row=e.target.closest('[data-metric]');if(row){selected=row.dataset.metric;renderResults();}
     });
