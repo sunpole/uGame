@@ -660,9 +660,8 @@ export class ProjectHubSystem {
     this.contentElement.querySelector?.('#world-map-find-me')?.addEventListener('click', () => {
       if (!currentZoneId) return;
       view.selectedId = currentZoneId;
+      view.mapCamera = null;
       this.renderWorldMap(view);
-      // The new viewport always returns to the current location, not a scrollbar.
-      if (view.mapCamera) focusCurrent();
     });
     this.contentElement.querySelector?.('#world-map-fit')?.addEventListener('click', fitWorld);
     const zoomCenter = () => ({ x: viewport.clientWidth / 2, y: viewport.clientHeight / 2 });
