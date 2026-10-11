@@ -43,6 +43,11 @@ async function checkViewport(profile) {
     if (profile.mobile) await locator.tap();
     else await locator.click();
   };
+  const heroAssetRequests=[];
+  page.on('request', request=>{
+    if(new URL(request.url()).pathname.startsWith('/assets/characters/'))
+      heroAssetRequests.push({method:request.method(),url:request.url()});
+  });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.stack || String(error)));
   // A missing optional user-supplied biome image is allowed: Pre-flight uses a
@@ -67,6 +72,11 @@ async function checkViewport(profile) {
       null,{timeout:75000});
     assert.equal(await page.locator('#hero-create-panel').isVisible(),true);
     assert.equal(await page.locator('#preflight-start').isHidden(),true);
+    assert.equal(heroAssetRequests.filter(req=>req.method==='HEAD').length,8,
+      'Pre-flight must check all eight hero assets without downloading PNG bodies');
+    assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=2,
+      'Pre-flight eagerly downloaded multi-megabyte portraits');
+
     assert.equal(await page.evaluate(()=>localStorage.getItem('ugame.save.v1')),null,
       'Startup gate must not overwrite an undecided save');
     const portraits=await page.evaluate(async()=>{
