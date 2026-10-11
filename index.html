@@ -205,7 +205,7 @@
 
           <form id="dev-console" class="dev-console" autocomplete="off">
             <label for="dev-code-input">DEV</label>
-            <input id="dev-code-input" name="dev-code" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="0000" />
+            <input id="dev-code-input" name="dev-code" type="text" inputmode="text" maxlength="220" list="dev-code-suggestions" spellcheck="false" autocomplete="off" placeholder="0000 / тп / tp" title="4 цифры или русская/английская команда · 9999 / help / помощь" /><datalist id="dev-code-suggestions"></datalist>
             <button type="submit">OK</button>
             <span id="dev-code-status" class="dev-code-status"></span>
           </form>
