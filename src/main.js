@@ -21,6 +21,7 @@ import { EventSpotSystem } from './event-spot-system.js';
 import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
 import { CharacterVitalsHUD } from './character-runtime.js';
+import { CharacterSkillSystem, pulseRadius, applyPulseHits } from './character-skills.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
@@ -70,6 +71,7 @@ let daylightSystem = null;
 let activeZoneScene = null;
 let chromeHeaderSystem = null;
 let characterVitalsHUD = null;
+let characterSkillSystem = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
 let uiWindowManager = null;
@@ -143,7 +145,8 @@ function executeDevCode(code) {
     eventSpotSystem,
     masterEncounterSystem,
     worldSpawnStateSystem,
-    saveSystem
+    saveSystem,
+    characterSkillSystem
   ];
 
   for (const system of systems) {
@@ -291,6 +294,7 @@ class ZoneScene extends Phaser.Scene {
     syncPlayerInputState();
 
     this.characterView = new CharacterView({ scene: this, player: this.player });
+    characterSkillSystem?.tick(Date.now());
 
     resourceSystem = new ResourceSystem({
       eventSystem: this.eventSystem,
@@ -1081,6 +1085,26 @@ class ZoneScene extends Phaser.Scene {
     this.wasDashing = state.dashing;
   }
 
+  animateRadialImpulse({durationMs,getTargets,hit}) {
+    const centre={x:this.player.x,y:this.player.y+PLAYER_SIZE / 2};
+    const seen=new Set();
+    const ring=this.add.graphics().setDepth(24);
+    const motion={elapsed:0};
+    const draw=()=>{
+      const r=pulseRadius(motion.elapsed);
+      ring.clear();
+      ring.lineStyle(3,0xff3e48,Math.max(0.08,0.95*(1-motion.elapsed/durationMs)));
+      ring.strokeCircle(centre.x,centre.y,r);
+      ring.lineStyle(1,0xffb8b8,Math.max(0,0.55*(1-motion.elapsed/durationMs)));
+      ring.strokeCircle(centre.x,centre.y,Math.max(1,r-3));
+      (hit||applyPulseHits)(getTargets?.()||[],centre,r,seen);
+    };
+    draw();
+    this.tweens.add({targets:motion,elapsed:durationMs,duration:durationMs,
+      onUpdate:draw,onComplete:()=>{draw();ring.destroy();}});
+    return centre;
+  }
+
   update(_time, delta) {
     if (!this.worldReady) return;
 
@@ -1200,6 +1224,19 @@ export async function bootGame({ availableTextureFiles } = {}) {
     persist: () => activeZoneScene?.persistGameState()
   });
   characterVitalsHUD.load().catch(error => console.warn('Character HUD unavailable',error));
+  characterSkillSystem = new CharacterSkillSystem({
+    getGameState: () => activeZoneScene?.gameState,
+    getRules: () => characterVitalsHUD?.rules,
+    save: () => activeZoneScene?.persistGameState(),
+    renderVitals: () => characterVitalsHUD?.render(),
+    canCast: () => Boolean(playerController?.enabled && activeZoneScene?.worldReady),
+    getTargets: () => activeZoneScene?.combatTargets || [],
+    animate: config => activeZoneScene?.animateRadialImpulse(config)
+  });
+  characterSkillSystem.bind();
+  // An open background tab may throttle Phaser; this wall-clock interval keeps
+  // candidate HP/PP/RP/JP regeneration tied to the *open session only*.
+  window.setInterval(() => characterSkillSystem?.tick(Date.now()),200);
   
   uiWindowManager = new UIWindowManager({
     host: document.querySelector('#game'),
