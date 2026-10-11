@@ -87,11 +87,11 @@ async function checkViewport(profile) {
       assert.ok(portrait.height>portrait.width*2,'Hero asset lost tall aspect ratio: '+portrait.url);
     }
     await activate('[data-hero-gender="female"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_52-2\\.png/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_52-2\.png/);
     await activate('[data-hero-archetype="leather"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_54-4\\.png/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_54-4\.png/);
     await activate('[data-hero-gender="male"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_53-3\\.png/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_53-3\.png/);
     await activate('[data-hero-archetype="hybrid"]');
     await activate('[data-hero-gender="female"]');
     await page.locator('#hero-name').fill('Антоний QA');
