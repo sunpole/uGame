@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.62",
-  "stage": "qa-world-map-crisp-layout-zoom",
+  "version": "0.2.63",
+  "stage": "qa-map-city-label-fit",
   "updated": "2026-10-11",
-  "summary": "World Map renders all 225 DOM diamonds and text with CSS layout zoom under a separate pan wrapper instead of a composited scaled layer. No world/save/gameplay changes."
+  "summary": "World Map city labels wrap and compact inside the diamond at 100-225% CSS zoom without changing map geometry, mechanics or saves."
 }
