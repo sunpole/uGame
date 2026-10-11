@@ -58,12 +58,15 @@ function filterRules(){
    const header=section.querySelector('h3')?.textContent.toLocaleLowerCase('ru-RU')||'';
    const matchAll=header.includes(q);
    let shown=0;
-   for(const label of section.querySelectorAll('label')){
-     const haystack=label.textContent.toLocaleLowerCase('ru-RU')+' '+(label.querySelector('input')?.dataset.rule||'').toLocaleLowerCase('ru-RU');
+   const containers=section.querySelectorAll('.dependency-row').length?section.querySelectorAll('.dependency-row'):section.querySelectorAll('label');
+   for(const container of containers){
+     const haystack=container.textContent.toLocaleLowerCase('ru-RU')+' '+(container.querySelector('input')?.dataset.rule||'').toLocaleLowerCase('ru-RU');
      const yes=!q||matchAll||haystack.includes(q);
-     label.hidden=!yes;if(yes)shown++;
+     container.hidden=!yes;if(yes)shown++;
    }
-   section.hidden=shown===0;visible+=shown;
+   section.hidden=shown===0&&!section.classList.contains('dependency-section');
+   if(section.classList.contains('dependency-section'))section.hidden=!!q&&!matchAll&&!shown;
+   visible+=shown;
  }
  $('#rule-search-count').textContent='Показано параметров: '+visible;
 }
@@ -122,7 +125,7 @@ async function importFile(file){
 async function init(){
   try{
     const response=await fetch('../data/character-stat-registry.json',{cache:'no-store'});
-    if(!response.ok)throw Error('HTTP '+response.status());
+    if(!response.ok)throw Error('HTTP '+response.status);
     registry=await response.json();
     if(!Array.isArray(registry.records)||registry.records.length<45||registry.schemaVersion!==1)throw Error('Реестр неполный');
     const ids=new Set(registry.records.map(x=>x.id));

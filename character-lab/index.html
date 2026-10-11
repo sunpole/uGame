@@ -24,7 +24,7 @@
     <section class="toolbar" aria-label="Настройки сравнения">
       <label>Количество профилей <select id="profile-count"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></label>
       <button id="reset-profiles" type="button">Сбросить профили</button>
-      <button id="reset-rules" type="button">Восстановить формулы</button>
+      <button id="reset-rules" type="button" title="Сбросить все изменения лаборатории к значениям из GitHub">Вернуть стандарт</button>
       <button id="export-snapshot" type="button">Экспорт JSON · все данные</button>
       <button id="import-snapshot" type="button">Импорт JSON · предпросмотр</button>
       <input type="file" id="snapshot-file" accept=".json,application/json" hidden aria-label="Выбрать файл лаборатории" />
@@ -57,6 +57,21 @@
     <section class="panel"><details id="coefficients"><summary>Редактор ВСЕХ коэффициентов (временно, пересчёт сразу)</summary><p class="hint">Каждый параметр редактируется отдельно, без eval и без сохранения в игру. Статус исходных значений — кандидат UGD-0038.</p><label class="rule-search-label">Поиск коэффициента / группы <input id="rule-search" type="search" placeholder="Например: ГЛР, ЛОВ, ХПС, Столица…" /></label> <span class="hint" id="rule-search-count"></span><div id="rule-editor"></div></details></section>
     <section class="panel"><details><summary>Базовые сценарии, спорные формулы, ограничения</summary><div id="assumptions"></div></details></section>
   </main>
+  <dialog id="dependency-dialog" class="import-dialog dependency-dialog" aria-labelledby="dependency-dialog-title">
+    <h2 id="dependency-dialog-title">Изменить зависимость</h2>
+    <p class="hint">Только песочница. Изменения расчёта войдут в экспорт JSON, но не в игру.</p>
+    <div class="dependency-dialog-fields">
+      <label>Характеристика<select id="dependency-metric"></select></label>
+      <label>Тип бонуса<select id="dependency-kind"><option value="flat">Плоский (+ единицы)</option><option value="increased">Складываемый процент (increased)</option><option value="more">Умножающий процент (more)</option></select></label>
+      <label>Значение<input id="dependency-value" type="number" step="any" value="1"></label>
+    </div>
+    <p id="dependency-message" role="status" class="hint"></p>
+    <div class="dialog-actions dependency-dialog-actions">
+      <button id="dependency-cancel" type="button">Отмена</button>
+      <button id="dependency-delete" type="button">Удалить</button>
+      <button id="dependency-save" type="button">Сохранить / заменить</button>
+    </div>
+  </dialog>
   <dialog id="import-review" class="import-dialog" aria-labelledby="import-review-title">
     <h2 id="import-review-title">Предварительная проверка JSON</h2>
     <p>Изменения будут внесены <strong>только в лабораторию</strong>. Ни исходные правила в GitHub, ни игровое сохранение не затрагиваются.</p>
