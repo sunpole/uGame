@@ -1,9 +1,6 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
 import { masterRarityReport } from './master-rarity-audit.js';
-import {
-  WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera,
-  worldMapClampCamera, worldMapZoomAt, worldMapPan
-} from './world-map-camera.js';
+import { WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera, worldMapClampCamera, worldMapZoomAt, worldMapPan } from './world-map-camera.js';
 
 function escapeHtml(value = '') {
   return String(value)
