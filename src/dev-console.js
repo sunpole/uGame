@@ -1,3 +1,5 @@
+import { resolveDevCode, devAliasSuggestions } from './dev-code-aliases.js';
+
 const GROUPS = {
   '1': 'Видимость / Vision',
   '2': 'Персонаж / Character',
@@ -28,16 +30,24 @@ export function initDevConsole({ execute } = {}) {
 
   if (!form || !input) return;
 
-  input.addEventListener('input', () => {
-    input.value = input.value.replace(/\D/g, '').slice(0, 4);
-  });
+  const suggestions = document.querySelector('#dev-code-suggestions');
+  if (suggestions) {
+    const options = document.createDocumentFragment();
+    for (const {value,code,language} of devAliasSuggestions()) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.label = code+' · '+(language==='ru'?'RU':'EN');
+      options.append(option);
+    }
+    suggestions.replaceChildren(options);
+  }
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const code = input.value.trim();
-
-    if (!/^\d{4}$/.test(code)) {
-      showStatus(status, 'Нужно 4 цифры / Enter four digits', 'error');
+    const entered = input.value.trim();
+    const code = resolveDevCode(entered);
+    if (!code) {
+      showStatus(status, 'Неизвестная команда / Unknown command · 9999 / help / помощь', 'error');
       return;
     }
 
@@ -50,7 +60,7 @@ export function initDevConsole({ execute } = {}) {
 
     const result = execute?.(code);
     if (result?.handled) {
-      showStatus(status, result.message || `${code} · выполнено`, result.state || 'ok');
+      showStatus(status, result.message || `${code} · выполнено / executed`, result.state || 'ok');
       releaseGameFocus(input, form);
       return;
     }
