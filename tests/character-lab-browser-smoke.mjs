@@ -71,8 +71,7 @@ async function smoke(profile){
     await page.locator('#pin-detail-close').click();
     await page.locator('tr[data-metric="ukl"]').click();
     assert.match(await page.locator('#formula-trace .trace-card').first().innerText(),/0,24%/);
-    // Reset these temporary examples before existing regression assertions.
-    await page.getByRole('button',{name:'Сбросить профили'}).click();
+    // Keep existing HP/OTV profile values intact: only EVA/ATK SPD got display examples.
     await page.locator('tr[data-metric="rps"]').click();
     assert.equal(await page.locator('#formula-detail[open] .trace-card').count(),4);
     await page.locator('#coefficients').evaluate(el=>{el.open=true;});
