@@ -72,6 +72,20 @@ async function checkViewport(profile) {
       null,{timeout:75000});
     assert.equal(await page.locator('#hero-create-panel').isVisible(),true);
     assert.equal(await page.locator('#preflight-start').isHidden(),true);
+    assert.equal(await page.locator('.hero-capital-card').count(),4,
+      'Four capital portrait cards must appear side-by-side on the creation screen');
+    assert.equal(await page.locator('[data-hero-image]').count(),4);
+    for(const [i,bonus] of ['+1 РПС','+50 РП','+1% РПС','+20% максимума РП'].entries()) {
+      const card=page.locator('.hero-capital-card').nth(i);
+      assert.match(await card.innerText(),new RegExp('Столица '+(i+1)));
+      assert.ok((await card.innerText()).includes(bonus),'Missing approved capital bonus '+bonus);
+    }
+    const desktopGrid=await page.locator('#hero-capital-grid').evaluate(el=>{
+      const style=getComputedStyle(el);return {columns:style.gridTemplateColumns,
+        scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
+    });
+    if(!profile.mobile)assert.equal(desktopGrid.columns.split(' ').length,4,
+      'Desktop hero gallery should show four visible portrait columns');
     assert.equal(heroAssetRequests.filter(req=>req.method==='HEAD').length,8,
       'Pre-flight must check all eight hero assets without downloading PNG bodies');
     assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=2,
@@ -96,12 +110,23 @@ async function checkViewport(profile) {
       assert.equal(portrait.status,200,'Hero portrait missing: '+portrait.url);
       assert.ok(portrait.height>portrait.width*2,'Hero asset lost tall aspect ratio: '+portrait.url);
     }
+    const expectFourPortraits=async(expected)=> {
+      const paths=await page.locator('[data-hero-image]').evaluateAll(imgs=>
+        imgs.map(img=>img.getAttribute('src')));
+      assert.equal(paths.length,4);
+      paths.forEach((path,i)=>assert.ok(path.endsWith(expected[i]),
+        'Portrait '+i+' did not change with shared M/Ж toggle: '+path));
+    };
+    await expectFourPortraits(['22_45_51-1.png','22_45_53-3.png',
+      '22_45_55-5.png','22_45_57-7.png']);
     await activate('[data-hero-gender="female"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_52-2\.png/);
+    await expectFourPortraits(['22_45_52-2.png','22_45_54-4.png',
+      '22_45_56-6.png','22_45_58-8.png']);
     await activate('[data-hero-archetype="leather"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_54-4\.png/);
+    assert.equal(await page.locator('[data-hero-archetype="leather"]').getAttribute('aria-pressed'),'true');
     await activate('[data-hero-gender="male"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/22_45_53-3\.png/);
+    await expectFourPortraits(['22_45_51-1.png','22_45_53-3.png',
+      '22_45_55-5.png','22_45_57-7.png']);
     await activate('[data-hero-archetype="hybrid"]');
     await activate('[data-hero-gender="female"]');
     await page.locator('#hero-name').fill('Антоний QA');
@@ -109,7 +134,7 @@ async function checkViewport(profile) {
     await page.waitForFunction(()=>document.querySelector('#hero-entrance')?.hidden===true);
     const heroSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')));
     assert.deepEqual(heroSaved.player.heroIdentity,{
-      schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid'
+      schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid',capitalId:'inspire'
     });
     assert.equal(heroSaved.player.characterDraft,null);
 
@@ -580,7 +605,7 @@ async function checkViewport(profile) {
     assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
     assert.match(await page.locator('#character-name').innerText(),/Антоний QA/);
     const preservedHero=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1'))?.player?.heroIdentity);
-    assert.deepEqual(preservedHero,{schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid'});
+    assert.deepEqual(preservedHero,{schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid',capitalId:'inspire'});
     // Draft survives F5 independently from the live class and old world save.
     await activate('#character-stats-open');
     await page.locator('#character-draft-panel').waitFor({timeout:10000});
