@@ -1,3 +1,15 @@
+# uGame v0.2.68 · RU/EN input for all DEV codes (2026-10-11)
+
+- Existing v0.2.67 XP ±5/10/50%, ZRL 1–65, signed OTV and free five-city teleport remain intact.
+- All **67 DEV commands** now accept their documented Russian and English names in the footer, with 134 autocomplete suggestions and common short RU/EN aliases such as `тп` / `tp`, `зрп +5%` / `xp +5%`, `сохранить` / `save`.
+- Exactly matched names map back to original four digits. No fuzzy matching for sensitive commands (9002 delete save); unknown names do nothing.
+- Gameplay, teleport cost, progression rules, GameState v1, old local saves, Character Lab/Admin Lab and original JPEGs unchanged.
+- Node and real Chromium desktop/mobile checks for all code mappings and text input.
+- Immutable rollback v0.2.67 SHA `580e636cfb60c8a445bf0de52b03fe3dd72f5d56`.
+- [Release notes](docs/releases/v0.2.68.md).
+
+---
+
 # uGame v0.2.67 · Bilingual DEV character tools and city travel (2026-10-11)
 
 - Bilingual Russian/English **all existing DEV codes** reference; Project Hub execution buttons bilingual.
