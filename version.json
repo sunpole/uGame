@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.60",
-  "stage": "qa-safe-south-jpeg-publishing",
+  "version": "0.2.61",
+  "stage": "qa-original-south-texture-names",
   "updated": "2026-10-11",
-  "summary": "Updater menu 12 creates a reviewable PR with local South JPEG textures via isolated Git worktree; no source file, gameplay or saves changed."
+  "summary": "Restore original 1024x1024 South field and city JPEG names across tracked assets, runtime, preflight and PC-to-GitHub uploader without reencoding; preserve browser texture overrides."
 }
