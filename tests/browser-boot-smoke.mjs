@@ -93,6 +93,62 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('[data-world-map-zone]').count(), 225);
     assert.equal(await page.locator('[data-world-map-zone].is-city').count(), 5);
     assert.equal(await page.locator('[data-world-map-zone].is-current').count(), 1);
+    const mapViewport=page.locator('#world-map-viewport');
+    const metrics=async()=>mapViewport.evaluate(el=>{
+      const stage=el.querySelector('.world-map-stage');
+      const a=stage.getBoundingClientRect(),b=el.getBoundingClientRect();
+      const m=new DOMMatrixReadOnly(getComputedStyle(stage).transform);
+      return {scale:m.a,x:m.e,y:m.f,stageWidth:a.width,stageHeight:a.height,
+        viewportWidth:b.width,viewportHeight:b.height,
+        scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
+        scrollHeight:el.scrollHeight,clientHeight:el.clientHeight};
+    });
+    const initial=await metrics();
+    assert.ok(initial.scale>0.6&&initial.scale<1.5,'Start at medium-scale current location');
+    assert.equal(await page.locator('.world-map-scroll').count(),0,'Old scroll container still exists');
+    assert.equal(await mapViewport.evaluate(el=>getComputedStyle(el).overflow),'hidden');
+    await activate('#world-map-fit');
+    const overview=await metrics();
+    assert.ok(overview.scale<initial.scale,'Overview must zoom out');
+    assert.ok(overview.stageWidth<=overview.viewportWidth+2,'Fit does not fit map width');
+    assert.ok(overview.stageHeight<=overview.viewportHeight+2,'Fit does not fit map height');
+    await activate('#world-map-find-me');
+    const focused=await metrics();
+    assert.ok(focused.scale>overview.scale,'Find Me must zoom back to medium scale');
+    const centre=await mapViewport.boundingBox();
+    if(!centre)throw Error('Map viewport not measurable');
+    if(!profile.mobile){
+      await page.mouse.move(centre.x+centre.width/2,centre.y+centre.height/2);
+      await page.mouse.wheel(0,-600);
+      await page.waitForTimeout(160);
+      const zoomed=await metrics();
+      assert.ok(zoomed.scale>focused.scale,'Mouse wheel must zoom in');
+      await page.mouse.down();
+      await page.mouse.move(centre.x+centre.width/2+80,centre.y+centre.height/2+36,{steps:8});
+      await page.mouse.up();
+      const dragged=await metrics();
+      assert.ok(Math.abs(dragged.x-zoomed.x)>8||Math.abs(dragged.y-zoomed.y)>8,
+        'Dragging map must pan the canvas');
+    }else{
+      // CDP synthesizes real multi-touch input through Chromium, not a JS mock.
+      const session=await context.newCDPSession(page);
+      const cx=centre.x+centre.width/2,cy=centre.y+centre.height/2;
+      const touch=(x,y,id)=>({x,y,id});
+      await session.send('Input.dispatchTouchEvent',{type:'touchStart',
+        touchPoints:[touch(cx-38,cy,1),touch(cx+38,cy,2)]});
+      await session.send('Input.dispatchTouchEvent',{type:'touchMove',
+        touchPoints:[touch(cx-70,cy,1),touch(cx+70,cy,2)]});
+      await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+      await page.waitForTimeout(120);
+      const pinched=await metrics();
+      assert.ok(pinched.scale>focused.scale,'Two-finger pinch must zoom on mobile');
+      await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(cx,cy,1)]});
+      await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touch(cx-42,cy-30,1)]});
+      await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+      const moved=await metrics();
+      assert.ok(Math.abs(moved.x-pinched.x)>5||Math.abs(moved.y-pinched.y)>5,
+        'Single-finger mobile swipe must pan');
+    }
     await activate('#world-map-find-me');
     assert.equal(await page.locator('[data-world-map-zone].is-current.is-selected').count(), 1);
 
