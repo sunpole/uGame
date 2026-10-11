@@ -1240,7 +1240,9 @@ input {
 }
 
 @media (max-width: 720px) {
-  .project-hub-open span {
+  /* The body receives .project-hub-open when the overlay opens.
+     Never hide ALL spans inside it: that erases tile labels on mobile. */
+  #project-hub-open span {
     display: none;
   }
 
