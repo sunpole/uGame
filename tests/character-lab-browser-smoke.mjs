@@ -47,6 +47,30 @@ async function smoke(profile){
     await rating.fill('600');assert.equal((await hp.innerText()).trim(),'156');
     await rating.fill('699');assert.equal((await hp.innerText()).trim(),'156');
     await rating.fill('700');assert.equal((await hp.innerText()).trim(),'157');
+    // Real browser unit interpretation must update together with editable candidate scores.
+    const firstCard=page.locator('.profile').first();
+    await firstCard.locator('details').evaluate(el=>{el.open=true;});
+    const setCandidateScore=async(key,target)=>{
+      const cell=page.locator('tr[data-metric="'+key+'"] td').nth(1);
+      const before=Number((await cell.evaluate(el=>el.firstChild?.textContent||'')).replace(/\s/g,'').replace(',','.'));
+      assert.ok(Number.isFinite(before),'Raw Lab score unreadable: '+key);
+      await firstCard.locator('input[data-key="extra.'+key+'"]').fill(String(target-before));
+      return cell;
+    };
+    const evasion=await setCandidateScore('ukl',24);
+    assert.match(await evasion.innerText(),/^24\s+=\s+0,24%/);
+    const attackSpeed=await setCandidateScore('ska',420);
+    assert.match(await attackSpeed.innerText(),/^420\s+=\s+4,2 атак\/с/);
+    await page.locator('tr[data-metric="ukl"] .pin-toggle').click();
+    const evasionPin=page.locator('[data-pin-value="ukl"][data-pin-profile="0"]');
+    assert.match(await evasionPin.innerText(),/24\s+=\s+0,24%/);
+    await evasionPin.click();
+    assert.match(await page.locator('#pin-detail-list').innerText(),/0,24%/);
+    await page.locator('#pin-detail-close').click();
+    await page.locator('tr[data-metric="ukl"]').click();
+    assert.match(await page.locator('#formula-trace .trace-card').first().innerText(),/0,24%/);
+    // Reset these temporary examples before existing regression assertions.
+    await page.getByRole('button',{name:'Сбросить профили'}).click();
     await page.locator('tr[data-metric="rps"]').click();
     assert.equal(await page.locator('#formula-detail[open] .trace-card').count(),4);
     await page.locator('#coefficients').evaluate(el=>{el.open=true;});
