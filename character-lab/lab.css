@@ -63,3 +63,22 @@
 .validation-table td small{display:block;font-size:11px;line-height:1.4;opacity:.8;margin-top:4px;overflow-wrap:anywhere}
 .validation-panel details>summary{cursor:pointer;font-weight:700;margin-bottom:8px}
 @media(max-width:640px){.validation-checks{grid-template-columns:1fr}.validation-table{min-width:640px}.validation-actions button{max-width:100%}}
+
+
+/* Formula builder: each dependency stays with its own numeric input and actions. */
+.dependency-section-heading{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.dependency-section-heading h3{margin:0}
+.dependency-section-heading button{font-size:12px;padding:6px 10px}
+.dependency-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,355px),1fr));gap:8px;align-items:start}
+.dependency-row{border:1px solid #314355;border-radius:8px;padding:8px;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;background:#0c1722}
+.dependency-row label{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 92px;column-gap:8px;align-items:center;color:#b6c9de;font-size:12px}
+.dependency-name{grid-column:1;font-weight:600;overflow-wrap:anywhere}
+.dependency-row label small{grid-column:1;color:#8ba4bd;font-size:11px}
+.dependency-row label input{grid-column:2;grid-row:1 / span 2;width:100%;text-align:right;font-variant-numeric:tabular-nums}
+.dependency-edit{font-size:11px;padding:7px 8px;white-space:nowrap}
+.dependency-dialog{max-width:580px}
+.dependency-dialog-fields{display:grid;gap:10px;margin:14px 0}
+.dependency-dialog-fields label{display:grid;gap:4px;font-size:12px;color:#b8c9df}
+.dependency-dialog-actions{flex-wrap:wrap}
+.dependency-dialog-actions #dependency-delete{margin-right:auto;border-color:#80555a}
+@media(max-width:600px){.dependency-list{grid-template-columns:1fr}.dependency-row label{grid-template-columns:minmax(0,1fr) 78px}.dependency-edit{font-size:11px}}
