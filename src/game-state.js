@@ -1,4 +1,5 @@
 import { normalizeCharacterDraft } from './character-draft.js';
+import { normalizeCharacterProgress, normalizeCharacterPools } from './character-runtime.js';
 
 export const GAME_STATE_SCHEMA_VERSION = 1;
 
@@ -164,7 +165,9 @@ export function createDefaultGameState() {
     schemaVersion: GAME_STATE_SCHEMA_VERSION,
     player: {
       classId: 'wanderer',
-      characterDraft: null
+      characterDraft: null,
+      characterProgress: normalizeCharacterProgress(null),
+      characterPools: null
     },
     world: {
       zoneId: 'zone-001',
@@ -204,7 +207,9 @@ export function normalizeGameState(input) {
       classId: typeof input.player?.classId === 'string' && input.player.classId
         ? input.player.classId
         : defaults.player.classId,
-      characterDraft: normalizeCharacterDraft(input.player?.characterDraft)
+      characterDraft: normalizeCharacterDraft(input.player?.characterDraft),
+      characterProgress: normalizeCharacterProgress(input.player?.characterProgress),
+      characterPools: normalizeCharacterPools(input.player?.characterPools)
     },
     world: {
       zoneId: validZoneId ? zoneId : defaults.world.zoneId,
@@ -240,6 +245,10 @@ export class GameState {
 
   setCharacterDraft(draft) {
     this.state.player.characterDraft = normalizeCharacterDraft(draft);
+  }
+
+  setCharacterPools(snapshot) {
+    this.state.player.characterPools=normalizeCharacterPools(snapshot);
   }
 
   setClassId(classId) {
