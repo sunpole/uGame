@@ -7,7 +7,7 @@
 .pinned-heading strong{font-size:13px;color:#d9efff}
 .pinned-heading .hint{margin:0;flex:1}
 .pinned-heading button{padding:4px 10px;font-size:12px}
-.pin-table-scroll{overflow:auto;max-height:37vh;overscroll-behavior:contain}
+.pin-table-scroll{overflow:auto;max-height:calc(100dvh - 115px);overscroll-behavior:contain}
 .pin-empty{margin:7px 0;color:#91a9bd;font-size:12px}
 .pinned-grid{display:grid;grid-template-columns:minmax(170px,1.5fr) repeat(var(--profiles,4), minmax(105px,1fr));min-width:max-content}
 .pinned-grid>div{border-bottom:1px solid #375068;padding:6px 10px;min-width:110px;text-align:right;font-variant-numeric:tabular-nums}
@@ -37,7 +37,7 @@
 .diff-preview{max-height:44vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 ui-monospace,monospace;background:#08121d;border-radius:7px;padding:12px;border:1px solid #30495c}
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}
 #registry-search{width:100%}
-@media(max-width:600px){.pinned-panel{padding:6px;top:0}.pinned-heading{gap:6px}.pinned-heading .hint{width:100%;flex-basis:100%}.pin-table-scroll{max-height:28vh}.registry-list{grid-template-columns:1fr;max-height:460px}.registry-controls label{min-width:100%;}.pinned-grid{grid-template-columns:minmax(145px,1fr) repeat(var(--profiles,4),minmax(100px,1fr));font-size:11px}.pinned-grid>div{padding:5px}.lab-root .toolbar button{font-size:12px}}
+@media(max-width:600px){.pinned-panel{padding:6px;top:0}.pinned-heading{gap:6px}.pinned-heading .hint{width:100%;flex-basis:100%}.pin-table-scroll{max-height:calc(100dvh - 150px)}.registry-list{grid-template-columns:1fr;max-height:460px}.registry-controls label{min-width:100%;}.pinned-grid{grid-template-columns:minmax(145px,1fr) repeat(var(--profiles,4),minmax(100px,1fr));font-size:11px}.pinned-grid>div{padding:5px}.lab-root .toolbar button{font-size:12px}}
 
 .rule-search-label{display:flex;flex-direction:column;gap:4px;max-width:480px;margin:8px 0;color:#aebdd0;font-size:12px}
 .rules-section[hidden],.rules-section label[hidden]{display:none!important}
@@ -84,3 +84,24 @@
 @media(max-width:600px){.dependency-list{grid-template-columns:1fr}.dependency-row label{grid-template-columns:minmax(0,1fr) 78px}.dependency-edit{font-size:11px}}
 
 .dependency-row[hidden]{display:none!important}
+
+
+/* Sticky comparison grows until near the viewport bottom, then scrolls internally. */
+.pinned-panel{max-height:calc(100dvh - 8px);display:flex;flex-direction:column;min-height:0}
+.pin-table-scroll{flex:0 1 auto;min-height:0}
+.pinned-heading{flex:0 0 auto}
+.pin-add-controls{display:flex;align-items:center;gap:6px;min-width:0}
+.pin-add-controls select{width:clamp(150px,22vw,285px);font-size:12px;height:32px;padding:3px 7px}
+.pin-add-controls button{white-space:nowrap;height:32px}
+.pin-help{font-size:11px;color:#9db7cd;margin:0 0 6px}
+.pin-value{border:0;background:transparent;color:inherit;text-align:right;width:100%;padding:3px 4px;min-height:27px;font-size:inherit;font-variant-numeric:tabular-nums}
+.pin-value:hover,.pin-value:focus-visible{background:#34536b;outline:1px solid #7dbdf8;color:#fff}
+#pin-hover-card{position:fixed;z-index:120;padding:12px;border:1px solid #668cae;border-radius:9px;background:#132636;color:#eef6ff;box-shadow:0 8px 38px #000e;font-size:12px;line-height:1.4;max-height:calc(100dvh - 24px);overflow:hidden;pointer-events:none;overflow-wrap:anywhere}
+#pin-hover-card[hidden]{display:none!important}
+#pin-hover-card ol{padding-left:18px;margin:7px 0;max-height:44vh;overflow:hidden}
+#pin-hover-card li{margin:4px 0}
+#pin-hover-card p{margin:8px 0 0;color:#b1c9de}
+.pin-detail-dialog ol{max-height:55dvh;overflow-y:auto;padding:0 8px 0 25px;line-height:1.6}
+.pin-detail-dialog li{margin:6px 0;overflow-wrap:anywhere}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:660px){.pin-add-controls{flex:1 1 100%}.pin-add-controls select{width:100%;flex:1 1 auto}.pin-help{font-size:10px}.pin-data .pin-value{min-width:75px}}
