@@ -64,37 +64,70 @@
         </section>
         <section id="hero-create-panel" class="hero-creator" hidden>
           <form id="hero-create-form">
-            <div class="hero-setup">
-              <div class="hero-details"><h2>Создание персонажа</h2>
-                <label class="hero-field" for="hero-name">Имя героя
-                  <input id="hero-name" type="text" maxlength="24" minlength="2" placeholder="Как зовут твоего героя?" required autocomplete="off" />
-                </label>
-                <div class="hero-field"><span>Пол персонажа</span>
-                  <div class="hero-segmented" role="group" aria-label="Выбор пола">
-                    <button type="button" data-hero-gender="male" aria-pressed="true">Мужской</button>
-                    <button type="button" data-hero-gender="female" aria-pressed="false">Женский</button>
-                  </div>
-                </div>
-                <fieldset class="hero-archetypes"><legend>Выбери один из четырёх образов</legend>
-                  <button type="button" data-hero-archetype="plate" aria-pressed="true"><strong>Латный воин</strong><small>Латы · меч</small></button>
-                  <button type="button" data-hero-archetype="leather" aria-pressed="false"><strong>Бретёр</strong><small>Кожа · сталь</small></button>
-                  <button type="button" data-hero-archetype="cloth" aria-pressed="false"><strong>Служитель</strong><small>Ткань · посох</small></button>
-                  <button type="button" data-hero-archetype="hybrid" aria-pressed="false"><strong>Воин духовного сана</strong><small>Вера · доспехи</small></button>
-                </fieldset>
-                <div id="hero-consent-line" class="hero-replace" hidden>
-                  <label><input id="hero-replace-confirm" type="checkbox" /> Я понимаю: текущий герой будет сохранён в резервную копию; новый займёт активное сохранение.</label>
-                </div>
-                <p class="hero-footnote">Это только визуальный образ. Класс, столица и характеристики не назначаются автоматически.</p>
-                <p id="hero-message" class="hero-message" role="alert" aria-live="polite"></p>
-                <div class="hero-buttons">
-                  <button id="hero-create" type="submit" class="hero-primary">Создать героя и войти в игру</button>
-                  <button id="hero-back" type="button" class="hero-secondary">Назад</button>
+            <div class="hero-create-top">
+              <div><h2>Выбери столицу происхождения</h2>
+                <p>Четыре столицы, четыре пути развития. Названия временные; портреты показывают стартовый образ.</p>
+              </div>
+              <div class="hero-field hero-gender-field"><span>Пол персонажа</span>
+                <div class="hero-segmented" role="group" aria-label="Выбор пола">
+                  <button type="button" data-hero-gender="male" aria-pressed="true">М</button>
+                  <button type="button" data-hero-gender="female" aria-pressed="false">Ж</button>
                 </div>
               </div>
-              <div class="hero-portrait-wrap"><img id="hero-preview" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_51-1.png"
-                   width="511" height="1536" alt="Латный воин — мужской образ"/>
-                <div class="hero-portrait-footer"><strong id="hero-preview-name">Будущий герой</strong>
-                  <small>Изображение · не игровой класс</small></div>
+            </div>
+            <fieldset class="hero-capital-grid" id="hero-capital-grid">
+              <legend>Выбери одну столицу · бонусы согласно принятому проектному решению</legend>
+                <button type="button" class="hero-capital-card" data-hero-archetype="plate" aria-pressed="true" aria-label="Столица 1: Сила. +1 РПС; +10 СИЛ · +10 ЗАЩ · +1% ХПС">
+                  <span class="hero-card-picture"><img data-hero-image="plate" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_51-1.png" alt="Латный воин, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 1</strong>
+                    <span class="hero-card-resource">Сила</span>
+                    <span class="hero-card-bonus-primary">+1 РПС</span>
+                    <small class="hero-card-bonus-extra">+10 СИЛ · +10 ЗАЩ · +1% ХПС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="leather" aria-pressed="false" aria-label="Столица 2: Концентрация. +50 РП; +10 КОН · +10 СКА · +1% РПС">
+                  <span class="hero-card-picture"><img data-hero-image="leather" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_53-3.png" alt="Бретёр, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 2</strong>
+                    <span class="hero-card-resource">Концентрация</span>
+                    <span class="hero-card-bonus-primary">+50 РП</span>
+                    <small class="hero-card-bonus-extra">+10 КОН · +10 СКА · +1% РПС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="cloth" aria-pressed="false" aria-label="Столица 3: Темп. +1% РПС; +10 ТЕМП · +10 УКЛ · +1% ППС">
+                  <span class="hero-card-picture"><img data-hero-image="cloth" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_55-5.png" alt="Служитель, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 3</strong>
+                    <span class="hero-card-resource">Темп</span>
+                    <span class="hero-card-bonus-primary">+1% РПС</span>
+                    <small class="hero-card-bonus-extra">+10 ТЕМП · +10 УКЛ · +1% ППС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="hybrid" aria-pressed="false" aria-label="Столица 4: Вдохновение. +20% максимума РП; +5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП">
+                  <span class="hero-card-picture"><img data-hero-image="hybrid" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_57-7.png" alt="Воин духовного сана, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 4</strong>
+                    <span class="hero-card-resource">Вдохновение</span>
+                    <span class="hero-card-bonus-primary">+20% максимума РП</span>
+                    <small class="hero-card-bonus-extra">+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП</small>
+                  </span>
+                </button>
+            </fieldset>
+            <p class="hero-footnote">Бонусы происхождения утверждены в концепции, но в текущем игровом прототипе ещё не применяются. Столица сохраняется как выбор персонажа; окончательные названия добавим позднее.</p>
+            <div class="hero-create-footer">
+              <label class="hero-field hero-name-field" for="hero-name">Имя героя
+                <input id="hero-name" type="text" maxlength="24" minlength="2" placeholder="Как зовут твоего героя?" required autocomplete="off">
+              </label>
+              <div class="hero-footer-controls">
+                <div id="hero-consent-line" class="hero-replace" hidden>
+                  <label><input id="hero-replace-confirm" type="checkbox"> Текущий герой будет сохранён в резервную копию, а новый займёт активное сохранение.</label>
+                </div>
+                <p id="hero-message" class="hero-message" role="alert" aria-live="polite"></p>
+                <div class="hero-buttons">
+                  <button id="hero-create" type="submit" class="hero-primary">Создать героя и начать</button>
+                  <button id="hero-back" type="button" class="hero-secondary">Назад</button>
+                </div>
               </div>
             </div>
           </form>
