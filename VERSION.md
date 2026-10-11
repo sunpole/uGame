@@ -1,3 +1,15 @@
+# uGame v0.2.64 · Character stats in game, phase 1 (2026-10-11)
+
+- Read-only in-game Character Draft displays 24 candidate-derived metrics using the exact same pure Character Balance Lab engine.
+- Owner can explicitly save a *draft comparison profile* (four candidate origins, 21 start distributions) in optional `player.characterDraft`. Existing GameState schema v1, saves and other player/world/resource fields are preserved.
+- No hidden default city selection, no XP/level progression, no battle/skill/step/Phaser modifications. Candidate calculations do not affect actual stats or gameplay.
+- Character Balance Lab, Character Admin Lab and JSON v1/v2 export/import remain sandbox-only and unchanged. Rules remain `discussing` UGD-0038.
+- New Node tests for legacy save migration, sanitization and equality to existing Lab engine; real Chromium desktop/mobile Pre-flight, Phaser, preview/save/reload and Lab tests.
+- Immutable rollback: v0.2.63, SHA `66fd219c4f541f200839e3ed663fbe7ea4d844af`.
+- [Release notes](docs/releases/v0.2.64.md).
+
+---
+
 # uGame v0.2.63 · City labels fit World Map diamonds (2026-10-11)
 
 - Long city titles wrap in the diamond's central safe width, including «Каменный Перекрёсток» and «Беломраморный Двор».
