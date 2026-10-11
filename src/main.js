@@ -21,6 +21,7 @@ import { EventSpotSystem } from './event-spot-system.js';
 import { QuestSystem } from './quest-system.js';
 import { GameState } from './game-state.js';
 import { CharacterVitalsHUD } from './character-runtime.js';
+import { DevCharacterTools, devCityTeleport } from './dev-character-tools.js';
 import { CharacterSkillSystem, pulseRadius, applyPulseHits } from './character-skills.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
@@ -72,6 +73,7 @@ let activeZoneScene = null;
 let chromeHeaderSystem = null;
 let characterVitalsHUD = null;
 let characterSkillSystem = null;
+let devCharacterTools = null;
 let actionRouter = null;
 let interfaceSettingsSystem = null;
 let uiWindowManager = null;
@@ -93,7 +95,7 @@ let spawnZoneDebugSystem = null;
 
 function syncPlayerInputState() {
   if (!playerController) return;
-  const overlayIds = ['dialogue-panel', 'interaction-panel', 'inventory-panel', 'project-hub'];
+  const overlayIds = ['dialogue-panel', 'interaction-panel', 'inventory-panel', 'project-hub', 'dev-character-panel'];
   const anyOverlayOpen = overlayIds.some((id) => {
     const element = document.getElementById(id);
     return element && !element.hidden;
@@ -146,6 +148,7 @@ function executeDevCode(code) {
     masterEncounterSystem,
     worldSpawnStateSystem,
     saveSystem,
+    devCharacterTools,
     characterSkillSystem
   ];
 
@@ -1246,6 +1249,25 @@ export async function bootGame({ availableTextureFiles } = {}) {
   fitPlayfield();
   window.addEventListener('resize', () => requestAnimationFrame(fitPlayfield));
   loadVersion();
+  devCharacterTools = new DevCharacterTools({
+    getState: () => activeZoneScene?.gameState,
+    save: () => activeZoneScene?.persistGameState?.(),
+    renderVitals: () => {
+      characterVitalsHUD?.render();
+      if(projectHubSystem?.overlay && !projectHubSystem.overlay.hidden &&
+        projectHubSystem.stack?.at(-1)?.type==='character-draft') projectHubSystem.renderCurrent();
+    },
+    getWorld: () => activeZoneScene?.worldGraph,
+    travel: cityId => devCityTeleport({
+      worldGraph: activeZoneScene?.worldGraph,
+      zoneSystem: activeZoneScene?.zoneSystem,
+      worldReady: activeZoneScene?.worldReady,
+      save: () => activeZoneScene?.persistGameState?.(),
+      updateVision: () => visionSystem?.update?.(),
+      playPortal: () => activeZoneScene?.audioSystem?.play?.('portal')
+    },cityId),
+    onOverlayChange: syncPlayerInputState
+  });
   initDevConsole({ execute: executeDevCode });
   
   new Phaser.Game({
