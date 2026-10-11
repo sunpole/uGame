@@ -8,8 +8,8 @@ export const GROUND_TEXTURE_ASSETS = [
   { key: 'ground-city-grass', file: './assets/textures/biomes/city_grass_1024.png', label: 'city_grass_1024.png' },
   { key: 'ground-city-sand', file: './assets/textures/biomes/city_sand_1024.png', label: 'city_sand_1024.png' },
   { key: 'ground-city-snow', file: './assets/textures/biomes/city_snow_1024.png', label: 'city_snow_1024.png' },
-  { key: 'ground-south', file: './assets/textures/biomes/south_256.jpg', label: 'south_256.jpg · южный песок' },
-  { key: 'ground-city-south', file: './assets/textures/biomes/city_south_512.jpg', label: 'city_south_512.jpg · белый мрамор' }
+  { key: 'ground-south', file: './assets/textures/biomes/ground_1024.jpg', label: 'ground_1024.jpg · южный песок' },
+  { key: 'ground-city-south', file: './assets/textures/biomes/city_ground_1024.jpg', label: 'city_ground_1024.jpg · белый мрамор' }
 ];
 
 function clone(value) {
@@ -27,13 +27,22 @@ function safeStorage() {
   try { return globalThis.localStorage || null; } catch { return null; }
 }
 
+// Older browser-local Biome Visual Lab overrides are mapped without losing scale/opacity.
+const LEGACY_PATHS = new Map([
+  ['./assets/textures/biomes/south_256.jpg', './assets/textures/biomes/ground_1024.jpg'],
+  ['./assets/textures/biomes/city_south_512.jpg', './assets/textures/biomes/city_ground_1024.jpg']
+]);
+export function normalizeGroundTexturePath(path) {
+  return LEGACY_PATHS.get(path) || path;
+}
+
 function normalizeEntry(entry = {}) {
   return {
     id: String(entry.id || ''),
     biome: String(entry.biome || 'grass'),
     city: Boolean(entry.city),
     textureName: String(entry.textureName || entry.id || 'Texture'),
-    textureFile: String(entry.textureFile || ''),
+    textureFile: normalizeGroundTexturePath(String(entry.textureFile || '')),
     enabled: entry.enabled !== false,
     scalePercent: clamp(entry.scalePercent, 1, 10000, 40),
     opacityPercent: clamp(entry.opacityPercent, 0, 100, 40)
