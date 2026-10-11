@@ -1,0 +1,95 @@
+name: uGame v0.2.58 world map viewport QA and release
+
+on:
+  pull_request:
+    paths:
+      - 'src/project-hub-system.js'
+      - 'src/world-map-camera.js'
+      - 'src/style.css'
+      - 'tests/world-navigation-ui.test.mjs'
+      - 'tests/browser-boot-smoke.mjs'
+      - 'index.html'
+      - 'version.json'
+      - 'package.json'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0258.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.58.md'
+      - '.github/workflows/publish-v0258.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify version and full Node regressions
+        run: |
+          node --check src/world-map-camera.js
+          node --check src/project-hub-system.js
+          node --check tests/browser-boot-smoke.mjs
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.58')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.58'\"))throw Error('Pre-flight version mismatch');
+          "
+      - name: Install actual Chromium desktop/mobile runner
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Real Chromium desktop/mobile world map, preflight, Phaser and save/F5
+        env:
+          CI: 'true'
+        run: node tests/browser-boot-smoke.mjs
+      - name: Real Chromium Character Lab regression
+        env:
+          CI: 'true'
+        run: node tests/character-lab-browser-smoke.mjs
+      - name: Real Chromium Character Admin Lab regression
+        env:
+          CI: 'true'
+        run: node tests/character-lab-admin-browser-smoke.mjs
+      - name: Verify pre-change immutable rollback release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.57-pre-world-map-v0258-20261011
+          git fetch origin tag v0.2.57-pre-world-map-v0258-20261011
+          test "$(git rev-parse v0.2.57-pre-world-map-v0258-20261011^{commit})" = "ca82dc32c7f4212c37d646e34b82ce8d04505561"
+      - name: Publish v0.2.58 QA prerelease only on validated main
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.58 >/dev/null 2>&1; then
+            gh release create v0.2.58 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.58 · Interactive World Map Camera" \
+              --notes-file docs/releases/v0.2.58.md --prerelease
+          fi
+          gh release view v0.2.58
+      - name: Upload browser errors when any test fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v0258-browser-failures
+          path: |
+            artifacts/browser-smoke/
+            artifacts/character-lab/
+            artifacts/character-admin/
+          if-no-files-found: ignore
+          retention-days: 10
