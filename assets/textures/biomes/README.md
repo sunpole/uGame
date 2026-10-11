@@ -17,6 +17,11 @@ The runtime mapping/defaults live in `data/biome-textures.json`. User/admin over
 
 Before public asset release, approved binaries should be promoted into tracked/static deployment assets without changing the GroundTextureSystem API.
 
-## South originals and publishing (v0.2.60)
+## Южные текстуры: оригинальные имена (v0.2.61)
 
-Updater item 12 reads `ground_1024.jpg` / `city_ground_1024.jpg` from **this folder**, copies their bytes to the original tracked targets `south_256.jpg` and `city_south_512.jpg` in an isolated worktree, and pushes only a review PR. The legacy destination filenames do not dictate image resolution; originals are not compressed or resized. If the original names are not present, the uploader uses the destination-named JPEGs instead. Six ignored PNGs remain local-only. See [`docs/releases/v0.2.60.md`](../../../docs/releases/v0.2.60.md).
+Эти JPEG теперь хранятся **под авторскими именами, без переименования и пересжатия**:
+
+- `ground_1024.jpg` — южная земля, 1024×1024.
+- `city_ground_1024.jpg` — южный город, 1024×1024.
+
+Пункт 12 Updater отправляет только эти два файла в отдельный PR. Конфигурация `data/biome-textures.json`, загрузчик Phaser и Pre-flight используют те же названия. Устаревшие `south_256.jpg` / `city_south_512.jpg` удалены. Шесть локальных PNG остаются независимыми.
