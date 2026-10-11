@@ -97,8 +97,8 @@ test('optional biome assets do not block Phaser preload when missing from clean 
   const loaded = [];
   const scene = { load: { image: (key, file) => loaded.push({ key, file }) } };
   const available = new Set([
-    './assets/textures/biomes/south_256.jpg',
-    './assets/textures/biomes/city_south_512.jpg'
+    './assets/textures/biomes/ground_1024.jpg',
+    './assets/textures/biomes/city_ground_1024.jpg'
   ]);
   preloadGroundTextures(scene, available);
   assert.deepEqual(loaded.map(({ file }) => file).sort(), [...available].sort());
