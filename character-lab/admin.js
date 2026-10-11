@@ -1,5 +1,7 @@
 import { METRICS, METRIC_KEYS, calculateCharacter } from '../src/character-balance/engine.js';
-import { createSnapshot, parseSnapshot, diffSnapshot } from '../src/character-balance/snapshot.js';
+import { createSnapshot, diffSnapshot } from '../src/character-balance/snapshot.js';
+import {createNamedSnapshot,parseNamedSnapshot,toEnglishFieldPath} from '../src/character-balance/named-snapshot.js';
+import {STAT_TERMS,labelForStat} from '../src/character-balance/terminology.js';
 import { subscribeLab, getLabState, applyLabState } from './lab.js';
 import {PIN_KEYS,PIN_LABELS,pinInfo} from '../src/character-balance/pins.js';
 
@@ -84,7 +86,7 @@ function renderRegistry(){
   const q=$('#registry-search').value.trim().toLocaleLowerCase('ru-RU');
   const kind=$('#registry-kind').value,status=$('#registry-status').value;
   let rows=registry.records.filter(x=>(kind==='all'||x.kind===kind)&&(status==='all'||x.implementation===status));
-  if(q)rows=rows.filter(x=>[x.id,x.abbreviation,x.name,x.meaning,x.notes,x.formula,...x.sourceRefs,...x.sourceRules].join(' ').toLocaleLowerCase('ru-RU').includes(q));
+  if(q)rows=rows.filter(x=>[x.id,x.abbreviation,x.name,STAT_TERMS[x.id]?.code,STAT_TERMS[x.id]?.en,x.meaning,x.notes,x.formula,...x.sourceRefs,...x.sourceRules].join(' ').toLocaleLowerCase('ru-RU').includes(q));
   $('#registry-count').textContent='· '+rows.length+' из '+registry.records.length;
   $('#registry-list').innerHTML=rows.map(x=>'<details class="registry-entry"><summary><strong>'+esc(x.abbreviation)+' · '+esc(x.name)+'</strong><span class="registry-status">'+esc(badgeText(x.implementation))+'</span></summary>'+
     '<p>'+esc(x.meaning)+'</p><p class="registry-meta"><b>Единица:</b> '+esc(x.unit)+'<br><b>Формула / правило:</b> '+esc(x.formula)+'<br><b>Источники начисления:</b> '+esc(x.sourceRules.length?x.sourceRules.join(', '):'сценарий или событие')+'<br>'+
@@ -121,16 +123,16 @@ async function saveJson(snapshot){
   const href=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=href;
-  a.download='uGame-character-lab-v0.2.57-'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='uGame-character-lab-english-ids-'+new Date().toISOString().slice(0,10)+'.json';
   document.body.append(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(href),800);
 }
 async function exportAll(){
   if(!registry||!state){notice('Данные ещё загружаются',true);return;}
   try{
-    const snapshot=await createSnapshot({...getLabState(),pins,registry});
+    const snapshot=await createNamedSnapshot({...getLabState(),pins,registry});
     await saveJson(snapshot);
-    notice('JSON выгружен: правила, 1–4 билда, реестр, формулы и предупреждения. В игру не применено.');
+    notice('JSON v2 выгружен с английскими названиями характеристик, 1–4 профилями и формулами. В игру не применено.');
   }catch(e){notice('Экспорт: '+e.message,true);}
 }
 function previewText(diff){
@@ -142,7 +144,7 @@ function previewText(diff){
     'Закреплено: '+diff.previousPins.join(', ')+' → '+diff.nextPins.join(', '),
     'База исходников отличается: '+(diff.sourceChanged?'ДА, импорт должен быть заблокирован':'нет'),
     '',
-    ...diff.ruleChanges.slice(0,MAX_DIFF_SHOWN).map(x=>x.field+': '+x.previous+' → '+x.next)
+    ...diff.ruleChanges.slice(0,MAX_DIFF_SHOWN).map(x=>toEnglishFieldPath(x.field)+': '+x.previous+' → '+x.next)
   ];
   if(diff.ruleChanges.length>MAX_DIFF_SHOWN)lines.push('…ещё '+(diff.ruleChanges.length-MAX_DIFF_SHOWN)+' изменённых параметров');
   return lines.join('\n');
@@ -151,7 +153,7 @@ async function importFile(file){
   if(!file)return;
   try{
     if(file.size>2_500_000)throw Error('Файл слишком большой');
-    const snapshot=await parseSnapshot(await file.text());
+    const snapshot=await parseNamedSnapshot(await file.text());
     if(snapshot.sourceBaselineCommit!==registry.sourceBaselineCommit)throw Error('Не совпадает исходный коммит базовой модели');
     if(JSON.stringify(snapshot.registry)!==JSON.stringify(registry))throw Error('Реестр в JSON отличается от проверенного реестра игры. Автоматически заменять его нельзя.');
     const before=await createSnapshot({...getLabState(),pins,registry});

@@ -1,5 +1,6 @@
 import { METRICS, METRIC_KEYS, validateRules, pointsAt, defaultProfile, calculateCharacter } from '../src/character-balance/engine.js';
 import {SOURCE_GROUPS, GROUP_LABELS, availableModifiers, hasSourceModifier, setSourceModifier, removeSourceModifier, sourceGroup} from '../src/character-balance/modifiers.js';
+import {labelForStat} from '../src/character-balance/terminology.js';
 
 const $ = (q) => document.querySelector(q);
 const esc = (x) => String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -45,13 +46,13 @@ function form(p,i){
     numberInput('ЗРЛ (1–65)','level',p.level)+
     choice('Столица','cityId',p.cityId,Object.entries(rules.cities).map(([k,v])=>[k,v.name]))+
     choice('Стартовый вариант','startIndex',p.startIndex,c.start.map((a,j)=>[j,a.join(' / ')]))+
-    numberInput('ОТВ','otv',p.otv)+
-    numberInput('ВЫН','vyn',p.vyn)+numberInput('ЛОВ','lov',p.lov)+
-    numberInput('ИНТ','intel',p.intel)+choice('Желание','desireMode',p.desireMode,[['positive','ЖП > 0'],['zero','ЖП = 0']])+
+    numberInput(labelForStat('otv'),'otv',p.otv)+
+    numberInput(labelForStat('vyn'),'vyn',p.vyn)+numberInput(labelForStat('lov'),'lov',p.lov)+
+    numberInput(labelForStat('intel'),'intel',p.intel)+choice('Желание','desireMode',p.desireMode,[['positive','ЖП > 0'],['zero','ЖП = 0']])+
     '</div><div class="points" data-points>'+(p.vyn+p.lov+p.intel)+' / '+budget+'</div><div class="warning-line" data-warnings></div>'+
     '<details><summary>Все независимые базы + временные модификаторы пассивов/экипировки</summary><p class="hint">Их ввод не меняет настоящие игровые системы.</p><div class="base-grid">'+
-    METRIC_KEYS.map(k=>numberInput('База · '+METRICS[k],'base.'+k,p.baseOverrides[k]??rules.baseline[k])+
-      numberInput('Доп. · '+METRICS[k],'extra.'+k,p.extraFlat[k]??0)).join('')+
+    METRIC_KEYS.map(k=>numberInput('База · '+labelForStat(k,METRICS[k]),'base.'+k,p.baseOverrides[k]??rules.baseline[k])+
+      numberInput('Доп. · '+labelForStat(k,METRICS[k]),'extra.'+k,p.extraFlat[k]??0)).join('')+
     '</div></details></article>';
 }
 function renderForms(){
@@ -62,7 +63,7 @@ function renderTrace(results){
   $('#formula-detail').open=true;
   const box=$('#formula-trace');box.className='trace-grid';box.style.setProperty('--count',String(results.length));
   box.innerHTML=results.map((r,i)=>'<article class="trace-card"><h3>Профиль '+(i+1)+' · ЗРЛ '+profiles[i].level+'</h3><strong>'+
-    esc(METRICS[selected])+': '+fmt(r.values[selected])+'</strong><ol>'+
+    esc(labelForStat(selected,METRICS[selected]))+': '+fmt(r.values[selected])+'</strong><ol>'+
     r.trace[selected].map(t=>'<li>'+esc(t.source)+': <b>'+fmt(t.amount)+'</b> → '+fmt(t.accumulated)+'</li>').join('')+
     '</ol><p class="hint">База + плоские значения → проценты → ГЛР → кап. Округление только для показа.</p></article>').join('');
 }
@@ -72,7 +73,7 @@ function renderResults(){
   $('#comparison-head').innerHTML='<tr><th scope="col">Показатель</th>'+results.map((r,i)=>
     '<th scope="col">Профиль '+(i+1)+'<small style="display:block">'+esc(r.city)+' · ЗРЛ '+profiles[i].level+'</small></th>').join('')+'</tr>';
   $('#comparison-body').innerHTML=METRIC_KEYS.map(k=>
-    '<tr role="button" tabindex="0" aria-selected="'+String(selected===k)+'" data-metric="'+k+'"><td>'+esc(METRICS[k])+'</td>'+
+    '<tr role="button" tabindex="0" aria-selected="'+String(selected===k)+'" data-metric="'+k+'"><td>'+esc(labelForStat(k,METRICS[k]))+'</td>'+
     results.map(r=>'<td>'+fmt(r.values[k])+'</td>').join('')+'</tr>').join('')+
     '<tr><td>Нераспределённые очки ВЫН/ЛОВ/ИНТ</td>'+results.map(r=>'<td>'+fmt(r.unspent)+'</td>').join('')+'</tr>'+
     '<tr><td>Свободных пассивных очков (без стартового)</td>'+results.map(r=>'<td>'+r.passivePoints+'</td>').join('')+'</tr>'+
@@ -98,7 +99,7 @@ function renderRules(){
       const attrs=direct?'data-rule="'+esc(path+'.'+metric)+'"':
         'data-mod-group="'+esc(path)+'" data-mod-metric="'+esc(metric)+'" data-mod-kind="'+esc(kind)+'"';
       return '<div class="dependency-row" data-dependency="'+esc(path+'.'+metric+'.'+kind)+'">'+
-        '<label><span class="dependency-name">'+esc(METRICS[metric])+'</span><small>'+esc(kindLabels[kind])+'</small>'+
+        '<label><span class="dependency-name">'+esc(labelForStat(metric,METRICS[metric]))+'</span><small>'+esc(kindLabels[kind])+'</small>'+
         '<input type="number" step="any" '+attrs+' value="'+esc(value)+'" aria-label="'+esc(METRICS[metric]+' '+kindLabels[kind])+'"></label>'+
         '<button type="button" class="dependency-edit" data-dep-edit data-group="'+esc(path)+'" data-metric="'+esc(metric)+'" data-kind="'+esc(kind)+'" aria-label="Изменить или удалить '+esc(METRICS[metric]+' '+kindLabels[kind])+'">⋯ Изменить</button></div>';
     })).join('');
@@ -177,7 +178,7 @@ function showDependencyDialog(path,metric=null,kind='flat'){
   const candidate=adding?opts.flatMap(([id])=>['flat','increased','more'].map(t=>[id,t])).find(([id,t])=>!hasSourceModifier(rules,path,id,t)):null;
   if(adding&&!candidate){status('Все 72 сочетания характеристики и типа уже добавлены');return;}
   $('#dependency-dialog-title').textContent=(adding?'Добавить зависимость':'Изменить или удалить зависимость')+' · '+GROUP_LABELS[path];
-  $('#dependency-metric').innerHTML=opts.map(([id,name])=>'<option value="'+esc(id)+'">'+esc(name)+'</option>').join('');
+  $('#dependency-metric').innerHTML=opts.map(([id,name])=>'<option value="'+esc(id)+'">'+esc(labelForStat(id,name))+'</option>').join('');
   $('#dependency-metric').value=adding?candidate[0]:metric;
   $('#dependency-kind').value=adding?candidate[1]:kind;
   $('#dependency-value').value=adding?'1':availableModifiers(rules,path)[metric]?.[kind]??0;

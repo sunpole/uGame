@@ -1,18 +1,19 @@
 // UI-only pinned comparison helpers. No game state, saves or balance changes.
 import {METRICS, METRIC_KEYS} from './engine.js';
+import {labelForStat} from './terminology.js';
 export const PIN_INPUTS=Object.freeze({
   level:'ЗРЛ · уровень',
-  vyn:'ВЫН · Выносливость',
-  lov:'ЛОВ · Ловкость',
-  intel:'ИНТ · Интеллект',
-  otv:'ОТВ · Ответственность',
+  vyn:labelForStat('vyn'),
+  lov:labelForStat('lov'),
+  intel:labelForStat('intel'),
+  otv:labelForStat('otv'),
   city:'Столица происхождения',
   mainResource:'СИЛ / КОН / ТЕМП / ВДОХ · тип ресурса',
   desireMode:'Желание · состояние',
   unspent:'Свободные очки ВЫН/ЛОВ/ИНТ'
 });
 export const PIN_KEYS=Object.freeze([...METRIC_KEYS,...Object.keys(PIN_INPUTS)]);
-export const PIN_LABELS=Object.freeze({...METRICS,...PIN_INPUTS});
+export const PIN_LABELS=Object.freeze({...Object.fromEntries(METRIC_KEYS.map(k=>[k,labelForStat(k,METRICS[k])])),...PIN_INPUTS});
 export function pinInfo(key,profile,result){
   if(!PIN_KEYS.includes(key))throw Error('Некорректная закреплённая характеристика: '+key);
   const input={
@@ -30,7 +31,7 @@ export function pinInfo(key,profile,result){
     return {label:PIN_LABELS[key],value:input[key],lines};
   }
   const value=result.values[key],traces=result.trace[key]||[];
-  return {label:METRICS[key],value,lines:[
+  return {label:PIN_LABELS[key],value,lines:[
     METRICS[key]+': '+value,
     ...traces.map(entry=>entry.source+'; изменение '+entry.amount+' → '+entry.accumulated),
     ...(result.capped.includes(key)?['Внимание: действует верхний предел.']:[]),

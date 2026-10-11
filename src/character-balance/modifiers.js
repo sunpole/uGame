@@ -7,8 +7,8 @@ export const SOURCE_GROUPS=Object.freeze([
   'cities.force.flat','cities.focus.flat','cities.tempo.flat','cities.inspire.flat'
 ]);
 export const GROUP_LABELS=Object.freeze({
-  baseline:'Исходные базы',perVyn:'За 1 ВЫН',perLov:'За 1 ЛОВ',
-  perInt:'За 1 ИНТ',perLevel:'За 1 ЗРЛ',perOtvBlock:'За 100 ОТВ',
+  baseline:'Исходные базы',perVyn:'За 1 ВЫН / CON · Constitution',perLov:'За 1 ЛОВ / DEX · Dexterity',
+  perInt:'За 1 ИНТ / INT · Intelligence',perLevel:'За 1 ЗРЛ / Level',perOtvBlock:'За 100 ОТВ / RESP · Responsibility',
   'desireBonuses.positive':'Желание > 0','desireBonuses.zero':'Желание = 0',
   'cities.force.flat':'Столица · Сила','cities.focus.flat':'Столица · Концентрация',
   'cities.tempo.flat':'Столица · Темп','cities.inspire.flat':'Столица · Вдохновение'
