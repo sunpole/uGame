@@ -121,6 +121,9 @@ test('HP guard clamps to 1 only while immortal; full refill includes Stamina',()
  assert.equal(sys.executeDevCode('8672').state,'ok');
  assert.equal(sys.damagePlayer(99999),1);
  assert.equal(currentCharacterVitals(rules,game.state.player).pools.current.hp,1);
+ assert.equal(sys.executeDevCode('8661').state,'ok');
+ assert.equal(currentCharacterVitals(rules,game.state.player).pools.current.hp,1,
+   'Immortality must also protect from DEV diagnostics');
  const full=sys.executeDevCode('8674');
  assert.equal(full.state,'ok');
  assert.deepEqual(calls.filter(v=>v==='stamina'),['stamina']);
@@ -129,4 +132,13 @@ test('HP guard clamps to 1 only while immortal; full refill includes Stamina',()
  sys.setAnomaly('immortal',false);
  assert.equal(sys.damagePlayer(99999),0);
  assert.equal(sys.anomalies.immortal,false);
+});
+
+test('8674 refills Stamina even before a character profile exists',()=>{
+ const game=new GameState(),calls=[];
+ const sys=new CharacterSkillSystem({root,getGameState:()=>game,getRules:()=>rules,
+   refillStamina:()=>calls.push('stamina')});
+ assert.equal(sys.executeDevCode('8674').state,'warn');
+ assert.deepEqual(calls,['stamina']);
+ assert.equal(game.state.player.characterPools,null);
 });
