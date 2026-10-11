@@ -212,6 +212,18 @@
         </div>
 
         <div id="overlay-root" class="overlay-root">
+          <section id="dev-character-panel" class="dev-character-panel" role="dialog" aria-modal="true"
+            aria-label="DEV управление персонажем и городами / Character and city tools" hidden>
+            <div class="dev-character-shell">
+              <header class="dev-character-header">
+                <div><strong>DEV · Персонаж и мир / Character &amp; world</strong>
+                  <small>Только тестирование / Testing only</small></div>
+                <button type="button" data-dev-close>× Закрыть / Close</button>
+              </header>
+              <div id="dev-character-content" class="dev-character-content"></div>
+              <output id="dev-character-result" aria-live="polite"></output>
+            </div>
+          </section>
           <section id="project-hub" class="project-hub" role="dialog" aria-modal="true" aria-labelledby="project-hub-title" hidden>
             <div class="project-hub-shell">
               <header class="project-hub-toolbar">
