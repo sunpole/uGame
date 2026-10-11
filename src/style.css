@@ -1240,7 +1240,9 @@ input {
 }
 
 @media (max-width: 720px) {
-  .project-hub-open span {
+  /* The body receives .project-hub-open when the overlay opens.
+     Never hide ALL spans inside it: that erases tile labels on mobile. */
+  #project-hub-open span {
     display: none;
   }
 
@@ -2750,16 +2752,28 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   background:radial-gradient(circle at 50% 50%,#142232,#070b12 78%);
 }
 .world-map-viewport:active { cursor:grabbing; }
+/* v0.2.62: pan is a positional wrapper, not a composited scale bitmap.
+   zoom on the inner stage lays out/rasterizes text and geometry at the new
+   scale in Chromium. All tile descendants share one intrinsic coordinate system. */
+.world-map-viewport .world-map-camera-layer {
+  position:absolute;
+  left:0;
+  top:0;
+  width:0;
+  height:0;
+  overflow:visible;
+}
 .world-map-viewport .world-map-stage {
   position:absolute;
   left:0;top:0;
   margin:0;
+  transform:none;
   transform-origin:0 0;
   border:none;
   border-radius:0;
   background:transparent;
   overflow:visible;
-  will-change:transform;
+  will-change:auto;
 }
 .world-map-viewport .world-map-tile { touch-action:none; }
 @media (max-width:800px) {

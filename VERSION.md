@@ -1,3 +1,14 @@
+# uGame v0.2.62 · Crisp World Map Zoom (2026-10-11)
+
+- World Map's 225 existing interactive HTML diamonds remain intact, but viewport zoom now uses real CSS layout `zoom` instead of parent `transform:scale` and GPU cached bitmap layer; an unscaled camera wrapper owns pan via `left/top`.
+- Labels, outlines, player beacon and hit areas share the same layout scale; native Chromium redraw improves text/border sharpness.
+- Wheel/drag/pinch, Find Me, full-world, zoom bounds and map selection preserved. Browser regression tests assert tile centre/label cohesion and no composited map transform through fit, wheel and pinch on desktop/mobile.
+- No world data/locations, balance, Phaser scene, biome textures or SaveSystem modified.
+- Immutable rollback v0.2.61, SHA 7e8619449afc5d1b41be8e03941a97b819fcd754.
+- [Release notes](docs/releases/v0.2.62.md).
+
+---
+
 # uGame v0.2.61 · Original South Texture Filenames (2026-10-11)
 
 - Canonical images: `ground_1024.jpg` (South ground), `city_ground_1024.jpg` (South city), exact original user-uploaded JPEG blobs from PR #67.

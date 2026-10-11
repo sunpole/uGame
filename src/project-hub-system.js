@@ -517,6 +517,7 @@ export class ProjectHubSystem {
       '<button id="world-map-fit" type="button">Весь мир</button>',
       '</div></div>',
       '<div class="world-map-viewport" id="world-map-viewport" tabindex="0" role="region" aria-label="Карта мира: перетаскивание, масштабирование колесом или жестом"> ',
+      '<div class="world-map-camera-layer">',
       '<div class="world-map-stage" style="width:' + mapWidth + 'px;height:' + mapHeight + 'px">',
       '<div class="world-map-compass world-map-compass-n"><b>N</b><span>СЕВЕР</span><i>↑</i></div>',
       '<div class="world-map-compass world-map-compass-ne"><b>NE</b><span>СЕВЕРО-ВОСТОК</span><i>↗</i></div>',
@@ -529,11 +530,13 @@ export class ProjectHubSystem {
       tiles,
       marker,
       '</div>',
+      '</div>',
       '</div>'
     ].join('');
 
     const viewport = this.contentElement.querySelector?.('#world-map-viewport');
     const stage = viewport?.querySelector('.world-map-stage');
+    const cameraLayer = viewport?.querySelector('.world-map-camera-layer');
     const scaleLabel = this.contentElement.querySelector?.('#world-map-scale');
     const bounds = () => ({
       viewportWidth: viewport?.clientWidth || 0,
@@ -545,10 +548,14 @@ export class ProjectHubSystem {
       y: mapHeight / 2 + ((Number(zone?.worldMap?.diamondY) || 0) - centerY) * 66
     });
     const applyCamera = (camera) => {
-      if (!viewport || !stage) return;
+      if (!viewport || !stage || !cameraLayer) return;
       view.mapCamera = worldMapClampCamera(camera, bounds());
-      stage.style.transform = 'translate(' + view.mapCamera.x + 'px, ' + view.mapCamera.y +
-        'px) scale(' + view.mapCamera.scale + ')';
+      // Real CSS layout zoom: Chromium re-rasterizes text and rotated tile borders
+      // at each zoom instead of stretching a cached composited bitmap layer.
+      // Pan belongs to a separate, unscaled wrapper; all descendants share zoom.
+      cameraLayer.style.left = view.mapCamera.x + 'px';
+      cameraLayer.style.top = view.mapCamera.y + 'px';
+      stage.style.zoom = String(view.mapCamera.scale);
       if (scaleLabel) scaleLabel.textContent = Math.round(view.mapCamera.scale * 100) + '%';
     };
     const focusCurrent = () => {
