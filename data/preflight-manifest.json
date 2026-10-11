@@ -94,14 +94,14 @@
   "requiredAssets": [
     "./assets/textures/biomes/ground_1024.jpg",
     "./assets/textures/biomes/city_ground_1024.jpg",
-    "./assets/characters/plate-male.webp",
-    "./assets/characters/plate-female.webp",
-    "./assets/characters/leather-male.webp",
-    "./assets/characters/leather-female.webp",
-    "./assets/characters/cloth-male.webp",
-    "./assets/characters/cloth-female.webp",
-    "./assets/characters/hybrid-male.webp",
-    "./assets/characters/hybrid-female.webp"
+    "./assets/characters/plate-male.jpg",
+    "./assets/characters/plate-female.jpg",
+    "./assets/characters/leather-male.jpg",
+    "./assets/characters/leather-female.jpg",
+    "./assets/characters/cloth-male.jpg",
+    "./assets/characters/cloth-female.jpg",
+    "./assets/characters/hybrid-male.jpg",
+    "./assets/characters/hybrid-female.jpg"
   ],
   "moduleFiles": [
     "./src/action-router.js",
