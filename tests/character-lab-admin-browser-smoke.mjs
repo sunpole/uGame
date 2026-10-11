@@ -110,7 +110,7 @@ async function check(label,viewport,isMobile){
    assert.match(await page.locator('#pin-detail-list').innerText(),/Полных сотен ОТВ/);
    await page.locator('#pin-detail-close').click();
    const costPin=page.locator('[data-pin-value="ust"][data-pin-profile="0"]');
-   assert.match((await costPin.innerText()).trim(),/1\\s?001/);
+   assert.equal((await costPin.innerText()).replace(/[^0-9]/g,''),'1001');
    await costPin.focus();
    assert.match(await page.locator('#pin-hover-card').innerText(),/ЖП > 0/);
    await costPin.click();
