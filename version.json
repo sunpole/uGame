@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.65",
-  "stage": "qa-character-hp-rp-orbs",
+  "version": "0.2.66",
+  "stage": "qa-skill-hotbar-radial-impulse",
   "updated": "2026-10-11",
-  "summary": "ARPG-style original red HP and blue RP orbs; PP and JP overlay rings, separate green Stamina, persisted character pool state and ZRL/ZRP with no unauthorized XP or combat effects."
+  "summary": "Seven skill slots (1–7) with real red radial impulse, 35 Desire-first/RP cost, 300 ms cooldown, 1→75px 300ms ring, 50 damage to registered combat enemies and online-only HP/PP/RP/JP regeneration. No current PvE enemy health targets."
 }
