@@ -158,6 +158,7 @@ function Import-BiomeTextures {
 
 # Selected JPGs go to a review PR; local checkout, saves, and ignored PNGs stay untouched.
 function Publish-SouthTextures {
+    Add-Type -AssemblyName System.Drawing
     Assert-Repository
     if ((Git @('branch','--show-current')) -ne 'main') { throw 'Publishing requires local main. Use menu 8 after rollback.' }
     foreach ($name in @('MERGE_HEAD','CHERRY_PICK_HEAD','REVERT_HEAD','rebase-merge','rebase-apply')) {
