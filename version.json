@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.69",
-  "stage": "qa-dev-anomaly-buffs",
+  "version": "0.2.70",
+  "stage": "hero-creator-awaiting-portraits-and-browser-qa",
   "updated": "2026-10-11",
-  "summary": "Session-only DEV codes for no skill cooldown, HP floor at 1, free skill casts, and instant full vitals+Stamina restore, with removable character header buffs."
+  "summary": "Post-Preflight first-entry hero screen: name, four cosmetic roles, instant male/female portraits, safe Continue/New and local backup; no authentication yet."
 }

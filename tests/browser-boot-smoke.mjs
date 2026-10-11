@@ -43,6 +43,11 @@ async function checkViewport(profile) {
     if (profile.mobile) await locator.tap();
     else await locator.click();
   };
+  const heroAssetRequests=[];
+  page.on('request', request=>{
+    if(new URL(request.url()).pathname.startsWith('/assets/characters/'))
+      heroAssetRequests.push({method:request.method(),url:request.url()});
+  });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.stack || String(error)));
   // A missing optional user-supplied biome image is allowed: Pre-flight uses a
@@ -61,6 +66,100 @@ async function checkViewport(profile) {
   });
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    // A fresh browser must create a hero after Pre-flight, before Phaser writes a save.
+    await page.waitForFunction(() => !document.querySelector('#hero-entrance')?.hidden ||
+      document.querySelector('#preflight-summary')?.dataset.state==='fail',
+      null,{timeout:75000});
+    assert.equal(await page.locator('#hero-create-panel').isVisible(),true);
+    assert.equal(await page.locator('#preflight-start').isHidden(),true);
+    assert.equal(await page.locator('.hero-capital-card').count(),4,
+      'Four capital portrait cards must appear side-by-side on the creation screen');
+    assert.equal(await page.locator('[data-hero-image]').count(),4);
+    for(const [i,bonus] of ['+1 РПС','+50 РП','+1% РПС','+20% максимума РП'].entries()) {
+      const card=page.locator('.hero-capital-card').nth(i);
+      assert.match(await card.innerText(),new RegExp('Столица '+(i+1)));
+      assert.ok((await card.innerText()).includes(bonus),'Missing approved capital bonus '+bonus);
+      const extras=['+10 СИЛ · +10 ЗАЩ · +1% ХПС',
+        '+10 КОН · +10 СКА · +1% РПС',
+        '+10 ТЕМП · +10 УКЛ · +1% ППС',
+        '+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП'];
+      assert.ok((await card.innerText()).includes(extras[i]),
+        'Missing correct capital secondary bonus for '+(i+1));
+      assert.ok((await card.innerText()).includes(["Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ","Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ","Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ","Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно"][i]),
+        'Missing approved 10-point starting allocation for '+(i+1));
+    }
+    // Verify actual layout, not string tokenization of CSS grid-template-columns:
+    // Chromium can report repeat()/minmax() instead of four pixel lengths.
+    const cardRects=await page.locator('.hero-capital-card').evaluateAll(cards=>
+      cards.map(card=>{
+        const r=card.getBoundingClientRect();
+        return {left:r.left,top:r.top,right:r.right,width:r.width,height:r.height};
+      }));
+    if(!profile.mobile){
+      assert.equal(cardRects.length,4,'Desktop requires four cards');
+      for(let i=0;i<cardRects.length;i++){
+        assert.ok(cardRects[i].width>100&&cardRects[i].height>200,
+          'Card '+i+' must be visibly sized on desktop');
+        assert.ok(Math.abs(cardRects[i].top-cardRects[0].top)<3,
+          'All four cards must be on the same horizontal row');
+        if(i>0)assert.ok(cardRects[i].left>=cardRects[i-1].right-3,
+          'The four capital cards must not overlap');
+      }
+      assert.ok(cardRects[3].right<=profile.viewport.width+4,
+        'Fourth capital card must fit inside desktop viewport');
+    }
+    assert.equal(heroAssetRequests.filter(req=>req.method==='HEAD').length,8,
+      'Pre-flight must check all eight hero assets without downloading PNG bodies');
+    assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=4,
+      'Pre-flight eagerly downloaded portraits beyond the four visible cards');
+
+    assert.equal(await page.evaluate(()=>localStorage.getItem('ugame.save.v1')),null,
+      'Startup gate must not overwrite an undecided save');
+    const portraits=await page.evaluate(async()=>{
+      const archetypes=['plate','leather','cloth','hybrid'],genders=['male','female'];
+      return Promise.all(archetypes.flatMap(a=>genders.map(async(g)=>{
+        const {heroPortraitPath}=await import('./src/hero-identity.js');
+        const url=heroPortraitPath(a,g);
+        const response=await fetch(url,{cache:'no-store'});
+        if(!response.ok)return {url,status:response.status};
+        const bmp=await createImageBitmap(await response.blob());
+        const result={url,status:response.status,width:bmp.width,height:bmp.height};
+        bmp.close();return result;
+      })));
+    });
+    assert.equal(portraits.length,8);
+    for(const portrait of portraits){
+      assert.equal(portrait.status,200,'Hero portrait missing: '+portrait.url);
+      assert.ok(portrait.height>portrait.width*2,'Hero asset lost tall aspect ratio: '+portrait.url);
+    }
+    const expectFourPortraits=async(expected)=> {
+      const paths=await page.locator('[data-hero-image]').evaluateAll(imgs=>
+        imgs.map(img=>img.getAttribute('src')));
+      assert.equal(paths.length,4);
+      paths.forEach((path,i)=>assert.ok(path.endsWith(expected[i]),
+        'Portrait '+i+' did not change with shared M/Ж toggle: '+path));
+    };
+    await expectFourPortraits(['22_45_51-1.png','22_45_53-3.png',
+      '22_45_55-5.png','22_45_57-7.png']);
+    await activate('[data-hero-gender="female"]');
+    await expectFourPortraits(['22_45_52-2.png','22_45_54-4.png',
+      '22_45_56-6.png','22_45_58-8.png']);
+    await activate('[data-hero-archetype="leather"]');
+    assert.equal(await page.locator('[data-hero-archetype="leather"]').getAttribute('aria-pressed'),'true');
+    await activate('[data-hero-gender="male"]');
+    await expectFourPortraits(['22_45_51-1.png','22_45_53-3.png',
+      '22_45_55-5.png','22_45_57-7.png']);
+    await activate('[data-hero-archetype="hybrid"]');
+    await activate('[data-hero-gender="female"]');
+    await page.locator('#hero-name').fill('Антоний QA');
+    await activate('#hero-create');
+    await page.waitForFunction(()=>document.querySelector('#hero-entrance')?.hidden===true);
+    const heroSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')));
+    assert.deepEqual(heroSaved.player.heroIdentity,{
+      schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid',capitalId:'inspire'
+    });
+    assert.equal(heroSaved.player.characterDraft,null);
+
     if (profile.mobile) {
       const layoutWidth = await page.evaluate(() => document.documentElement.clientWidth);
       assert.ok(layoutWidth <= profile.viewport.width + 4,
@@ -511,6 +610,12 @@ async function checkViewport(profile) {
     assert.ok(sampleZone?.tier, 'outer-ring zone Tier was not saved');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForFunction(() => !document.querySelector('#hero-entrance')?.hidden ||
+      document.querySelector('#preflight-summary')?.dataset.state==='fail',
+      null,{timeout:75000});
+    assert.equal(await page.locator('#hero-continue').isVisible(),true);
+    assert.match(await page.locator('#hero-existing-name').innerText(),/Антоний QA/);
+    await activate('#hero-continue');
     await page.waitForFunction(() =>
       document.querySelector('#preflight-start')?.hidden === false ||
       document.querySelector('#preflight-summary')?.dataset.state === 'fail',
@@ -520,6 +625,9 @@ async function checkViewport(profile) {
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
     assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
+    assert.match(await page.locator('#character-name').innerText(),/Антоний QA/);
+    const preservedHero=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1'))?.player?.heroIdentity);
+    assert.deepEqual(preservedHero,{schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid',capitalId:'inspire'});
     // Draft survives F5 independently from the live class and old world save.
     await activate('#character-stats-open');
     await page.locator('#character-draft-panel').waitFor({timeout:10000});

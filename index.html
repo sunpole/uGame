@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.69</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.69" />
+    <title>uGame v0.2.70</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.70" />
     <style>
       /* The hidden full-size game chrome must not enlarge the mobile layout viewport
          while Chromium is displaying the startup gate. */
@@ -47,6 +47,95 @@
           <button id="preflight-start" class="preflight-action primary" type="button" hidden>Начать играть</button>
           <span id="preflight-copy-status" class="preflight-copy-status" aria-live="polite"></span>
         </div>
+      </div>
+    </section>
+    <section id="hero-entrance" class="hero-entrance" aria-label="Создание персонажа" hidden>
+      <div class="hero-shell">
+        <header class="hero-heading"><div><span class="hero-eyebrow">uGAME · НАЧАЛО ПУТИ</span>
+          <h1>Твой герой. Твоя история.</h1><p>Выбирай внешность свободно — без ограничений профессий и развития.</p></div>
+          <span class="hero-local">Локальный герой · без регистрации</span></header>
+        <section id="hero-choose-panel" class="hero-choose-panel">
+          <div class="hero-saved-label">Найдено сохранение</div>
+          <h2 id="hero-existing-name">—</h2><p id="hero-last-save"></p><p id="hero-help"></p>
+          <div class="hero-buttons"><button id="hero-continue" class="hero-primary" type="button">Продолжить последнего героя</button>
+            <button id="hero-new" type="button" class="hero-secondary">Создать нового персонажа</button>
+            <button id="hero-restore" type="button" class="hero-secondary" hidden>Восстановить предыдущего героя</button>
+          </div>
+        </section>
+        <section id="hero-create-panel" class="hero-creator" hidden>
+          <form id="hero-create-form">
+            <div class="hero-create-top">
+              <div><h2>Выбери столицу происхождения</h2>
+                <p>Четыре столицы, четыре пути развития. Названия временные; портреты показывают стартовый образ.</p>
+              </div>
+              <div class="hero-field hero-gender-field"><span>Пол персонажа</span>
+                <div class="hero-segmented" role="group" aria-label="Выбор пола">
+                  <button type="button" data-hero-gender="male" aria-pressed="true">М</button>
+                  <button type="button" data-hero-gender="female" aria-pressed="false">Ж</button>
+                </div>
+              </div>
+            </div>
+            <fieldset class="hero-capital-grid" id="hero-capital-grid">
+              <legend>Выбери одну столицу · бонусы согласно принятому проектному решению</legend>
+                <button type="button" class="hero-capital-card" data-hero-archetype="plate" aria-pressed="true" aria-label="Столица 1: Сила. +1 РПС; +10 СИЛ · +10 ЗАЩ · +1% ХПС">
+                  <span class="hero-card-picture"><img data-hero-image="plate" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_51-1.png" alt="Латный воин, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 1</strong>
+                    <span class="hero-card-resource">Сила</span>
+                    <span class="hero-card-bonus-primary">+1 РПС</span>
+                    <span class="hero-card-stats">Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ</span>
+                    <small class="hero-card-bonus-extra">+10 СИЛ · +10 ЗАЩ · +1% ХПС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="leather" aria-pressed="false" aria-label="Столица 2: Концентрация. +50 РП; +10 КОН · +10 СКА · +1% РПС">
+                  <span class="hero-card-picture"><img data-hero-image="leather" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_53-3.png" alt="Бретёр, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 2</strong>
+                    <span class="hero-card-resource">Концентрация</span>
+                    <span class="hero-card-bonus-primary">+50 РП</span>
+                    <span class="hero-card-stats">Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ</span>
+                    <small class="hero-card-bonus-extra">+10 КОН · +10 СКА · +1% РПС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="cloth" aria-pressed="false" aria-label="Столица 3: Темп. +1% РПС; +10 ТЕМП · +10 УКЛ · +1% ППС">
+                  <span class="hero-card-picture"><img data-hero-image="cloth" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_55-5.png" alt="Служитель, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 3</strong>
+                    <span class="hero-card-resource">Темп</span>
+                    <span class="hero-card-bonus-primary">+1% РПС</span>
+                    <span class="hero-card-stats">Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ</span>
+                    <small class="hero-card-bonus-extra">+10 ТЕМП · +10 УКЛ · +1% ППС</small>
+                  </span>
+                </button>
+                <button type="button" class="hero-capital-card" data-hero-archetype="hybrid" aria-pressed="false" aria-label="Столица 4: Вдохновение. +20% максимума РП; +5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП">
+                  <span class="hero-card-picture"><img data-hero-image="hybrid" src="./assets/characters/Изображение ChatGPT 11 окт. 2026 г., 22_45_57-7.png" alt="Воин духовного сана, мужской образ" loading="eager" decoding="async"></span>
+                  <span class="hero-card-copy">
+                    <strong>Столица 4</strong>
+                    <span class="hero-card-resource">Вдохновение</span>
+                    <span class="hero-card-bonus-primary">+20% максимума РП</span>
+                    <span class="hero-card-stats">Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно</span>
+                    <small class="hero-card-bonus-extra">+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП</small>
+                  </span>
+                </button>
+            </fieldset>
+            <p class="hero-footnote">Бонусы происхождения утверждены в концепции, но в текущем игровом прототипе ещё не применяются. Столица сохраняется как выбор персонажа; окончательные названия добавим позднее.</p>
+            <div class="hero-create-footer">
+              <label class="hero-field hero-name-field" for="hero-name">Имя героя
+                <input id="hero-name" type="text" maxlength="24" minlength="2" placeholder="Как зовут твоего героя?" required autocomplete="off">
+              </label>
+              <div class="hero-footer-controls">
+                <div id="hero-consent-line" class="hero-replace" hidden>
+                  <label><input id="hero-replace-confirm" type="checkbox"> Текущий герой будет сохранён в резервную копию, а новый займёт активное сохранение.</label>
+                </div>
+                <p id="hero-message" class="hero-message" role="alert" aria-live="polite"></p>
+                <div class="hero-buttons">
+                  <button id="hero-create" type="submit" class="hero-primary">Создать героя и начать</button>
+                  <button id="hero-back" type="button" class="hero-secondary">Назад</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </section>
       </div>
     </section>
     <div id="app" class="selection-disabled" aria-hidden="true" style="visibility:hidden">
@@ -250,7 +339,7 @@
 
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.69</strong>
+          <strong id="footer-version">v0.2.70</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -281,7 +370,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.69';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.70';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -298,7 +387,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.69 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.70 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -333,14 +422,19 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.69', root });
+        const result = await runPreflight({ expectedVersion: '0.2.70', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.69');
+        const gameModule = await import('./src/main.js?v=0.2.70');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
+
+        window.__ugameBoot.phase = 'hero-selection';
+        const { openHeroEntrance } = await import('./src/hero-creation.js?v=0.2.70');
+        await openHeroEntrance({root:document});
+        window.__ugameBoot.phase = 'hero-confirmed';
 
         phaseStartedAt = performance.now();
         result.report.set('world-boot', 'Запуск игрового мира', 'running', 'инициализация…');
