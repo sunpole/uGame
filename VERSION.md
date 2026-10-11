@@ -1,3 +1,14 @@
+# uGame v0.2.58 · World Map Camera UX · QA (2026-10-11)
+
+- Pan by pointer/touch, zoom by wheel under cursor or mobile pinch, viewport zoom buttons and keyboard alternatives.
+- Find Me focuses the persistent current-zone green marker at a medium scale; Overview fits 225 zones into the visible canvas. Two internal scrollbars removed.
+- Camera is view-only and never persists to GameState; 225 world zones, world geometry, economy, timers and browser saves unchanged.
+- Immutable pre-patch code release: v0.2.57-pre-world-map-v0258-20261011, exact main ca82dc32c7f4212c37d646e34b82ce8d04505561.
+- Node camera mathematics/World Map regressions and genuine Chromium desktop/mobile+Phaser+Save/F5 CI required before release.
+- Details: [v0.2.58](docs/releases/v0.2.58.md).
+
+---
+
 # uGame v0.2.57 · Character Balance Registry and Admin Lab · QA (2026-10-10)
 
 - Fourth independent cross-check confirmed late numeric decision precedence; author example UVM corrected semantically (100 points = 1% cooldown, 10 sec → 9.9 sec). Original ugame_anton_info.txt untouched.
