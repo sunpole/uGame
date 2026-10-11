@@ -52,7 +52,7 @@ function form(p,i){
     '</div><div class="points" data-points>'+(p.vyn+p.lov+p.intel)+' / '+budget+'</div><div class="warning-line" data-warnings></div>'+
     '<details><summary>Все независимые базы + временные модификаторы пассивов/экипировки</summary><p class="hint">Их ввод не меняет настоящие игровые системы.</p><div class="base-grid">'+
     METRIC_KEYS.map(k=>numberInput('База · '+labelForStat(k,METRICS[k]),'base.'+k,p.baseOverrides[k]??rules.baseline[k])+
-      numberInput('Доп. · '+METRICS[k],'extra.'+k,p.extraFlat[k]??0)).join('')+
+      numberInput('Доп. · '+labelForStat(k,METRICS[k]),'extra.'+k,p.extraFlat[k]??0)).join('')+
     '</div></details></article>';
 }
 function renderForms(){
@@ -63,7 +63,7 @@ function renderTrace(results){
   $('#formula-detail').open=true;
   const box=$('#formula-trace');box.className='trace-grid';box.style.setProperty('--count',String(results.length));
   box.innerHTML=results.map((r,i)=>'<article class="trace-card"><h3>Профиль '+(i+1)+' · ЗРЛ '+profiles[i].level+'</h3><strong>'+
-    esc(METRICS[selected])+': '+fmt(r.values[selected])+'</strong><ol>'+
+    esc(labelForStat(selected,METRICS[selected]))+': '+fmt(r.values[selected])+'</strong><ol>'+
     r.trace[selected].map(t=>'<li>'+esc(t.source)+': <b>'+fmt(t.amount)+'</b> → '+fmt(t.accumulated)+'</li>').join('')+
     '</ol><p class="hint">База + плоские значения → проценты → ГЛР → кап. Округление только для показа.</p></article>').join('');
 }
@@ -73,7 +73,7 @@ function renderResults(){
   $('#comparison-head').innerHTML='<tr><th scope="col">Показатель</th>'+results.map((r,i)=>
     '<th scope="col">Профиль '+(i+1)+'<small style="display:block">'+esc(r.city)+' · ЗРЛ '+profiles[i].level+'</small></th>').join('')+'</tr>';
   $('#comparison-body').innerHTML=METRIC_KEYS.map(k=>
-    '<tr role="button" tabindex="0" aria-selected="'+String(selected===k)+'" data-metric="'+k+'"><td>'+esc(METRICS[k])+'</td>'+
+    '<tr role="button" tabindex="0" aria-selected="'+String(selected===k)+'" data-metric="'+k+'"><td>'+esc(labelForStat(k,METRICS[k]))+'</td>'+
     results.map(r=>'<td>'+fmt(r.values[k])+'</td>').join('')+'</tr>').join('')+
     '<tr><td>Нераспределённые очки ВЫН/ЛОВ/ИНТ</td>'+results.map(r=>'<td>'+fmt(r.unspent)+'</td>').join('')+'</tr>'+
     '<tr><td>Свободных пассивных очков (без стартового)</td>'+results.map(r=>'<td>'+r.passivePoints+'</td>').join('')+'</tr>'+
