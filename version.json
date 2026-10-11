@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.58",
-  "stage": "qa-candidate-world-map-viewport",
+  "version": "0.2.59",
+  "stage": "qa-character-lab-readable-units",
   "updated": "2026-10-11",
-  "summary": "World map presentation: drag pan, anchored wheel/pinch zoom, find-me focus and full-world overview; no world, gameplay balance or save changes."
+  "summary": "Character Lab display-only translations of candidate raw ratings into percent and per-second units in comparison, pinned values and traces; no balance or saved JSON schema changes."
 }
