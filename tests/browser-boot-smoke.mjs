@@ -61,6 +61,47 @@ async function checkViewport(profile) {
   });
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    // A fresh browser must create a hero after Pre-flight, before Phaser writes a save.
+    await page.waitForFunction(() => !document.querySelector('#hero-entrance')?.hidden ||
+      document.querySelector('#preflight-summary')?.dataset.state==='fail',
+      null,{timeout:75000});
+    assert.equal(await page.locator('#hero-create-panel').isVisible(),true);
+    assert.equal(await page.locator('#preflight-start').isHidden(),true);
+    assert.equal(await page.evaluate(()=>localStorage.getItem('ugame.save.v1')),null,
+      'Startup gate must not overwrite an undecided save');
+    const portraits=await page.evaluate(async()=>{
+      const archetypes=['plate','leather','cloth','hybrid'],genders=['male','female'];
+      return Promise.all(archetypes.flatMap(a=>genders.map(async(g)=>{
+        const url='./assets/characters/'+a+'-'+g+'.webp';
+        const response=await fetch(url,{cache:'no-store'});
+        if(!response.ok)return {url,status:response.status};
+        const bmp=await createImageBitmap(await response.blob());
+        const result={url,status:response.status,width:bmp.width,height:bmp.height};
+        bmp.close();return result;
+      })));
+    });
+    assert.equal(portraits.length,8);
+    for(const portrait of portraits){
+      assert.equal(portrait.status,200,'Hero portrait missing: '+portrait.url);
+      assert.ok(portrait.height>portrait.width*2,'Hero asset lost tall aspect ratio: '+portrait.url);
+    }
+    await activate('[data-hero-gender="female"]');
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/plate-female\.webp/);
+    await activate('[data-hero-archetype="leather"]');
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-female\.webp/);
+    await activate('[data-hero-gender="male"]');
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-male\.webp/);
+    await activate('[data-hero-archetype="hybrid"]');
+    await activate('[data-hero-gender="female"]');
+    await page.locator('#hero-name').fill('Антоний QA');
+    await activate('#hero-create');
+    await page.waitForFunction(()=>document.querySelector('#hero-entrance')?.hidden===true);
+    const heroSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')));
+    assert.deepEqual(heroSaved.player.heroIdentity,{
+      schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid'
+    });
+    assert.equal(heroSaved.player.characterDraft,null);
+
     if (profile.mobile) {
       const layoutWidth = await page.evaluate(() => document.documentElement.clientWidth);
       assert.ok(layoutWidth <= profile.viewport.width + 4,
@@ -511,6 +552,12 @@ async function checkViewport(profile) {
     assert.ok(sampleZone?.tier, 'outer-ring zone Tier was not saved');
 
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForFunction(() => !document.querySelector('#hero-entrance')?.hidden ||
+      document.querySelector('#preflight-summary')?.dataset.state==='fail',
+      null,{timeout:75000});
+    assert.equal(await page.locator('#hero-continue').isVisible(),true);
+    assert.match(await page.locator('#hero-existing-name').innerText(),/Антоний QA/);
+    await activate('#hero-continue');
     await page.waitForFunction(() =>
       document.querySelector('#preflight-start')?.hidden === false ||
       document.querySelector('#preflight-summary')?.dataset.state === 'fail',
@@ -520,6 +567,9 @@ async function checkViewport(profile) {
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
     assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
+    assert.match(await page.locator('#character-name').innerText(),/Антоний QA/);
+    const preservedHero=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1'))?.player?.heroIdentity);
+    assert.deepEqual(preservedHero,{schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid'});
     // Draft survives F5 independently from the live class and old world save.
     await activate('#character-stats-open');
     await page.locator('#character-draft-panel').waitFor({timeout:10000});
