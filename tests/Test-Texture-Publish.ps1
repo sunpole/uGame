@@ -95,7 +95,7 @@ Check ((Native $bare @('rev-parse','main')) -eq $before) 'remote main is unchang
 Check ((Native $script:Root @('rev-parse','HEAD')) -eq $before) 'local main HEAD is unchanged'
 Check ((Native $script:Root @('status','--porcelain=v1','--untracked-files=all')) -eq $beforeStatus) 'local dirty and staged files are unchanged'
 $paths=@((Native $bare @('diff-tree','--no-commit-id','--name-only','-r',$refs[0])) -split '\r?\n' | Where-Object {$_})
-Check ($paths.Count -eq 2 -and $paths -contains 'assets/textures/biomes/ground_1024.jpg' -and $paths -contains 'assets/textures/biomes/city_ground_1024.jpg') 'upload allowlist enforces exactly two JPEG paths'
+Check ($paths.Count -ge 1 -and $paths.Count -le 2 -and @($paths | Where-Object { $_ -notin @('assets/textures/biomes/ground_1024.jpg','assets/textures/biomes/city_ground_1024.jpg') }).Count -eq 0) 'upload allowlist stages only approved JPEG paths (unchanged JPEG can be omitted)'
 foreach($mapping in @(@('ground_1024.jpg','ground_1024.jpg'),@('city_ground_1024.jpg','city_ground_1024.jpg'))){
   $hash=Native $script:Root @('hash-object',(Join-Path $clientTextures $mapping[0]))
   $remoteHash=Native $bare @('rev-parse',($refs[0]+':assets/textures/biomes/'+$mapping[1]))
