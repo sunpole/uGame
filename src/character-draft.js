@@ -14,15 +14,20 @@ export function normalizeCharacterDraft(raw) {
       || raw.startIndex >= (raw.cityId === 'inspire' ? 3 : 6)) return null;
   return { schemaVersion: 1, cityId: raw.cityId, startIndex: raw.startIndex };
 }
-export function characterDraftProfile(rules, draft) {
+export function characterDraftProfile(rules, draft, overrides = {}) {
   validateRules(rules);
   const checked=normalizeCharacterDraft(draft);
   if (!checked) throw Error('Не выбран пробный профиль персонажа');
-  // Fixed comparison inputs until level/Responsibility earning is implemented.
-  return defaultProfile(rules, 1, checked.cityId, checked.startIndex);
+  // DEV can test candidate ZRL/OTV formula without introducing XP thresholds
+  // or claiming automatic allocation of level points in live gameplay.
+  const level = Number.isInteger(overrides.level) && overrides.level >= 1 && overrides.level <= 65
+    ? overrides.level : 1;
+  const profile=defaultProfile(rules, level, checked.cityId, checked.startIndex);
+  if(Number.isSafeInteger(overrides.otv)) profile.otv=overrides.otv;
+  return profile;
 }
-export function characterDraftResult(rules, draft) {
-  const profile=characterDraftProfile(rules,draft);
+export function characterDraftResult(rules, draft, overrides = {}) {
+  const profile=characterDraftProfile(rules,draft,overrides);
   return {profile, ...calculateCharacter(rules,profile)};
 }
 export {METRICS,METRIC_KEYS};
