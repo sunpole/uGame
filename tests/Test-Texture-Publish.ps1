@@ -15,9 +15,9 @@ $script:Root=Join-Path $fixture 'client'
 $bare=Join-Path $fixture 'remote.git'
 $seed=Join-Path $fixture 'seed'
 [void][IO.Directory]::CreateDirectory($fixture)
-function Native([string]$at,[string[]]$args){
+function Native([string]$at,[string[]]$Arguments){
   $old=$ErrorActionPreference;$ErrorActionPreference='Continue'
-  try{$result=& $script:GitExe -C $at @args 2>&1;$exit=$LASTEXITCODE}finally{$ErrorActionPreference=$old}
+  try{$result=& $script:GitExe -C $at @Arguments 2>&1;$exit=$LASTEXITCODE}finally{$ErrorActionPreference=$old}
   if($exit -ne 0){throw ($result|Out-String)}
   return (($result|Out-String).Trim())
 }
