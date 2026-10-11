@@ -1,5 +1,6 @@
 // Portable sandbox snapshot. Deliberately no GameState / SaveSystem / Phaser import.
 import { validateRules, calculateCharacter, METRIC_KEYS } from './engine.js';
+import { PIN_KEYS } from './pins.js';
 export const SNAPSHOT_KIND='ugame.character-balance.sandbox';
 export const SNAPSHOT_SCHEMA=1;
 const allowedProfiles=new Set(['level','cityId','startIndex','vyn','lov','intel','otv','desireMode','baseOverrides','extraFlat']);
@@ -43,7 +44,7 @@ async function hash(text){
 export async function createSnapshot({rules,profiles,pins,selected,registry}){
   validateRules(rules);validateRegistry(registry);
   if(!Array.isArray(profiles)||profiles.length<1||profiles.length>4)throw Error('Можно экспортировать 1–4 профиля');
-  if(!Array.isArray(pins)||pins.some(k=>!METRIC_KEYS.includes(k))||new Set(pins).size!==pins.length)throw Error('Некорректные закреплённые метрики');
+  if(!Array.isArray(pins)||pins.some(k=>!PIN_KEYS.includes(k))||new Set(pins).size!==pins.length)throw Error('Некорректные закреплённые метрики');
   if(!METRIC_KEYS.includes(selected))throw Error('Некорректный выделенный показатель');
   const calculations=profiles.map(p=>validateProfile(p,rules));
   const body={kind:SNAPSHOT_KIND,schemaVersion:SNAPSHOT_SCHEMA,release:'0.2.57',
@@ -68,7 +69,7 @@ export async function parseSnapshot(json){
   if(!Array.isArray(object.profiles)||object.profiles.length<1||object.profiles.length>4)throw Error('Число профилей должно быть 1–4');
   const calculated=object.profiles.map(p=>validateProfile(p,object.rules));
   if(JSON.stringify(calculated)!==JSON.stringify(object.calculations))throw Error('Расчётные результаты не соответствуют правилам/профилям');
-  if(!Array.isArray(object.pins)||object.pins.some(k=>!METRIC_KEYS.includes(k))||new Set(object.pins).size!==object.pins.length)throw Error('Некорректные закрепления');
+  if(!Array.isArray(object.pins)||object.pins.some(k=>!PIN_KEYS.includes(k))||new Set(object.pins).size!==object.pins.length)throw Error('Некорректные закрепления');
   if(!METRIC_KEYS.includes(object.selected))throw Error('Некорректный выбранный показатель');
   return object;
 }

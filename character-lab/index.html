@@ -18,9 +18,16 @@
     </header>
     <div class="warning" role="note"><strong>КАНДИДАТ БАЛАНСА · UGD-0038 discussing</strong> · Изменения коэффициентов остаются в памяти лаборатории, не применяются к действующей игре. Их можно сохранить в отдельный JSON и позднее восстановить.</div>
     <aside class="pinned-panel" id="pinned-panel" aria-label="Закреплённые характеристики">
-      <div class="pinned-heading"><strong>📌 Закреплённое сравнение</strong><span class="hint" id="pin-count">Нажмите значок 📌 в таблице ниже</span><button type="button" id="clear-pins">Очистить</button></div>
+      <div class="pinned-heading"><strong>📌 Закреплённое сравнение</strong><span class="hint" id="pin-count">Нажмите 📌 в таблице или + Добавить</span><label class="pin-add-controls"><span class="sr-only">Новая характеристика</span><select id="pin-add-select" aria-label="Выбрать характеристику для закрепления"></select><button type="button" id="pin-add">+ Добавить</button></label><button type="button" id="clear-pins">Очистить</button></div><p class="pin-help">Наведи на значение — увидишь источники. Нажми — откроется полная расшифровка.</p>
       <div class="pin-table-scroll" id="pin-table-scroll"><div id="pinned-comparison"></div></div>
     </aside>
+    <div id="pin-hover-card" role="tooltip" hidden></div>
+    <dialog id="pin-detail-dialog" class="import-dialog pin-detail-dialog" aria-labelledby="pin-detail-heading">
+      <h2 id="pin-detail-heading">Источники значения</h2>
+      <p class="hint">Расчёты кандидатной лаборатории; не показатели настоящего игрового персонажа.</p>
+      <ol id="pin-detail-list"></ol>
+      <div class="dialog-actions"><button type="button" id="pin-detail-close">Закрыть</button></div>
+    </dialog>
     <section class="toolbar" aria-label="Настройки сравнения">
       <label>Количество профилей <select id="profile-count"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></label>
       <button id="reset-profiles" type="button">Сбросить профили</button>

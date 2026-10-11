@@ -81,11 +81,16 @@ export function calculateCharacter(rules, profile) {
     if (delta!==0 || label.startsWith('База')) trace[key].push({source:label, amount:round(delta), accumulated:round(values[key])});
   }
   const increased=Object.fromEntries(METRIC_KEYS.map(key=>[key,0]));
+  const increasedSources=Object.fromEntries(METRIC_KEYS.map(key=>[key,[]]));
   const more=[];
+  function accumulateIncreased(key,pct,label){
+    increased[key]+=pct;
+    increasedSources[key].push(label+': '+round(pct)+'%');
+  }
   function addGroup(path,mult,label){
     for (const [key,types] of Object.entries(availableModifiers(rules,path))) {
       if(types.flat!==undefined)add(key,types.flat*mult,label+': '+mult+' × '+types.flat);
-      if(types.increased!==undefined)increased[key]+=mult*types.increased;
+      if(types.increased!==undefined)accumulateIncreased(key,mult*types.increased,label+' '+mult+' × '+types.increased+'%');
       if(types.more!==undefined)more.push({key,factor:1+mult*types.more/100,label:label+': more '+mult+' × '+types.more+'%'});
     }
   }
@@ -98,7 +103,7 @@ export function calculateCharacter(rules, profile) {
     add(key,value-starting,'Переопределение базы: '+value+' − '+starting);
   }
   for(const [key,types] of Object.entries(base)){
-    if(types.increased!==undefined)increased[key]+=types.increased;
+    if(types.increased!==undefined)accumulateIncreased(key,types.increased,'База '+types.increased+'%');
     if(types.more!==undefined)more.push({key,factor:1+types.more/100,label:'База: more '+types.more+'%'});
   }
   addGroup('perVyn',profile.vyn,'ВЫН');
@@ -116,16 +121,13 @@ export function calculateCharacter(rules, profile) {
     const base=values[key], delta=base*pct/100;
     add(key,delta,label + ': ' + round(base) + ' × ' + round(pct) + '%');
   };
-  applyPct('rp',city.percent?.rp||0,'Столица: % к запасу РП');
-  if (city.regenFromMaxRpPercent) add('rps',values.rp*city.regenFromMaxRpPercent/100,'Темп: максимум РП ' + round(values.rp) + ' × ' + city.regenFromMaxRpPercent + '%/сек');
-  applyPct('hps',(city.percent?.hps||0)+profile.lov*0.01,'Бонусы к ХПС (столица + 0,01% за ЛОВ)');
-  applyPct('rps',city.percent?.rps||0,'Бонус столицы к РПС');
-  applyPct('pps',city.percent?.pps||0,'Бонус столицы к ППС');
-  const glrPct=values.glr/100;
-  for (const key of ['hps','rps','pps','jps','rgs']) applyPct(key,glrPct,'ГЛР: ' + round(values.glr) + ' / 100 = ' + round(glrPct) + '%');
-  // All increased sources for one metric add their percentages first.
-  // Different more sources multiply sequentially AFTER the increased step.
-  for (const key of METRIC_KEYS)if(increased[key]!==0)applyPct(key,increased[key],'Суммарные increased (конструктор)');
+  // Phase 1: all flat sources are accumulated above. Increased percentages are
+  // additive for the same statistic, while every more source multiplies in order.
+  // Crucially, cross-stat dependencies must consume these FINAL upstream results,
+  // not the raw flat total (GLR→5 regens and RP→Tempo RPS).
+  for (const key of METRIC_KEYS)if(increased[key]!==0){
+    applyPct(key,increased[key],'Суммарные increased ['+increasedSources[key].join('; ')+']');
+  }
   for (const part of more){
     assertNumber(part.factor,part.label);
     const before=values[part.key],next=before*part.factor;
@@ -133,8 +135,26 @@ export function calculateCharacter(rules, profile) {
     add(part.key,next-before,part.label+' × '+round(part.factor));
   }
   const capped=[];
+  // A dependent regeneration must use the same GLR as the visible capped metric.
+  if(rules.caps.glr!==undefined && values.glr>rules.caps.glr){
+    add('glr',rules.caps.glr-values.glr,'Верхний предел '+rules.caps.glr);
+    capped.push('glr');
+  }
+  // Phase 2: legacy city special cases and dependent calculations.
+  // This preserves all historical results when ruleModifiers is absent.
+  applyPct('rp',city.percent?.rp||0,'Столица: % к запасу РП');
+  if (city.regenFromMaxRpPercent) add('rps',values.rp*city.regenFromMaxRpPercent/100,'Темп: максимум РП '+round(values.rp)+' × '+city.regenFromMaxRpPercent+'%/сек');
+  applyPct('hps',(city.percent?.hps||0)+profile.lov*0.01,'Бонусы к ХПС (столица + 0,01% за ЛОВ)');
+  applyPct('rps',city.percent?.rps||0,'Бонус столицы к РПС');
+  applyPct('pps',city.percent?.pps||0,'Бонус столицы к ППС');
+  // Phase 3: one common global regeneration multiplier from the FINAL GLR.
+  const glrPct=values.glr/100;
+  for (const key of ['hps','rps','pps','jps','rgs']){
+    applyPct(key,glrPct,'ГЛР: '+round(values.glr)+' / 100 = '+round(glrPct)+'%');
+  }
   for (const [key,cap] of Object.entries(rules.caps)) {
-    if (values[key]>cap){add(key,cap-values[key],'Верхний предел ' + cap);capped.push(key);}
+    if(key==='glr')continue;
+    if(values[key]>cap){add(key,cap-values[key],'Верхний предел '+cap);capped.push(key);}
   }
   for (const key of METRIC_KEYS) values[key]=round(values[key]);
   const budget=pointsAt(level,rules);

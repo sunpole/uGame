@@ -93,6 +93,61 @@ async function check(label,viewport,isMobile){
    assert.equal(await perVyn.locator('[data-dep-edit][data-metric="hp"]').count(),3);
    await page.locator('#reset-rules').click();
    assert.equal((await page.locator('tr[data-metric="hp"] td').nth(1).innerText()).trim(),'150');
+   // Seven+ pinned rows: sticky area may use nearly full screen, not a fixed 37vh.
+   for(const key of ['vyn','lov','intel','otv','level','mainResource','ust','glr']){
+     await page.locator('#pin-add-select').selectOption(key);
+     await page.locator('#pin-add').click();
+   }
+   assert.ok((await page.locator('#pinned-comparison .pin-label').count())>=12);
+   const pinScroll=await page.locator('#pin-table-scroll').evaluate(el=>({
+     cssMax:getComputedStyle(el).maxHeight,win:window.innerHeight,height:el.getBoundingClientRect().height
+   }));
+   assert.ok(parseFloat(pinScroll.cssMax)>pinScroll.win*0.68,'Pin panel should grow close to viewport height');
+   assert.ok(pinScroll.height<=pinScroll.win,'Pinned content scrolls within viewport');
+   const inputPin=page.locator('[data-pin-value="otv"][data-pin-profile="0"]');
+   assert.equal((await inputPin.innerText()).trim(),'1');
+   await inputPin.click();
+   assert.match(await page.locator('#pin-detail-list').innerText(),/Полных сотен ОТВ/);
+   await page.locator('#pin-detail-close').click();
+   const costPin=page.locator('[data-pin-value="ust"][data-pin-profile="0"]');
+   assert.equal((await costPin.innerText()).replace(/[^0-9]/g,''),'1001');
+   await costPin.focus();
+   assert.match(await page.locator('#pin-hover-card').innerText(),/ЖП > 0/);
+   await costPin.click();
+   assert.match(await page.locator('#pin-detail-list').innerText(),/ЖП > 0/);
+   assert.match(await page.locator('#pin-detail-list').innerText(),/1000/);
+   await page.locator('#pin-detail-close').click();
+   await page.locator('#coefficients').evaluate(e=>e.open=true);
+   await page.locator('#rule-search').fill('ГЛР');
+   const perLevel=page.locator('[data-dependency-group="perLevel"]');
+   await perLevel.locator('[data-dep-add]').click();
+   await page.locator('#dependency-metric').selectOption('glr');
+   await page.locator('#dependency-kind').selectOption('increased');
+   await page.locator('#dependency-value').fill('100');
+   await page.locator('#dependency-save').click();
+   await page.locator('#rule-search').fill('');
+   // 100% increased GLR/level must amplify GLR and every linked regeneration.
+   const perLevelGlr=page.locator('[data-dependency-group="perLevel"] [data-mod-metric="glr"][data-mod-kind="increased"]');
+   assert.equal(await perLevelGlr.count(),1);
+   const boosted=await page.evaluate(async()=>{
+     const {getLabState}=await import('./lab.js');
+     const {calculateCharacter}=await import('../src/character-balance/engine.js');
+     const current=getLabState(),profile=current.profiles[0];
+     const withBoost=calculateCharacter(current.rules,profile);
+     const without=structuredClone(current.rules);
+     delete without.ruleModifiers.perLevel.glr.increased;
+     delete without.ruleModifiers.perLevel.glr;
+     delete without.ruleModifiers.perLevel;
+     delete without.ruleModifiers;
+     const basic=calculateCharacter(without,profile);
+     return {glr:[basic.values.glr,withBoost.values.glr],
+       regens:['hps','rps','pps','jps','rgs'].map(k=>[k,basic.values[k],withBoost.values[k]])};
+   });
+   assert.ok(boosted.glr[1]>boosted.glr[0]);
+   for(const [key,without,withBoost] of boosted.regens)
+     assert.ok(withBoost>without,key+' not amplified by increased GLR');
+   await page.locator('#reset-rules').click();
+   assert.equal((await page.locator('[data-pin-value="glr"][data-pin-profile="0"]').innerText()).trim(),'0,05');
    await page.locator('#registry-search').fill('глобальная регенерация');
    assert.equal(await page.locator('#registry-list .registry-entry').count(),1);
    assert.match(await page.locator('#registry-list').innerText(),/ГЛР/);
