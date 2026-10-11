@@ -97,9 +97,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.2.61
-          git fetch origin tag v0.2.61
-          test "$(git rev-parse v0.2.61^{commit})" = "ae4694cbf3803e2a6c8f781e661d13aa213f0d33"
+          gh release view v0.2.62
+          git fetch origin tag v0.2.62
+          test "$(git rev-parse v0.2.62^{commit})" = "ae4694cbf3803e2a6c8f781e661d13aa213f0d33"
       - name: Publish QA prerelease after both test platforms pass
         env:
           GH_TOKEN: ${{ github.token }}
