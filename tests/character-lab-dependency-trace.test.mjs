@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {METRIC_KEYS,calculateCharacter,defaultProfile} from '../src/character-balance/engine.js';
-import {setSourceModifier} from '../src/character-balance/modifiers.js';
+import {setSourceModifier,availableModifiers} from '../src/character-balance/modifiers.js';
 import {PIN_KEYS, PIN_INPUTS, pinInfo} from '../src/character-balance/pins.js';
 import {createSnapshot,parseSnapshot} from '../src/character-balance/snapshot.js';
 const read=path=>JSON.parse(readFileSync(new URL(path,import.meta.url),'utf8'));
@@ -23,7 +23,8 @@ test('ALL 24 output metrics use their own flat/increased/more; each stacked % ac
    assert.ok(x.trace[key].some(t=>/Суммарные increased/.test(t.source)),key+' inc trace');
    assert.ok(x.trace[key].some(t=>/more/.test(t.source)),key+' more trace');
    const flat=structuredClone(rules);
-   setSourceModifier(flat,'perVyn',key,'flat',2,METRIC_KEYS);
+   const originalFlat=availableModifiers(rules,'perVyn')[key]?.flat??0;
+   setSourceModifier(flat,'perVyn',key,'flat',originalFlat+2,METRIC_KEYS);
    const y=calculateCharacter(flat,first(flat));
    assert.ok(y.values[key]>ref.values[key],key+' flat effect must increase');
  }
