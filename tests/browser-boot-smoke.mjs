@@ -79,6 +79,12 @@ async function checkViewport(profile) {
       const card=page.locator('.hero-capital-card').nth(i);
       assert.match(await card.innerText(),new RegExp('Столица '+(i+1)));
       assert.ok((await card.innerText()).includes(bonus),'Missing approved capital bonus '+bonus);
+      const extras=['+10 СИЛ · +10 ЗАЩ · +1% ХПС',
+        '+10 КОН · +10 СКА · +1% РПС',
+        '+10 ТЕМП · +10 УКЛ · +1% ППС',
+        '+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП'];
+      assert.ok((await card.innerText()).includes(extras[i]),
+        'Missing correct capital secondary bonus for '+(i+1));
     }
     const desktopGrid=await page.locator('#hero-capital-grid').evaluate(el=>{
       const style=getComputedStyle(el);return {columns:style.gridTemplateColumns,
@@ -88,8 +94,8 @@ async function checkViewport(profile) {
       'Desktop hero gallery should show four visible portrait columns');
     assert.equal(heroAssetRequests.filter(req=>req.method==='HEAD').length,8,
       'Pre-flight must check all eight hero assets without downloading PNG bodies');
-    assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=2,
-      'Pre-flight eagerly downloaded multi-megabyte portraits');
+    assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=4,
+      'Pre-flight eagerly downloaded portraits beyond the four visible cards');
 
     assert.equal(await page.evaluate(()=>localStorage.getItem('ugame.save.v1')),null,
       'Startup gate must not overwrite an undecided save');
