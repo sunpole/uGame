@@ -125,7 +125,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if ! gh release view v0.2.69 >/dev/null 2>&1; then
-            gh release create v0.2.69 --target "$GITHUB_SHA" --title "uGame v0.2.69 · Russian/English DEV command input" --notes-file docs/releases/v0.2.69.md --prerelease
+            gh release create v0.2.69 --target "$GITHUB_SHA" --title "uGame v0.2.69 · Removable DEV anomaly buffs" --notes-file docs/releases/v0.2.69.md --prerelease
           fi
           gh release view v0.2.69
           git fetch --force origin tag v0.2.69
