@@ -88,12 +88,26 @@ async function checkViewport(profile) {
       assert.ok((await card.innerText()).includes(["Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ","Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ","Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ","Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно"][i]),
         'Missing approved 10-point starting allocation for '+(i+1));
     }
-    const desktopGrid=await page.locator('#hero-capital-grid').evaluate(el=>{
-      const style=getComputedStyle(el);return {columns:style.gridTemplateColumns,
-        scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
-    });
-    if(!profile.mobile)assert.equal(desktopGrid.columns.split(' ').length,4,
-      'Desktop hero gallery should show four visible portrait columns');
+    // Verify actual layout, not string tokenization of CSS grid-template-columns:
+    // Chromium can report repeat()/minmax() instead of four pixel lengths.
+    const cardRects=await page.locator('.hero-capital-card').evaluateAll(cards=>
+      cards.map(card=>{
+        const r=card.getBoundingClientRect();
+        return {left:r.left,top:r.top,right:r.right,width:r.width,height:r.height};
+      }));
+    if(!profile.mobile){
+      assert.equal(cardRects.length,4,'Desktop requires four cards');
+      for(let i=0;i<cardRects.length;i++){
+        assert.ok(cardRects[i].width>100&&cardRects[i].height>200,
+          'Card '+i+' must be visibly sized on desktop');
+        assert.ok(Math.abs(cardRects[i].top-cardRects[0].top)<3,
+          'All four cards must be on the same horizontal row');
+        if(i>0)assert.ok(cardRects[i].left>=cardRects[i-1].right-3,
+          'The four capital cards must not overlap');
+      }
+      assert.ok(cardRects[3].right<=profile.viewport.width+4,
+        'Fourth capital card must fit inside desktop viewport');
+    }
     assert.equal(heroAssetRequests.filter(req=>req.method==='HEAD').length,8,
       'Pre-flight must check all eight hero assets without downloading PNG bodies');
     assert.ok(heroAssetRequests.filter(req=>req.method==='GET').length<=4,
