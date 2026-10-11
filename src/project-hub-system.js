@@ -492,7 +492,7 @@ export class ProjectHubSystem {
         '<p class="character-draft-note">Зелёная Stamina работает по прежним правилам. ',
         'ПП подсвечен золотым кольцом над красным шаром, ЖП — фиолетовым кольцом над синим. ',
         'Новые ХП/ПП/РП/ЖП сохранены, но их расход, регенерация и ЗРП ещё не подключены к игровым событиям.</p>',
-        '<div class="character-draft-grid">'
+        '<div class="character-draft-grid">',
         ...METRIC_KEYS.map(key=>{
           const value=calculated.values[key];
           const interpretation=metricInterpretation(key,value);
