@@ -1218,6 +1218,7 @@ export async function bootGame({ availableTextureFiles } = {}) {
   
   interfaceSettingsSystem = new InterfaceSettingsSystem();
   
+  document.querySelector('#character-stats-open')?.addEventListener('click', () => projectHubSystem?.openCharacterDraft());
   projectHubSystem = new ProjectHubSystem({
     openButton: document.querySelector('#project-hub-open'),
     overlay: document.querySelector('#project-hub'),
@@ -1230,6 +1231,14 @@ export async function bootGame({ availableTextureFiles } = {}) {
     onOpenChange: () => syncPlayerInputState(),
     interfaceSettings: interfaceSettingsSystem,
     biomeTextureSettings: biomeTextureSettingsSystem,
+    characterDraft: {
+      get: () => activeZoneScene?.gameState?.state?.player?.characterDraft || null,
+      set: (draft) => {
+        if (!activeZoneScene?.gameState) return;
+        activeZoneScene.gameState.setCharacterDraft(draft);
+        activeZoneScene.persistGameState();
+      }
+    },
     worldMap: {
       getData: () => {
         const graph = worldSpawnStateSystem?.worldGraph;

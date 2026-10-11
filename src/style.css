@@ -2812,3 +2812,40 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   .world-map-zoom-controls { width:100%; }
   .world-map-zoom-controls button { min-height:38px; }
 }
+
+/* Character Draft: gameplay-visible, but deliberately not active gameplay balance. */
+.character-stats-open { display:block; border:1px solid #355b73; color:#b8e8ff;
+  background:#101c2b; font-size:10px; line-height:1.15; padding:2px 6px;
+  border-radius:5px; cursor:pointer; width:max-content; max-width:100%; }
+.character-stats-open:hover { background:#1a3550; }
+.character-draft-panel { max-width:1100px; margin:0 auto; padding:8px 2px 28px; }
+.character-draft-panel h2 { display:flex; align-items:center; flex-wrap:wrap;
+  gap:10px; margin:0 0 10px; font-size:18px; }
+.character-draft-chip { font-size:10px; background:#282114; color:#ffda8c;
+  border:1px solid #a97830; border-radius:12px; padding:4px 8px; letter-spacing:.02em; }
+.character-draft-note { color:#aab8c9; font-size:12px; line-height:1.5; }
+.character-draft-note a { color:#81c8ff; }
+.character-draft-controls { display:flex; flex-wrap:wrap; align-items:end; gap:8px;
+  margin:16px 0 8px; }
+.character-draft-controls label { display:grid; gap:5px; font-size:12px; color:#b9c4d2; }
+.character-draft-controls select { min-height:35px; color:#f0f6fc; background:#111923;
+  border:1px solid #405269; border-radius:7px; padding:5px; max-width:100%; }
+.character-draft-controls button { min-height:35px; color:#e6edf3; background:#152333;
+  border:1px solid #53657a; border-radius:7px; padding:6px 12px; cursor:pointer; }
+.character-draft-controls button:disabled { opacity:.4; cursor:default; }
+.character-draft-status { color:#90c6a4; font-size:12px; margin:8px 0 14px; }
+.character-draft-summary { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.character-draft-summary span { display:inline-flex; gap:6px; align-items:center;
+  padding:8px; border:1px solid #394354; border-radius:7px; background:#111820;
+  color:#aebcce; font-size:12px; }
+.character-draft-summary strong { color:#eef5ff; }
+.character-draft-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
+  gap:8px; }
+.character-draft-stat { display:grid; gap:5px; min-width:0;
+  border:1px solid #314354; border-radius:8px; background:#101922; padding:10px; }
+.character-draft-stat span { font-size:11px; color:#aab8c7; }
+.character-draft-stat strong { color:#eff7ff; font-size:17px; font-variant-numeric:tabular-nums; }
+.character-draft-stat small { color:#85c4b4; font-size:10px; }
+.character-draft-warning { color:#f7cf85; font-size:12px; line-height:1.4; }
+@media(max-width:600px) { .character-draft-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .character-draft-controls label { flex:1 1 170px; } }
