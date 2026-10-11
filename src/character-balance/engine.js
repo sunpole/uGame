@@ -150,7 +150,7 @@ export function calculateCharacter(rules, profile) {
   // Phase 3: one common global regeneration multiplier from the FINAL GLR.
   const glrPct=values.glr/100;
   for (const key of ['hps','rps','pps','jps','rgs']){
-    applyPct(key,glrPct,'ГЛР (итог '+round(values.glr)+'): '+round(values.glr)+' / 100 = '+round(glrPct)+'%');
+    applyPct(key,glrPct,'ГЛР: '+round(values.glr)+' / 100 = '+round(glrPct)+'%');
   }
   for (const [key,cap] of Object.entries(rules.caps)) {
     if(key==='glr')continue;
