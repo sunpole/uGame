@@ -1234,7 +1234,8 @@ export async function bootGame({ availableTextureFiles } = {}) {
     renderVitals: () => characterVitalsHUD?.render(),
     canCast: () => Boolean(playerController?.enabled && activeZoneScene?.worldReady),
     getTargets: () => activeZoneScene?.combatTargets || [],
-    animate: config => activeZoneScene?.animateRadialImpulse(config)
+    animate: config => activeZoneScene?.animateRadialImpulse(config),
+    refillStamina: () => playerController?.refillStamina()
   });
   characterSkillSystem.bind();
   // An open background tab may throttle Phaser; this wall-clock interval keeps
