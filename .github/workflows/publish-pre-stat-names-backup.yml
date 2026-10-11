@@ -38,4 +38,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release view v0.2.57-pre-stat-names-20261011
+          git fetch --tags --force origin
           test "$(git rev-parse v0.2.57-pre-stat-names-20261011^{commit})" = "d0a120de23589c2476eb38ba55de48ea4ece6034"
