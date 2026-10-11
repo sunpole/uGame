@@ -65,7 +65,11 @@ function latestBackup(storage){
 function setText(root,selector,text) {
   const el=root.querySelector(selector);if(el)el.textContent=text;
 }
-export function openHeroEntrance({root=document,storage=globalThis.localStorage}={}) {
+export function openHeroEntrance({root=document,storage}={}) {
+  // Accessing localStorage itself can throw SecurityError (private/sandbox mode).
+  if(storage===undefined) {
+    try { storage=globalThis.localStorage; } catch { storage=null; }
+  }
   const gate=root.querySelector('#hero-entrance');
   if(!gate)return Promise.reject(new Error('Не найден экран выбора героя'));
   const saved=storedHero(storage);
@@ -102,9 +106,10 @@ export function openHeroEntrance({root=document,storage=globalThis.localStorage}
   chooser.hidden=saved.kind==='empty';
   panel.hidden=saved.kind!=='empty';
   if(saved.kind==='invalid'||saved.kind==='unavailable'){
-    panel.hidden=true;chooser.hidden=false;continueButton.hidden=true;
+    panel.hidden=true;chooser.hidden=false;continueButton.hidden=false;
+    continueButton.textContent='Играть без сохранения';
     gate.querySelector('#hero-new').hidden=true;
-    setText(gate,'#hero-help','Сохранение повреждено или хранилище недоступно. Данные не изменялись. Сделайте резервную копию перед дальнейшими действиями.');
+    setText(gate,'#hero-help','Сохранение повреждено или хранилище недоступно. Вы можете играть временно без сохранения; старые данные не будут удалены или перезаписаны.');
   }
   gate.hidden=false;
   preview();
