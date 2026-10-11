@@ -22,6 +22,21 @@ async function fetchJson(url) {
   catch (error) { throw new Error('JSON parse: ' + (error?.message || error)); }
 }
 
+// Binary assets are checked by HEAD only: do not download multi-megabyte PNGs
+// as UTF-8 text during the mandatory boot gate (especially on slow mobile networks).
+async function checkAssetAvailability(url, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { method: 'HEAD', cache: 'no-store',
+      signal: controller.signal });
+    if (!response.ok) throw new Error(String(response.status) + ' ' + response.statusText);
+    return true;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function importedSpecs(source) {
   const specs = [];
   const pattern = /(?:^|\n)\s*import\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]\s*;?/g;
@@ -610,7 +625,7 @@ export async function runPreflight({ expectedVersion = '0.0.0', root }) {
   await check('files', 'Доступность обязательных файлов', async () => {
     if (!context.manifest) throw new Error('нет манифеста');
     await Promise.all(context.manifest.requiredFiles.map((url) => fetchText(url)));
-    await Promise.all(context.manifest.requiredAssets.map((url) => fetchText(url)));
+    await Promise.all(context.manifest.requiredAssets.map((url) => checkAssetAvailability(url)));
     return (context.manifest.requiredFiles.length + context.manifest.requiredAssets.length) + ' файлов доступны';
   });
 
