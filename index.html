@@ -67,8 +67,29 @@
 
         <div class="chrome-header-block character-progress-block">
           <span class="chrome-label">ПРОГРЕСС</span>
-          <strong id="character-level">LV —</strong>
-          <span id="character-xp">XP —</span>
+          <div class="character-maturity">
+            <strong id="character-level">ЗРЛ 1 / 65</strong>
+            <span id="character-xp">ЗРП 0 · порог позже</span>
+          </div>
+          <div class="character-orb-pair" aria-label="Ресурсы персонажа: здоровье, Покров, основной ресурс и Желание">
+            <div class="character-orb hp" id="character-orb-hp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">ХП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ПП —</span>
+            </div>
+            <div class="character-orb rp" id="character-orb-rp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">РП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ЖП —</span>
+            </div>
+          </div>
+          <span class="character-hud-provisional">БАЛАНС · ПРОТОТИП</span>
           <span id="header-stamina">Stamina 100 / 100</span>
           <div class="chrome-progress-track" aria-hidden="true"><i id="header-stamina-bar" style="width:100%"></i></div>
         </div>
