@@ -190,14 +190,20 @@ export class CharacterSkillSystem {
     }
     if(!['8661','8662','8674'].includes(code))return {handled:false};
     const state=this.state();
-    if(!state?.vitals.pools)return {handled:true,state:'warn',
-      message:code+' · Сначала сохраните профиль персонажа'};
+    if(!state?.vitals.pools){
+      if(code==='8674')this.refillStamina?.();
+      return {handled:true,state:'warn',message:code+
+        (code==='8674'?' · Stamina восстановлена; для четырёх ресурсов сначала сохраните профиль':
+          ' · Сначала сохраните профиль персонажа')};
+    }
     const {gs,vitals}=state;
     const current={};
     for(const key of POOL_KEYS) {
       const max=Math.max(0,vitals.values[key]||0);
       const drain={hp:20,pp:10,rp:15,jp:10}[key];
-      current[key]=code==='8661'?Math.max(0,vitals.pools.current[key]-drain):max;
+      current[key]=code==='8661'
+        ?Math.max(key==='hp'&&this.anomalies.immortal?1:0,vitals.pools.current[key]-drain)
+        :max;
     }
     gs.setCharacterPools({...vitals.pools,current});
     this.fullRpSince=null;
