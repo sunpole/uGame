@@ -153,31 +153,7 @@ async function checkViewport(profile) {
           errorX:Math.abs((r.left+r.width/2)-expectedX),
           errorY:Math.abs((r.top+r.height/2)-expectedY),
           labelX:Math.abs((label.left+label.width/2)-(r.left+r.width/2)),
-          labelY:Math.abs((label.top+label.height/2)-(r.top+r.height/2)),
-          stageZoom:scale,
-          tileRect:{left:r.left,top:r.top,width:r.width,height:r.height},
-          labelRect:{left:label.left,top:label.top,width:label.width,height:label.height},
-          innerStyle:{left:getComputedStyle(tile.querySelector('.world-map-tile-inner')).left,
-            width:getComputedStyle(tile.querySelector('.world-map-tile-inner')).width,
-            display:getComputedStyle(tile.querySelector('.world-map-tile-inner')).display,
-            visibility:getComputedStyle(tile.querySelector('.world-map-tile-inner')).visibility,
-            transform:getComputedStyle(tile.querySelector('.world-map-tile-inner')).transform},
-          innerHtml:tile.querySelector('.world-map-tile-inner').outerHTML.slice(0,260),
-          viewport:{x:viewportRect.x,y:viewportRect.y,width:viewportRect.width,height:viewportRect.height},
-          connected:tile.querySelector('.world-map-tile-inner').isConnected,
-          ancestorClasses:(()=>{
-            const classes=[];let parent=tile.parentElement;while(parent&&classes.length<10){
-              classes.push(parent.tagName+'.'+parent.className);parent=parent.parentElement;
-            }return classes;
-          })(),
-          cssDisplayRules:(()=>{
-            const inner=tile.querySelector('.world-map-tile-inner');
-            return [...document.styleSheets].flatMap(sheet=>{
-              try{return [...sheet.cssRules].filter(rule=>rule.selectorText &&
-                rule.style?.getPropertyValue('display')&&inner.matches(rule.selectorText))
-                .map(rule=>rule.selectorText+' = '+rule.style.getPropertyValue('display'));}catch{return [];}
-            });
-          })()};
+          labelY:Math.abs((label.top+label.height/2)-(r.top+r.height/2))};
       });
     });
     async function checkCrispTiles(){
@@ -209,6 +185,9 @@ async function checkViewport(profile) {
     const focused=await metrics();
     await checkCrispTiles();
     assert.ok(focused.scale>overview.scale,'Find Me must zoom back to medium scale');
+    // On mobile the now-visible toolbar labels push the map below the fold.
+    // Scroll the actual viewport into view before CDP touch gestures.
+    await mapViewport.scrollIntoViewIfNeeded();
     const centre=await mapViewport.boundingBox();
     if(!centre)throw Error('Map viewport not measurable');
     if(!profile.mobile){
@@ -228,25 +207,6 @@ async function checkViewport(profile) {
       // CDP synthesizes real multi-touch input through Chromium, not a JS mock.
       const session=await context.newCDPSession(page);
       const cx=centre.x+centre.width/2,cy=centre.y+centre.height/2;
-      // Find Me has rebuilt the viewport; attach trace to the current DOM.
-      await page.evaluate(()=>{
-        const el=document.querySelector('#world-map-viewport');
-        window.__ugMapTouchTrace=[];
-        for(const type of ['pointerdown','pointermove','pointerup','pointercancel','touchstart','touchmove']){
-          document.addEventListener(type,e=>{
-            const trace=window.__ugMapTouchTrace;
-            if(trace.length<80)trace.push({type,id:e.pointerId,x:e.clientX,y:e.clientY,
-              target:String(e.target?.className).slice(0,90),
-              contained:el.contains(e.target),
-              cameraZoom:getComputedStyle(el.querySelector('.world-map-stage')).zoom});
-          },true);
-        }
-      });
-      const hitBefore=await page.evaluate(({x,y})=>{
-        const el=document.elementFromPoint(x,y);
-        return {tag:el?.tagName,cls:el?.className,
-          inMap:Boolean(el?.closest('#world-map-viewport'))};
-      },{x:cx,y:cy});
       const touch=(x,y,id)=>({x,y,id});
       await session.send('Input.dispatchTouchEvent',{type:'touchStart',
         touchPoints:[touch(cx-38,cy,1),touch(cx+38,cy,2)]});
@@ -256,10 +216,7 @@ async function checkViewport(profile) {
       await page.waitForTimeout(120);
       const pinched=await metrics();
       await checkCrispTiles();
-      assert.ok(pinched.scale>focused.scale,'Two-finger pinch must zoom on mobile: '+JSON.stringify({
-        focused, pinched,hitBefore,
-        events:await page.evaluate(()=>window.__ugMapTouchTrace)
-      }));
+      assert.ok(pinched.scale>focused.scale,'Two-finger pinch must zoom on mobile');
       await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(cx,cy,1)]});
       await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touch(cx-42,cy-30,1)]});
       await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
