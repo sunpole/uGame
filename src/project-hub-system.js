@@ -1,5 +1,9 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
 import { masterRarityReport } from './master-rarity-audit.js';
+import {
+  WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera,
+  worldMapClampCamera, worldMapZoomAt, worldMapPan
+} from './world-map-camera.js';
 
 function escapeHtml(value = '') {
   return String(value)
@@ -228,6 +232,8 @@ export class ProjectHubSystem {
   }
 
   close() {
+    this.mapViewportObserver?.disconnect();
+    this.mapViewportObserver = null;
     if (!this.overlay || this.overlay.hidden) return;
     this.overlay.hidden = true;
     document.body.classList.remove('project-hub-open');
@@ -254,6 +260,8 @@ export class ProjectHubSystem {
   }
 
   renderCurrent() {
+    this.mapViewportObserver?.disconnect();
+    this.mapViewportObserver = null;
     const view = this.stack[this.stack.length - 1];
     if (!view) {
       this.renderRoot();
@@ -299,6 +307,8 @@ export class ProjectHubSystem {
   }
 
   renderRoot() {
+    this.mapViewportObserver?.disconnect();
+    this.mapViewportObserver = null;
     this.backButton.hidden = true;
     this.titleElement.textContent = 'Project Hub';
     this.breadcrumbElement.textContent = 'uGame / Hub';
@@ -405,6 +415,8 @@ export class ProjectHubSystem {
   }
 
   renderWorldMap(view) {
+    this.mapViewportObserver?.disconnect();
+    this.mapViewportObserver = null;
     this.setSubViewHeader(view.label || 'Карта мира', 'uGame / Мир / Карта');
     const data = this.worldMap?.getData?.();
     const zones = Array.isArray(data?.zones) ? data.zones : [];
@@ -499,7 +511,15 @@ export class ProjectHubSystem {
       '<span data-kind="city">◆ Мирный город</span>',
       '<span data-kind="current">⌖ ВЫ ЗДЕСЬ — зелёный маяк</span>',
       '</div>',
-      '<div class="world-map-scroll">',
+      '<div class="world-map-viewport-tools">',
+      '<span>Перетащите карту мышью или пальцем · колесо — масштаб · два пальца — приближение</span>',
+      '<div class="world-map-zoom-controls">',
+      '<button id="world-map-zoom-out" type="button" aria-label="Отдалить карту">−</button>',
+      '<output id="world-map-scale" aria-live="off">100%</output>',
+      '<button id="world-map-zoom-in" type="button" aria-label="Приблизить карту">+</button>',
+      '<button id="world-map-fit" type="button">Весь мир</button>',
+      '</div></div>',
+      '<div class="world-map-viewport" id="world-map-viewport" tabindex="0" role="region" aria-label="Карта мира: перетаскивание, масштабирование колесом или жестом"> ',
       '<div class="world-map-stage" style="width:' + mapWidth + 'px;height:' + mapHeight + 'px">',
       '<div class="world-map-compass world-map-compass-n"><b>N</b><span>СЕВЕР</span><i>↑</i></div>',
       '<div class="world-map-compass world-map-compass-ne"><b>NE</b><span>СЕВЕРО-ВОСТОК</span><i>↗</i></div>',
@@ -515,6 +535,122 @@ export class ProjectHubSystem {
       '</div>'
     ].join('');
 
+    const viewport = this.contentElement.querySelector?.('#world-map-viewport');
+    const stage = viewport?.querySelector('.world-map-stage');
+    const scaleLabel = this.contentElement.querySelector?.('#world-map-scale');
+    const bounds = () => ({
+      viewportWidth: viewport?.clientWidth || 0,
+      viewportHeight: viewport?.clientHeight || 0,
+      mapWidth, mapHeight
+    });
+    const zonePoint = (zone) => ({
+      x: mapWidth / 2 + ((Number(zone?.worldMap?.diamondX) || 0) - centerX) * 66,
+      y: mapHeight / 2 + ((Number(zone?.worldMap?.diamondY) || 0) - centerY) * 66
+    });
+    const applyCamera = (camera) => {
+      if (!viewport || !stage) return;
+      view.mapCamera = worldMapClampCamera(camera, bounds());
+      stage.style.transform = 'translate(' + view.mapCamera.x + 'px, ' + view.mapCamera.y +
+        'px) scale(' + view.mapCamera.scale + ')';
+      if (scaleLabel) scaleLabel.textContent = Math.round(view.mapCamera.scale * 100) + '%';
+    };
+    const focusCurrent = () => {
+      if (!currentZone) return;
+      applyCamera(worldMapFocusCamera(bounds(), zonePoint(currentZone), WORLD_MAP_FOCUS_SCALE));
+    };
+    const fitWorld = () => applyCamera(worldMapFitCamera(bounds()));
+    const zoomAt = (point, scale) => {
+      if (!view.mapCamera) return;
+      applyCamera(worldMapZoomAt(view.mapCamera, bounds(), point, scale));
+    };
+    if (viewport && stage) {
+      if (view.mapCamera) applyCamera(view.mapCamera);
+      else if (currentZone) focusCurrent();
+      else fitWorld();
+
+      viewport.addEventListener('wheel', (event) => {
+        if (event.cancelable) event.preventDefault();
+        const box = viewport.getBoundingClientRect();
+        zoomAt({ x: event.clientX - box.left, y: event.clientY - box.top },
+          view.mapCamera.scale * Math.exp(-Math.sign(event.deltaY) * 0.15));
+      }, { passive: false });
+
+      const pointers = new Map();
+      let suppressClick = false;
+      const midpoint = (values) => ({
+        x: (values[0].x + values[1].x) / 2,
+        y: (values[0].y + values[1].y) / 2,
+        distance: Math.hypot(values[0].x - values[1].x, values[0].y - values[1].y)
+      });
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (!pointers.size) suppressClick = false;
+        pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        viewport.setPointerCapture?.(event.pointerId);
+      });
+      viewport.addEventListener('pointermove', (event) => {
+        const prior = pointers.get(event.pointerId);
+        if (!prior) return;
+        const before = [...pointers.values()];
+        const dx = event.clientX - prior.x, dy = event.clientY - prior.y;
+        if (dx === 0 && dy === 0) return;
+        pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (Math.hypot(dx, dy) > 3 || pointers.size > 1) suppressClick = true;
+        if (pointers.size === 1) {
+          applyCamera(worldMapPan(view.mapCamera, bounds(), dx, dy));
+        } else {
+          const oldMid = midpoint(before.slice(0, 2));
+          const newMid = midpoint([...pointers.values()].slice(0, 2));
+          const rect = viewport.getBoundingClientRect();
+          const pan = worldMapPan(view.mapCamera, bounds(),
+            newMid.x - oldMid.x, newMid.y - oldMid.y);
+          applyCamera(worldMapZoomAt(pan, bounds(),
+            { x: newMid.x - rect.left, y: newMid.y - rect.top },
+            pan.scale * (newMid.distance / Math.max(1, oldMid.distance))));
+        }
+        if (event.cancelable) event.preventDefault();
+      });
+      const releasePointer = (event) => pointers.delete(event.pointerId);
+      viewport.addEventListener('pointerup', releasePointer);
+      viewport.addEventListener('pointercancel', releasePointer);
+      viewport.addEventListener('click', (event) => {
+        if (!suppressClick) return;
+        suppressClick = false;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
+      viewport.addEventListener('keydown', (event) => {
+        const center = { x: viewport.clientWidth / 2, y: viewport.clientHeight / 2 };
+        let handled = true;
+        if (event.key === '+' || event.key === '=') zoomAt(center, view.mapCamera.scale * 1.18);
+        else if (event.key === '-') zoomAt(center, view.mapCamera.scale / 1.18);
+        else if (event.key === '0') fitWorld();
+        else if (event.key === 'Home') focusCurrent();
+        else if (event.key === 'ArrowLeft') applyCamera(worldMapPan(view.mapCamera, bounds(), 65, 0));
+        else if (event.key === 'ArrowRight') applyCamera(worldMapPan(view.mapCamera, bounds(), -65, 0));
+        else if (event.key === 'ArrowUp') applyCamera(worldMapPan(view.mapCamera, bounds(), 0, 65));
+        else if (event.key === 'ArrowDown') applyCamera(worldMapPan(view.mapCamera, bounds(), 0, -65));
+        else handled = false;
+        if (handled) { event.preventDefault(); event.stopPropagation(); }
+      });
+      if (typeof ResizeObserver !== 'undefined') {
+        let priorBounds = bounds();
+        this.mapViewportObserver = new ResizeObserver(() => {
+          const next = bounds();
+          if (!next.viewportWidth || !next.viewportHeight) return;
+          if (next.viewportWidth === priorBounds.viewportWidth &&
+              next.viewportHeight === priorBounds.viewportHeight) return;
+          const centre = {
+            x: (priorBounds.viewportWidth / 2 - view.mapCamera.x) / view.mapCamera.scale,
+            y: (priorBounds.viewportHeight / 2 - view.mapCamera.y) / view.mapCamera.scale
+          };
+          priorBounds = next;
+          applyCamera(worldMapFocusCamera(next, centre, view.mapCamera.scale));
+        });
+        this.mapViewportObserver.observe(viewport);
+      }
+    }
+
     for (const button of this.contentElement.querySelectorAll('[data-world-map-zone]')) {
       button.addEventListener('click', () => {
         view.selectedId = button.dataset.worldMapZone;
@@ -522,13 +658,18 @@ export class ProjectHubSystem {
       });
     }
     this.contentElement.querySelector?.('#world-map-find-me')?.addEventListener('click', () => {
-      if(!currentZoneId)return;
+      if (!currentZoneId) return;
       view.selectedId = currentZoneId;
       this.renderWorldMap(view);
-      this.contentElement.querySelector?.('[data-world-map-zone].is-current')?.scrollIntoView?.({
-        block: 'center', inline: 'center', behavior: 'smooth'
-      });
+      // The new viewport always returns to the current location, not a scrollbar.
+      if (view.mapCamera) focusCurrent();
     });
+    this.contentElement.querySelector?.('#world-map-fit')?.addEventListener('click', fitWorld);
+    const zoomCenter = () => ({ x: viewport.clientWidth / 2, y: viewport.clientHeight / 2 });
+    this.contentElement.querySelector?.('#world-map-zoom-in')?.addEventListener('click', () =>
+      zoomAt(zoomCenter(), view.mapCamera.scale * 1.18));
+    this.contentElement.querySelector?.('#world-map-zoom-out')?.addEventListener('click', () =>
+      zoomAt(zoomCenter(), view.mapCamera.scale / 1.18));
     this.contentElement.scrollTop = 0;
   }
 
