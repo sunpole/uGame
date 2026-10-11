@@ -462,7 +462,12 @@ export class ProjectHubSystem {
         zone.id === currentZoneId ? '<span class="world-map-tile-player-icon" aria-hidden="true">⌖</span>' : '',
         '<strong>' + escapeHtml(zone.name || zone.id) + '</strong>',
         '<small>' + escapeHtml(zone.id) + '</small>',
-        '<em>' + escapeHtml(typeLabel + ' · ' + (zone.biome || '—')) + '</em>',
+        // City labels must fit inside a diamond: separate compact role/biome
+        // lines instead of one overflowing "ГОРОД · role · biome" sentence.
+        zone.isSafeCity
+          ? '<em class="world-map-tile-kind">ГОРОД</em><em class="world-map-tile-meta">' +
+            escapeHtml((city?.roleName || 'специализация не задана') + ' · ' + (zone.biome || '—')) + '</em>'
+          : '<em>' + escapeHtml(typeLabel + ' · ' + (zone.biome || '—')) + '</em>',
         '</span>',
         '</button>'
       ].join('');
