@@ -105,3 +105,20 @@
 .pin-detail-dialog li{margin:6px 0;overflow-wrap:anywhere}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:660px){.pin-add-controls{flex:1 1 100%}.pin-add-controls select{width:100%;flex:1 1 auto}.pin-help{font-size:10px}.pin-data .pin-value{min-width:75px}}
+
+/* v0.2.59: optional units complement raw candidate scores, not new stats. */
+.stat-interpretation {
+  display:inline-block;
+  margin-left:4px;
+  font-size:0.83em;
+  font-weight:600;
+  color:#95ddc1;
+  white-space:nowrap;
+  vertical-align:baseline;
+  font-variant-numeric:tabular-nums;
+}
+#comparison-body .stat-interpretation { color:#a6dbec; }
+.trace-card .stat-interpretation { color:#a6dbec; }
+.pin-value .stat-interpretation { color:#95ddc1; }
+.pin-value:focus-visible .stat-interpretation,
+.pin-value:hover .stat-interpretation { color:#e9fffa; }

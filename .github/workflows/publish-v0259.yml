@@ -1,0 +1,99 @@
+name: uGame v0.2.59 Character Lab readable units QA and release
+
+on:
+  pull_request:
+    paths:
+      - 'src/character-balance/display-units.js'
+      - 'src/character-balance/pins.js'
+      - 'character-lab/**'
+      - 'tests/character-lab-display-units.test.mjs'
+      - 'tests/character-lab-browser-smoke.mjs'
+      - 'tests/character-lab-admin-browser-smoke.mjs'
+      - 'index.html'
+      - 'version.json'
+      - 'package.json'
+      - 'data/preflight-manifest.json'
+      - '.github/workflows/publish-v0259.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/releases/v0.2.59.md'
+      - '.github/workflows/publish-v0259.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source and full Node suite
+        run: |
+          node --check src/character-balance/display-units.js
+          node --check character-lab/lab.js
+          node --check character-lab/admin.js
+          node --check src/character-balance/pins.js
+          node --check tests/character-lab-display-units.test.mjs
+          node --check tests/character-lab-browser-smoke.mjs
+          npm test
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          for(const p of ['version.json','package.json','data/preflight-manifest.json']){
+            if(JSON.parse(fs.readFileSync(p,'utf8')).version !== '0.2.59')throw Error('version mismatch '+p);
+          }
+          if(!fs.readFileSync('index.html','utf8').includes(\"expectedVersion: '0.2.59'\"))throw Error('Pre-flight version mismatch');
+          "
+      - name: Install real Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile Candidate Lab comparison and pin/trace unit conversions
+        env:
+          CI: 'true'
+        run: node tests/character-lab-browser-smoke.mjs
+      - name: Desktop/mobile Admin Lab JSON/validator/regression
+        env:
+          CI: 'true'
+        run: node tests/character-lab-admin-browser-smoke.mjs
+      - name: Desktop/mobile full game Pre-flight Phaser map and save/F5
+        env:
+          CI: 'true'
+        run: node tests/browser-boot-smoke.mjs
+      - name: Verify immutable v0.2.58 rollback tag
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.2.58
+          git fetch origin tag v0.2.58
+          test "$(git rev-parse v0.2.58^{commit})" = "ddeee3cc9f557552a930f51f32a7b89387d9e6a0"
+      - name: Publish QA prerelease after green checks on main
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view v0.2.59 >/dev/null 2>&1; then
+            gh release create v0.2.59 --target "$GITHUB_SHA" \
+              --title "uGame v0.2.59 · Readable Character Lab Units" \
+              --notes-file docs/releases/v0.2.59.md --prerelease
+          fi
+          gh release view v0.2.59
+      - name: Retain browser failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uGame-v0259-browser-errors
+          path: |
+            artifacts/character-lab/
+            artifacts/character-admin/
+            artifacts/browser-smoke/
+          if-no-files-found: ignore
+          retention-days: 10
