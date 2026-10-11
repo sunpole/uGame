@@ -162,6 +162,8 @@
     "./src/character-runtime.js",
     "./src/character-skills.js",
     "./src/dev-character-tools.js",
-    "./src/dev-code-aliases.js"
+    "./src/dev-code-aliases.js",
+    "./src/hero-identity.js",
+    "./src/hero-creation.js"
   ]
 }
