@@ -160,3 +160,33 @@ test('wheel zoom stays anchored under cursor, pan stays bounded and zoom has lim
   assert.ok(min.scale>=worldMapFitScale(940,530,2120,2120)*0.75);
   assert.equal(max.scale,WORLD_MAP_MAX_SCALE);
 });
+
+test('city diamond labels split city type and role/biome without affecting field text or navigation',()=>{
+  const {hub,content,control}=mockHub();
+  control('#world-map-find-me','');
+  hub.citySpecializations=new Map([
+    ['loc-00013',{roleName:'Перекрёсток'}],
+    ['loc-00025',{roleName:'Мудрость'}]
+  ]);
+  hub.worldMap={getData:()=>({
+    currentZoneId:'loc-00025',
+    zones:[
+      {id:'loc-00013',name:'Каменный Перекрёсток',isSafeCity:true,biome:'stone',
+        worldMap:{diamondX:0,diamondY:0}},
+      {id:'loc-00025',name:'Беломраморный Двор',isSafeCity:true,biome:'south',
+        worldMap:{diamondX:2,diamondY:0}},
+      {id:'loc-00024',name:'Южный Рубеж 24',isSafeCity:false,biome:'south',
+        locationTier:'T1',worldMap:{diamondX:4,diamondY:0}}
+    ]
+  })};
+  hub.renderWorldMap({type:'world-map'});
+  assert.equal((content.innerHTML.match(/data-world-map-zone=/g)||[]).length,3);
+  assert.equal((content.innerHTML.match(/class="world-map-tile-kind"/g)||[]).length,2);
+  assert.equal((content.innerHTML.match(/class="world-map-tile-meta"/g)||[]).length,2);
+  assert.match(content.innerHTML,/Каменный Перекрёсток/);
+  assert.match(content.innerHTML,/Беломраморный Двор/);
+  assert.match(content.innerHTML,/Перекрёсток · stone/);
+  assert.match(content.innerHTML,/Мудрость · south/);
+  assert.match(content.innerHTML,/LT T1 · south/);
+  assert.match(content.innerHTML,/world-map-tile-player-icon/);
+});

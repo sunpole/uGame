@@ -2226,6 +2226,36 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 .world-map-tile[data-biome='stone'] { border-color: #c9d1d9; background: #30363d; }
 .world-map-tile[data-biome='south'] { border-color: #ff7b72; background: #54252a; }
 .world-map-tile.is-city { border-width: 5px; background: #11161d; }
+/* v0.2.63: fit long city labels into the central diamond, at every CSS zoom.
+   Keep the existing rotated tile + counter-rotated text; adjust text only. */
+.world-map-tile.is-city .world-map-tile-inner { gap: 1px; }
+.world-map-tile.is-city .world-map-tile-inner strong {
+  width: 76px;
+  max-width: 76px;
+  font-size: 8.5px;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.world-map-tile.is-city .world-map-tile-inner small { font-size: 6.8px; }
+.world-map-tile.is-city .world-map-tile-inner em {
+  display: block;
+  max-width: 74px;
+  font-size: 6.5px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.world-map-tile.is-city .world-map-tile-kind {
+  font-weight: 700;
+  letter-spacing: .035em;
+}
+.world-map-tile.is-city .world-map-tile-player-icon {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+}
 .world-map-tile[data-city-key='north'] { border-color: #388bfd; }
 .world-map-tile[data-city-key='east'] { border-color: #3fb950; }
 .world-map-tile[data-city-key='start'] { border-color: #f0f6fc; }

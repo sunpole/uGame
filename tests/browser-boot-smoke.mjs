@@ -113,6 +113,64 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('[data-world-map-zone].is-city').count(), 5);
     assert.equal(await page.locator('[data-world-map-zone].is-current').count(), 1);
     const mapViewport=page.locator('#world-map-viewport');
+    // All five cities, including long titles and the highlighted player city,
+    // must fit *inside* their diamonds at the actual 100% / 175% / 225% layout
+    // zoom in real Chromium (desktop and mobile). Temporarily focus each tile
+    // without changing the in-memory world-map camera, then restore DOM styles.
+    const cityFit=await mapViewport.evaluate(el=>{
+      const stage=el.querySelector('.world-map-stage');
+      const layer=el.querySelector('.world-map-camera-layer');
+      const before={zoom:stage.style.zoom,left:layer.style.left,top:layer.style.top};
+      const report=[];
+      try{
+        const cities=[...stage.querySelectorAll('[data-world-map-zone].is-city')];
+        for(const scale of [1,1.75,2.25]){
+          stage.style.zoom=String(scale);
+          for(const city of cities){
+            const css=getComputedStyle(city);
+            layer.style.left=(el.clientWidth/2-parseFloat(css.left)*scale)+'px';
+            layer.style.top=(el.clientHeight/2-parseFloat(css.top)*scale)+'px';
+            const r=city.getBoundingClientRect();
+            const cx=(r.left+r.right)/2,cy=(r.top+r.bottom)/2;
+            const radius=r.width/2;
+            const label=city.querySelector('.world-map-tile-inner');
+            const children=[...label.children].filter(child=>
+              child.matches('strong,small,em'));
+            const rects=children.map(node=>{
+              const b=node.getBoundingClientRect();
+              const corners=[[b.left,b.top],[b.right,b.top],
+                [b.left,b.bottom],[b.right,b.bottom]];
+              const intrusion=Math.max(...corners.map(([x,y])=>
+                Math.abs(x-cx)+Math.abs(y-cy)-radius));
+              return {text:node.textContent,tag:node.tagName,
+                width:b.width,height:b.height,intrusion};
+            });
+            report.push({id:city.dataset.worldMapZone,
+              scale,cityName:city.querySelector('strong').textContent,
+              radius,rects});
+          }
+        }
+      }finally{
+        stage.style.zoom=before.zoom;
+        layer.style.left=before.left;
+        layer.style.top=before.top;
+      }
+      return report;
+    });
+    assert.equal(cityFit.length,15,'Expected 5 cities at 3 distinct zoom levels');
+    for(const c of cityFit){
+      assert.equal(c.rects.length,4,'City must have title, id, city type and role/biome: '+c.id);
+      for(const box of c.rects){
+        assert.ok(box.width>0&&box.height>0,'City label hidden: '+JSON.stringify(c));
+        assert.ok(box.intrusion<=2*c.scale,
+          'Text escapes the diamond: '+JSON.stringify({id:c.id,scale:c.scale,...box}));
+      }
+    }
+    for(const c of cityFit.filter(c=>c.scale===2.25)){
+      assert.ok(c.rects[1].text.startsWith('loc-'),'City ID must remain visible');
+      assert.equal(c.rects[2].text,'ГОРОД');
+      assert.match(c.rects[3].text,/ · /,'City specialization and biome still shown');
+    }
     const metrics=async()=>mapViewport.evaluate(el=>{
       const stage=el.querySelector('.world-map-stage');
       const layer=el.querySelector('.world-map-camera-layer');

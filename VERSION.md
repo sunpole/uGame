@@ -1,3 +1,15 @@
+# uGame v0.2.63 · City labels fit World Map diamonds (2026-10-11)
+
+- Long city titles wrap in the diamond's central safe width, including «Каменный Перекрёсток» and «Беломраморный Двор».
+- City type and specialization/biome become two compact text lines; preserved all original wording.
+- City current-zone icon remains visible but no longer increases label stack height.
+- Unchanged: sharp CSS layout zoom, 225 zone geometry, maps, balances, saves, original biome JPEGs.
+- Chromium desktop/mobile checks all 5 city tile text rectangles at 100/175/225%, plus Phaser/Pre-flight/Save-F5 smoke.
+- Immutable rollback: [v0.2.62](https://github.com/sunpole/uGame/releases/tag/v0.2.62), SHA ae4694cbf3803e2a6c8f781e661d13aa213f0d33.
+- [Release details](docs/releases/v0.2.63.md).
+
+---
+
 # uGame v0.2.62 · Crisp World Map Zoom (2026-10-11)
 
 - World Map's 225 existing interactive HTML diamonds remain intact, but viewport zoom now uses real CSS layout `zoom` instead of parent `transform:scale` and GPU cached bitmap layer; an unscaled camera wrapper owns pan via `left/top`.
