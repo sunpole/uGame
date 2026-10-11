@@ -145,7 +145,13 @@ async function checkViewport(profile) {
           errorX:Math.abs((r.left+r.width/2)-expectedX),
           errorY:Math.abs((r.top+r.height/2)-expectedY),
           labelX:Math.abs((label.left+label.width/2)-(r.left+r.width/2)),
-          labelY:Math.abs((label.top+label.height/2)-(r.top+r.height/2))};
+          labelY:Math.abs((label.top+label.height/2)-(r.top+r.height/2)),
+          stageZoom:scale,
+          tileRect:{left:r.left,top:r.top,width:r.width,height:r.height},
+          labelRect:{left:label.left,top:label.top,width:label.width,height:label.height},
+          innerStyle:{left:getComputedStyle(tile.querySelector('.world-map-tile-inner')).left,
+            width:getComputedStyle(tile.querySelector('.world-map-tile-inner')).width,
+            transform:getComputedStyle(tile.querySelector('.world-map-tile-inner')).transform}};
       });
     });
     async function checkCrispTiles(){
