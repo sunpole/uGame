@@ -72,7 +72,7 @@ async function checkViewport(profile) {
     const portraits=await page.evaluate(async()=>{
       const archetypes=['plate','leather','cloth','hybrid'],genders=['male','female'];
       return Promise.all(archetypes.flatMap(a=>genders.map(async(g)=>{
-        const url='./assets/characters/'+a+'-'+g+'.webp';
+        const url='./assets/characters/'+a+'-'+g+'.jpg';
         const response=await fetch(url,{cache:'no-store'});
         if(!response.ok)return {url,status:response.status};
         const bmp=await createImageBitmap(await response.blob());
@@ -86,11 +86,11 @@ async function checkViewport(profile) {
       assert.ok(portrait.height>portrait.width*2,'Hero asset lost tall aspect ratio: '+portrait.url);
     }
     await activate('[data-hero-gender="female"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/plate-female\.webp/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/plate-female\.jpg/);
     await activate('[data-hero-archetype="leather"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-female\.webp/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-female\.jpg/);
     await activate('[data-hero-gender="male"]');
-    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-male\.webp/);
+    assert.match(await page.locator('#hero-preview').getAttribute('src'),/leather-male\.jpg/);
     await activate('[data-hero-archetype="hybrid"]');
     await activate('[data-hero-gender="female"]');
     await page.locator('#hero-name').fill('Антоний QA');
