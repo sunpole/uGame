@@ -1,4 +1,5 @@
 import { normalizeCharacterDraft } from './character-draft.js';
+import { normalizeCharacterResponsibility } from './dev-character-tools.js';
 import { normalizeCharacterProgress, normalizeCharacterPools } from './character-runtime.js';
 
 export const GAME_STATE_SCHEMA_VERSION = 1;
@@ -167,6 +168,7 @@ export function createDefaultGameState() {
       classId: 'wanderer',
       characterDraft: null,
       characterProgress: normalizeCharacterProgress(null),
+      characterResponsibility: null,
       characterPools: null
     },
     world: {
@@ -209,6 +211,7 @@ export function normalizeGameState(input) {
         : defaults.player.classId,
       characterDraft: normalizeCharacterDraft(input.player?.characterDraft),
       characterProgress: normalizeCharacterProgress(input.player?.characterProgress),
+      characterResponsibility: normalizeCharacterResponsibility(input.player?.characterResponsibility),
       characterPools: normalizeCharacterPools(input.player?.characterPools)
     },
     world: {
@@ -249,6 +252,14 @@ export class GameState {
 
   setCharacterPools(snapshot) {
     this.state.player.characterPools=normalizeCharacterPools(snapshot);
+  }
+
+  setCharacterProgress(next) {
+    this.state.player.characterProgress = normalizeCharacterProgress(next);
+  }
+
+  setCharacterResponsibility(value) {
+    this.state.player.characterResponsibility = normalizeCharacterResponsibility(value);
   }
 
   setClassId(classId) {
