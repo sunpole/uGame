@@ -444,7 +444,9 @@ export class ProjectHubSystem {
       const runtime=this.characterDraft?.getRuntime?.() || null;
       const profile=normalizeCharacterDraft(view.draft) || saved ||
         {schemaVersion:1,cityId:'force',startIndex:3};
-      const calculated=characterDraftResult(rules,profile);
+      const calculated=characterDraftResult(rules,profile,
+        runtime?.draft?.cityId===profile.cityId&&runtime?.draft?.startIndex===profile.startIndex
+          ? {level:runtime.progress.zrl,otv:runtime.responsibility}:{});
       const city=rules.cities[profile.cityId];
       const isSaved=Boolean(saved && saved.cityId===profile.cityId &&
         saved.startIndex===profile.startIndex);
@@ -477,7 +479,9 @@ export class ProjectHubSystem {
         '<div class="character-draft-summary">',
         '<span>ЗРЛ <strong>'+escapeHtml(String(runtime?.progress?.zrl ?? 1))+' / 65</strong></span>',
         '<span>ЗРП <strong>'+escapeHtml(fmt(runtime?.progress?.zrp ?? 0))+'</strong> (начисление пока не включено)</span>',
-        '<span>ОТВ <strong>1</strong> (временный сценарий)</span>',
+        '<span>ОТВ <strong>'+escapeHtml(String(runtime?.responsibility??calculated.profile.otv))+
+        '</strong> '+(runtime?.responsibility===null||runtime?.responsibility===undefined
+          ? '(временный сценарий)':'(DEV-задание)')+'</span>',
         '<span>ЖП <strong>&gt; 0</strong> (условие расчёта)</span>',
         '<span>Основной ресурс <strong>'+escapeHtml(calculated.mainResource)+'</strong></span>',
         '</div>',
@@ -1227,7 +1231,7 @@ export class ProjectHubSystem {
         button.type = 'button';
         button.className = 'project-hub-dev-code-run';
         button.dataset.devRunCode = code;
-        button.textContent = 'Выполнить';
+        button.textContent = 'Выполнить / Run';
 
         const status = document.createElement('small');
         status.className = 'project-hub-dev-code-status';
