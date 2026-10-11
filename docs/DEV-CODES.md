@@ -1,8 +1,8 @@
 # DEV-коды uGame / uGame DEV codes
 
-**RU:** Четыре цифры в нижней консоли DEV или Project Hub → «DEV-коды» → «Выполнить». Это тестовые команды, **не обычные игровые навыки**. Значения некоторых команд изменяют локальное сохранение.
+**RU:** В нижней DEV-консоли можно вводить **четырёхзначный код или полное название команды из колонки «Русский» или «English»**. Все 67 действующих кодов принимают оба языка; при вводе доступны подсказки. Например: `тп` / `tp` → **2399**, `зрп +5%` / `xp +5%` → **2101**, `уровень +1` / `level +1` → **2201**, `сохранить` / `save` → **9001**, `помощь` / `help` → **9999**. В Project Hub → «DEV-коды» кнопки «Выполнить» продолжают посылать исходный номер. Это **только тестовые команды**, часть изменяет локальное сохранение. Неизвестные имена или неполные фразы не исполняются. Команда удаления сейва `9002` распознаётся **только по точному совпадению** номера, полного названия или короткого `удалить сохранение` / `delete save`; не использовать на нужном сохранении.
 
-**EN:** Enter four digits in the footer DEV console, or Project Hub → DEV codes → Run. Development/testing only; some commands modify the local save.
+**EN:** In the DEV footer, enter **four digits or any full Russian/English command name shown below**. Autocomplete suggestions cover all 67 current codes. Short equivalents include `tp` / `тп`, `xp +5%` / `зрп +5%`, `level +1` / `уровень +1`, `save` / `сохранить`, and `help` / `помощь`. Project Hub Run buttons still send the original numeric ID. DEV-only; certain commands change the browser save. Unknown or partial names never run.
 
 ## Диапазоны / Ranges
 
