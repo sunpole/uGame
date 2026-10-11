@@ -32,7 +32,7 @@ $relative='assets\textures\biomes'
 $seedTextures=Join-Path $seed $relative
 [void][IO.Directory]::CreateDirectory($seedTextures)
 function JPEG([string]$path,[int]$red,[int]$green,[int]$blue){
-  $bitmap=New-Object System.Drawing.Bitmap(512,512)
+  $bitmap=New-Object System.Drawing.Bitmap -ArgumentList 512,512
   try{
     $color=[System.Drawing.Color]::FromArgb($red,$green,$blue)
     $g=[System.Drawing.Graphics]::FromImage($bitmap)
