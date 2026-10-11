@@ -1,3 +1,12 @@
+# uGame v0.2.70 — Creator (QA-кандидат, НЕ релиз)
+
+- Новый первый экран после Pre-flight до Phaser: четыре визуальных архетипа × два пола, имя, мгновенная смена портрета, сохранение необязательного `heroIdentity`.
+- Продолжение старого `ugame.save.v1` без миграции идентичности. Перед заменой новым героем — полная локальная резервная копия и явное подтверждение.
+- Нет логина/пароля: серверной учётной записи нет. Тесты Chromium/Windows и все 8 WebP необходимы до публикации.
+- [Отчёт](docs/releases/v0.2.70.md); откат `v0.2.69` SHA `03c77b6047cefca585f3a1a3d3d807c86651c776`.
+
+---
+
 # uGame v0.2.69 · Removable DEV anomaly buffs (2026-10-11)
 
 - DEV 8671: toggle no skill cooldown, 8672: toggle immortality (HP minimum 1), 8673: toggle free skill casting (no JP/RP spend), 8674: one-time 100% HP/PP/RP/JP + Stamina refill.
