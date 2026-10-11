@@ -110,7 +110,7 @@ export function calculateCharacter(rules, profile) {
   addGroup('perOtvBlock',blocks,'Полные сотни ОТВ');
   addGroup('cities.'+cityId+'.flat',1,'Столица '+city.name);
   addGroup('desireBonuses.'+desireMode,1,desireMode==='positive'?'ЖП > 0':'ЖП = 0');
-  for(const [key,rate] of Object.entries(profile.extraFlat||{}))add(key,rate,'Пробные внешние бонусы');
+  for(const [key,rate] of Object.entries(profile.extraFlat||{}))add(key,rate,'Пробные внешние бонусы: 1 × '+rate);
   const applyPct=(key,pct,label)=>{
     if (!pct) return;
     const base=values[key], delta=base*pct/100;
