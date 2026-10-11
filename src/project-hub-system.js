@@ -586,7 +586,7 @@ export class ProjectHubSystem {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         if (!pointers.size) suppressClick = false;
         pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-        viewport.setPointerCapture?.(event.pointerId);
+        // Do not capture a simple tap: tiles must remain clickable.
       });
       viewport.addEventListener('pointermove', (event) => {
         const prior = pointers.get(event.pointerId);
@@ -595,7 +595,12 @@ export class ProjectHubSystem {
         const dx = event.clientX - prior.x, dy = event.clientY - prior.y;
         if (dx === 0 && dy === 0) return;
         pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-        if (Math.hypot(dx, dy) > 3 || pointers.size > 1) suppressClick = true;
+        if (Math.hypot(dx, dy) > 3 || pointers.size > 1) {
+          suppressClick = true;
+          // Capture only an actual drag/pinch, never a stationary tile click.
+          if (!viewport.hasPointerCapture?.(event.pointerId))
+            viewport.setPointerCapture?.(event.pointerId);
+        }
         if (pointers.size === 1) {
           applyCamera(worldMapPan(view.mapCamera, bounds(), dx, dy));
         } else {
