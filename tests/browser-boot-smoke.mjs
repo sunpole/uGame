@@ -85,6 +85,8 @@ async function checkViewport(profile) {
         '+5 ВДОХ · +10 ЖП · +1 ГЛР · +5 СКП'];
       assert.ok((await card.innerText()).includes(extras[i]),
         'Missing correct capital secondary bonus for '+(i+1));
+      assert.ok((await card.innerText()).includes(["Старт: +5 ВЫН; ещё 5 очков — ЛОВ/ИНТ","Старт: +5 ЛОВ; ещё 5 очков — ВЫН/ИНТ","Старт: +5 ИНТ; ещё 5 очков — ВЫН/ЛОВ","Старт: +3 ВЫН, +3 ЛОВ, +3 ИНТ; ещё 1 — случайно"][i]),
+        'Missing approved 10-point starting allocation for '+(i+1));
     }
     const desktopGrid=await page.locator('#hero-capital-grid').evaluate(el=>{
       const style=getComputedStyle(el);return {columns:style.gridTemplateColumns,
