@@ -107,6 +107,29 @@ export class CharacterSkillSystem {
     this.updateUI(now);
     return {ok:true,...paid,origin};
   }
+  // Manual QA only: expose 4 pool depletion and refill without pretending
+  // the world already has combat damage sources or altering balance formulas.
+  executeDevCode(code) {
+    if(!['8661','8662'].includes(code))return {handled:false};
+    const state=this.state();
+    if(!state?.vitals.pools)return {handled:true,state:'warn',
+      message:code+' · Сначала сохраните профиль персонажа'};
+    const {gs,vitals}=state;
+    const current={};
+    for(const key of POOL_KEYS) {
+      const max=Math.max(0,vitals.values[key]||0);
+      const drain={hp:20,pp:10,rp:15,jp:10}[key];
+      current[key]=code==='8661'?Math.max(0,vitals.pools.current[key]-drain):max;
+    }
+    gs.setCharacterPools({...vitals.pools,current});
+    this.fullRpSince=null;
+    this.save?.();this.renderVitals?.();this.updateUI();
+    this.feedback(code==='8661'?'DEV: списаны тестовые ХП/ПП/РП/ЖП':
+      'DEV: все четыре запаса восстановлены',true);
+    return {handled:true,state:'ok',message:code==='8661'
+      ?'8661 · тестовый расход четырёх ресурсов; наблюдайте регенерацию шаров'
+      :'8662 · все четыре ресурса пополнены'};
+  }
   tick(now=Date.now()){
     if(this.lastTickAt===null){this.lastTickAt=now;this.updateUI(now);return;}
     const dt=Math.max(0,now-this.lastTickAt);this.lastTickAt=now;
