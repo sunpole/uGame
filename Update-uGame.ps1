@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('menu','status','sync','report','run','quickrun','github','rollback','resume','simulate','textures')][string]$Command = 'menu')
+param([ValidateSet('menu','status','sync','report','run','quickrun','github','rollback','resume','simulate','textures','publishtextures')][string]$Command = 'menu')
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:Root = [IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
@@ -155,6 +155,101 @@ function Import-BiomeTextures {
     Write-Log ("Biome textures: $present/6 available, $copied copied/updated.")
 }
 
+
+# Selected JPGs go to a review PR; local checkout, saves, and ignored PNGs stay untouched.
+function Publish-SouthTextures {
+    Assert-Repository
+    if ((Git @('branch','--show-current')) -ne 'main') { throw 'Publishing requires local main. Use menu 8 after rollback.' }
+    foreach ($name in @('MERGE_HEAD','CHERRY_PICK_HEAD','REVERT_HEAD','rebase-merge','rebase-apply')) {
+        $state = Git @('rev-parse','--git-path',$name)
+        if (-not [IO.Path]::IsPathRooted($state)) { $state = Join-Path $script:Root $state }
+        if (Test-Path -LiteralPath $state) { throw 'Finish the existing Git operation first.' }
+    }
+    $dir = Join-Path $script:Root 'assets\textures\biomes'
+    if (-not (Test-Path -LiteralPath $dir -PathType Container)) { throw 'Missing assets/textures/biomes.' }
+    if ((Get-Item -LiteralPath $dir).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Symlink directories cannot be uploaded.' }
+    $pairs = @(
+        @{ Label='South field'; Original='ground_1024.jpg'; Target='south_256.jpg' },
+        @{ Label='South city'; Original='city_ground_1024.jpg'; Target='city_south_512.jpg' }
+    )
+    $items = @()
+    foreach ($pair in $pairs) {
+        $original = Join-Path $dir $pair.Original
+        $current = Join-Path $dir $pair.Target
+        $source = if (Test-Path -LiteralPath $original -PathType Leaf) { $original }
+            elseif (Test-Path -LiteralPath $current -PathType Leaf) { $current }
+            else { $null }
+        if (-not $source) { Write-Host ('Missing ' + $pair.Label + ': ' + $pair.Original + ' or ' + $pair.Target); continue }
+        $info = Get-Item -LiteralPath $source
+        if ($info.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw ('Symlink not allowed: ' + $source) }
+        if ($info.Length -lt 1024 -or $info.Length -gt 20MB) { throw ('Invalid JPEG size: ' + $source) }
+        $stream = [IO.File]::OpenRead($source)
+        try {
+            $magic = New-Object byte[] 3
+            if ($stream.Read($magic,0,3) -ne 3 -or $magic[0] -ne 255 -or $magic[1] -ne 216 -or $magic[2] -ne 255) {
+                throw ('Not a JPEG: ' + $source)
+            }
+            $stream.Position = 0
+            $picture = [System.Drawing.Image]::FromStream($stream,$false,$true)
+            try {
+                $width = $picture.Width
+                $height = $picture.Height
+                if ($width -lt 256 -or $height -lt 256) { throw ('JPEG resolution is too small: ' + $source) }
+            } finally { $picture.Dispose() }
+        } finally { $stream.Dispose() }
+        $items += @{ Source=$source; Target=$pair.Target; Hash=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash }
+        Write-Host ('Ready: ' + $pair.Label + ' ' + [IO.Path]::GetFileName($source) + ' (' + $width + 'x' + $height + ') -> ' + $pair.Target)
+    }
+    if (-not $items.Count) { Write-Log 'No South JPEGs found.'; return }
+    Write-Host 'The images will be copied byte-for-byte, not compressed. No code, PNGs, or saves are uploaded.'
+    Write-Host 'Publishing makes a GitHub branch and PR, not an automatic merge into main.'
+    if ((Read-Host 'Type UPLOAD to publish these exact files') -cne 'UPLOAD') { Write-Host 'Canceled.'; return }
+    [void](Git @('-c','protocol.allow=never','-c','protocol.https.allow=always','-c','http.followRedirects=false','fetch','--no-tags','--no-recurse-submodules',$script:Remote,'refs/heads/main:refs/remotes/origin/main'))
+    $remoteHead = Git @('rev-parse','--verify','refs/remotes/origin/main^{commit}')
+    $temporary = Join-Path $script:Temp 'texture-publish-worktree'
+    $created = $false
+    try {
+        [void](Git @('worktree','add','--detach',$temporary,$remoteHead))
+        $created = $true
+        $allowed = @()
+        foreach ($item in $items) {
+            if ((Get-FileHash -LiteralPath $item.Source -Algorithm SHA256).Hash -cne $item.Hash) {
+                throw ('Texture was modified during upload: ' + $item.Source)
+            }
+            $relative = 'assets/textures/biomes/' + $item.Target
+            [IO.File]::Copy($item.Source,(Join-Path $temporary ('assets\textures\biomes\' + $item.Target)),$true)
+            [void](Git @('-C',$temporary,'add','--',$relative))
+            $allowed += $relative
+        }
+        $changes = Git @('-C',$temporary,'diff','--cached','--name-only')
+        $changed = @($changes -split '\r?\n' | Where-Object { $_ })
+        foreach ($file in $changed) { if ($file -cnotin $allowed) { throw ('Unexpected staged file: ' + $file) } }
+        if (-not $changed.Count) { Write-Log 'Both South JPEGs already match GitHub main. No upload needed.'; return }
+        Write-Host ('Changed: ' + ($changed -join ', '))
+        if (-not (Git @('config','user.email'))) { throw 'Configure git user.email before publishing.' }
+        [void](Git @('-C',$temporary,'commit','-m','assets: restore local South JPEG textures'))
+        $branch = 'assets/south-jpg-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8)
+        [void](Git @('-c','protocol.allow=never','-c','protocol.https.allow=always','-c','http.followRedirects=false','-C',$temporary,'push','--porcelain',$script:Remote,('HEAD:refs/heads/' + $branch)))
+        Write-Log ('Published branch ' + $branch + ': ' + ($changed -join ', '))
+        $compare = 'https://github.com/sunpole/uGame/compare/main...' + $branch + '?expand=1'
+        $gh = Get-Command gh.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($gh) {
+            $previous = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            try {
+                $output = & $gh.Source pr create --repo sunpole/uGame --base main --head $branch --title 'assets: upload South high-resolution JPEGs' --body ('Uploaded locally using uGame updater option 12. Paths: ' + ($changed -join ', ') + '. No gameplay or save changes.') 2>&1
+                $status = $LASTEXITCODE
+            } finally { $ErrorActionPreference = $previous }
+            if ($status -eq 0) { Write-Host ('Created PR: ' + ($output | Out-String).Trim()) }
+            else { Write-Host ('Create PR manually: ' + $compare) }
+        } else { Write-Host ('GitHub CLI unavailable. Create PR manually: ' + $compare) }
+        Write-Host 'After merging the PR, use option 1 to download approved texture changes.'
+        Write-Host 'Your local checkout and source files were not modified.'
+    } finally {
+        if ($created) { [void](Git @('worktree','remove','--force',$temporary)) }
+    }
+}
+
 function Run-Project {
     param([switch]$SkipRunConfirmation)
     Assert-Repository
@@ -269,6 +364,7 @@ function Invoke-Action([string]$Action) {
         'resume' { Resume-Project }
         'simulate' { Run-Simulation }
         'textures' { Import-BiomeTextures }
+        'publishtextures' { Publish-SouthTextures }
     }
 }
 function Main {
@@ -293,7 +389,7 @@ function Main {
         if ($Command -ne 'menu') { Invoke-Action $Command; return }
         while (-not $script:StopMenu) {
             Write-Host "=== uGame ==="
-            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n10. Import biome textures\n11. Quick Run project (no RUN prompt)\n0. Exit".Replace('\n',[Environment]::NewLine)
+            Write-Host "1. Update from GitHub\n2. Status\n3. ChatGPT report\n4. Run project\n5. Open GitHub\n6. Open project folder\n7. Rollback files\n8. Return to main\n9. Simulation Lab\n10. Import biome textures\n11. Quick Run project (no RUN prompt)\n12. Publish South JPEGs to GitHub (PR)\n0. Exit".Replace('\n',[Environment]::NewLine)
             $choice = Read-Host 'Number'
             try {
                 switch ($choice) {
@@ -309,7 +405,8 @@ function Main {
                     '9' { Invoke-Action simulate }
                     '10' { Invoke-Action textures }
                     '11' { Invoke-Action quickrun }
-                    default { Write-Host 'Choose a number from 0 to 11.' }
+                    '12' { Invoke-Action publishtextures }
+                    default { Write-Host 'Choose a number from 0 to 12.' }
                 }
             } catch { Write-Log ('STOP: ' + $_.Exception.Message) }
         }
