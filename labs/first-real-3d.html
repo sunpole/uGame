@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>uGame · Настоящий 3D-персонаж · Quaternius</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0c161e;color:#e8f2fc;font-family:system-ui,Arial,sans-serif}
+header{padding:12px 17px;background:#172a38;border-bottom:1px solid #44627a;display:flex;justify-content:space-between;gap:12px;align-items:center}
+header strong{font-size:16px}header small{display:block;font-size:11px;color:#aac8db;margin-top:3px}
+a{color:#a7dcff}main{display:grid;grid-template-columns:minmax(0,1fr) 270px;height:calc(100svh - 60px);min-height:480px}
+#stage{position:relative;background:radial-gradient(circle at 50% 30%,#3d5c6c,#182a37 72%,#0e1720);overflow:hidden;min-height:360px}
+#stage canvas{width:100%;height:100%;display:block}
+#loading{position:absolute;top:15px;left:15px;right:15px;background:#12334cee;padding:10px;text-align:center;border-radius:8px}
+#loading[hidden]{display:none}#tip{position:absolute;bottom:8px;left:8px;right:8px;text-align:center;font-size:12px;color:#d7ebf9;background:#142638c9;padding:7px;border-radius:8px;pointer-events:none}
+aside{padding:15px;background:#142533;border-left:1px solid #3b5d75;overflow:auto}section{margin-bottom:20px}h2{font-size:13px;margin:0 0 8px}
+.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}button{background:#284258;border:1px solid #587790;color:#eef8ff;border-radius:7px;min-height:43px;padding:7px;cursor:pointer}
+button[aria-pressed=true]{border:2px solid #a6dcff;background:#366383;font-weight:bold}button:hover{background:#42617c}
+#status{font-size:12px;line-height:1.5;background:#11202c;border:1px solid #385368;border-radius:7px;padding:9px}
+p{font-size:12px;line-height:1.5;color:#b5cedf}.touch{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:210px;max-width:100%;margin:auto}
+.touch button{touch-action:none}
+@media(max-width:760px){header{padding:10px 12px}main{height:auto;display:block}#stage{height:51svh;min-height:320px}aside{border:0;border-top:1px solid #3b5d75}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+</head><body>
+<header><div><strong>uGame · Первый настоящий 3D-человечек</strong><small>Quaternius · нейтральная модель · отдельный полигон</small></div><a href="../">← uGame</a></header>
+<main><div id="stage"><div id="loading" role="status">Загрузка 3D-модели…</div><div id="tip">Камера действительно смотрит сверху под углом. WASD / стрелки — движение; кнопки работают на телефоне.</div></div>
+<aside>
+<div class="pair"><section><h2>Наклон камеры</h2><div class="buttons">
+<button data-angle="45">45°</button><button data-angle="60" aria-pressed="true">60°</button><button data-angle="75">75°</button>
+</div></section><section><h2>Размер на карте</h2><div class="buttons">
+<button data-scale="0.75">75%</button><button data-scale="1" aria-pressed="true">100%</button><button data-scale="1.3">130%</button>
+</div></section></div>
+<section><h2>Вращение и пробная ходьба</h2><div class="buttons">
+<button id="turn-left">↶ 45°</button><button id="walk-toggle" aria-pressed="true">Ходьба</button><button id="turn-right">45° ↷</button>
+</div></section>
+<section><h2>Управление</h2><div class="touch">
+<span></span><button data-move="up">↑</button><span></span>
+<button data-move="left">←</button><button id="reset">⌂</button><button data-move="right">→</button>
+<span></span><button data-move="down">↓</button><span></span>
+</div></section>
+<section><h2>Состояние</h2><div id="status" role="status">Запуск WebGL…</div></section>
+<p><a href="https://quaternius.com/packs/universalbasecharacters.html" target="_blank" rel="noopener">Quaternius Universal Base Characters</a> · CC0. Готовая скелетная 3D-модель; пробная ходьба создаётся на полигоне. Загрузка из интернета, игровой код и сохранения uGame не меняются.</p>
+</aside></main>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const SOURCE='https://cdn.jsdelivr.net/gh/programasweights/avatar@ddd5fc34a445bcded3cf9836607aaeebc19a5c78/public/assets/character.glb';
+const FALLBACK='https://raw.githubusercontent.com/programasweights/avatar/ddd5fc34a445bcded3cf9836607aaeebc19a5c78/public/assets/character.glb';
+const stage=document.querySelector('#stage'),status=document.querySelector('#status'),loading=document.querySelector('#loading');
+const q=window.__ugame3d={phase:'boot',modelLoaded:false,webglReady:false,angle:60,scale:1,walk:true,rigBones:0,frames:0,source:SOURCE,error:null};
+const say=t=>{status.textContent=t+' · '+q.angle+'° · '+Math.round(q.scale*100)+'%';};
+const fail=e=>{q.phase='error';q.error=String(e?.message||e);loading.textContent='Ошибка 3D: '+q.error;say('Не удалось загрузить модель');};
+try{
+  const scene=new THREE.Scene();
+  const camera=new THREE.OrthographicCamera(-3,3,3,-3,0.1,100);
+  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'default'});
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;
+  stage.prepend(renderer.domElement);q.webglReady=true;
+  scene.add(new THREE.HemisphereLight(0xe6f3ff,0x62727e,2.5));
+  const light=new THREE.DirectionalLight(0xfff7e9,3);light.position.set(-4,8,6);scene.add(light);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(75,75),new THREE.MeshStandardMaterial({color:0x485963,roughness:1}));
+  floor.rotation.x=-Math.PI/2;floor.position.y=-.01;scene.add(floor);
+  const grid=new THREE.GridHelper(70,70,0x7a98ab,0x5b7180);scene.add(grid);
+  const player=new THREE.Group();scene.add(player);
+  const visual=new THREE.Group();player.add(visual);
+  let angle=60,yaw=0,phase=0,walk=true,bones=[];
+  const keySet=new Set(),keys={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',a:'left',s:'down',d:'right'};
+  const setAngle=n=>{angle=q.angle=n;document.querySelectorAll('[data-angle]').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.angle===n)));say('Настоящий 3D');};
+  const setScale=n=>{q.scale=n;visual.scale.setScalar(n);document.querySelectorAll('[data-scale]').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.scale===n)));say('Масштаб изменён');};
+  document.querySelectorAll('[data-angle]').forEach(b=>b.addEventListener('click',()=>setAngle(+b.dataset.angle)));
+  document.querySelectorAll('[data-scale]').forEach(b=>b.addEventListener('click',()=>setScale(+b.dataset.scale)));
+  document.querySelector('#walk-toggle').addEventListener('click',e=>{walk=!walk;q.walk=walk;e.target.setAttribute('aria-pressed',String(walk));say(walk?'Пробная ходьба':'Стоит');});
+  document.querySelector('#turn-left').onclick=()=>{yaw-=Math.PI/4;visual.rotation.y=yaw;};
+  document.querySelector('#turn-right').onclick=()=>{yaw+=Math.PI/4;visual.rotation.y=yaw;};
+  document.querySelector('#reset').onclick=()=>{player.position.set(0,0,0);yaw=0;visual.rotation.y=0;setAngle(60);setScale(1);};
+  window.addEventListener('keydown',e=>{const k=keys[e.key]||keys[e.key?.toLowerCase()];if(k){e.preventDefault();keySet.add(k);}});
+  window.addEventListener('keyup',e=>{const k=keys[e.key]||keys[e.key?.toLowerCase()];if(k)keySet.delete(k);});
+  window.addEventListener('blur',()=>keySet.clear());
+  document.querySelectorAll('[data-move]').forEach(b=>{
+    b.addEventListener('pointerdown',e=>{e.preventDefault();keySet.add(b.dataset.move);b.setPointerCapture?.(e.pointerId);});
+    for(const ev of ['pointerup','pointercancel','lostpointercapture'])
+      b.addEventListener(ev,()=>keySet.delete(b.dataset.move));
+  });
+  function resize(){
+    const rect=stage.getBoundingClientRect();const aspect=rect.width/Math.max(rect.height,1),half=2.7;
+    camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;
+    camera.updateProjectionMatrix();renderer.setSize(Math.max(rect.width,1),Math.max(rect.height,1),false);
+  }
+  new ResizeObserver(resize).observe(stage);resize();
+  let last=performance.now();
+  function loop(now){
+    requestAnimationFrame(loop);
+    const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
+    const x=Number(keySet.has('right'))-Number(keySet.has('left'));
+    const z=Number(keySet.has('down'))-Number(keySet.has('up'));
+    const moving=Boolean(x||z);
+    if(moving){const len=Math.hypot(x,z);player.position.x=THREE.MathUtils.clamp(player.position.x+x/len*dt*1.8,-12,12);player.position.z=THREE.MathUtils.clamp(player.position.z+z/len*dt*1.8,-12,12);visual.rotation.y=Math.atan2(x,z);}
+    if(walk||moving)phase+=dt*8;
+    const s=(walk||moving)?Math.sin(phase)*.32:0;
+    for(const b of bones){b.node.quaternion.copy(b.rest);b.node.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),s*b.sign));}
+    const elevation=THREE.MathUtils.degToRad(angle),az=THREE.MathUtils.degToRad(32);
+    const target=new THREE.Vector3(player.position.x,.8,player.position.z),distance=8;
+    camera.position.set(target.x+Math.cos(elevation)*Math.sin(az)*distance,target.y+Math.sin(elevation)*distance,target.z+Math.cos(elevation)*Math.cos(az)*distance);
+    camera.lookAt(target);renderer.render(scene,camera);q.frames++;
+  }
+  requestAnimationFrame(loop);
+  q.phase='loading';
+  const loader=new GLTFLoader();
+  async function loadModel(){
+    let gltf;
+    try{gltf=await loader.loadAsync(SOURCE);}catch(error){say('Повторная загрузка…');gltf=await loader.loadAsync(FALLBACK);}
+    const model=gltf.scene;const bounds=new THREE.Box3().setFromObject(model);const size=new THREE.Vector3();bounds.getSize(size);
+    if(!size.y)throw Error('Пустая модель');
+    const factor=1.9/size.y,center=bounds.getCenter(new THREE.Vector3());
+    model.scale.setScalar(factor);model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
+    model.traverse(n=>{if(n.isSkinnedMesh)n.frustumCulled=false;});
+    visual.add(model);
+    const allBones=[];model.traverse(n=>{if(n.isBone)allBones.push(n);});
+    for(const [tokens,sign] of [
+      [['leftupperleg','leftthigh','leftupleg'],1],
+      [['rightupperleg','rightthigh','rightupleg'],-1],
+      [['leftupperarm','leftarm'],-.65],
+      [['rightupperarm','rightarm'],.65]
+    ]){
+      const node=allBones.find(n=>tokens.some(t=>n.name.toLowerCase().includes(t)));
+      if(node)bones.push({node,rest:node.quaternion.clone(),sign});
+    }
+    q.rigBones=bones.length;q.modelLoaded=true;q.phase='ready';loading.hidden=true;
+    say('Готово · настоящая модель, пробная ходьба · риг '+bones.length+'/4');
+  }
+  loadModel().catch(fail);
+}catch(e){fail(e);}
+</script></body></html>
