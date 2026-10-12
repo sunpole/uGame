@@ -3170,3 +3170,74 @@ html.ugame-text-selection-enabled .chrome-logo-block {
  .hero-card-copy{min-height:100px}
  .hero-heading h1{font-size:19px}
 }
+
+/* v0.2.72 · accepted compact bottom HUD: two composite resource orbs, real action time. */
+#app{grid-template-rows:minmax(112px,auto) minmax(0,1fr) 27px 38px}
+.game-chrome-header{grid-template-columns:150px minmax(250px,1.1fr) minmax(160px,.5fr) minmax(320px,1.45fr)}
+.character-progress-block{justify-content:center}
+.character-progress-block .character-maturity{align-items:center}
+.combat-hud{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);
+  z-index:35;display:grid;grid-template-columns:minmax(68px,90px) minmax(0,392px) minmax(68px,90px);
+  align-items:end;gap:7px;width:max-content;max-width:calc(100% - 8px);
+  color:#d5dfe9;pointer-events:none}
+.combat-hud-center{display:grid;min-width:0;justify-items:center;gap:4px}
+.combat-hud .character-orb-pair{display:contents}
+.combat-hud-orb{display:flex;align-items:center;justify-content:center;min-width:0;padding-bottom:22px}
+.combat-hud .character-orb{width:100%;padding:7px 2px 5px;border:1px solid #3a4656;
+  border-radius:12px;background:#0a1019d9;box-sizing:border-box}
+.combat-hud .character-orb .orb-shell{width:clamp(51px,5vw,74px);
+  height:clamp(51px,5vw,74px);margin:auto}
+.combat-hud .character-orb .orb-number,.combat-hud .character-orb .orb-overlay-number{
+  font-size:9px;max-width:100%;overflow:hidden;text-overflow:clip}
+.combat-hud .skill-hotbar{position:static;left:auto;bottom:auto;transform:none;
+  max-width:100%;width:100%;pointer-events:none}
+.combat-hud .skill-hotbar-slots{gap:3px;padding:4px}
+.combat-hud .skill-slot{width:47px;height:49px}
+.combat-stamina{display:grid;width:100%;gap:2px;justify-items:center;
+  padding:2px 7px 4px;box-sizing:border-box;border-radius:5px;background:#080e18bc}
+.combat-stamina #header-stamina{font-size:10px;color:#8edda4;font-variant-numeric:tabular-nums}
+.combat-stamina .chrome-progress-track{height:6px;width:100%;border-radius:4px;overflow:hidden}
+.action-meter{display:grid;gap:2px;width:100%;padding:2px 7px;box-sizing:border-box;
+  border:1px solid #374557;border-radius:5px;background:#080e18d9}
+.action-meter-label{display:flex;justify-content:space-between;gap:8px;
+  font-size:10px;color:#e5c790;font-variant-numeric:tabular-nums}
+.action-meter-track{width:100%;height:6px;overflow:hidden;border-radius:4px;
+  background:#1e2733;border:1px solid #394453;box-sizing:border-box}
+.action-meter-track i{display:block;width:0;height:100%;
+  background:linear-gradient(90deg,#e6af56,#ffe4a2);box-shadow:0 0 5px #f4c86d}
+.action-meter[data-state="idle"] .action-meter-track i{opacity:.15}
+.action-meter[data-state="completed"] .action-meter-track i{background:#87e4ac}
+.xp-bottom-band{min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  gap:9px;align-items:center;padding:2px 12px 3px;box-sizing:border-box;
+  border-top:1px solid #384a61;border-bottom:1px solid #263142;background:#0b1520;
+  color:#c6d9ef;font:10px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums}
+.xp-bottom-band strong{white-space:nowrap;color:#f0d197}
+.xp-bottom-body{min-width:0;display:grid;gap:1px;text-align:center}
+.xp-bottom-track{height:5px;background:#263746;border-radius:4px;overflow:hidden}
+.xp-bottom-track i{display:block;width:0;height:100%;
+  background:linear-gradient(90deg,#4d87c0,#b6d8ff);transition:width .2s linear}
+#character-xp{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px}
+#xp-bottom-percent{white-space:nowrap;color:#b9d5f0}
+.xp-bottom-band[data-threshold-known="false"] .xp-bottom-track i{width:0!important}
+@media(max-width:1150px){
+ .game-chrome-header{grid-template-columns:minmax(105px,145px) minmax(0,1fr)}
+ .combat-hud{grid-template-columns:60px minmax(0,340px) 60px;gap:3px}
+ .combat-hud .skill-slot{width:43px;height:45px}
+ .combat-hud .character-orb .orb-shell{width:49px;height:49px}
+}
+@media(max-width:750px){
+ .combat-hud{bottom:146px;grid-template-columns:43px minmax(0,1fr) 43px;
+   width:calc(100% - 6px);gap:2px}
+ .combat-hud .skill-hotbar{bottom:auto}
+ .combat-hud .skill-hotbar-slots{gap:1px;padding:2px}
+ .combat-hud .skill-slot{width:clamp(24px,7.3vw,40px);height:40px}
+ .combat-hud .character-orb{padding:4px 0;border-radius:8px}
+ .combat-hud .character-orb .orb-shell{width:35px;height:35px}
+ .combat-hud .character-orb .orb-mark{font-size:10px}
+ .combat-hud .character-orb .orb-number,.combat-hud .character-orb .orb-overlay-number{font-size:7px}
+ .combat-stamina #header-stamina{font-size:9px}
+ .action-meter-label{font-size:9px}
+ .xp-bottom-band{grid-template-columns:auto minmax(0,1fr) auto;gap:3px;padding-inline:4px}
+ #character-xp{font-size:8px}
+ #xp-bottom-percent{font-size:8px}
+}
