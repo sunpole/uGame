@@ -24,6 +24,16 @@ export function characterDraftProfile(rules, draft, overrides = {}) {
     ? overrides.level : 1;
   const profile=defaultProfile(rules, level, checked.cityId, checked.startIndex);
   if(Number.isSafeInteger(overrides.otv)) profile.otv=overrides.otv;
+  // Live character spends level points manually; Lab still uses defaultProfile's
+  // hypothetical even split when no allocation override is supplied.
+  if(overrides.allocation && typeof overrides.allocation==='object') {
+    const start=rules.cities[checked.cityId].start[checked.startIndex];
+    const spent=overrides.allocation;
+    for(const [key,i] of [['vyn',0],['lov',1],['intel',2]]) {
+      if(!Number.isSafeInteger(spent[key])||spent[key]<0)throw Error('Invalid spent points: '+key);
+      profile[key]=start[i]+spent[key];
+    }
+  }
   return profile;
 }
 export function characterDraftResult(rules, draft, overrides = {}) {

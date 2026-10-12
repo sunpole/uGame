@@ -4,6 +4,7 @@ import { normalizeCharacterProgress } from './character-runtime.js';
 // Unknown thresholds are never invented.
 export const APPROVED_LEVEL_THRESHOLDS=Object.freeze({64:1100000000});
 let activeThresholds=APPROVED_LEVEL_THRESHOLDS;
+export const getXpThresholds=()=>activeThresholds;
 
 export function validateXpCurve(config) {
   if(config?.schemaVersion!==1||config?.maxLevel!==65||
