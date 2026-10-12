@@ -222,18 +222,19 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');
     assert.ok(await page.locator('#game canvas').count() >= 1, 'Phaser canvas did not mount');
 
-    // Real in-game Character Draft: never auto-create a profile in an old save.
+    // Newly created hero receives the chosen capital's profile immediately.
     assert.equal(await page.locator('#character-stats-open').count(),1);
-    assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'false');
-    assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'false');
+    assert.equal(await page.locator('#character-orb-hp').getAttribute('data-ready'),'true');
+    assert.equal(await page.locator('#character-orb-rp').getAttribute('data-ready'),'true');
     assert.match(await page.locator('#character-level').innerText(),/ЗРЛ 1 \/ 65/);
     assert.match(await page.locator('#character-xp').innerText(),/ЗРП 0/);
     assert.match(await page.locator('#header-stamina').innerText(),/Stamina/);
     await activate('#character-stats-open');
     await page.locator('#character-draft-panel').waitFor({timeout:10000});
     assert.equal(await page.locator('[data-character-stat]').count(),24);
-    assert.match(await page.locator('#character-draft-status').innerText(),/не записан/);
-    assert.match(await page.locator('#character-draft-panel').innerText(),/НЕ ВЛИЯЕТ НА ИГРУ/);
+    assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
+    assert.match(await page.locator('#character-draft-panel').innerText(),/КОЭФФИЦИЕНТЫ НЕ УТВЕРЖДЕНЫ/);
+    assert.equal(await page.locator('#character-draft-city').inputValue(),'inspire');
     await page.selectOption('#character-draft-city','focus');
     await page.locator('#character-draft-start').waitFor();
     await page.selectOption('#character-draft-start','2');
