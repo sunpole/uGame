@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'labs/free-2d-eight-way.html'
+      - 'labs/real-walk-atlas.html'
+      - 'tests/real-walk-atlas-browser-smoke.mjs'
+      - 'docs/work-reports/2026-10-12-real-atlas-visual-guide.md'
       - 'tests/character-2d-lab-browser-smoke.mjs'
       - '.github/workflows/character-2d-lab-qa.yml'
       - 'docs/work-reports/2026-10-12-free-2d-eight-way-lab.md'
@@ -11,6 +14,8 @@ on:
     branches: [main]
     paths:
       - 'labs/free-2d-eight-way.html'
+      - 'labs/real-walk-atlas.html'
+      - 'tests/real-walk-atlas-browser-smoke.mjs'
       - 'tests/character-2d-lab-browser-smoke.mjs'
       - '.github/workflows/character-2d-lab-qa.yml'
 permissions:
@@ -32,11 +37,15 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install chromium --with-deps
       - name: Real Chromium desktop/mobile canvas, sourced frames and recolor
-        run: node tests/character-2d-lab-browser-smoke.mjs
+        run: |
+          node tests/character-2d-lab-browser-smoke.mjs
+          node tests/real-walk-atlas-browser-smoke.mjs
       - name: Preserve browser screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ugame-2d-cc0-browser-preview
-          path: artifacts/character-2d/
+          path: |
+            artifacts/character-2d/
+            artifacts/real-walk-atlas/
           if-no-files-found: ignore
