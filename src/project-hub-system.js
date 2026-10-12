@@ -1,5 +1,6 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
 import { normalizeCharacterDraft, characterDraftResult, METRICS, METRIC_KEYS } from './character-draft.js';
+import {CHARACTER_VISUALS,FRAME_WIDTH,FRAME_HEIGHT,WALK_FRAMES,makeGalleryPreview} from './character-sprite-gallery.js';
 import { metricInterpretation } from './character-balance/display-units.js';
 import { masterRarityReport } from './master-rarity-audit.js';
 import { WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera, worldMapClampCamera, worldMapZoomAt, worldMapPan } from './world-map-camera.js';
@@ -173,6 +174,7 @@ export class ProjectHubSystem {
     worldAnalyzer,
     worldMap,
     characterDraft,
+    characterSprites,
     spawnZoneDebug,
     devCodeRunner
   }) {
@@ -190,6 +192,7 @@ export class ProjectHubSystem {
     this.worldAnalyzer = worldAnalyzer;
     this.worldMap = worldMap;
     this.characterDraft = characterDraft;
+    this.characterSprites = characterSprites;
     this.characterDraftRules = null;
     this.spawnZoneDebug = spawnZoneDebug;
     this.devCodeRunner = devCodeRunner;
@@ -295,6 +298,10 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (view.type === 'sprite-gallery') {
+      this.renderSpriteGallery(view);
+      return;
+    }
     if (view.type === 'character-draft') {
       this.renderCharacterDraft(view);
       return;
@@ -415,6 +422,11 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (item.type === 'sprite-gallery') {
+      this.stack.push({type:'sprite-gallery',label:item.label});
+      this.renderCurrent();
+      return;
+    }
     if (item.type === 'character-draft') {
       this.stack.push({type:'character-draft',label:item.label});
       this.renderCurrent();
@@ -433,6 +445,53 @@ export class ProjectHubSystem {
     }
   }
 
+
+  renderSpriteGallery(view){
+    this.setSubViewHeader('Примерочная персонажей','uGame / Игра / Внешность');
+    const current=this.characterSprites?.get?.()||'original';
+    const escape=escapeHtml;
+    const cards=CHARACTER_VISUALS.map(v=>{
+      const selected=v.id===current;
+      const preview=v.type==='pixel'
+        ?'<span class="sprite-gallery-motion" style="background-image:url('+
+          makeGalleryPreview(v.id)+');"></span>'
+        :'<span class="sprite-gallery-original" aria-label="Оригинальный процедурный человек">'+
+          '<i class="sprite-gallery-original-head"></i>'+
+          '<i class="sprite-gallery-original-body"></i>'+
+          '<i class="sprite-gallery-original-feet"></i></span>';
+      return '<button type="button" class="sprite-gallery-card" data-sprite-select="'+
+        escape(v.id)+'" aria-pressed="'+selected+'">'+
+        '<span class="sprite-gallery-actor">'+preview+'</span>'+
+        '<strong>'+escape(v.label)+'</strong><small>'+escape(v.note)+'</small>'+
+        '<em>'+(selected?'На карте сейчас':'Посмотреть на карте')+'</em></button>';
+    });
+    this.contentElement.innerHTML=[
+      '<section class="sprite-gallery-panel" id="sprite-gallery-panel">',
+      '<h2>Примерочная персонажей <span class="character-draft-chip">DEV · ВРЕМЕННО</span></h2>',
+      '<p>Шесть вариантов: наш оригинальный человечек и пять собственных пиксельных пробных моделей.',
+      ' На карточках воспроизводится движение ног; в игре проверьте реальную ходьбу во всех направлениях.</p>',
+      '<p>Нажмите модель → «Вернуться в игру» → пройдитесь WASD/стрелками или экранными кнопками.',
+      ' Вернитесь сюда, чтобы сменить. Выбор <strong>не меняет сохранение</strong>,',
+      ' после F5 снова оригинальный человек.</p>',
+      '<p id="sprite-gallery-status" role="status">На карте: <strong>'+
+        escape(CHARACTER_VISUALS.find(v=>v.id===current)?.label||'Оригинальный uGame')+'</strong></p>',
+      '<div class="sprite-gallery-grid">',
+      ...cards,
+      '</div>',
+      '<p class="character-draft-note">Это оригинальные графические эскизы uGame, ',
+      '<strong>не загруженные сторонние паки</strong>. Без оружия, статов и изменения игровой скорости.</p>',
+      '</section>'
+    ].join('');
+    for(const button of this.contentElement.querySelectorAll('[data-sprite-select]')){
+      button.addEventListener('click',()=>{
+        const id=button.dataset.spriteSelect;
+        const ok=this.characterSprites?.select?.(id);
+        if(ok)this.renderSpriteGallery(view);
+        else this.contentElement.querySelector('#sprite-gallery-status').textContent=
+          'Модель не готова. Оригинальный персонаж по-прежнему доступен.';
+      });
+    }
+  }
 
   async renderCharacterDraft(view) {
     this.setSubViewHeader('Характеристики персонажа','uGame / Игра / Характеристики');
