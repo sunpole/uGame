@@ -23,6 +23,8 @@ import { GameState } from './game-state.js';
 import { CharacterVitalsHUD } from './character-runtime.js';
 import { DevCharacterTools, devCityTeleport } from './dev-character-tools.js';
 import { CharacterSkillSystem, pulseRadius, applyPulseHits } from './character-skills.js';
+import { ActionMeter } from './action-meter.js';
+import { renderXpMeter } from './xp-meter.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
@@ -1224,9 +1226,11 @@ export async function bootGame({ availableTextureFiles } = {}) {
     .catch(() => {});
   characterVitalsHUD = new CharacterVitalsHUD({
     getState: () => activeZoneScene?.gameState,
-    persist: () => activeZoneScene?.persistGameState()
+    persist: () => activeZoneScene?.persistGameState(),
+    onProgress: progress => renderXpMeter(document,progress)
   });
   characterVitalsHUD.load().catch(error => console.warn('Character HUD unavailable',error));
+  const combatActionMeter = new ActionMeter();
   characterSkillSystem = new CharacterSkillSystem({
     getGameState: () => activeZoneScene?.gameState,
     getRules: () => characterVitalsHUD?.rules,
@@ -1235,7 +1239,8 @@ export async function bootGame({ availableTextureFiles } = {}) {
     canCast: () => Boolean(playerController?.enabled && activeZoneScene?.worldReady),
     getTargets: () => activeZoneScene?.combatTargets || [],
     animate: config => activeZoneScene?.animateRadialImpulse(config),
-    refillStamina: () => playerController?.refillStamina()
+    refillStamina: () => playerController?.refillStamina(),
+    onCast: skill => combatActionMeter.start(skill)
   });
   characterSkillSystem.bind();
   // An open background tab may throttle Phaser; this wall-clock interval keeps
