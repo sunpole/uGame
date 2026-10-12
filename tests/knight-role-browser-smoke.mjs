@@ -36,10 +36,10 @@ async function check(name,viewport,mobile){
   await page.waitForFunction(()=>document.querySelector('#knight-role-preview')?.getAttribute('src')?.startsWith('data:image/png'),null,{timeout:60000});
   assert.equal(await page.locator('#knight-role-preview').evaluate(img=>img.naturalWidth),128);
   const scale=page.locator('#knight-role-scale');
-  await scale.fill('1.25');await scale.dispatchEvent('input');
+  await scale.evaluate(el=>{el.value='1.25';el.dispatchEvent(new Event('input',{bubbles:true}));});
   assert.equal(await page.locator('#knight-scale-value').innerText(),'1.25');
   const shadow=page.locator('#knight-role-shadow');
-  await shadow.fill('0.55');await shadow.dispatchEvent('input');
+  await shadow.evaluate(el=>{el.value='0.55';el.dispatchEvent(new Event('input',{bubbles:true}));});
   assert.equal(await page.locator('#knight-shadow-value').innerText(),'55%');
   await click('#knight-role-hero');
   await page.waitForFunction(()=>document.documentElement.dataset.characterVisual==='knight-role',null,{timeout:90000});
