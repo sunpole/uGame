@@ -676,9 +676,18 @@ async function checkViewport(profile) {
     const legacySave=await page.evaluate(()=>{
       const save=JSON.parse(localStorage.getItem('ugame.save.v1'));
       save.player.characterDraft=null;save.player.characterPools=null;
-      localStorage.setItem('ugame.save.v1',JSON.stringify(save));
       return save;
     });
+    // Install the legacy fixture BEFORE scripts run in the new page. Mutating
+    // localStorage while Phaser is active is a race with its auto-save.
+    const fixtureText=JSON.stringify(JSON.stringify(legacySave));
+    await context.addInitScript(`(()=>{
+      const marker='ugame.qa.v0271-legacy-seeded';
+      if(!localStorage.getItem(marker)){
+        localStorage.setItem('ugame.save.v1',${fixtureText});
+        localStorage.setItem(marker,'1');
+      }
+    })()`);
     await page.reload({waitUntil:'domcontentloaded',timeout:30000});
     await page.waitForFunction(()=>!document.querySelector('#hero-entrance')?.hidden,
       null,{timeout:75000});
