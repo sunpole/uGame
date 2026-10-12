@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.74",
-  "stage": "levelup-manual-attributes",
+  "version": "0.2.75",
+  "stage": "character-walk-gallery-qa",
   "updated": "2026-10-12",
-  "summary": "XP level-up overflow, manual character attribute allocations and real derived HP/PP/RP/JP update."
+  "summary": "Six on-screen hero visuals: original preserved + five original pixel studies with 4-direction walks; session-only gallery."
 }

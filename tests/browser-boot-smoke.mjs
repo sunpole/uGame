@@ -287,6 +287,45 @@ async function checkViewport(profile) {
       'Full-width XP band must be BETWEEN workspace controls and footer');
     await page.waitForFunction(() => document.querySelector('#xp-bottom-band')?.getAttribute('data-threshold-known')==='true');
     assert.match(await page.locator('#character-xp').innerText(),/1.{0,2}000/);
+
+    await activate('#project-hub-close');
+
+    // Real Phaser 4-way walking review. This is NOT a mocked CSS-only gallery.
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original');
+    await activate('#project-hub-open');
+    await activate('[data-hub-section="game"]');
+    await activate('[data-hub-item="sprite-gallery"]');
+    await page.locator('#sprite-gallery-panel').waitFor({timeout:10000});
+    assert.equal(await page.locator('[data-sprite-select]').count(),6);
+    assert.equal(await page.locator('[data-sprite-select="original"]').getAttribute('aria-pressed'),'true');
+    await activate('[data-sprite-select="blue-striped"]');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'blue-striped');
+    assert.equal(await page.locator('[data-sprite-select="blue-striped"]').getAttribute('aria-pressed'),'true');
+    await activate('#project-hub-close');
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(()=>document.documentElement.dataset.characterVisualFrame?.startsWith('right-'));
+    const movingFrame=await page.locator('html').getAttribute('data-character-visual-frame');
+    assert.match(movingFrame,/^right-[0-3]$/);
+    await page.keyboard.up('ArrowRight');
+    await page.waitForFunction(()=>document.documentElement.dataset.characterVisualFrame==='right-0');
+    await activate('#project-hub-open');
+    await activate('[data-hub-section="game"]');
+    await activate('[data-hub-item="sprite-gallery"]');
+    for(const candidate of ['stone-guard','forest-traveler','quiet-scholar','road-wanderer']){
+      await activate('[data-sprite-select="'+candidate+'"]');
+      assert.equal(await page.locator('html').getAttribute('data-character-visual'),candidate);
+    }
+    assert.equal(await page.locator('#sprite-gallery-status').innerText().then(t=>t.includes('Дорожный странник')),true);
+    await activate('#project-hub-close');
+    assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')))
+      ?.player?.characterVisual,undefined,'Visual review must not enter GameState');
+    await activate('#project-hub-open');
+    await activate('[data-hub-section="game"]');
+    await activate('[data-hub-item="sprite-gallery"]');
+    await activate('[data-sprite-select="original"]');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual-frame'),null);
+    await activate('[data-sprite-select="blue-striped"]');
     await activate('#project-hub-close');
 
     // Real seven-slot hotbar and keyboard impulse, not only Node simulation.
@@ -681,6 +720,8 @@ async function checkViewport(profile) {
       'Browser F5 caused Pre-flight failure');
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original',
+      'F5 must restore original procedural character; gallery is session-only');
     assert.match(await page.locator('#character-class').innerText(), /Разведчик/);
     assert.match(await page.locator('#character-name').innerText(),/Антоний QA/);
     const preservedHero=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1'))?.player?.heroIdentity);

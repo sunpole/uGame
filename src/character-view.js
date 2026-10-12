@@ -85,6 +85,7 @@ export class CharacterView {
     this.container.setVisible(isOriginal);
     if(this.pixelView){this.pixelView.destroy();this.pixelView=null;}
     this.pixelStep=0;this.pixelElapsed=0;this.pixelDirection='down';
+    delete document.documentElement.dataset.characterVisualFrame;
     if(!isOriginal){
       this.pixelView=this.scene.add.image(this.player.x,this.player.y,
         sheetTextureKey(id),'down-0').setDepth(10).setScale(1.05);
@@ -102,6 +103,8 @@ export class CharacterView {
       this.pixelStep=state.moving?Math.floor(this.pixelElapsed/145)%4:0;
       this.pixelView.setPosition(this.player.x,this.player.y-5);
       this.pixelView.setFrame(this.pixelDirection+'-'+this.pixelStep);
+      document.documentElement.dataset.characterVisualFrame=
+        this.pixelDirection+'-'+this.pixelStep;
       return;
     }
     this.container.setPosition(this.player.x, this.player.y);
