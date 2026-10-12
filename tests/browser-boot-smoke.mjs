@@ -598,10 +598,12 @@ async function checkViewport(profile) {
     await dev('2299','2299');
     const devPanel=page.locator('#dev-character-panel');
     assert.equal(await devPanel.isVisible(),true);
-    await page.locator('[data-dev-input="zrp"]').fill('1000');
+    await page.locator('[data-dev-input="zrp"]').fill('2000');
     await activate('[data-dev-action="zrp"]');
     await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
       ?.player?.characterProgress?.zrp===1000);
+    assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')))).player.characterProgress.zrl,2,
+      'DEV XP must automatically cross 1→2, carrying 1000 leftover');
     await activate('[data-dev-code="2101"]');
     await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
       ?.player?.characterProgress?.zrp===1050);
@@ -624,6 +626,18 @@ async function checkViewport(profile) {
     assert.match(await page.locator('#character-xp').innerText(),/525/);
     assert.match(await page.locator('#character-xp').innerText(),/463.{0,2}986/,
       'Approved level 31 threshold must display');
+    // Spend one saved level-up point and verify live derived HP + persistence.
+    const hpBeforeAllocation=Number(await page.locator('#character-orb-hp').getAttribute('data-max'));
+    await activate('#character-stats-open');
+    await page.locator('#character-level-allocation').waitFor({timeout:10000});
+    assert.ok(Number(await page.locator('#character-free-points').innerText())>0);
+    await activate('[data-allocate-stat="vyn"]');
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')
+      ?.player?.characterAllocation?.spent?.vyn===1);
+    assert.equal(Number(await page.locator('#character-orb-hp').getAttribute('data-max'))>hpBeforeAllocation,
+      true,'One VYN point must increase live maximum HP');
+    assert.equal(await page.locator('#character-passive-points').innerText(),'30');
+    await activate('#project-hub-close');
     await dev('2399','2399');
     assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
     const priorSteps=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.stepEconomy);
@@ -681,6 +695,7 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
     assert.match(await page.locator('#character-xp').innerText(),/ЗРП 525/);
     assert.match(await page.locator('#character-draft-status').innerText(),/Сохранён/);
+    assert.equal(await page.locator('#character-spent-points').innerText(),'1');
     await activate('#project-hub-close');
     const afterReload = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('ugame.save.v1') || 'null'));

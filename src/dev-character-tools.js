@@ -1,4 +1,5 @@
 import { normalizeCharacterProgress } from './character-runtime.js';
+import { getXpThresholds } from './xp-meter.js';
 
 export const DEV_XP_PERCENT_CODES=Object.freeze({
   '2101':5,'2102':10,'2103':50,'2111':-5,'2112':-10,'2113':-50
@@ -57,8 +58,9 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=n=>Number(n).toLocaleString('ru-RU');
 
 export class DevCharacterTools {
-  constructor({getState,save,renderVitals,getWorld,travel,onOverlayChange,root=document}={}){
-    Object.assign(this,{getState,save,renderVitals,getWorld,travel,onOverlayChange,root});
+  constructor({getState,save,renderVitals,getWorld,travel,onOverlayChange,
+    getThresholds=getXpThresholds,root=document}={}){
+    Object.assign(this,{getState,save,renderVitals,getWorld,travel,onOverlayChange,getThresholds,root});
     this.panel=root.querySelector?.('#dev-character-panel')||null;
     this.currentMode='character';
     this.installPanel();
@@ -106,7 +108,7 @@ export class DevCharacterTools {
       const gs=this.getState?.();
       if(!gs)return {ok:false,message:'Нет персонажа / Character unavailable'};
       const previous=gs.state.player.characterProgress;
-      if(kind==='zrp') gs.setCharacterProgress({...previous,zrp:devSetZrp(value)});
+      if(kind==='zrp') gs.setCharacterExperience(devSetZrp(value),this.getThresholds());
       else if(kind==='zrl') gs.setCharacterProgress({...previous,zrl:devSetLevel(value)});
       else if(kind==='otv') gs.setCharacterResponsibility(devSetResponsibility(value));
       else return {ok:false,message:'Неизвестное поле / Unknown field'};
@@ -127,7 +129,8 @@ export class DevCharacterTools {
     const next=percent!==undefined
       ? {...old,zrp:devPercentZrp(old.zrp,percent)}
       : {...old,zrl:devLevel(old.zrl,change)};
-    gs.setCharacterProgress(next);
+    if(percent!==undefined) gs.setCharacterExperience(next.zrp,this.getThresholds());
+    else gs.setCharacterProgress(next);
     this.save?.();this.renderVitals?.();
     const field=percent!==undefined?'ЗРП / ZRP':'ЗРЛ / Level';
     const message=code+' · '+field+' '+(percent!==undefined
@@ -159,8 +162,8 @@ export class DevCharacterTools {
     content.innerHTML='<p><strong>ЗРЛ '+fmt(zrl)+'/65 · ЗРП '+fmt(zrp)+
       ' · ОТВ '+(otv===null||otv===undefined?'не задано / unset':fmt(otv))+'</strong></p>'+
       '<p>Проценты меняют <strong>накопленный ЗРП</strong>, НЕ процент до нового уровня. '+
-      'Таблица порогов XP утверждена, но DEV-коды не вызывают автоповышение. При нулевом опыте сначала задайте число.<br>'+
-      '<small>Percent adjusts currently held XP, NOT percent to next level. No auto level-up.</small></p>'+
+      'Задание ЗРП через DEV теперь проводит переходы ЗРЛ по утверждённой таблице. При нулевом опыте сначала задайте число.<br>'+
+      '<small>Percent adjusts currently held XP, NOT percent-to-next-level; crossed thresholds grant levels.</small></p>'+
       '<div class="dev-tool-pct">'+percentButtons+'</div>'+
       '<div class="dev-tool-fields">'+
       '<label>ЗРП / XP <input data-dev-input="zrp" type="number" min="0" step="1" value="'+esc(zrp)+'"></label>'+

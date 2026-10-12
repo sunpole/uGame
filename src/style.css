@@ -3241,3 +3241,14 @@ html.ugame-text-selection-enabled .chrome-logo-block {
  #character-xp{font-size:8px}
  #xp-bottom-percent{font-size:8px}
 }
+
+/* v0.2.74: compact tap-safe live character point allocator; no change to HUD layout. */
+.character-level-allocation{margin:12px 0;padding:12px;border:1px solid #34465b;
+  border-radius:9px;background:rgba(16,25,36,.8)}
+.character-level-allocation h3{margin:0 0 5px;font-size:14px}
+.character-attribute-actions{display:flex;flex-wrap:wrap;gap:8px}
+.character-attribute-actions button{min-height:40px;min-width:88px;
+  border:1px solid #527492;border-radius:7px;padding:8px 14px;
+  background:#203548;color:#e6f1fa;font-weight:700;cursor:pointer}
+.character-attribute-actions button:disabled{opacity:.4;cursor:default}
+.character-attribute-actions button:not(:disabled):hover{background:#2c4b64}

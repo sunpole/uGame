@@ -1,4 +1,5 @@
 import { characterDraftResult, normalizeCharacterDraft } from './character-draft.js';
+import { allocationSummary } from './character-progression.js';
 
 export const CHARACTER_PROGRESS_SCHEMA_VERSION = 1;
 export const CHARACTER_POOL_KEYS = Object.freeze(['hp','pp','rp','jp']);
@@ -24,11 +25,13 @@ export function normalizeCharacterPools(raw) {
 export function currentCharacterVitals(rules, player) {
   const draft=normalizeCharacterDraft(player?.characterDraft);
   const progress=normalizeCharacterProgress(player?.characterProgress);
-  if (!draft || !rules) return {progress,draft:null,values:null,pools:null,mainResource:null,
+  const allocation=allocationSummary(progress.zrl,player?.characterAllocation);
+  if (!draft || !rules) return {progress,allocation,draft:null,values:null,pools:null,mainResource:null,
     responsibility:player?.characterResponsibility ?? null};
   const computed=characterDraftResult(rules,draft,{
     level:progress.zrl,
-    otv:player?.characterResponsibility
+    otv:player?.characterResponsibility,
+    allocation:allocation.spent
   }); // original shared Lab engine, including DEV-only candidate ZRL and OTV
   const values=computed.values;
   const profileKey=draft.cityId+':'+draft.startIndex;
@@ -38,7 +41,7 @@ export function currentCharacterVitals(rules, player) {
     const max=Math.max(0,Number(values[key])||0);
     current[key]=saved?.profileKey===profileKey ? Math.min(max,saved.current[key]) : max;
   }
-  return {progress,draft,values,mainResource:computed.mainResource,
+  return {progress,draft,allocation,values,mainResource:computed.mainResource,
     responsibility:player?.characterResponsibility ?? null,
     pools:{schemaVersion:1,profileKey,current}};
 }

@@ -2,6 +2,8 @@ import { normalizeCharacterDraft } from './character-draft.js';
 import { normalizeHeroIdentity } from './hero-identity.js';
 import { normalizeCharacterResponsibility } from './dev-character-tools.js';
 import { normalizeCharacterProgress, normalizeCharacterPools } from './character-runtime.js';
+import { normalizeCharacterAllocation, spendCharacterAttribute, settleCharacterExperience, awardCharacterExperience } from './character-progression.js';
+import { getXpThresholds } from './xp-meter.js';
 
 export const GAME_STATE_SCHEMA_VERSION = 1;
 
@@ -170,6 +172,7 @@ export function createDefaultGameState() {
       heroIdentity: null,
       characterDraft: null,
       characterProgress: normalizeCharacterProgress(null),
+      characterAllocation: normalizeCharacterAllocation(null),
       characterResponsibility: null,
       characterPools: null
     },
@@ -214,6 +217,7 @@ export function normalizeGameState(input) {
         : defaults.player.classId,
       characterDraft: normalizeCharacterDraft(input.player?.characterDraft),
       characterProgress: normalizeCharacterProgress(input.player?.characterProgress),
+      characterAllocation: normalizeCharacterAllocation(input.player?.characterAllocation),
       characterResponsibility: normalizeCharacterResponsibility(input.player?.characterResponsibility),
       characterPools: normalizeCharacterPools(input.player?.characterPools)
     },
@@ -263,6 +267,28 @@ export class GameState {
 
   setCharacterProgress(next) {
     this.state.player.characterProgress = normalizeCharacterProgress(next);
+  }
+
+  allocateCharacterAttribute(stat) {
+    if (!this.state.player.characterDraft) throw Error('Сначала выберите профиль персонажа');
+    this.state.player.characterAllocation=spendCharacterAttribute(
+      this.state.player.characterProgress.zrl,this.state.player.characterAllocation,stat);
+    return this.state.player.characterAllocation;
+  }
+
+  // DEV and future quest/combat systems share this exact overflow-safe pipeline.
+  // The old setCharacterProgress remains a manual level override for QA.
+  setCharacterExperience(zrp,thresholds=getXpThresholds()) {
+    const result=settleCharacterExperience({
+      ...this.state.player.characterProgress,zrp},thresholds);
+    this.state.player.characterProgress=normalizeCharacterProgress(result);
+    return result;
+  }
+
+  awardCharacterXp(amount,thresholds=getXpThresholds()) {
+    const result=awardCharacterExperience(this.state.player.characterProgress,amount,thresholds);
+    this.state.player.characterProgress=normalizeCharacterProgress(result);
+    return result;
   }
 
   setCharacterResponsibility(value) {

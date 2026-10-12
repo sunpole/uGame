@@ -446,7 +446,8 @@ export class ProjectHubSystem {
         {schemaVersion:1,cityId:'force',startIndex:3};
       const calculated=characterDraftResult(rules,profile,
         runtime?.draft?.cityId===profile.cityId&&runtime?.draft?.startIndex===profile.startIndex
-          ? {level:runtime.progress.zrl,otv:runtime.responsibility}:{});
+          ? {level:runtime.progress.zrl,otv:runtime.responsibility,
+              allocation:runtime.allocation?.spent}:{});
       const city=rules.cities[profile.cityId];
       const isSaved=Boolean(saved && saved.cityId===profile.cityId &&
         saved.startIndex===profile.startIndex);
@@ -486,6 +487,28 @@ export class ProjectHubSystem {
         '<span>ЖП <strong>&gt; 0</strong> (условие расчёта)</span>',
         '<span>Основной ресурс <strong>'+escapeHtml(calculated.mainResource)+'</strong></span>',
         '</div>',
+        '<section class="character-level-allocation" id="character-level-allocation">',
+        '<h3>Развитие ВЫН / ЛОВ / ИНТ</h3>',
+        '<p class="character-draft-note">Очки за уровень начисляются автоматически. ',
+        'Распределение — только по выбору игрока; перераспределения пока нет.</p>',
+        '<div class="character-draft-summary">',
+        '<span>Свободно <strong id="character-free-points">'+
+          escapeHtml(String(isSaved?(runtime?.allocation?.free??0):0))+'</strong></span>',
+        '<span>Потрачено <strong id="character-spent-points">'+
+          escapeHtml(String(isSaved?(runtime?.allocation?.used??0):0))+'</strong></span>',
+        '<span>Пассивные очки <strong id="character-passive-points">'+
+          escapeHtml(String(isSaved?(runtime?.allocation?.passiveEarned??0):0))+
+          '</strong> (дерево ещё не включено)</span>',
+        '</div>',
+        '<div class="character-attribute-actions">',
+        ...[['vyn','ВЫН'],['lov','ЛОВ'],['intel','ИНТ']].map(([key,label])=>
+          '<button type="button" data-allocate-stat="'+key+'"'+
+          (!isSaved||!runtime?.allocation?.free?' disabled':'')+'>'+
+          '+1 '+label+'</button>'),
+        '</div>',
+        '<p class="character-draft-note" id="character-allocation-status">'+
+          (isSaved?'Очки сохраняются вместе с персонажем.':'Сначала сохраните профиль.')+'</p>',
+        '</section>',
         '<h3>Текущие запасы · ХП / Покров / РП / Желание</h3>',
         '<div class="character-draft-summary" id="character-runtime-pools">',
         ...[['hp','ХП'],['pp','ПП'],['rp','РП'],['jp','ЖП']].map(([key,label])=>
@@ -496,7 +519,7 @@ export class ProjectHubSystem {
         '</div>',
         '<p class="character-draft-note">Зелёная Stamina работает по прежним правилам. ',
         'ПП подсвечен золотым кольцом над красным шаром, ЖП — фиолетовым кольцом над синим. ',
-        'Новые ХП/ПП/РП/ЖП сохранены, но их расход, регенерация и ЗРП ещё не подключены к игровым событиям.</p>',
+        'ХП/ПП/РП/ЖП пересчитываются при распределении очков; регенерация и Импульс остаются прежними. Боевое/квестовое начисление ЗРП ещё не включено.</p>',
         '<div class="character-draft-grid">',
         ...METRIC_KEYS.map(key=>{
           const value=calculated.values[key];
@@ -515,6 +538,18 @@ export class ProjectHubSystem {
         'Сведения из экспортированного JSON не применяются к игре автоматически.</p>',
         '</section>'
       ].join('');
+      this.contentElement.querySelectorAll('[data-allocate-stat]').forEach(button=>{
+        button.addEventListener('click',()=>{
+          try{
+            if(!isSaved)throw Error('Сохраните профиль перед распределением');
+            this.characterDraft?.allocate?.(button.dataset.allocateStat);
+            this.renderCharacterDraft(view);
+          }catch(error){
+            const status=this.contentElement.querySelector('#character-allocation-status');
+            if(status)status.textContent=error.message;
+          }
+        });
+      });
       this.contentElement.querySelector('#character-draft-city')?.addEventListener('change',event=>{
         view.draft={schemaVersion:1,cityId:event.target.value,startIndex:0};
         this.renderCharacterDraft(view);
