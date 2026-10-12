@@ -72,9 +72,7 @@ export class KnightRoleLibrary{
  selectHeroRole(role){
   if(role!==null&&(!isKnightRole(role)||knightRoleInfo(role).group!=='hero'))throw Error('Для героя выбери одну из четырёх моделей');
   this.selectedRole=role;
-  const ok=storageWrite({...this.settings,__selected:role});
-  this.onChange?.();
-  return ok;
+  return storageWrite({...this.settings,__selected:role});
  }
  async importPng(role,file){
   if(!isKnightRole(role))throw Error('Неизвестная роль');

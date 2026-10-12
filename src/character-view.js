@@ -145,7 +145,7 @@ export class CharacterView {
       }else{
         const cfg=this.knightRoles.setting(selected);
         this.knightImage.setScale(cfg.scale);
-        this.knightShadow.setAlpha(cfg.shadow).setScale(cfg.scale);
+        this.knightShadow.setAlpha(cfg.shadow).setSize(38*cfg.scale,11*cfg.scale);
       }
     }else if(this.variantId==='knight-role')this.setVariant('original');
   }
