@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>uGame · Бесплатный 8-dir персонаж · 2D лаборатория</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#eaf2fa;background:#101923}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;display:flex;flex-direction:column}
+header{padding:12px 18px;background:#142636;border-bottom:1px solid #42637a;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:18px;margin:0}header small{display:block;color:#b1c5d4;font-size:12px}
+a{color:#addbfc}main{display:grid;grid-template-columns:minmax(0,1fr) 305px;flex:1;min-height:0}
+#field{position:relative;min-height:370px;overflow:hidden;background:#27373c}
+#field:before{content:"";position:absolute;inset:-50%;transform:rotate(-8deg);background-image:linear-gradient(#0003 2px,transparent 2px),linear-gradient(90deg,#0003 2px,transparent 2px);background-size:64px 64px;opacity:.4}
+#ground{position:absolute;top:51%;left:50%;width:165px;height:48px;transform:translate(-50%,-50%);border-radius:50%;background:#050a1099;filter:blur(8px)}
+#actor{position:absolute;top:51%;left:50%;width:275px;height:275px;transform:translate(-50%,-56%);image-rendering:pixelated}
+#footnote{position:absolute;bottom:15px;left:14px;right:14px;padding:10px;border-radius:8px;color:#e8f5ff;background:#102637d9;font-size:12px;text-align:center}
+aside{padding:15px;background:#142331;border-left:1px solid #365569;overflow:auto}
+h2{font-size:13px;margin:0 0 9px}section{margin-bottom:21px}
+.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+button{color:#e8f1fb;font:inherit;border:1px solid #49657a;border-radius:8px;background:#20384c;cursor:pointer;min-height:39px;padding:7px 8px}
+button:hover{background:#31516c}button[aria-pressed=true]{background:#355f81;border:2px solid #a2d2fa;padding:6px 7px;font-weight:700}
+.directions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.directions button{min-height:41px;touch-action:none;user-select:none;font-weight:650}
+.note{font-size:11px;line-height:1.55;color:#aebdcb}#status{background:#101e2a;border:1px solid #32526b;border-radius:7px;padding:11px;font-size:12px;line-height:1.65;white-space:pre-line}
+#loading{position:absolute;top:15px;left:50%;max-width:90%;transform:translateX(-50%);background:#17324aee;border-radius:7px;padding:9px 12px;font-size:13px;font-weight:600;text-align:center}
+#loading[hidden]{display:none}#swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+#swatches button{min-height:52px;font-size:12px}#swatches i{display:block;width:18px;height:18px;margin:0 auto 4px;border-radius:50%;border:1px solid #f7f7f740}
+@media(max-width:760px){main{display:block}#field{height:47svh;min-height:290px}aside{border-left:0;border-top:1px solid #365569;padding:12px}header{padding:10px 12px}h1{font-size:15px}}
+</style>
+</head><body>
+<header><div><h1>uGame · Первый бесплатный 2D-персонаж</h1><small>Реальный 8-направленный CC0-атлас · без 3D и без изменения самой игры</small></div><a href="../">← В uGame</a></header>
+<main><div id="field">
+<div id="ground"></div><canvas id="actor" width="256" height="256" aria-label="Анимированный двухмерный персонаж"></canvas>
+<div id="loading" role="status">Загружаю готовые кадры…</div>
+<div id="footnote">Это настоящие чужие кадры, не самодельный человечек. Сравни 8 направлений, размер и простую перекраску.</div>
+</div>
+<aside>
+<section><h2>Направление (восемь сторон)</h2>
+<div class="directions" id="directions">
+<button data-dir="2" aria-label="Северо-запад">↖ NW</button><button data-dir="3" aria-label="Север">↑ N</button><button data-dir="4" aria-label="Северо-восток">↗ NE</button>
+<button data-dir="1" aria-label="Запад">← W</button><button id="toggle-walk" aria-pressed="true">Ходьба</button><button data-dir="5" aria-label="Восток">→ E</button>
+<button data-dir="0" aria-label="Юго-запад">↙ SW</button><button data-dir="7" aria-pressed="true" aria-label="Юг">↓ S</button><button data-dir="6" aria-label="Юго-восток">↘ SE</button>
+</div><p class="note">Нажимай стрелки или WASD: при удержании видно ходьбу. Переключатель в центре показывает шаг на месте.</p>
+</section>
+<section><h2>Пробные палитры ткани</h2><div id="swatches">
+<button data-color="base" aria-pressed="true"><i style="background:#8babb6"></i>Оригинал</button>
+<button data-color="burgundy"><i style="background:#753c55"></i>Бордовый</button>
+<button data-color="ivory"><i style="background:#c4b18f"></i>Светлый</button>
+</div><p class="note">Это перекраска одной исходной одежды, не отдельные костюмы и не смена формы модели.</p>
+</section>
+<section><h2>Размер на поле</h2><div class="options" id="scales">
+<button data-scale=".75">75%</button><button data-scale="1" aria-pressed="true">100%</button><button data-scale="1.3">130%</button>
+</div></section>
+<section><h2>Фактический статус</h2><div id="status" role="status">Ожидание внешних ассетов…</div></section>
+<p class="note">Источник: безоружная восьминаправленная модель персонажа из CC0-набора <a href="https://github.com/kodareef5/lowerlobby/blob/main/CREDITS.md" target="_blank" rel="noopener">Lower Lobby — Credits</a> (автор оригинального арта Hormelz). Этот тест использует опубликованные сжатые кадры, не платную графику PVGames. Никакой библиотеки оружия, боевых действий или хранения выбора в сохранениях здесь нет.</p>
+<p class="note">Бесплатный редактор <a href="https://nightmare-82.itch.io/rpg-tools" target="_blank" rel="noopener">RPG Tools</a> доступен отдельно для Windows; его 950-МБ содержимое ещё не проверено.</p>
+</aside>
+</main>
+<script type="module">
+const SOURCE_BASE='https://cdn.jsdelivr.net/gh/kodareef5/lowerlobby@44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight/';
+const canvas=document.querySelector('#actor'),ctx=canvas.getContext('2d',{alpha:true});
+const status=document.querySelector('#status'),loader=document.querySelector('#loading');
+const model=window.__ugame2d={phase:'init',ready:false,source:SOURCE_BASE,dir:7,color:'base',scale:1,walk:true,anim:'Walk',frame:-1,rendered:0,pixels:0,frameSize:256,sourceFrames:0,error:null};
+const themes={base:null,burgundy:[135,60,78],ivory:[185,171,137]};
+let palette,manifest,animations;
+let cache=new Map(),keys=new Set(),last=0,time=0,physicalWalk=false;
+function setStatus(info){
+ status.textContent=info+'\n8 направлений · 2 анимации: idle/walk · масштаб '+Math.round(model.scale*100)+'%\nПалитра: '+model.color+' · кадр: '+(model.frame+1)+' · отрисовок: '+model.rendered;
+}
+function error(e){model.phase='error';model.error=String(e?.message||e);loader.textContent='Ошибка загрузки CC0-кадров: '+model.error;setStatus('Невозможно получить данные. Проверь интернет.');}
+function parseHex(s){
+ const hex=s.replace('#','');return [0,2,4,6].map(pos=>parseInt(hex.slice(pos,pos+2),16));
+}
+function colorsForTheme(theme){
+ const base=palette.palette.map(parseHex),tint=themes[theme];
+ if(!tint)return base;
+ return base.map((rgba,i)=>{
+  if(!palette.bands?.runtime?.[i]||palette.bands.runtime[i]!=='cloth')return rgba;
+  const lum=(rgba[0]*.299+rgba[1]*.587+rgba[2]*.114)/175;
+  const factor=Math.max(.32,Math.min(1.28,lum));
+  return tint.map(v=>Math.round(Math.min(255,v*factor))).concat(rgba[3]);
+ });
+}
+function decodeFrame(encoded,colors){
+ const image=ctx.createImageData(256,256),data=image.data;
+ const packed=atob(encoded);
+ for(let i=0;i<packed.length;){
+  const y=packed.charCodeAt(i++),x=packed.charCodeAt(i++),len=packed.charCodeAt(i++);
+  if(y>=256||x+len>256||i+len>packed.length)throw Error('Неправильный формат кадра');
+  let start=(y*256+x)*4;
+  for(let j=0;j<len;j++){
+   const index=packed.charCodeAt(i++),p=colors[index];
+   if(!p)throw Error('Некорректная палитра');
+   data[start++]=p[0];data[start++]=p[1];data[start++]=p[2];data[start++]=p[3];
+  }
+ }
+ return image;
+}
+let currentColors;
+function draw(){
+ if(!model.ready)return;
+ const info=manifest.animations[model.anim];
+ const at=Math.floor(time*info.fps/1000)%info.frameCount;
+ if(at===model.frame&&model._lastDir===model.dir&&model._lastColor===model.color)return;
+ const signature=model.anim+':'+model.dir+':'+at+':'+model.color;
+ let image=cache.get(signature);
+ if(!image){
+  const data=animations[model.anim].dirs[model.dir];
+  image=decodeFrame(data.frames[at],currentColors);
+  cache.set(signature,image);
+  if(cache.size>55)cache.delete(cache.keys().next().value);
+ }
+ ctx.clearRect(0,0,256,256);ctx.putImageData(image,0,0);
+ model.frame=at;model._lastDir=model.dir;model._lastColor=model.color;model.rendered++;
+ model.pixels=0;
+ // Bounded probe: check transparent-pixel alpha has actually been decoded.
+ for(let i=3;i<image.data.length;i+=64)if(image.data[i]>0)model.pixels++;
+ if(model.rendered%12===1)setStatus('Кадры действительно загружены из CC0-источника');
+}
+function setColor(c){
+ if(!(c in themes))return;
+ model.color=c;currentColors=colorsForTheme(c);cache.clear();
+ document.querySelectorAll('[data-color]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===c)));
+ model.frame=-1;draw();setStatus('Перекраска ткани, исходная форма без изменений');
+}
+function setDir(n){
+ if(n<0||n>7)return;
+ model.dir=n;model.frame=-1;time=0;
+ document.querySelectorAll('[data-dir]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.dir===n)));
+ draw();setStatus('Направление обновлено');
+}
+function setScale(n){
+ model.scale=n;canvas.style.width=(275*n)+'px';canvas.style.height=(275*n)+'px';
+ document.querySelectorAll('[data-scale]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.scale===n)));
+ setStatus('Размер изменён');
+}
+document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()=>setDir(+b.dataset.dir)));
+document.querySelectorAll('[data-color]').forEach(b=>b.addEventListener('click',()=>setColor(b.dataset.color)));
+document.querySelectorAll('[data-scale]').forEach(b=>b.addEventListener('click',()=>setScale(+b.dataset.scale)));
+document.querySelector('#toggle-walk').addEventListener('click',e=>{
+ model.walk=!model.walk;e.target.setAttribute('aria-pressed',String(model.walk));
+ model.anim=(model.walk||physicalWalk)?'Walk':'Idle';model.frame=-1;time=0;draw();setStatus(model.walk?'Шаг на месте':'Ожидание');
+});
+const keyDirs={ArrowUp:3,ArrowDown:7,ArrowLeft:1,ArrowRight:5,w:3,s:7,a:1,d:5};
+window.addEventListener('keydown',e=>{const k=keyDirs[e.key]??keyDirs[e.key?.toLowerCase()];if(k!==undefined){keys.add(k);e.preventDefault();}});
+window.addEventListener('keyup',e=>{const k=keyDirs[e.key]??keyDirs[e.key?.toLowerCase()];if(k!==undefined)keys.delete(k);});
+window.addEventListener('blur',()=>keys.clear());
+function tick(now){
+ requestAnimationFrame(tick);
+ const dt=Math.min(60,Math.max(0,now-last));last=now;
+ if(!model.ready)return;
+ const up=keys.has(3),down=keys.has(7),left=keys.has(1),right=keys.has(5);
+ const v=(up?-1:0)+(down?1:0),h=(left?-1:0)+(right?1:0);
+ const directions={'-1,-1':2,'-1,0':3,'-1,1':4,'0,-1':1,'0,1':5,'1,-1':0,'1,0':7,'1,1':6};
+ physicalWalk=Boolean(h||v);
+ if(physicalWalk){
+  const nd=directions[v+','+h];if(nd!==undefined&&nd!==model.dir)setDir(nd);
+ }
+ const desired=(model.walk||physicalWalk)?'Walk':'Idle';
+ if(desired!==model.anim){model.anim=desired;model.frame=-1;time=0;}
+ time+=dt;draw();
+}
+requestAnimationFrame(tick);
+async function loadJson(name){
+ const response=await fetch(SOURCE_BASE+name+'.json',{mode:'cors'});
+ if(!response.ok)throw Error(name+': HTTP '+response.status);
+ return response.json();
+}
+try{
+ model.phase='loading';
+ [manifest,palette,...animations]=await Promise.all(['manifest','palette','Idle','Walk'].map(loadJson));
+ animations={Idle:animations[0],Walk:animations[1]};
+ if(manifest.frameSize!==256||manifest.dirAngles.length!==8||animations.Walk.dirs.length!==8||animations.Idle.dirs.length!==8)throw Error('Внешний формат изменён');
+ model.sourceFrames=manifest.animations.Walk.frameCount*8+manifest.animations.Idle.frameCount*8;
+ currentColors=colorsForTheme('base');model.ready=true;model.phase='ready';loader.hidden=true;
+ setStatus('Готово: один настоящий бесплатный 8-dir персонаж');
+ draw();
+}catch(e){error(e);}
+</script>
+</body>
+</html>
