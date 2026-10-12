@@ -1,3 +1,5 @@
+import {knightNpcRole} from './knight-atlas-core.js';
+
 function createHumanoidVisual(scene, {
   x = 0,
   y = 0,
@@ -73,7 +75,8 @@ export function masterFarewellDisplay(item, now = Date.now()) {
 }
 
 export class InteractableSystem {
-  constructor({ scene, player, eventSystem, audioSystem, onPrompt } = {}) {
+  constructor({ scene, player, eventSystem, audioSystem, onPrompt, knightRoles } = {}) {
+    this.knightRoles=knightRoles;
     this.scene = scene;
     this.player = player;
     this.eventSystem = eventSystem;
@@ -333,7 +336,42 @@ export class InteractableSystem {
     item._label = label;
     item._displayObjects = displayObjects;
     this.objects.push(...displayObjects);
+    if(this.knightRoles?.ready&&knightNpcRole(item))void this.decorateKnightItem(item);
     return body;
+  }
+
+  async decorateKnightItem(item){
+    const role=knightNpcRole(item),library=this.knightRoles;
+    if(!library||!role)return;
+    const token=item._knightToken=(item._knightToken||0)+1;
+    const cfg=library.setting(role);
+    let key=null;
+    if(cfg?.enabled&&library.ready){
+      try{key=await library.texture(role);}catch(error){
+        console.warn('NPC knight texture fallback',item.id,error);
+      }
+    }
+    if(token!==item._knightToken||!this.items.includes(item))return;
+    for(const old of item._knightObjects||[]){
+      old.destroy?.();
+      this.objects=this.objects.filter(x=>x!==old);
+      item._displayObjects=item._displayObjects?.filter(x=>x!==old)||[];
+    }
+    item._knightObjects=[];
+    if(!key){item.display?.setVisible?.(true);return;}
+    const scene=this.scene;
+    const shadow=scene.add.ellipse(item.x,item.y+18,38*cfg.scale,12*cfg.scale,
+      0x000000,cfg.shadow).setDepth(5);
+    const sprite=scene.add.image(item.x,item.y+19,key,'S-idle')
+      .setDepth(6).setOrigin(0.5,0.94).setScale(cfg.scale);
+    item.display?.setVisible?.(false);
+    item._knightObjects=[shadow,sprite];
+    item._displayObjects?.push(shadow,sprite);
+    this.objects.push(shadow,sprite);
+  }
+  refreshKnightViews(){
+    if(!this.knightRoles?.ready)return;
+    for(const item of this.items)if(knightNpcRole(item))void this.decorateKnightItem(item);
   }
 
   update({ interactPressed = false } = {}) {
@@ -519,6 +557,7 @@ export class InteractableSystem {
     if (index < 0) return false;
 
     const [item] = this.items.splice(index, 1);
+    item._knightToken=(item._knightToken||0)+1;
     if (item._glow) this.scene?.tweens?.killTweensOf(item._glow);
     if (item._masterRewardMarker) this.scene?.tweens?.killTweensOf(item._masterRewardMarker);
 
@@ -534,6 +573,7 @@ export class InteractableSystem {
   clear() {
     this.onPrompt?.('');
     for (const item of this.items) {
+      item._knightToken=(item._knightToken||0)+1;
       if (item._glow) this.scene?.tweens?.killTweensOf(item._glow);
       if (item._masterRewardMarker) this.scene?.tweens?.killTweensOf(item._masterRewardMarker);
     }
