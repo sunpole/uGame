@@ -1,5 +1,4 @@
-import {KNIGHT_FRAME_SIZE,KNIGHT_DISPLAY_FRAME,KNIGHT_WALK_FRAMES,KNIGHT_ROLES,KNIGHT_DIRS,KNIGHT_ATLAS_ROWS,
- isKnightRole,knightRoleInfo,safeKnightSetting,validateKnightUpload,knightSourcePalette,decodeKnightRun} from './knight-atlas-core.js';
+import {KNIGHT_FRAME_SIZE,KNIGHT_DISPLAY_FRAME,KNIGHT_WALK_FRAMES,KNIGHT_ROLES,KNIGHT_DIRS,KNIGHT_ATLAS_ROWS,isKnightRole,knightRoleInfo,safeKnightSetting,validateKnightUpload,knightSourcePalette,decodeKnightRun} from './knight-atlas-core.js';
 const DATA='./data/knight-source/';
 const PREF_KEY='ugame.knight-visuals.v1',DB_NAME='ugame-knight-uploads-v1';
 const FILE_LIMIT=12*1024*1024;
