@@ -1,0 +1,46 @@
+name: uGame 3D Character Lab Browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'labs/first-real-3d.html'
+      - 'tests/character-3d-browser-smoke.mjs'
+      - 'docs/work-reports/2026-10-12-first-real-3d-quaternius-lab.md'
+      - '.github/workflows/character-3d-lab-qa.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'labs/first-real-3d.html'
+      - 'tests/character-3d-browser-smoke.mjs'
+      - '.github/workflows/character-3d-lab-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  real-chromium-3d:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm game version unchanged and standalone file exists
+        run: |
+          node -e "const fs=require('fs');if(JSON.parse(fs.readFileSync('version.json')).version!=='0.2.76')process.exit(1);if(!fs.existsSync('labs/first-real-3d.html'))process.exit(1)"
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install chromium --with-deps
+      - name: Real desktop and mobile 3D model, camera pitch and rig smoke
+        env:
+          CI: 'true'
+        run: node tests/character-3d-browser-smoke.mjs
+      - name: Screenshot evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quaternius-3d-chromium
+          path: artifacts/character-3d/
+          if-no-files-found: ignore
