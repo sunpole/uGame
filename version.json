@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.75",
-  "stage": "character-walk-gallery-qa",
+  "version": "0.2.76",
+  "stage": "character-perspective-size-comparison",
   "updated": "2026-10-12",
-  "summary": "Six on-screen hero visuals: original preserved + five original pixel studies with 4-direction walks; session-only gallery."
+  "summary": "Original + 3/4 and high top-down neutral characters at three rendered sizes each; legacy gallery retained, session-only selection."
 }

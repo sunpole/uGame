@@ -1,4 +1,4 @@
-import {ORIGINAL_VISUAL_ID,isCharacterVisualId,installWalkingTextures,sheetTextureKey,directionFromVector,FRAME_HEIGHT} from './character-sprite-gallery.js';
+import {ORIGINAL_VISUAL_ID,isCharacterVisualId,installWalkingTextures,sheetTextureKey,directionFromVector,visualScale,perspectiveDescriptor} from './character-sprite-gallery.js';
 function approach(current, target, delta, response = 80) {
   const t = 1 - Math.exp(-Math.max(0, delta) / response);
   return current + (target - current) * t;
@@ -85,10 +85,15 @@ export class CharacterView {
     this.container.setVisible(isOriginal);
     if(this.pixelView){this.pixelView.destroy();this.pixelView=null;}
     this.pixelStep=0;this.pixelElapsed=0;this.pixelDirection='down';
-    delete document.documentElement.dataset.characterVisualFrame;
+    for(const key of ['characterVisualFrame','characterVisualScale','characterVisualPerspective'])
+      delete document.documentElement.dataset[key];
     if(!isOriginal){
       this.pixelView=this.scene.add.image(this.player.x,this.player.y,
-        sheetTextureKey(id),'down-0').setDepth(10).setScale(1.05);
+        sheetTextureKey(id),'down-0').setDepth(10).setOrigin(0.5,0.92)
+          .setScale(visualScale(id));
+      document.documentElement.dataset.characterVisualScale=this.pixelView.scaleX.toFixed(2);
+      document.documentElement.dataset.characterVisualPerspective=
+        perspectiveDescriptor(id)?.angle||'legacy';
     }
     document.documentElement.dataset.characterVisual=id;
     return true;
@@ -101,7 +106,8 @@ export class CharacterView {
       this.pixelDirection=directionFromVector(state.direction);
       this.pixelElapsed=state.moving?this.pixelElapsed+delta:0;
       this.pixelStep=state.moving?Math.floor(this.pixelElapsed/145)%4:0;
-      this.pixelView.setPosition(this.player.x,this.player.y-5);
+      // Align ground contact in world coordinates for all three apparent sizes.
+      this.pixelView.setPosition(this.player.x,this.player.y+19);
       this.pixelView.setFrame(this.pixelDirection+'-'+this.pixelStep);
       document.documentElement.dataset.characterVisualFrame=
         this.pixelDirection+'-'+this.pixelStep;
@@ -142,5 +148,7 @@ export class CharacterView {
     this.container?.destroy(true);
     if(document.documentElement.dataset.characterVisual===this.variantId)
       delete document.documentElement.dataset.characterVisual;
+    for(const key of ['characterVisualFrame','characterVisualScale','characterVisualPerspective'])
+      delete document.documentElement.dataset[key];
   }
 }
