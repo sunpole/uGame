@@ -6,8 +6,8 @@ export const DEV_XP_PERCENT_CODES=Object.freeze({
 export const DEV_LEVEL_CODES=Object.freeze({'2201':1,'2202':-1});
 export const DEV_PANEL_CODES=Object.freeze({character:'2299',city:'2399'});
 
-// Unapproved XP curve: these percentages operate on *currently stored ZRP*,
-// not on an invented threshold-to-next-level or total lifetime experience.
+// DEV percentages change currently stored ZRP, not percent-to-next-level.
+// Accepted XP thresholds do not add auto-leveling or real combat XP grants.
 export function devPercentZrp(current,percent) {
   const base=Number.isSafeInteger(current)&&current>=0?current:0;
   if(!Number.isFinite(percent)||Math.abs(percent)>100)return base;
@@ -159,7 +159,7 @@ export class DevCharacterTools {
     content.innerHTML='<p><strong>ЗРЛ '+fmt(zrl)+'/65 · ЗРП '+fmt(zrp)+
       ' · ОТВ '+(otv===null||otv===undefined?'не задано / unset':fmt(otv))+'</strong></p>'+
       '<p>Проценты меняют <strong>накопленный ЗРП</strong>, НЕ процент до нового уровня. '+
-      'Без утверждённой XP-кривой автоповышения нет. При нулевом опыте сначала задайте число.<br>'+
+      'Таблица порогов XP утверждена, но DEV-коды не вызывают автоповышение. При нулевом опыте сначала задайте число.<br>'+
       '<small>Percent adjusts currently held XP, NOT percent to next level. No auto level-up.</small></p>'+
       '<div class="dev-tool-pct">'+percentButtons+'</div>'+
       '<div class="dev-tool-fields">'+

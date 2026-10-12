@@ -24,7 +24,7 @@ import { CharacterVitalsHUD } from './character-runtime.js';
 import { DevCharacterTools, devCityTeleport } from './dev-character-tools.js';
 import { CharacterSkillSystem, pulseRadius, applyPulseHits } from './character-skills.js';
 import { ActionMeter } from './action-meter.js';
-import { renderXpMeter } from './xp-meter.js';
+import { renderXpMeter, loadXpThresholds } from './xp-meter.js';
 import { SaveSystem } from './save-system.js';
 import { ProjectHubSystem } from './project-hub-system.js';
 import { ChromeContextSystem } from './chrome-context-system.js';
@@ -1230,6 +1230,8 @@ export async function bootGame({ availableTextureFiles } = {}) {
     onProgress: progress => renderXpMeter(document,progress)
   });
   characterVitalsHUD.load().catch(error => console.warn('Character HUD unavailable',error));
+  loadXpThresholds().then(() => characterVitalsHUD?.render())
+    .catch(error => console.warn('XP thresholds unavailable: preserving v0.2.72 fallback',error));
   const combatActionMeter = new ActionMeter();
   characterSkillSystem = new CharacterSkillSystem({
     getGameState: () => activeZoneScene?.gameState,

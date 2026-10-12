@@ -1,46 +1,58 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { xpMeterModel, xpFormatNumber, xpFormatPercent, renderXpMeter } from '../src/xp-meter.js';
-import { actionProgress, ActionMeter } from '../src/action-meter.js';
+import {readFileSync} from 'node:fs';
+import {xpMeterModel,xpFormatNumber,xpFormatPercent,renderXpMeter,
+  validateXpCurve,loadXpThresholds} from '../src/xp-meter.js';
+import {actionProgress, ActionMeter} from '../src/action-meter.js';
 
+const curve=JSON.parse(readFileSync(new URL('../data/character-xp-curve.json',import.meta.url)));
 const fakeRoot=()=>{
   const el=new Map();
-  return {
-    querySelector(sel){
-      if(!el.has(sel))el.set(sel,{style:{},textContent:'',dataset:{},
-        attributes:{},setAttribute(k,v){this.attributes[k]=v;}});
-      return el.get(sel);
-    }
-  };
+  return {querySelector(sel){
+    if(!el.has(sel))el.set(sel,{style:{},textContent:'',dataset:{},
+      attributes:{},setAttribute(k,v){this.attributes[k]=v;}});
+    return el.get(sel);
+  }};
 };
-test('XP thresholds: only accepted 64→65 cost, no invented formulas for 1–63',()=>{
-  for(const level of [1,10,31,63]){
-    const m=xpMeterModel({zrl:level,zrp:104008});
-    assert.equal(m.level,level);assert.equal(m.current,104008);
-    assert.equal(m.known,false);assert.equal(m.needed,null);
-    assert.equal(m.earned,null);assert.equal(m.remaining,null);
+test('All 64 approved level-up thresholds have integrity, correct sum and point grants',async()=>{
+  const thresholds=validateXpCurve(curve);
+  assert.equal(Object.keys(thresholds).length,64);
+  assert.equal(curve.totalRequiredXp,3067443826);
+  assert.equal(curve.levels.reduce((a,r)=>a+r.requiredXp,0),3067443826);
+  assert.deepEqual([thresholds[1],thresholds[2],thresholds[20],thresholds[40],
+    thresholds[60],thresholds[64]],[1000,2000,92499,1863153,240309835,1100000000]);
+  assert.equal(curve.levels.reduce((a,r)=>a+r.attributePoints,0),248);
+  assert.equal(curve.levels[64].requiredXp,0);
+  await loadXpThresholds(async(path,opts)=>{
+    assert.equal(path,'./data/character-xp-curve.json');
+    assert.equal(opts.cache,'no-store');
+    return {ok:true,json:async()=>curve};
+  });
+  for(const zrl of [1,2,3,10,20,24,31,63,64]){
+    const model=xpMeterModel({zrl,zrp:0});
+    assert.equal(model.known,true);
+    assert.equal(model.needed,curve.levels[zrl-1].requiredXp);
   }
-  const last=xpMeterModel({zrl:64,zrp:275000000});
-  assert.equal(last.needed,1100000000);
-  assert.equal(last.earned,25);assert.equal(last.remaining,75);
-  const max=xpMeterModel({zrl:65,zrp:77777});
-  assert.deepEqual(max,{level:65,current:0,needed:0,earned:0,remaining:0,known:true,maxLevel:true});
+  assert.deepEqual(xpMeterModel({zrl:65,zrp:77777}),
+    {level:65,current:0,needed:0,earned:0,remaining:0,known:true,maxLevel:true});
 });
-test('XP percent uses consistent numerator and denominator, finite and capped',()=>{
-  const m=xpMeterModel({zrl:24,zrp:104008},{24:457800});
-  assert.equal(m.needed,457800);
-  assert.ok(Math.abs(m.earned+(m.remaining)-100)<1e-6);
-  assert.ok(Math.abs(m.earned-22.7199)<.01);
-  assert.equal(xpFormatNumber(457800),'457 800'.replace(/ /g,' '));
-  assert.match(xpFormatPercent(m.earned),/^22,72%$/);
-  assert.equal(xpMeterModel({zrl:64,zrp:99999999999}).earned,100);
+test('XP percentages use level thresholds, clamp, do not mutate or level DEV save',()=>{
+ const progress={zrl:24,zrp:104008};
+ const m=xpMeterModel(progress);
+ assert.equal(m.needed,161280);
+ assert.ok(Math.abs(m.earned+m.remaining-100)<1e-6);
+ assert.equal(xpFormatNumber(457800),'457 800');
+ assert.equal(xpMeterModel({zrl:64,zrp:99999999999}).earned,100);
+ assert.equal(xpMeterModel({zrl:2,zrp:2000}).level,2);
+ assert.deepEqual(progress,{zrl:24,zrp:104008});
+ assert.match(xpFormatPercent(m.earned),/%$/);
 });
-test('Bottom XP bar renders real known/unknown/max states without overwriting save',()=>{
+test('Bottom HUD renders 31 / 64 / MAX using accepted real numbers',()=>{
  const root=fakeRoot();
  renderXpMeter(root,{zrl:31,zrp:525});
- assert.equal(root.querySelector('#character-xp').textContent,'ЗРП 525 / — · порог уточняется');
- assert.equal(root.querySelector('#xp-bottom-percent').textContent,'—% / —%');
- assert.equal(root.querySelector('#xp-bottom-fill').style.width,'0.00%');
+ assert.equal(root.querySelector('#character-xp').textContent,'ЗРП 525 / 463 986');
+ assert.equal(root.querySelector('#xp-bottom-band').attributes['data-threshold-known'],'true');
+ assert.equal(root.querySelector('#xp-bottom-fill').style.width,'0.11%');
  renderXpMeter(root,{zrl:64,zrp:550000000});
  assert.match(root.querySelector('#character-xp').textContent,/550.*1.*100/);
  assert.equal(root.querySelector('#xp-bottom-fill').style.width,'50.00%');
@@ -48,6 +60,13 @@ test('Bottom XP bar renders real known/unknown/max states without overwriting sa
  renderXpMeter(root,{zrl:65,zrp:12345});
  assert.equal(root.querySelector('#character-xp').textContent,'ЗРП 0 / 0 · МАКС');
  assert.equal(root.querySelector('#xp-bottom-fill').style.width,'0.00%');
+});
+test('Malformed or altered XP configs are rejected before becoming active',()=>{
+ assert.throws(()=>validateXpCurve({...curve,totalRequiredXp:1}),/totals/);
+ const invalid=structuredClone(curve);invalid.levels[32].requiredXp=-1;
+ assert.throws(()=>validateXpCurve(invalid),/Invalid/);
+ const last=structuredClone(curve);last.levels[63].requiredXp=1100000001;
+ assert.throws(()=>validateXpCurve(last),/totals/);
 });
 test('Action meter reports actual elapsed time for 100ms or 3s casts',()=>{
  assert.equal(actionProgress(-500,3000),0);

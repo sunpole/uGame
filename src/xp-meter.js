@@ -1,8 +1,46 @@
 import { normalizeCharacterProgress } from './character-runtime.js';
-// Project Journal UGD-0038 #44-53: only the 64→65 threshold is accepted.
-// Missing thresholds are intentionally shown as unknown, never fabricated.
+
+// Immutable v0.2.72 fallback if the new data file cannot be read.
+// Unknown thresholds are never invented.
 export const APPROVED_LEVEL_THRESHOLDS=Object.freeze({64:1100000000});
-export function xpMeterModel(progress,thresholds=APPROVED_LEVEL_THRESHOLDS) {
+let activeThresholds=APPROVED_LEVEL_THRESHOLDS;
+
+export function validateXpCurve(config) {
+  if(config?.schemaVersion!==1||config?.maxLevel!==65||
+     !Array.isArray(config.levels)||config.levels.length!==65)
+    throw Error('XP curve must contain levels 1–65');
+  const thresholds={};
+  let total=0,previous=0;
+  for(const [index,row] of config.levels.entries()) {
+    if(row.level!==index+1||!Number.isSafeInteger(row.requiredXp)||
+       !Number.isSafeInteger(row.referenceMobXp)||
+       !Number.isSafeInteger(row.attributePoints)||
+       row.requiredXp<0||row.referenceMobXp<0||row.attributePoints<0)
+      throw Error('Invalid XP curve row '+(index+1));
+    if(index===64){
+      if(row.requiredXp!==0||row.referenceMobXp!==0)
+        throw Error('Level 65 must be MAX');
+    }else{
+      if(row.requiredXp<=0||(index>0&&row.requiredXp<previous))
+        throw Error('XP thresholds must be monotonically increasing');
+      previous=row.requiredXp;
+      thresholds[row.level]=row.requiredXp;
+      total+=row.requiredXp;
+    }
+  }
+  if(total!==3067443826||config.totalRequiredXp!==total||
+     thresholds[1]!==1000||thresholds[2]!==2000||thresholds[64]!==1100000000)
+    throw Error('XP curve disagrees with accepted totals');
+  return Object.freeze(thresholds);
+}
+export async function loadXpThresholds(fetchConfig=fetch){
+  const response=await fetchConfig('./data/character-xp-curve.json',{cache:'no-store'});
+  if(!response.ok)throw Error('XP curve HTTP '+response.status);
+  const thresholds=validateXpCurve(await response.json());
+  activeThresholds=thresholds;
+  return thresholds;
+}
+export function xpMeterModel(progress,thresholds=activeThresholds) {
   const {zrl,zrp}=normalizeCharacterProgress(progress);
   if(zrl===65)return {level:65,current:0,needed:0,earned:0,remaining:0,known:true,maxLevel:true};
   const target=thresholds[zrl];
