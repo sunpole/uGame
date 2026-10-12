@@ -1,0 +1,147 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>uGame · Настоящий 8-направленный атлас для Photoshop</title>
+<style>
+:root{font:15px system-ui,Arial,sans-serif;color:#e7f3fe;background:#111b26}
+*{box-sizing:border-box}body{margin:0}header{padding:12px 18px;background:#20364c;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:19px;line-height:1.3;margin:0}h2{font-size:16px;margin:0 0 8px}a{color:#a9d9fb}p{margin:8px 0 13px;color:#c7d9e7;line-height:1.5}
+main{max-width:1300px;margin:auto;padding:14px}
+.tag{display:inline-block;background:#234964;border:1px solid #5785a8;color:#e8f7ff;border-radius:16px;padding:4px 9px;font-size:12px}
+.note{font-size:12px;color:#b0c6d9}.columns{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;margin:12px 0}
+.panel{border:1px solid #456278;background:#1a2c3b;border-radius:10px;padding:13px;min-width:0}
+#atlas-scroll{overflow-x:auto;max-width:100%;background:#13222e;border-radius:7px}
+#atlas-grid{display:block;width:820px;height:600px;max-width:none}
+#actor{display:block;margin:4px auto;width:230px;height:230px;image-rendering:pixelated;max-width:100%}
+.grid-directions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+button{font:inherit;cursor:pointer;background:#2b4b64;color:#fff;border:1px solid #587e9a;border-radius:7px;padding:9px;min-height:42px}
+button[aria-pressed="true"]{background:#46749b;border:2px solid #b0e1ff;padding:8px}
+button:hover{background:#39668a}button.primary{display:block;width:100%;background:#2c695e;border-color:#74b8a8;margin-top:12px;font-weight:700}
+#status{border:1px solid #48708b;padding:10px;border-radius:6px;font-size:12px;line-height:1.6;margin-top:13px}
+#status[data-ready="false"]{color:#ffd098}
+#hint{font-size:12px;color:#e0e8f0;margin:6px 0}
+@media(max-width:820px){.columns{grid-template-columns:1fr}#actor{width:190px;height:190px}.panel{padding:10px}}
+</style></head><body>
+<header><div><h1>Настоящий атлас: 8 направлений × 11 кадров шага</h1><span class="tag">Одна PNG-картинка · реальные кадры · без 3D</span></div><a href="./free-2d-eight-way.html">← Примерочная персонажа</a></header>
+<main>
+<p><strong>Как в полиграфии:</strong> представь, что это лист с 88 маленькими изображениями. Каждая строка — поворот персонажа, каждый столбец — следующая фаза движения. Браузер показывает их по очереди.</p>
+<div class="columns">
+<section class="panel"><h2>1. Посмотри на раскладку настоящих кадров</h2>
+<p id="hint">Слева подписаны направления; сверху — кадры 1–11. Все кадры взяты из настоящей бесплатной анимации.</p>
+<div id="atlas-scroll"><canvas id="atlas-grid" width="820" height="600" role="img" aria-label="Восемь строк направлений и одиннадцать последовательных кадров ходьбы"></canvas></div>
+<p class="note">Схема для понимания: она уменьшена для экрана. Кнопка ниже сохранит настоящий прозрачный атлас с кадрами 256×256 для Photoshop.</p>
+<button class="primary" id="download-atlas" disabled>Скачать настоящий PNG-атлас (8 × 11)</button>
+</section>
+<aside class="panel"><h2>2. Посмотри, как одна строка оживает</h2>
+<canvas id="actor" width="256" height="256" role="img" aria-label="Живая анимация выбранного направления"></canvas>
+<p class="note">Персонаж выше показывает последовательность тех кадров, которые лежат в выбранной строке.</p>
+<div class="grid-directions">
+<button data-dir="2">↖ NW</button><button data-dir="3">↑ N</button><button data-dir="4">↗ NE</button>
+<button data-dir="1">← W</button><button id="play" aria-pressed="true">❚❚ Стоп</button><button data-dir="5">→ E</button>
+<button data-dir="0">↙ SW</button><button data-dir="7" aria-pressed="true">↓ S</button><button data-dir="6">↘ SE</button>
+</div>
+<div id="status" data-ready="false" role="status">Загрузка реальных кадров…</div>
+<p class="note">Это <strong>цельный персонаж</strong>, пока без отдельных слоёв брони. Здесь можно редактировать PNG в Photoshop, но новая одежда сама не появится во всех ракурсах.</p>
+</aside>
+</div>
+<p class="note">Источник графики: бесплатный unarmed-рыцарь Hormelz, CC0, архивированные кадры из <a href="https://github.com/kodareef5/lowerlobby/tree/44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight" target="_blank" rel="noopener noreferrer">Lower Lobby</a>. Ни сам uGame, ни его сохранения не изменены. Для загрузки нужен интернет.</p>
+</main>
+<script type="module">
+const SOURCE='https://cdn.jsdelivr.net/gh/kodareef5/lowerlobby@44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight/';
+const order=[2,3,4,1,5,0,7,6],names=['NW','N','NE','W','E','SW','S','SE'];
+const model=window.__realAtlas={status:'loading',source:SOURCE,dir:7,frame:0,frameCount:0,directions:8,
+ decoded:0,drawCount:0,sheetSize:[2816,2048],downloadReady:false,error:null};
+const $=selector=>document.querySelector(selector);
+const grid=$('#atlas-grid'),gc=grid.getContext('2d'),actor=$('#actor'),ac=actor.getContext('2d');
+let palette,walk,manifest,frames=[],running=true,last=0,t=0,current=-1;
+const temp=document.createElement('canvas');temp.width=256;temp.height=256;const tc=temp.getContext('2d');
+function decode(code){
+ const data=new ImageData(256,256),out=data.data,packed=atob(code);
+ for(let i=0;i<packed.length;){
+  const y=packed.charCodeAt(i++),x=packed.charCodeAt(i++),len=packed.charCodeAt(i++);
+  if(y>=256||x+len>256||i+len>packed.length)throw Error('Некорректный кадр');
+  let k=(y*256+x)*4;
+  for(let j=0;j<len;j++){
+   const rgba=palette[packed.charCodeAt(i++)];
+   if(!rgba)throw Error('Неверная палитра');
+   out[k++]=rgba[0];out[k++]=rgba[1];out[k++]=rgba[2];out[k++]=rgba[3];
+  }
+ }
+ return data;
+}
+const rgbaOf=s=>[0,2,4,6].map(i=>parseInt(s.replace('#','').slice(i,i+2),16));
+async function json(name){
+ const response=await fetch(SOURCE+name+'.json');if(!response.ok)throw Error(name+': HTTP '+response.status);
+ return response.json();
+}
+function setStatus(message,ok){
+ const el=$('#status');el.dataset.ready=String(Boolean(ok));el.textContent=message;
+}
+function drawGrid(){
+ gc.fillStyle='#152431';gc.fillRect(0,0,820,600);
+ gc.fillStyle='#dbeaf4';gc.font='bold 12px Arial';
+ for(let col=0;col<11;col++)gc.fillText(String(col+1),55+col*68+25,23);
+ for(let row=0;row<8;row++){
+  const y=34+row*70;
+  gc.fillStyle=model.dir===order[row]?'#285474':'#203747';
+  gc.fillRect(0,y,817,68);
+  gc.fillStyle='#dceefa';gc.fillText(names[row],13,y+38);
+  for(let col=0;col<11;col++){
+   tc.putImageData(frames[order[row]][col],0,0);
+   gc.fillStyle='#354952';gc.fillRect(52+col*68,y+2,64,64);
+   gc.imageSmoothingEnabled=false;
+   gc.drawImage(temp,52+col*68,y+2,64,64);
+   gc.strokeStyle='#5d7b8b';gc.strokeRect(52+col*68+.5,y+2.5,63,63);
+  }
+ }
+}
+function setDir(dir){
+ model.dir=dir;
+ document.querySelectorAll('[data-dir]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.dir)===dir)));
+ if(model.status==='ready'){drawGrid();current=-1;renderFrame();}
+}
+function renderFrame(){
+ if(model.status!=='ready')return;
+ if(model.frame===current)return;
+ ac.clearRect(0,0,256,256);ac.putImageData(frames[model.dir][model.frame],0,0);current=model.frame;model.drawCount++;
+}
+function loop(now){
+ requestAnimationFrame(loop);
+ if(model.status!=='ready')return;
+ const dt=Math.min(80,Math.max(0,now-last));last=now;
+ if(running)t+=dt;
+ const frame=running?Math.floor(t/(1000/manifest.animations.Walk.fps))%11:model.frame;
+ if(frame!==model.frame){model.frame=frame;renderFrame();}
+}
+requestAnimationFrame(loop);
+document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>setDir(Number(b.dataset.dir)));
+$('#play').onclick=e=>{
+ running=!running;e.target.textContent=running?'❚❚ Стоп':'▶ Пуск';
+ e.target.setAttribute('aria-pressed',String(running));
+};
+async function download(){
+ if(model.status!=='ready')return;
+ const out=document.createElement('canvas');out.width=2816;out.height=2048;
+ const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;
+ for(let row=0;row<8;row++)for(let col=0;col<11;col++){
+  tc.putImageData(frames[order[row]][col],0,0);ctx.drawImage(temp,col*256,row*256);
+ }
+ const blob=await new Promise(ok=>out.toBlob(ok,'image/png'));
+ if(!blob){setStatus('Ошибка сохранения PNG',false);return;}
+ const uri=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=uri;a.download='uGame_real_knight_WALK_8x11.png';document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(uri),4000);
+ model.downloadReady=true;setStatus('PNG готов: 8 строк × 11 кадров, 2816×2048 px, прозрачный фон.',true);
+}
+$('#download-atlas').onclick=download;
+try{
+ [manifest,palette,walk]=await Promise.all([json('manifest'),json('palette'),json('Walk')]);
+ if(manifest.frameSize!==256||manifest.animations.Walk.frameCount!==11||walk.dirs.length!==8)throw Error('Формат источника изменился');
+ palette=palette.palette.map(rgbaOf);
+ // Materialize true frames, not interpolated or duplicated animation.
+ for(let dir=0;dir<8;dir++){const list=[];for(let k=0;k<11;k++){list.push(decode(walk.dirs[dir].frames[k]));model.decoded++;}frames.push(list);}
+ model.frameCount=11;model.status='ready';setDir(7);renderFrame();
+ $('#download-atlas').disabled=false;
+ setStatus('Готово! Настоящих разных кадров: '+model.decoded+'. Нажми строку и посмотри движение справа.',true);
+}catch(error){
+ model.status='error';model.error=String(error.message||error);setStatus('Не удалось загрузить кадры: '+model.error,false);
+}
+</script></body></html>
