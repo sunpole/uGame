@@ -290,43 +290,54 @@ async function checkViewport(profile) {
 
     await activate('#project-hub-close');
 
-    // Real Phaser 4-way walking review. This is NOT a mocked CSS-only gallery.
+    // Real desktop/mobile Phaser 3/4 vs overhead projection at 3 different render sizes.
+    // Keep the original and old five outfits as regression fallback.
     assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original');
     await activate('#project-hub-open');
     await activate('[data-hub-section="game"]');
     await activate('[data-hub-item="sprite-gallery"]');
     await page.locator('#sprite-gallery-panel').waitFor({timeout:10000});
-    assert.equal(await page.locator('[data-sprite-select]').count(),6);
+    assert.equal(await page.locator('#sprite-gallery-perspectives [data-sprite-select]').count(),7);
+    assert.equal(await page.locator('[data-sprite-select]').count(),12);
     assert.equal(await page.locator('[data-sprite-select="original"]').getAttribute('aria-pressed'),'true');
-    await activate('[data-sprite-select="blue-striped"]');
-    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'blue-striped');
-    assert.equal(await page.locator('[data-sprite-select="blue-striped"]').getAttribute('aria-pressed'),'true');
+    const studies=[
+      ['three-quarter-small','three-quarter','0.78'],
+      ['three-quarter-medium','three-quarter','1.05'],
+      ['three-quarter-large','three-quarter','1.35'],
+      ['high-topdown-small','high-topdown','0.78'],
+      ['high-topdown-medium','high-topdown','1.05'],
+      ['high-topdown-large','high-topdown','1.35']
+    ];
+    for(const [id,angle,scale] of studies){
+      await activate('[data-sprite-select="'+id+'"]');
+      assert.equal(await page.locator('html').getAttribute('data-character-visual'),id);
+      assert.equal(await page.locator('html').getAttribute('data-character-visual-perspective'),angle);
+      assert.equal(await page.locator('html').getAttribute('data-character-visual-scale'),scale);
+      assert.equal(await page.locator('[data-sprite-select="'+id+'"]').getAttribute('aria-pressed'),'true');
+    }
     await activate('#project-hub-close');
     await page.keyboard.down('ArrowRight');
     await page.waitForFunction(()=>document.documentElement.dataset.characterVisualFrame?.startsWith('right-'));
-    const movingFrame=await page.locator('html').getAttribute('data-character-visual-frame');
-    assert.match(movingFrame,/^right-[0-3]$/);
+    assert.match(await page.locator('html').getAttribute('data-character-visual-frame'),/^right-[0-3]$/);
     await page.keyboard.up('ArrowRight');
     await page.waitForFunction(()=>document.documentElement.dataset.characterVisualFrame==='right-0');
-    await activate('#project-hub-open');
-    await activate('[data-hub-section="game"]');
-    await activate('[data-hub-item="sprite-gallery"]');
-    for(const candidate of ['stone-guard','forest-traveler','quiet-scholar','road-wanderer']){
-      await activate('[data-sprite-select="'+candidate+'"]');
-      assert.equal(await page.locator('html').getAttribute('data-character-visual'),candidate);
-    }
-    assert.equal(await page.locator('#sprite-gallery-status').innerText().then(t=>t.includes('Дорожный странник')),true);
-    await activate('#project-hub-close');
-    assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')))
-      ?.player?.characterVisual,undefined,'Visual review must not enter GameState');
+    // Inspect the actual Phaser image frame changes rather than only the card animations.
     await activate('#project-hub-open');
     await activate('[data-hub-section="game"]');
     await activate('[data-hub-item="sprite-gallery"]');
     await activate('[data-sprite-select="original"]');
     assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual-scale'),null);
     assert.equal(await page.locator('html').getAttribute('data-character-visual-frame'),null);
+    // Legacy pack from v0.2.75 must remain available but secondary.
+    await activate('#sprite-gallery-legacy summary');
     await activate('[data-sprite-select="blue-striped"]');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'blue-striped');
+    await activate('[data-sprite-select="three-quarter-medium"]');
+    assert.equal(await page.locator('html').getAttribute('data-character-visual'),'three-quarter-medium');
     await activate('#project-hub-close');
+    assert.equal((await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')))
+      ?.player?.characterVisual,undefined,'Gallery must never write a selected appearance to GameState');
 
     // Real seven-slot hotbar and keyboard impulse, not only Node simulation.
     assert.equal(await page.locator('[data-skill-slot]').count(),7);
