@@ -3297,3 +3297,26 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 #sprite-gallery-perspectives .sprite-gallery-actor{height:116px}
 #sprite-gallery-perspectives .sprite-gallery-card{min-height:208px}
 @media(max-width:680px){#sprite-gallery-perspectives{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* v0.2.77: a compact, mouse-friendly, role-based PNG editor for print designers. */
+.knight-library-panel{color:#d8ebf8;font-size:13px;line-height:1.5;max-width:1130px;margin:auto}
+.knight-library-panel h2{font-size:17px}
+.knight-library-layout{display:grid;grid-template-columns:minmax(240px,1fr) minmax(280px,1.2fr);gap:14px}
+.knight-library-list{display:grid;grid-template-columns:1fr 1fr;gap:7px;align-content:start}
+.knight-library-list button{cursor:pointer;text-align:left;padding:11px;border:1px solid #467189;border-radius:8px;background:#183248;color:#e8f5ff}
+.knight-library-list button[aria-pressed=true]{border:2px solid #8ecdfa;background:#315978;padding:10px}
+.knight-library-list span{font-size:10px;color:#91e1b9}
+.knight-library-controls{padding:15px;border:1px solid #365d75;background:#132a3c;border-radius:9px;display:flex;flex-direction:column;gap:8px}
+.knight-library-controls h3{margin:0 0 2px;font-size:17px}
+.knight-library-preview{height:135px;background:#203343;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.knight-library-preview img{width:128px;height:128px;image-rendering:pixelated}
+.knight-library-controls label{display:flex;flex-direction:column;gap:5px}
+.knight-library-controls input[type=range]{width:100%;accent-color:#79b9e4}
+.knight-library-controls .knight-enable{flex-direction:row;align-items:center}
+.knight-library-controls .knight-file-label{font-weight:650}
+.knight-library-controls input[type=file]{font-size:12px;max-width:100%}
+.knight-buttons{display:flex;gap:6px;flex-wrap:wrap}
+.knight-buttons button{background:#2b4d67;border:1px solid #6089aa;color:#eaf6ff;border-radius:7px;padding:9px;cursor:pointer}
+.knight-library-panel .knight-help{font-size:11px;color:#b4cede}
+#knight-role-status{padding:8px 10px;border:1px solid #4c7c91;background:#173147;border-radius:7px}
+@media(max-width:760px){.knight-library-layout{grid-template-columns:1fr}.knight-library-list{grid-template-columns:1fr 1fr}}
