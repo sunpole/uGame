@@ -1,0 +1,400 @@
+{
+  "schemaVersion": 1,
+  "version": "0.2.73",
+  "status": "accepted-2026-10-12",
+  "maxLevel": 65,
+  "totalRequiredXp": 3067443826,
+  "notes": "Пороги утверждены. referenceMobXp — ориентир будущих боёв, а не текущая награда.",
+  "levels": [
+    {
+      "level": 1,
+      "requiredXp": 1000,
+      "referenceMobXp": 25,
+      "attributePoints": 0
+    },
+    {
+      "level": 2,
+      "requiredXp": 2000,
+      "referenceMobXp": 29,
+      "attributePoints": 3
+    },
+    {
+      "level": 3,
+      "requiredXp": 4076,
+      "referenceMobXp": 33,
+      "attributePoints": 3
+    },
+    {
+      "level": 4,
+      "requiredXp": 5120,
+      "referenceMobXp": 38,
+      "attributePoints": 3
+    },
+    {
+      "level": 5,
+      "requiredXp": 6421,
+      "referenceMobXp": 44,
+      "attributePoints": 3
+    },
+    {
+      "level": 6,
+      "requiredXp": 7857,
+      "referenceMobXp": 50,
+      "attributePoints": 3
+    },
+    {
+      "level": 7,
+      "requiredXp": 9764,
+      "referenceMobXp": 58,
+      "attributePoints": 3
+    },
+    {
+      "level": 8,
+      "requiredXp": 11850,
+      "referenceMobXp": 66,
+      "attributePoints": 3
+    },
+    {
+      "level": 9,
+      "requiredXp": 14497,
+      "referenceMobXp": 76,
+      "attributePoints": 3
+    },
+    {
+      "level": 10,
+      "requiredXp": 17569,
+      "referenceMobXp": 87,
+      "attributePoints": 5
+    },
+    {
+      "level": 11,
+      "requiredXp": 21315,
+      "referenceMobXp": 100,
+      "attributePoints": 3
+    },
+    {
+      "level": 12,
+      "requiredXp": 25800,
+      "referenceMobXp": 115,
+      "attributePoints": 3
+    },
+    {
+      "level": 13,
+      "requiredXp": 31329,
+      "referenceMobXp": 133,
+      "attributePoints": 3
+    },
+    {
+      "level": 14,
+      "requiredXp": 37507,
+      "referenceMobXp": 152,
+      "attributePoints": 3
+    },
+    {
+      "level": 15,
+      "requiredXp": 45143,
+      "referenceMobXp": 175,
+      "attributePoints": 3
+    },
+    {
+      "level": 16,
+      "requiredXp": 54101,
+      "referenceMobXp": 201,
+      "attributePoints": 3
+    },
+    {
+      "level": 17,
+      "requiredXp": 64764,
+      "referenceMobXp": 231,
+      "attributePoints": 3
+    },
+    {
+      "level": 18,
+      "requiredXp": 77556,
+      "referenceMobXp": 266,
+      "attributePoints": 3
+    },
+    {
+      "level": 19,
+      "requiredXp": 92344,
+      "referenceMobXp": 305,
+      "attributePoints": 3
+    },
+    {
+      "level": 20,
+      "requiredXp": 92499,
+      "referenceMobXp": 351,
+      "attributePoints": 5
+    },
+    {
+      "level": 21,
+      "requiredXp": 106202,
+      "referenceMobXp": 403,
+      "attributePoints": 3
+    },
+    {
+      "level": 22,
+      "requiredXp": 122014,
+      "referenceMobXp": 463,
+      "attributePoints": 3
+    },
+    {
+      "level": 23,
+      "requiredXp": 140198,
+      "referenceMobXp": 532,
+      "attributePoints": 3
+    },
+    {
+      "level": 24,
+      "requiredXp": 161280,
+      "referenceMobXp": 612,
+      "attributePoints": 3
+    },
+    {
+      "level": 25,
+      "requiredXp": 187577,
+      "referenceMobXp": 703,
+      "attributePoints": 3
+    },
+    {
+      "level": 26,
+      "requiredXp": 218255,
+      "referenceMobXp": 808,
+      "attributePoints": 3
+    },
+    {
+      "level": 27,
+      "requiredXp": 253726,
+      "referenceMobXp": 928,
+      "attributePoints": 3
+    },
+    {
+      "level": 28,
+      "requiredXp": 295245,
+      "referenceMobXp": 1067,
+      "attributePoints": 3
+    },
+    {
+      "level": 29,
+      "requiredXp": 343280,
+      "referenceMobXp": 1226,
+      "attributePoints": 3
+    },
+    {
+      "level": 30,
+      "requiredXp": 398878,
+      "referenceMobXp": 1408,
+      "attributePoints": 5
+    },
+    {
+      "level": 31,
+      "requiredXp": 463986,
+      "referenceMobXp": 1619,
+      "attributePoints": 3
+    },
+    {
+      "level": 32,
+      "requiredXp": 539181,
+      "referenceMobXp": 1860,
+      "attributePoints": 3
+    },
+    {
+      "level": 33,
+      "requiredXp": 626518,
+      "referenceMobXp": 2137,
+      "attributePoints": 3
+    },
+    {
+      "level": 34,
+      "requiredXp": 728132,
+      "referenceMobXp": 2456,
+      "attributePoints": 3
+    },
+    {
+      "level": 35,
+      "requiredXp": 845936,
+      "referenceMobXp": 2822,
+      "attributePoints": 3
+    },
+    {
+      "level": 36,
+      "requiredXp": 982820,
+      "referenceMobXp": 3243,
+      "attributePoints": 3
+    },
+    {
+      "level": 37,
+      "requiredXp": 1141777,
+      "referenceMobXp": 3727,
+      "attributePoints": 3
+    },
+    {
+      "level": 38,
+      "requiredXp": 1326218,
+      "referenceMobXp": 4283,
+      "attributePoints": 3
+    },
+    {
+      "level": 39,
+      "requiredXp": 1540296,
+      "referenceMobXp": 4922,
+      "attributePoints": 3
+    },
+    {
+      "level": 40,
+      "requiredXp": 1863153,
+      "referenceMobXp": 5656,
+      "attributePoints": 10
+    },
+    {
+      "level": 41,
+      "requiredXp": 2176528,
+      "referenceMobXp": 6499,
+      "attributePoints": 3
+    },
+    {
+      "level": 42,
+      "requiredXp": 2542049,
+      "referenceMobXp": 7468,
+      "attributePoints": 3
+    },
+    {
+      "level": 43,
+      "requiredXp": 2968362,
+      "referenceMobXp": 8582,
+      "attributePoints": 3
+    },
+    {
+      "level": 44,
+      "requiredXp": 3492308,
+      "referenceMobXp": 9862,
+      "attributePoints": 3
+    },
+    {
+      "level": 45,
+      "requiredXp": 4398416,
+      "referenceMobXp": 11333,
+      "attributePoints": 3
+    },
+    {
+      "level": 46,
+      "requiredXp": 5496960,
+      "referenceMobXp": 13023,
+      "attributePoints": 3
+    },
+    {
+      "level": 47,
+      "requiredXp": 6825777,
+      "referenceMobXp": 14966,
+      "attributePoints": 3
+    },
+    {
+      "level": 48,
+      "requiredXp": 8428308,
+      "referenceMobXp": 17198,
+      "attributePoints": 3
+    },
+    {
+      "level": 49,
+      "requiredXp": 10356556,
+      "referenceMobXp": 19762,
+      "attributePoints": 3
+    },
+    {
+      "level": 50,
+      "requiredXp": 12673394,
+      "referenceMobXp": 22710,
+      "attributePoints": 10
+    },
+    {
+      "level": 51,
+      "requiredXp": 15450540,
+      "referenceMobXp": 26097,
+      "attributePoints": 3
+    },
+    {
+      "level": 52,
+      "requiredXp": 18774076,
+      "referenceMobXp": 29989,
+      "attributePoints": 3
+    },
+    {
+      "level": 53,
+      "requiredXp": 22744997,
+      "referenceMobXp": 34461,
+      "attributePoints": 3
+    },
+    {
+      "level": 54,
+      "requiredXp": 27483518,
+      "referenceMobXp": 39601,
+      "attributePoints": 3
+    },
+    {
+      "level": 55,
+      "requiredXp": 44971624,
+      "referenceMobXp": 45507,
+      "attributePoints": 10
+    },
+    {
+      "level": 56,
+      "requiredXp": 74072913,
+      "referenceMobXp": 52294,
+      "attributePoints": 3
+    },
+    {
+      "level": 57,
+      "requiredXp": 110853911,
+      "referenceMobXp": 60093,
+      "attributePoints": 3
+    },
+    {
+      "level": 58,
+      "requiredXp": 156957953,
+      "referenceMobXp": 69055,
+      "attributePoints": 3
+    },
+    {
+      "level": 59,
+      "requiredXp": 214349158,
+      "referenceMobXp": 79354,
+      "attributePoints": 3
+    },
+    {
+      "level": 60,
+      "requiredXp": 240309835,
+      "referenceMobXp": 91189,
+      "attributePoints": 15
+    },
+    {
+      "level": 61,
+      "requiredXp": 241631106,
+      "referenceMobXp": 104789,
+      "attributePoints": 3
+    },
+    {
+      "level": 62,
+      "requiredXp": 317334212,
+      "referenceMobXp": 120417,
+      "attributePoints": 3
+    },
+    {
+      "level": 63,
+      "requiredXp": 410244141,
+      "referenceMobXp": 138376,
+      "attributePoints": 3
+    },
+    {
+      "level": 64,
+      "requiredXp": 1100000000,
+      "referenceMobXp": 159014,
+      "attributePoints": 3
+    },
+    {
+      "level": 65,
+      "requiredXp": 0,
+      "referenceMobXp": 0,
+      "attributePoints": 20
+    }
+  ]
+}

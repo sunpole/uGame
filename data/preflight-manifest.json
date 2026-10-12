@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.72",
+  "version": "0.2.73",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -91,7 +91,8 @@
     "./src/hero-creation.js",
     "./src/hero-start-profile.js",
     "./src/xp-meter.js",
-    "./src/action-meter.js"
+    "./src/action-meter.js",
+    "./data/character-xp-curve.json"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [

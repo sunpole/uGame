@@ -285,8 +285,8 @@ async function checkViewport(profile) {
     assert.ok(orbLayout.xp.b<=orbLayout.footer.t+2 &&
       orbLayout.xp.t>=orbLayout.controls.b-6,
       'Full-width XP band must be BETWEEN workspace controls and footer');
-    assert.equal(await page.locator('#xp-bottom-band').getAttribute('data-threshold-known'),
-      'false','Never invent unapproved XP thresholds');
+    await page.waitForFunction(() => document.querySelector('#xp-bottom-band')?.getAttribute('data-threshold-known')==='true');
+    assert.match(await page.locator('#character-xp').innerText(),/1.{0,2}000/);
     await activate('#project-hub-close');
 
     // Real seven-slot hotbar and keyboard impulse, not only Node simulation.
@@ -622,8 +622,8 @@ async function checkViewport(profile) {
     assert.equal(afterDev.schemaVersion,1);
     assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
     assert.match(await page.locator('#character-xp').innerText(),/525/);
-    assert.match(await page.locator('#character-xp').innerText(),/порог уточняется/,
-      'Nonapproved level thresholds must not be fabricated');
+    assert.match(await page.locator('#character-xp').innerText(),/463.{0,2}986/,
+      'Approved level 31 threshold must display');
     await dev('2399','2399');
     assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
     const priorSteps=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.stepEconomy);
