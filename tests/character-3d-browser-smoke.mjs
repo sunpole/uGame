@@ -47,7 +47,7 @@ async function check(name,viewport,mobile){
    const s=page.locator('[data-scale="'+size+'"]');
    if(mobile){await b.tap();await s.tap();}else{await b.click();await s.click();}
    const actual=await page.evaluate(()=>({angle:window.__ugame3d.angle,scale:window.__ugame3d.scale}));
-   assert.deepEqual(actual,{angle,scale});
+   assert.deepEqual(actual,{angle,scale:size});
    assert.equal(await b.getAttribute('aria-pressed'),'true');
    assert.equal(await s.getAttribute('aria-pressed'),'true');
   }
