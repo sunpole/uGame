@@ -3252,3 +3252,38 @@ html.ugame-text-selection-enabled .chrome-logo-block {
   background:#203548;color:#e6f1fa;font-weight:700;cursor:pointer}
 .character-attribute-actions button:disabled{opacity:.4;cursor:default}
 .character-attribute-actions button:not(:disabled):hover{background:#2c4b64}
+
+/* v0.2.75 — temporary walking character art review; no changes to combat HUD. */
+.sprite-gallery-panel{max-width:1110px;margin:0 auto;padding:8px 2px 25px}
+.sprite-gallery-panel h2{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:20px}
+.sprite-gallery-panel p{color:#b6c6d4;font-size:12px;line-height:1.6}
+#sprite-gallery-status{color:#d8e9ee}
+.sprite-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sprite-gallery-card{display:flex;flex-direction:column;align-items:center;gap:7px;
+ text-align:center;border:1px solid #38546b;border-radius:10px;min-width:0;min-height:199px;
+ color:#e8f3fa;background:#132637;padding:11px;cursor:pointer}
+.sprite-gallery-card[aria-pressed="true"]{border:2px solid #86c6ff;background:#1c3a4f;padding:10px}
+.sprite-gallery-card:hover{background:#24425a}
+.sprite-gallery-card strong{font-size:13px}
+.sprite-gallery-card small{font-size:11px;line-height:1.35;color:#acbdcf;min-height:30px}
+.sprite-gallery-card em{font-size:10px;font-style:normal;color:#91d0fc}
+.sprite-gallery-actor{height:104px;width:84px;display:flex;justify-content:center;
+ align-items:center;overflow:hidden;image-rendering:pixelated}
+.sprite-gallery-motion{width:64px;height:96px;display:block;
+ background-size:256px 384px;background-position:0 0;
+ animation:ugame-gallery-walk .68s steps(4,end) infinite}
+@keyframes ugame-gallery-walk{to{background-position:-256px 0}}
+.sprite-gallery-original{width:64px;height:96px;display:block;position:relative}
+.sprite-gallery-original-head{position:absolute;top:17px;left:21px;
+ width:22px;height:22px;border-radius:100%;background:#e7c6a5;box-shadow:0 0 0 2px #1f2328}
+.sprite-gallery-original-body{position:absolute;top:41px;left:14px;width:36px;height:29px;
+ border-radius:100%;background:#5f81ff}
+.sprite-gallery-original-feet{position:absolute;top:69px;left:20px;width:24px;height:16px;
+ border-left:8px solid #30363d;border-right:8px solid #30363d;box-sizing:border-box;
+ animation:ugame-gallery-feet .68s ease-in-out infinite alternate}
+@keyframes ugame-gallery-feet{to{transform:skewX(15deg)}}
+@media(max-width:680px){.sprite-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .sprite-gallery-card{min-height:205px;padding:7px}.sprite-gallery-card[aria-pressed="true"]{padding:6px}}
+@media(prefers-reduced-motion:reduce){
+ .sprite-gallery-motion,.sprite-gallery-original-feet{animation:none}
+}

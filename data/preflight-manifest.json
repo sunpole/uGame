@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.74",
+  "version": "0.2.75",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -93,7 +93,8 @@
     "./src/xp-meter.js",
     "./src/action-meter.js",
     "./data/character-xp-curve.json",
-    "./src/character-progression.js"
+    "./src/character-progression.js",
+    "./src/character-sprite-gallery.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -173,6 +174,7 @@
     "./src/hero-start-profile.js",
     "./src/xp-meter.js",
     "./src/action-meter.js",
-    "./src/character-progression.js"
+    "./src/character-progression.js",
+    "./src/character-sprite-gallery.js"
   ]
 }

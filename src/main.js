@@ -1306,6 +1306,10 @@ export async function bootGame({ availableTextureFiles } = {}) {
     onOpenChange: () => syncPlayerInputState(),
     interfaceSettings: interfaceSettingsSystem,
     biomeTextureSettings: biomeTextureSettingsSystem,
+    characterSprites: {
+      get: () => activeZoneScene?.characterView?.variantId || 'original',
+      select: (id) => activeZoneScene?.characterView?.setVariant(id) ?? false
+    },
     characterDraft: {
       getRuntime: () => characterVitalsHUD?.render() || null,
       allocate: (stat) => {
