@@ -1308,6 +1308,13 @@ export async function bootGame({ availableTextureFiles } = {}) {
     biomeTextureSettings: biomeTextureSettingsSystem,
     characterDraft: {
       getRuntime: () => characterVitalsHUD?.render() || null,
+      allocate: (stat) => {
+        const gameState=activeZoneScene?.gameState;
+        if(!gameState)throw Error('Персонаж ещё не загружен');
+        gameState.allocateCharacterAttribute(stat);
+        activeZoneScene.persistGameState();
+        characterVitalsHUD?.render();
+      },
       get: () => activeZoneScene?.gameState?.state?.player?.characterDraft || null,
       set: (draft) => {
         if (!activeZoneScene?.gameState) return;
