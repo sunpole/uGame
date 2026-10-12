@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.76",
-  "stage": "character-perspective-size-comparison",
+  "version": "0.2.77",
+  "stage": "knight-role-visual-library",
   "updated": "2026-10-12",
-  "summary": "Original + 3/4 and high top-down neutral characters at three rendered sizes each; legacy gallery retained, session-only selection."
+  "summary": "8-way real CC0 knight walk/idle on actual map; twelve local role images, adjustable size/shadow, PNG import on device, original preserved."
 }

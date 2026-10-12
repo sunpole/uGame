@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.76",
+  "version": "0.2.77",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -95,7 +95,13 @@
     "./data/character-xp-curve.json",
     "./src/character-progression.js",
     "./src/character-sprite-gallery.js",
-    "./src/character-perspective-studies.js"
+    "./src/character-perspective-studies.js",
+    "./src/knight-atlas-core.js",
+    "./src/knight-role-library.js",
+    "./data/knight-source/manifest.json",
+    "./data/knight-source/palette.json",
+    "./data/knight-source/Idle.json",
+    "./data/knight-source/Walk.json"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -177,6 +183,8 @@
     "./src/action-meter.js",
     "./src/character-progression.js",
     "./src/character-sprite-gallery.js",
-    "./src/character-perspective-studies.js"
+    "./src/character-perspective-studies.js",
+    "./src/knight-atlas-core.js",
+    "./src/knight-role-library.js"
   ]
 }
