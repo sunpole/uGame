@@ -40,6 +40,7 @@ export class KnightRoleLibrary{
   this.settings=Object.fromEntries(KNIGHT_ROLES.map(r=>[r.id,safeKnightSetting(r.id,storageRead()[r.id])]));
   this.uploads=new Map();this.textures=new Map();this.db=null;this.source=null;
   this.ready=false;this.error='';this.scene=null;this.revision=0;
+  this.pending=new Map();this.selectedRole=storageRead().__selected||null;
  }
  setting(role){return this.settings[role]||null;}
  hasUpload(role){return this.uploads.has(role);}
@@ -67,7 +68,14 @@ export class KnightRoleLibrary{
    this.ready=true;this.onChange?.();
   }catch(error){this.error='Исходные кадры недоступны: '+String(error.message||error);this.onChange?.();}
  }
- bindScene(scene){this.scene=scene;this.textures.clear();if(this.ready)this.onChange?.();}
+ bindScene(scene){this.scene=scene;this.textures.clear();this.pending.clear();if(this.ready)this.onChange?.();}
+ selectHeroRole(role){
+  if(role!==null&&(!isKnightRole(role)||knightRoleInfo(role).group!=='hero'))throw Error('Для героя выбери одну из четырёх моделей');
+  this.selectedRole=role;
+  const ok=storageWrite({...this.settings,__selected:role});
+  this.onChange?.();
+  return ok;
+ }
  async importPng(role,file){
   if(!isKnightRole(role))throw Error('Неизвестная роль');
   if(file?.type!=='image/png')throw Error('Выбери PNG, не JPG и не GIF');
@@ -87,27 +95,30 @@ export class KnightRoleLibrary{
  }
  setSettings(role,entry){
   this.settings[role]=safeKnightSetting(role,{...this.settings[role],...entry});
-  const ok=storageWrite(this.settings);
+  const ok=storageWrite({...this.settings,__selected:this.selectedRole});
   this.onChange?.();
   return ok;
  }
- invalidate(role){this.textures.delete(role);this.revision++;this.onChange?.();}
+ invalidate(role){this.textures.delete(role);this.pending.delete(role);this.revision++;this.onChange?.();}
  async texture(role){
   if(!this.ready||!this.scene||!isKnightRole(role))return null;
-  const cached=this.textures.get(role);
-  if(cached)return cached;
-  const key='ugame-knight-'+role+'-'+this.revision;
-  const canvas=await this.compile(role);
-  if(!this.scene?.textures)return null;
-  // Multiple roles share identical source frames but have independent palette/PNG.
-  const texture=this.scene.textures.addCanvas(key,canvas);
-  for(let dir=0;dir<8;dir++){
-   const prefix=KNIGHT_DIRS[dir]+'-';
-   for(let i=0;i<11;i++)texture.add(prefix+i,0,i*128,dir*128,128,128);
-   texture.add(prefix+'idle',0,11*128,dir*128,128,128);
-  }
-  this.textures.set(role,key);
-  return key;
+  const cached=this.textures.get(role);if(cached)return cached;
+  if(this.pending.has(role))return this.pending.get(role);
+  const revision=this.revision,scene=this.scene;
+  const pending=(async()=>{
+   const canvas=await this.compile(role);
+   if(!scene?.textures||this.scene!==scene||revision!==this.revision)return null;
+   const key='ugame-knight-'+role+'-'+revision;
+   const texture=scene.textures.exists(key)?scene.textures.get(key):scene.textures.addCanvas(key,canvas);
+   for(let dir=0;dir<8;dir++){
+    const prefix=KNIGHT_DIRS[dir]+'-';
+    for(let i=0;i<11;i++)if(!texture.has(prefix+i))texture.add(prefix+i,0,i*128,dir*128,128,128);
+    if(!texture.has(prefix+'idle'))texture.add(prefix+'idle',0,11*128,dir*128,128,128);
+   }
+   this.textures.set(role,key);return key;
+  })();
+  this.pending.set(role,pending);
+  try{return await pending;}finally{if(this.pending.get(role)===pending)this.pending.delete(role);}
  }
  async compile(role){
   const upload=this.uploads.get(role);
