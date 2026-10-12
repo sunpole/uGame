@@ -9,7 +9,7 @@ test('Original, six neutral size/angle studies, and five retained costumes are s
  assert.equal(CHARACTER_VISUALS[0].id,ORIGINAL_VISUAL_ID);
  assert.equal(CHARACTER_VISUALS.filter(v=>v.type==='pixel').length,11);
  assert.equal(CHARACTER_VISUALS.filter(v=>v.group==='perspective').length,6);
- assert.equal(new Set(CHARACTER_VISUALS.map(v=>v.id)).size,6);
+ assert.equal(new Set(CHARACTER_VISUALS.map(v=>v.id)).size,12);
  for(const v of CHARACTER_VISUALS){
    assert.equal(isCharacterVisualId(v.id),true);
    assert.ok(v.label.length>5&&v.note.length>10);
