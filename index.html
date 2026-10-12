@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uGame v0.2.71</title>
-    <link rel="stylesheet" href="./src/style.css?v=0.2.71" />
+    <title>uGame v0.2.72</title>
+    <link rel="stylesheet" href="./src/style.css?v=0.2.72" />
     <style>
       /* The hidden full-size game chrome must not enlarge the mobile layout viewport
          while Chromium is displaying the startup gate. */
@@ -159,29 +159,8 @@
           <span class="chrome-label">ПРОГРЕСС</span>
           <div class="character-maturity">
             <strong id="character-level">ЗРЛ 1 / 65</strong>
-            <span id="character-xp">ЗРП 0 · порог позже</span>
-          </div>
-          <div class="character-orb-pair" aria-label="Ресурсы персонажа: здоровье, Покров, основной ресурс и Желание">
-            <div class="character-orb hp" id="character-orb-hp" data-ready="false">
-              <div class="orb-shell" aria-hidden="true">
-                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
-                <span class="orb-mark">ХП</span>
-              </div>
-              <span class="orb-number">—</span>
-              <span class="orb-overlay-number">ПП —</span>
             </div>
-            <div class="character-orb rp" id="character-orb-rp" data-ready="false">
-              <div class="orb-shell" aria-hidden="true">
-                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
-                <span class="orb-mark">РП</span>
-              </div>
-              <span class="orb-number">—</span>
-              <span class="orb-overlay-number">ЖП —</span>
-            </div>
-          </div>
           <span class="character-hud-provisional">БАЛАНС · ПРОТОТИП</span>
-          <span id="header-stamina">Stamina 100 / 100</span>
-          <div class="chrome-progress-track" aria-hidden="true"><i id="header-stamina-bar" style="width:100%"></i></div>
         </div>
 
         <div class="chrome-header-block resource-summary-block">
@@ -265,7 +244,26 @@
           </div>
         </main>
 
-        <div id="skill-hotbar" class="skill-hotbar" role="group" aria-label="Семь слотов умений · клавиши 1–7">
+        <div id="combat-hud" class="combat-hud" aria-label="Боевые показатели и навыки">
+          <div class="combat-hud-orb combat-hud-left"><div class="character-orb hp" id="character-orb-hp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">ХП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ПП —</span>
+            </div>
+            </div>
+          <div class="combat-hud-center">
+            <div class="action-meter" id="action-meter" role="progressbar" aria-label="Действие" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-state="idle">
+              <div class="action-meter-label"><span id="action-meter-name">Действие · готов</span><span id="action-meter-pct">0%</span></div>
+              <div class="action-meter-track"><i id="action-meter-fill"></i></div>
+            </div>
+            <div class="combat-stamina">
+              <span id="header-stamina">Stamina 100 / 100</span>
+          <div class="chrome-progress-track" aria-hidden="true"><i id="header-stamina-bar" style="width:100%"></i></div>
+            </div>
+            <div id="skill-hotbar" class="skill-hotbar" role="group" aria-label="Семь слотов умений · клавиши 1–7">
           <div class="skill-hotbar-slots">
             <button class="skill-slot active" type="button" data-skill-slot="1" data-affordable="false"
               title="1 · Красный импульс: −35 ЖП/РП, КД 0,3 с, радиус 75 px, 50 урона">
@@ -280,6 +278,17 @@
             <button class="skill-slot empty" type="button" data-skill-slot="7" title="7 · свободный слот"><kbd>7</kbd><span>＋</span></button>
           </div>
           <output id="skill-hotbar-status" aria-live="polite">1–7 · Выбери и сохрани профиль для использования</output>
+        </div>
+          </div>
+          <div class="combat-hud-orb combat-hud-right"><div class="character-orb rp" id="character-orb-rp" data-ready="false">
+              <div class="orb-shell" aria-hidden="true">
+                <div class="orb-liquid"></div><div class="orb-glass"></div><div class="orb-ring"></div>
+                <span class="orb-mark">РП</span>
+              </div>
+              <span class="orb-number">—</span>
+              <span class="orb-overlay-number">ЖП —</span>
+            </div>
+</div>
         </div>
         <div id="workspace-control-strip" class="workspace-control-strip" aria-label="Удалённое управление и DEV">
           <div class="mouse-controls" aria-label="Управление мышью">
@@ -337,9 +346,17 @@
         </div>
       </div>
 
+      <div id="xp-bottom-band" class="xp-bottom-band" role="group" aria-label="Прогресс опыта персонажа">
+        <strong id="xp-bottom-level">ЗРЛ 1</strong>
+        <div class="xp-bottom-body">
+          <div class="xp-bottom-track" aria-hidden="true"><i id="xp-bottom-fill" style="width:0%"></i></div>
+          <span id="character-xp">ЗРП 0 / — · порог уточняется</span>
+        </div>
+        <span id="xp-bottom-percent">—% / —%</span>
+      </div>
       <footer id="global-footer" class="game-chrome-footer">
         <div class="chrome-footer-block version-block">
-          <strong id="footer-version">v0.2.71</strong>
+          <strong id="footer-version">v0.2.72</strong>
         </div>
         <div class="chrome-footer-block build-block">
           <span id="footer-build">BUILD …</span>
@@ -370,7 +387,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.min.js"></script>
     <script type="module">
-      import { runPreflight } from './src/preflight-system.js?v=0.2.71';
+      import { runPreflight } from './src/preflight-system.js?v=0.2.72';
 
       const root = document.querySelector('#preflight-screen');
       const app = document.querySelector('#app');
@@ -387,7 +404,7 @@
         });
         const summary = root.querySelector('#preflight-summary')?.textContent?.trim() || '—';
         return [
-          'uGame v0.2.71 · PRE-FLIGHT DEBUG',
+          'uGame v0.2.72 · PRE-FLIGHT DEBUG',
           'Дата: ' + new Date().toISOString(),
           'Boot phase: ' + String(window.__ugameBoot?.phase || 'unknown'),
           'Browser: ' + navigator.userAgent,
@@ -422,17 +439,17 @@
 
       try {
         window.__ugameBoot.phase = 'preflight';
-        const result = await runPreflight({ expectedVersion: '0.2.71', root });
+        const result = await runPreflight({ expectedVersion: '0.2.72', root });
         if (!result.ok) throw new Error('Pre-flight failed');
 
         let phaseStartedAt = performance.now();
         result.report.set('module-boot', 'Импорт игрового модуля', 'running', 'загрузка…');
-        const gameModule = await import('./src/main.js?v=0.2.71');
+        const gameModule = await import('./src/main.js?v=0.2.72');
         let phaseElapsed = performance.now() - phaseStartedAt;
         result.report.set('module-boot', 'Импорт игрового модуля', 'ok', 'OK · ' + phaseElapsed.toFixed(phaseElapsed < 100 ? 1 : 0) + ' мс');
 
         window.__ugameBoot.phase = 'hero-selection';
-        const { openHeroEntrance } = await import('./src/hero-creation.js?v=0.2.71');
+        const { openHeroEntrance } = await import('./src/hero-creation.js?v=0.2.72');
         await openHeroEntrance({root:document});
         window.__ugameBoot.phase = 'hero-confirmed';
 
