@@ -1,4 +1,5 @@
 import {ORIGINAL_VISUAL_ID,isCharacterVisualId,installWalkingTextures,sheetTextureKey,directionFromVector,visualScale,perspectiveDescriptor} from './character-sprite-gallery.js';
+import {knightFacing} from './knight-atlas-core.js';
 function approach(current, target, delta, response = 80) {
   const t = 1 - Math.exp(-Math.max(0, delta) / response);
   return current + (target - current) * t;
@@ -43,7 +44,10 @@ function createHumanoidVisual(scene, {
 }
 
 export class CharacterView {
-  constructor({ scene, player } = {}) {
+  constructor({ scene, player, knightRoles } = {}) {
+    this.knightRoles=knightRoles;
+    this.knightImage=null;this.knightShadow=null;this.knightRole=null;
+    this.knightTicket=0;this.knightElapsed=0;this.knightFrame='S-idle';
     this.scene = scene;
     this.player = player;
     this.phase = 0;
@@ -77,6 +81,9 @@ export class CharacterView {
 
   setVariant(id){
     if(!isCharacterVisualId(id))return false;
+    this.knightTicket++;
+    this.clearKnightVisual();
+    if(this.knightRoles?.selectedRole)this.knightRoles.selectHeroRole(null);
     if(id!==ORIGINAL_VISUAL_ID && (this.spriteGalleryError||
         !this.scene.textures.exists(sheetTextureKey(id))))return false;
     if(id===this.variantId)return true;
@@ -99,9 +106,62 @@ export class CharacterView {
     return true;
   }
 
+  clearKnightVisual(){
+    this.knightImage?.destroy();this.knightImage=null;
+    this.knightShadow?.destroy();this.knightShadow=null;
+    this.knightRole=null;this.knightElapsed=0;
+  }
+  async setKnight(role,{persist=true}={}){
+    if(!this.knightRoles?.ready)return false;
+    const ticket=++this.knightTicket;
+    let key;
+    try{key=await this.knightRoles.texture(role);}catch(error){
+      console.warn('Knight role cannot be loaded, using original',error);return false;
+    }
+    if(ticket!==this.knightTicket||!key||!this.player?.active)return false;
+    if(persist)this.knightRoles.selectHeroRole(role);
+    this.clearKnightVisual();
+    this.pixelView?.destroy();this.pixelView=null;
+    this.variantId='knight-role';
+    this.knightRole=role;
+    this.container.setVisible(false);
+    const settings=this.knightRoles.setting(role);
+    this.knightShadow=this.scene.add.ellipse(this.player.x,this.player.y+14,
+      38*settings.scale,11*settings.scale,0x000000,settings.shadow).setDepth(9);
+    this.knightImage=this.scene.add.image(this.player.x,this.player.y+19,key,'S-idle')
+      .setOrigin(0.5,0.94).setDepth(10).setScale(settings.scale);
+    this.knightElapsed=0;this.knightFrame='S-idle';
+    document.documentElement.dataset.characterVisual='knight-role';
+    document.documentElement.dataset.characterVisualScale=String(settings.scale);
+    document.documentElement.dataset.characterVisualPerspective='eight-way';
+    return true;
+  }
+  refreshKnightRole(){
+    const selected=this.knightRoles?.selectedRole;
+    if(selected&&this.knightRoles?.ready){
+      if(this.variantId!=='knight-role'||this.knightRole!==selected||
+         this.knightImage?.texture?.key!==this.knightRoles.textures.get(selected)){
+        void this.setKnight(selected,{persist:false});
+      }else{
+        const cfg=this.knightRoles.setting(selected);
+        this.knightImage.setScale(cfg.scale);
+        this.knightShadow.setAlpha(cfg.shadow).setSize(38*cfg.scale,11*cfg.scale);
+      }
+    }else if(this.variantId==='knight-role')this.setVariant('original');
+  }
+
   update(state, delta) {
     if (!state) return;
-
+    if(this.variantId==='knight-role'&&this.knightImage){
+      const dir=knightFacing(state.direction);
+      this.knightElapsed=state.moving?this.knightElapsed+delta:0;
+      const frame=state.moving?dir+'-'+(Math.floor(this.knightElapsed/105)%11):dir+'-idle';
+      this.knightImage.setPosition(this.player.x,this.player.y+19);
+      this.knightShadow.setPosition(this.player.x,this.player.y+16);
+      if(this.knightFrame!==frame){this.knightImage.setFrame(frame);this.knightFrame=frame;}
+      document.documentElement.dataset.characterVisualFrame=frame;
+      return;
+    }
     if(this.variantId!==ORIGINAL_VISUAL_ID && this.pixelView){
       this.pixelDirection=directionFromVector(state.direction);
       this.pixelElapsed=state.moving?this.pixelElapsed+delta:0;
@@ -144,6 +204,7 @@ export class CharacterView {
   }
 
   destroy() {
+    this.knightTicket++;this.clearKnightVisual();
     this.pixelView?.destroy();
     this.container?.destroy(true);
     if(document.documentElement.dataset.characterVisual===this.variantId)

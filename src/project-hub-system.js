@@ -1,6 +1,7 @@
 import { GROUND_TEXTURE_ASSETS } from './ground-texture-system.js';
 import { normalizeCharacterDraft, characterDraftResult, METRICS, METRIC_KEYS } from './character-draft.js';
 import {CHARACTER_VISUALS,FRAME_WIDTH,FRAME_HEIGHT,WALK_FRAMES,makeGalleryPreview} from './character-sprite-gallery.js';
+import {KNIGHT_ROLES} from './knight-atlas-core.js';
 import { metricInterpretation } from './character-balance/display-units.js';
 import { masterRarityReport } from './master-rarity-audit.js';
 import { WORLD_MAP_FOCUS_SCALE, worldMapFitCamera, worldMapFocusCamera, worldMapClampCamera, worldMapZoomAt, worldMapPan } from './world-map-camera.js';
@@ -175,6 +176,7 @@ export class ProjectHubSystem {
     worldMap,
     characterDraft,
     characterSprites,
+    knightRoles,
     spawnZoneDebug,
     devCodeRunner
   }) {
@@ -193,6 +195,7 @@ export class ProjectHubSystem {
     this.worldMap = worldMap;
     this.characterDraft = characterDraft;
     this.characterSprites = characterSprites;
+    this.knightRoles = knightRoles;
     this.characterDraftRules = null;
     this.spawnZoneDebug = spawnZoneDebug;
     this.devCodeRunner = devCodeRunner;
@@ -298,6 +301,7 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (view.type === 'knight-library') {this.renderKnightLibrary(view);return;}
     if (view.type === 'sprite-gallery') {
       this.renderSpriteGallery(view);
       return;
@@ -422,6 +426,10 @@ export class ProjectHubSystem {
       return;
     }
 
+    if (item.type === 'knight-library') {
+      this.stack.push({type:'knight-library',label:item.label,selectedRole:'hero-plate'});
+      this.renderCurrent();return;
+    }
     if (item.type === 'sprite-gallery') {
       this.stack.push({type:'sprite-gallery',label:item.label});
       this.renderCurrent();
@@ -445,6 +453,99 @@ export class ProjectHubSystem {
     }
   }
 
+
+  async renderKnightLibrary(view){
+    this.setSubViewHeader('Атласы рыцаря · 12 ролей','uGame / Игра / Библиотека персонажей');
+    const library=this.knightRoles,role=view.selectedRole||'hero-plate',cfg=library?.setting(role);
+    if(!library||!cfg){this.contentElement.textContent='Библиотека пока недоступна';return;}
+    const status=(text)=>{const node=this.contentElement.querySelector('#knight-role-status');if(node)node.textContent=text;};
+    this.contentElement.innerHTML=[
+      '<section class="knight-library-panel" id="knight-role-library">',
+      '<h2>Наш настоящий 8-направленный рыцарь <span class="character-draft-chip">DEV · ГРАФИКА</span></h2>',
+      '<p>Выбирай, кому назначить рисунок. <b>12 отдельных ролей</b> для игроков, банка, двух телепортеров, четырёх городских стражей и будущего человека-противника.',
+      ' Без PNG каждая роль использует базового рыцаря с отдельным цветом.</p>',
+      '<p><b>Важно:</b> роль «человек-противник» пока только заготовка, боевых мобов эта настройка не создаёт.',
+      ' Четыре правителя пока используют места существующих городских стражей, новых царских NPC мы не добавляем.</p>',
+      '<div class="knight-library-layout">',
+      '<div class="knight-library-list" id="knight-role-list">',
+      KNIGHT_ROLES.map(r=>'<button type="button" data-knight-role="'+escapeHtml(r.id)+
+       '" aria-pressed="'+(r.id===role)+'">'+escapeHtml(r.name)+
+       (library.hasUpload(r.id)?' <span aria-label="Есть загруженный PNG">● PNG</span>':'')+'</button>').join(''),
+      '</div>',
+      '<div class="knight-library-controls">',
+      '<h3>'+escapeHtml(KNIGHT_ROLES.find(r=>r.id===role)?.name||role)+'</h3>',
+      '<div class="knight-library-preview"><img id="knight-role-preview" alt="Образец выбранного рыцаря" width="128" height="128"></div>',
+      '<p id="knight-role-file">Источник: '+escapeHtml(library.uploadName(role)||'Встроенный CC0 рыцарь')+'</p>',
+      '<label>Масштаб модели: <output id="knight-scale-value">'+cfg.scale.toFixed(2)+'</output>',
+      '<input id="knight-role-scale" type="range" min="0.30" max="3.50" step="0.05" value="'+cfg.scale+'"></label>',
+      '<label>Тень: <output id="knight-shadow-value">'+Math.round(cfg.shadow*100)+'%</output>',
+      '<input id="knight-role-shadow" type="range" min="0" max="0.80" step="0.05" value="'+cfg.shadow+'"></label>',
+      '<label class="knight-enable"><input id="knight-role-enabled" type="checkbox" '+(cfg.enabled?'checked':'')+'> Показывать модель вместо старой фигуры</label>',
+      '<label class="knight-file-label" for="knight-role-upload">Выбрать свой PNG с компьютера</label>',
+      '<input id="knight-role-upload" type="file" accept="image/png,.png">',
+      '<p class="knight-help">Нужен исходный прозрачный PNG <b>2816×2048</b>: 8 строк направлений × 11 кадров.',
+      ' Встроенные Idle/Walk уже есть. Свой файл загружается только в эту роль и сохраняется в браузере.</p>',
+      '<div class="knight-buttons"><button id="knight-role-reset" type="button">Вернуть стандартный рисунок</button>',
+      (KNIGHT_ROLES.find(r=>r.id===role)?.group==='hero'?'<button id="knight-role-hero" type="button">Показать на моём герое</button>':''),
+      '<button id="knight-role-original" type="button">Вернуть первого героя</button></div>',
+      '<p id="knight-role-status" role="status">'+escapeHtml(library.error||
+        'Масштаб, тень и свой PNG сохраняются на этом устройстве (не в игровом Save).')+'</p>',
+      '</div></div>',
+      '<p class="knight-help">Файл не отправляется на сервер. Это локальные графические настройки устройства: в другом браузере или на другом ПК PNG придётся импортировать ещё раз.',
+      ' Исходный герой, характеристики, экономика и игровые сохранения остаются без изменений.</p>',
+      '</section>'
+    ].join('');
+    const root=this.contentElement;
+    const choose=async(id)=>{
+      view.selectedRole=id;
+      await this.renderKnightLibrary(view);
+    };
+    for(const b of root.querySelectorAll('[data-knight-role]'))b.addEventListener('click',()=>{void choose(b.dataset.knightRole);});
+    const update=(prop,value)=>{
+      const saved=library.setSettings(role,{[prop]:value});
+      status(saved?'Настройки сохранены локально.':'Не удалось сохранить настройки браузера.');
+    };
+    root.querySelector('#knight-role-scale')?.addEventListener('input',event=>{
+      const scale=Number(event.target.value);
+      root.querySelector('#knight-scale-value').textContent=scale.toFixed(2);
+      update('scale',scale);
+    });
+    root.querySelector('#knight-role-shadow')?.addEventListener('input',event=>{
+      const value=Number(event.target.value);
+      root.querySelector('#knight-shadow-value').textContent=Math.round(value*100)+'%';
+      update('shadow',value);
+    });
+    root.querySelector('#knight-role-enabled')?.addEventListener('change',event=>update('enabled',event.target.checked));
+    root.querySelector('#knight-role-upload')?.addEventListener('change',async(event)=>{
+      const file=event.target.files?.[0];if(!file)return;
+      status('Проверяю и сохраняю PNG, подожди…');
+      try{
+        await library.importPng(role,file);
+        await this.renderKnightLibrary(view);
+        status('Свой PNG сохранён для роли: '+file.name);
+      }catch(error){status('Ошибка: '+String(error.message||error));event.target.value='';}
+    });
+    root.querySelector('#knight-role-reset')?.addEventListener('click',async()=>{
+      status('Возвращаю встроенный рисунок…');
+      try{await library.clearPng(role);await this.renderKnightLibrary(view);status('Стандартный рыцарь восстановлен.');}
+      catch(error){status('Ошибка: '+String(error.message||error));}
+    });
+    root.querySelector('#knight-role-hero')?.addEventListener('click',async()=>{
+      status('Применяю рыцаря на игровой карте…');
+      const ok=await this.characterSprites?.selectKnight?.(role);
+      status(ok?'Герой переодет! Закрой Hub и походи на карте.':'Вариант недоступен: '+(library.error||'проверь загрузку'));
+    });
+    root.querySelector('#knight-role-original')?.addEventListener('click',()=>{
+      const ok=this.characterSprites?.select?.('original');
+      status(ok?'Первый оригинальный герой восстановлен.':'Сцена ещё загружается');
+    });
+    if(!library.ready){status(library.error||'Исходные кадры загружаются…');return;}
+    try{
+      const src=await library.preview(role);
+      if(this.stack.at(-1)===view&&this.contentElement.querySelector('#knight-role-preview'))
+        this.contentElement.querySelector('#knight-role-preview').src=src;
+    }catch(error){status('Ошибка предпросмотра: '+String(error.message||error));}
+  }
 
   renderSpriteGallery(view){
     this.setSubViewHeader('Примерочная персонажей','uGame / Игра / Ракурс и размер');

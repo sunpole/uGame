@@ -7,6 +7,7 @@ import { EventSystem } from './event-system.js';
 import { InteractableSystem } from './interactable-system.js';
 import { PlayerController } from './player-controller.js';
 import { CharacterView } from './character-view.js';
+import { KnightRoleLibrary } from './knight-role-library.js';
 import { AudioSystem } from './audio-system.js';
 import { ZoneRulesSystem } from './zone-rules-system.js';
 import { ResourceSystem } from './resource-system.js';
@@ -93,6 +94,10 @@ let resourceProfessionSystem = null;
 let resourceProfessionView = null;
 let masterActivitySystem = null;
 let spawnZoneDebugSystem = null;
+const knightRoles=new KnightRoleLibrary({onChange:()=>{
+  activeZoneScene?.characterView?.refreshKnightRole?.();
+  activeZoneScene?.interactableSystem?.refreshKnightViews?.();
+}});
 
 
 function syncPlayerInputState() {
@@ -298,7 +303,7 @@ class ZoneScene extends Phaser.Scene {
     playerController.bindVirtualControls(document);
     syncPlayerInputState();
 
-    this.characterView = new CharacterView({ scene: this, player: this.player });
+    this.characterView = new CharacterView({ scene: this, player: this.player, knightRoles });
     characterSkillSystem?.tick(Date.now());
 
     resourceSystem = new ResourceSystem({
@@ -495,6 +500,7 @@ class ZoneScene extends Phaser.Scene {
       player: this.player,
       eventSystem: this.eventSystem,
       audioSystem: this.audioSystem,
+      knightRoles,
       onPrompt: (text) => {
         if (this.interactPromptElement) this.interactPromptElement.textContent = text;
       }
@@ -508,6 +514,9 @@ class ZoneScene extends Phaser.Scene {
         chromeContextSystem?.setZoneRuntimeStatus(text);
       }
     });
+
+    knightRoles.bindScene(this);
+    void knightRoles.initialize();
 
     this.zoneSystem = new ZoneSystem({
       scene: this,
@@ -1308,8 +1317,10 @@ export async function bootGame({ availableTextureFiles } = {}) {
     biomeTextureSettings: biomeTextureSettingsSystem,
     characterSprites: {
       get: () => activeZoneScene?.characterView?.variantId || 'original',
-      select: (id) => activeZoneScene?.characterView?.setVariant(id) ?? false
+      select: (id) => activeZoneScene?.characterView?.setVariant(id) ?? false,
+      selectKnight: (role) => activeZoneScene?.characterView?.setKnight(role) ?? Promise.resolve(false)
     },
+    knightRoles,
     characterDraft: {
       getRuntime: () => characterVitalsHUD?.render() || null,
       allocate: (stat) => {
