@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-10",
+  "updated": "2026-10-12",
   "records": [
     {
       "id": "UGD-0001",
@@ -1181,6 +1181,31 @@
         "UGD-0014",
         "UGD-0015",
         "UGD-0020",
+        "UGD-0035"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0039",
+      "title": "Сохранение первого человечка uGame при внедрении библиотеки спрайтов",
+      "date": "2026-10-12",
+      "type": "architecture",
+      "status": "accepted",
+      "flags": [
+        "needs-prototype",
+        "needs-test"
+      ],
+      "tags": [
+        "ui",
+        "character-build",
+        "npc",
+        "gameplay",
+        "technical"
+      ],
+      "path": "records/UGD-0039-preserve-original-character.md",
+      "related": [
+        "UGD-0038",
         "UGD-0035"
       ],
       "supersedes": [],
