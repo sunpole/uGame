@@ -3230,7 +3230,7 @@ html.ugame-text-selection-enabled .chrome-logo-block {
    width:calc(100% - 6px);gap:2px}
  .combat-hud .skill-hotbar{bottom:auto}
  .combat-hud .skill-hotbar-slots{gap:1px;padding:2px}
- .combat-hud .skill-slot{width:clamp(24px,7.3vw,40px);height:40px}
+ .combat-hud .skill-slot{width:clamp(30px,7.3vw,40px);height:40px}
  .combat-hud .character-orb{padding:4px 0;border-radius:8px}
  .combat-hud .character-orb .orb-shell{width:35px;height:35px}
  .combat-hud .character-orb .orb-mark{font-size:10px}
