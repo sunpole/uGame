@@ -2,8 +2,7 @@ import { normalizeCharacterDraft } from './character-draft.js';
 import { normalizeHeroIdentity } from './hero-identity.js';
 import { normalizeCharacterResponsibility } from './dev-character-tools.js';
 import { normalizeCharacterProgress, normalizeCharacterPools } from './character-runtime.js';
-import { normalizeCharacterAllocation, spendCharacterAttribute,
-  settleCharacterExperience, awardCharacterExperience } from './character-progression.js';
+import { normalizeCharacterAllocation, spendCharacterAttribute, settleCharacterExperience, awardCharacterExperience } from './character-progression.js';
 import { getXpThresholds } from './xp-meter.js';
 
 export const GAME_STATE_SCHEMA_VERSION = 1;
