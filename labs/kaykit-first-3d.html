@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>uGame · Первый настоящий 3D-персонаж · KayKit</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101822;color:#ebf4fc}
+    *{box-sizing:border-box}body{margin:0;min-height:100svh;display:flex;flex-direction:column}
+    header{background:#152432;padding:12px 18px;border-bottom:1px solid #375067;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between}
+    h1{font-size:18px;margin:0;line-height:1.25}header p{font-size:12px;color:#b7c8d8;margin:4px 0 0}
+    a{color:#9fd4fd}main{display:grid;grid-template-columns:minmax(0,1fr) 290px;flex:1;min-height:0}
+    #stage{position:relative;min-height:400px;background:radial-gradient(ellipse at 50% 32%,#304958 0,#172831 60%,#0c151e 100%);overflow:hidden}
+    #stage canvas{display:block;width:100%;height:100%}
+    #hint{position:absolute;bottom:12px;left:12px;right:12px;padding:7px 10px;text-align:center;font-size:12px;color:#daebfb;background:#162735cc;border-radius:10px;pointer-events:none}
+    #loading{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-weight:650;font-size:13px;text-align:center;padding:9px 14px;background:#132a3eea;border:1px solid #547693;border-radius:8px;max-width:95%}
+    #loading[hidden]{display:none}aside{padding:16px;background:#142130;border-left:1px solid #355067;overflow:auto}
+    section{margin:0 0 20px}h2{font-size:14px;margin:0 0 9px;color:#d4e9f9}
+    .options{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    button{font:inherit;cursor:pointer;min-height:42px;background:#20364a;color:#eaf4fc;border:1px solid #486781;border-radius:8px;padding:8px 7px}
+    button:hover{background:#30516b}button[aria-pressed="true"]{background:#375c7c;border:2px solid #a0d6ff;padding:7px 6px;font-weight:700}
+    .row{display:flex;gap:6px}.row button{flex:1}
+    #status{background:#102030;border:1px solid #35566d;border-radius:9px;padding:11px;font-size:12px;color:#cce3f3;line-height:1.5;overflow-wrap:anywhere}
+    #status strong{color:#fff}.small{font-size:11px;line-height:1.5;color:#a6bace}
+    .dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:240px;margin:auto}
+    .dpad button{touch-action:none;user-select:none}
+    #stage:focus{outline:2px solid #76bffc}
+    @media(max-width:780px){main{display:flex;flex-direction:column}#stage{height:53svh;min-height:300px;flex:none}aside{border:0;border-top:1px solid #355067;padding:13px}
+      .control-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.control-columns section{margin:0 0 14px}
+      header{padding:10px 14px}}
+    @media(prefers-reduced-motion:reduce){button{transition:none}}
+  </style>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+</head>
+<body>
+<header>
+  <div><h1>uGame · первый настоящий 3D-человечек</h1><p>Отдельный полигон · KayKit CC0 · исходный Phaser и сохранения не затронуты</p></div>
+  <a href="../">← Вернуться в uGame</a>
+</header>
+<main>
+  <div id="stage" tabindex="0" aria-label="Интерактивное трёхмерное поле">
+    <div id="loading" role="status">Загружаю готовую 3D-модель…</div>
+    <div id="hint">Это настоящий объёмный персонаж. Изменяй угол камеры и размер; WASD / стрелки — движение.</div>
+  </div>
+  <aside>
+    <div class="control-columns">
+      <section><h2>Наклон камеры от земли</h2>
+        <div id="angle-buttons" class="options"><button data-angle="45">45°</button><button data-angle="60" aria-pressed="true">60°</button><button data-angle="75">75°</button></div>
+        <p class="small">Чем больше угол, тем сильнее вид сверху и заметнее макушка.</p>
+      </section>
+      <section><h2>Масштаб персонажа</h2>
+        <div id="scale-buttons" class="options"><button data-scale="0.75">75%</button><button data-scale="1" aria-pressed="true">100%</button><button data-scale="1.3">130%</button></div>
+        <p class="small">Только внешний вид; игровая скорость не меняется.</p>
+      </section>
+    </div>
+    <section><h2>Анимация и обзор</h2>
+      <div class="row"><button id="walk-toggle" aria-pressed="true">Ходьба: ВКЛ</button><button id="turn-left">↶ Поворот</button><button id="turn-right">Поворот ↷</button></div>
+    </section>
+    <section><h2>Движение по полю</h2>
+      <div class="dpad">
+        <span></span><button data-move="up" aria-label="Вперёд">↑</button><span></span>
+        <button data-move="left" aria-label="Влево">←</button><button id="reset-view" aria-label="Сбросить положение">⌂</button><button data-move="right" aria-label="Вправо">→</button>
+        <span></span><button data-move="down" aria-label="Назад">↓</button><span></span>
+      </div>
+    </section>
+    <section><h2>Фактическое состояние</h2><div id="status" aria-live="polite">Запуск WebGL…</div></section>
+    <p class="small">Одна готовая анимированная модель из <a href="https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0" target="_blank" rel="noopener noreferrer">KayKit Adventurers 1.0</a>, лицензия CC0. Подгружается из публичной библиотеки по интернету. Это эксперимент, а не новый игровой релиз. Если браузер не поддерживает WebGL, увидишь объяснение вместо пустого поля.</p>
+  </aside>
+</main>
+<script type="module">
+  import * as THREE from 'three';
+  import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+  // Pinned free CC0 asset source — third-party model is NOT committed to uGame.
+  const MODEL_URL='https://cdn.jsdelivr.net/gh/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0@672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Knight.glb';
+  const status=document.querySelector('#status');
+  const loading=document.querySelector('#loading');
+  const stage=document.querySelector('#stage');
+  const inspect=window.__ugame3d={
+    phase:'initializing',modelLoaded:false,rendererReady:false,
+    source:MODEL_URL,angle:60,scale:1,walk:true,clipCount:0,walkingClip:null,error:null,
+    angleEvents:0,scaleEvents:0,lastFrame:0,actual3d:true
+  };
+  const updateStatus=(message)=>{
+    status.innerHTML='<strong>'+message+'</strong><div>Модель: '+(inspect.modelLoaded?'загружена':'ожидание')+
+      ' · Камера: '+inspect.angle+'° · Масштаб: '+Math.round(inspect.scale*100)+
+      '% · Анимаций: '+inspect.clipCount+'</div>';
+  };
+  const fatal=(error)=>{
+    inspect.phase='error';inspect.error=String(error?.message||error);
+    loading.textContent='Не удалось открыть 3D: '+inspect.error;
+    updateStatus('Ошибка загрузки');
+  };
+  try{
+    const scene=new THREE.Scene();
+    scene.background=null;
+    const camera=new THREE.OrthographicCamera(-3,3,3,-3,0.1,90);
+    const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'default'});
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.35;
+    stage.prepend(renderer.domElement);
+    inspect.rendererReady=true;
+
+    scene.add(new THREE.HemisphereLight(0xe9f4ff,0x5a6b70,2.4));
+    const sun=new THREE.DirectionalLight(0xfff4df,3.3);
+    sun.position.set(-4,9,6);scene.add(sun);
+    const floor=new THREE.Mesh(new THREE.PlaneGeometry(70,70),new THREE.MeshStandardMaterial({color:0x37464c,roughness:0.96}));
+    floor.rotation.x=-Math.PI/2;floor.position.y=-0.012;scene.add(floor);
+    const grid=new THREE.GridHelper(70,70,0x6b828c,0x4a6168);
+    grid.position.y=0.001;scene.add(grid);
+    const marker=new THREE.Mesh(new THREE.RingGeometry(.65,.69,64),
+      new THREE.MeshBasicMaterial({color:0x91bbcb,transparent:true,opacity:0.55,side:THREE.DoubleSide}));
+    marker.rotation.x=-Math.PI/2;marker.position.y=0.016;scene.add(marker);
+    const root=new THREE.Group();scene.add(root);
+    const avatar=new THREE.Group();root.add(avatar);
+
+    let mixer=null,idleClip=null,walkClip=null,activeAction=null,walking=true,yaw=0;
+    let angle=60,azimuth=30,distance=8.5,zoom=1,meshHeight=1.8;
+    const target=new THREE.Vector3();
+    function chooseClip(name){
+      if(!mixer)return;
+      const clip=(name==='walk'?walkClip:idleClip)||walkClip||idleClip;
+      if(!clip)return;
+      const action=mixer.clipAction(clip);
+      if(activeAction===action)return;
+      action.reset().setLoop(THREE.LoopRepeat,Infinity).fadeIn(.15).play();
+      if(activeAction)activeAction.fadeOut(.15);
+      activeAction=action;
+    }
+    function setAngle(n){
+      angle=n;inspect.angle=n;inspect.angleEvents++;
+      for(const b of document.querySelectorAll('[data-angle]'))b.setAttribute('aria-pressed',String(Number(b.dataset.angle)===n));
+      updateStatus('Настоящая 3D-модель, ракурс '+n+'°');
+    }
+    function setScale(n){
+      inspect.scale=n;inspect.scaleEvents++;
+      root.scale.setScalar(n);
+      for(const b of document.querySelectorAll('[data-scale]'))b.setAttribute('aria-pressed',String(Number(b.dataset.scale)===n));
+      updateStatus('Модель: '+Math.round(n*100)+'%');
+    }
+    function turn(delta){yaw+=delta;avatar.rotation.y=yaw;}
+    document.querySelectorAll('[data-angle]').forEach(b=>b.addEventListener('click',()=>setAngle(Number(b.dataset.angle))));
+    document.querySelectorAll('[data-scale]').forEach(b=>b.addEventListener('click',()=>setScale(Number(b.dataset.scale))));
+    document.querySelector('#walk-toggle').addEventListener('click',()=>{
+      walking=!walking;inspect.walk=walking;chooseClip(walking?'walk':'idle');
+      const b=document.querySelector('#walk-toggle');b.textContent='Ходьба: '+(walking?'ВКЛ':'ВЫКЛ');b.setAttribute('aria-pressed',String(walking));
+    });
+    document.querySelector('#turn-left').addEventListener('click',()=>turn(-Math.PI/4));
+    document.querySelector('#turn-right').addEventListener('click',()=>turn(Math.PI/4));
+    document.querySelector('#reset-view').addEventListener('click',()=>{
+      root.position.set(0,0,0);yaw=0;avatar.rotation.y=0;azimuth=30;zoom=1;
+      setScale(1);setAngle(60);
+    });
+    const held=new Set();
+    const keyMap={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right'};
+    window.addEventListener('keydown',e=>{
+      if(e.target instanceof HTMLButtonElement)return;
+      const d=keyMap[e.key]||keyMap[e.key?.toLowerCase()];
+      if(d){held.add(d);e.preventDefault();}
+    });
+    window.addEventListener('keyup',e=>{const d=keyMap[e.key]||keyMap[e.key?.toLowerCase()];if(d)held.delete(d);});
+    window.addEventListener('blur',()=>held.clear());
+    document.querySelectorAll('[data-move]').forEach(b=>{
+      const press=e=>{e.preventDefault();held.add(b.dataset.move);b.setPointerCapture?.(e.pointerId);};
+      const release=e=>{e.preventDefault();held.delete(b.dataset.move);};
+      b.addEventListener('pointerdown',press);
+      for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,release);
+    });
+    function resize(){
+      const rect=stage.getBoundingClientRect();
+      const w=Math.max(rect.width,1),h=Math.max(rect.height,1);
+      const aspect=w/h,half=2.85/zoom;
+      camera.left=-half*aspect;camera.right=half*aspect;
+      camera.top=half;camera.bottom=-half;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w,h,false);
+    }
+    new ResizeObserver(resize).observe(stage);resize();
+    // View azimuth fixed; elevation is a REAL 3D camera rotation, not a 2D trick.
+    const clock=new THREE.Clock();
+    let previous=performance.now();
+    function animate(now){
+      requestAnimationFrame(animate);
+      const dt=Math.min(0.05,(now-previous)/1000||0.016);previous=now;
+      if(mixer)mixer.update(dt);
+      const dx=(held.has('right')?1:0)-(held.has('left')?1:0);
+      const dz=(held.has('down')?1:0)-(held.has('up')?1:0);
+      if(dx||dz){
+        const len=Math.hypot(dx,dz);root.position.x+=dx/len*dt*2;root.position.z+=dz/len*dt*2;
+        root.position.x=THREE.MathUtils.clamp(root.position.x,-12,12);
+        root.position.z=THREE.MathUtils.clamp(root.position.z,-12,12);
+        avatar.rotation.y=Math.atan2(dx,dz);
+        chooseClip('walk');
+      }else chooseClip(walking?'walk':'idle');
+      marker.position.x=root.position.x;marker.position.z=root.position.z;
+      const elevation=THREE.MathUtils.degToRad(angle),az=THREE.MathUtils.degToRad(azimuth);
+      target.set(root.position.x,0.83,root.position.z);
+      camera.position.set(target.x+Math.sin(az)*Math.cos(elevation)*distance,
+        target.y+Math.sin(elevation)*distance,target.z+Math.cos(az)*Math.cos(elevation)*distance);
+      camera.lookAt(target);
+      renderer.render(scene,camera);
+      inspect.lastFrame=now;
+    }
+    requestAnimationFrame(animate);
+
+    inspect.phase='loading-model';updateStatus('Загрузка модели KayKit…');
+    new GLTFLoader().load(MODEL_URL,(gltf)=>{
+      const obj=gltf.scene;
+      const bounds=new THREE.Box3().setFromObject(obj);
+      const size=new THREE.Vector3();bounds.getSize(size);
+      if(!Number.isFinite(size.y)||size.y<=0)throw Error('У модели неправильная геометрия');
+      const factor=meshHeight/size.y;
+      obj.scale.setScalar(factor);
+      obj.position.set(-bounds.getCenter(new THREE.Vector3()).x*factor,-bounds.min.y*factor,
+        -bounds.getCenter(new THREE.Vector3()).z*factor);
+      obj.traverse(n=>{if(n.isMesh){n.frustumCulled=false;n.material.side=THREE.FrontSide;}});
+      avatar.add(obj);
+      const clips=gltf.animations;
+      mixer=new THREE.AnimationMixer(obj);
+      walkClip=clips.find(c=>/^Walking_A$/i.test(c.name))||
+        clips.find(c=>/walking|walk|run/i.test(c.name))||clips[0]||null;
+      idleClip=clips.find(c=>/^Idle_A$/i.test(c.name))||
+        clips.find(c=>/idle|stand/i.test(c.name))||walkClip;
+      inspect.clipCount=clips.length;inspect.walkingClip=walkClip?.name||null;
+      inspect.modelLoaded=true;inspect.phase='ready';
+      chooseClip('walk');loading.hidden=true;
+      updateStatus('Модель загружена! Сравни ракурсы и размеры.');
+    },p=>{
+      if(p.total)loading.textContent='Загрузка 3D-модели '+Math.min(100,Math.round(p.loaded/p.total*100))+'%…';
+    },fatal);
+  }catch(error){fatal(error);}
+</script>
+</body>
+</html>
