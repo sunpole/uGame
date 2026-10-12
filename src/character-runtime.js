@@ -52,9 +52,10 @@ export const formatCharacterNumber = value => new Intl.NumberFormat('ru-RU',{
 
 // No tick(), regen, skill costs or XP grants. No offline timestamps.
 export class CharacterVitalsHUD {
-  constructor({ getState, persist, root=document }={}) {
+  constructor({ getState, persist, onProgress=()=>{}, root=document }={}) {
     this.getState=getState;
     this.persist=persist;
+    this.onProgress=onProgress;
     this.root=root;
     this.rules=null;
   }
@@ -102,7 +103,7 @@ export class CharacterVitalsHUD {
     const lvl=this.root.querySelector('#character-level');
     const xp=this.root.querySelector('#character-xp');
     if(lvl)lvl.textContent='ЗРЛ '+state.progress.zrl+' / 65';
-    if(xp)xp.textContent='ЗРП '+formatCharacterNumber(state.progress.zrp)+' · порог позже';
+    this.onProgress(state.progress); // bottom XP bar is owned by the progression UI
     return state;
   }
 }

@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.71",
-  "stage": "hero-profile-candidate-initialization",
+  "version": "0.2.72",
+  "stage": "compact-combat-hud",
   "updated": "2026-10-12",
-  "summary": "Hero onboarding now initializes characterDraft from approved capital ten-point layouts using existing candidate rules; repairs v0.2.70 saves with backup, improves desktop form height."
+  "summary": "Two composite resource orbs flanking skills; real action timer and centered Stamina; bottom XP display with approved-only level threshold."
 }
