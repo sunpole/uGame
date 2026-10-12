@@ -75,6 +75,14 @@ async function checkViewport(profile) {
     assert.equal(await page.locator('.hero-capital-card').count(),4,
       'Four capital portrait cards must appear side-by-side on the creation screen');
     assert.equal(await page.locator('[data-hero-image]').count(),4);
+    if(!profile.mobile){
+      const startButton=await page.locator('#hero-create').boundingBox();
+      const currentScroll=await page.locator('.hero-shell').evaluate(el=>el.scrollTop);
+      assert.ok(startButton&&startButton.y>=0&&
+        startButton.y+startButton.height<=profile.viewport.height-4,
+        'Create button must be visible WITHOUT scrolling on desktop');
+      assert.equal(currentScroll,0,'Creator must open at scroll zero');
+    }
     for(const [i,bonus] of ['+1 РПС','+50 РП','+1% РПС','+20% максимума РП'].entries()) {
       const card=page.locator('.hero-capital-card').nth(i);
       assert.match(await card.innerText(),new RegExp('Столица '+(i+1)));
@@ -158,7 +166,11 @@ async function checkViewport(profile) {
     assert.deepEqual(heroSaved.player.heroIdentity,{
       schemaVersion:1,name:'Антоний QA',gender:'female',archetype:'hybrid',capitalId:'inspire'
     });
-    assert.equal(heroSaved.player.characterDraft,null);
+    assert.equal(heroSaved.player.characterDraft.cityId,'inspire');
+    assert.ok(heroSaved.player.characterDraft.startIndex>=0&&
+      heroSaved.player.characterDraft.startIndex<3,
+      'Chosen origin must receive an accepted ten-point draft');
+    assert.equal(heroSaved.player.characterProgress.zrl,1);
 
     if (profile.mobile) {
       const layoutWidth = await page.evaluate(() => document.documentElement.clientWidth);
@@ -199,6 +211,14 @@ async function checkViewport(profile) {
 
     await activate('#preflight-start');
     await page.waitForFunction(() => window.__ugameBoot?.phase === 'playing', null, { timeout: 15000 });
+    await page.waitForFunction(()=>document.querySelector('#character-orb-hp')?.dataset.ready==='true',
+      null,{timeout:10000});
+    for(const name of ['hp','rp']){
+      const orb=page.locator('#character-orb-'+name);
+      assert.ok(Number(await orb.getAttribute('data-max'))>0,
+        name+' max must be initialized without manual profile save');
+      assert.match(await orb.innerText(),/[0-9]/,name+' must show calculated pool');
+    }
     assert.equal(await page.locator('#app').getAttribute('aria-hidden'), 'false');
     assert.ok(await page.locator('#game canvas').count() >= 1, 'Phaser canvas did not mount');
 
@@ -651,6 +671,35 @@ async function checkViewport(profile) {
     assert.deepEqual(afterReload.worldSpawnState.zones['loc-00026'], sampleZone,
       'F5 unexpectedly rerolled unexpired outer-ring Location Tier');
 
+    // Emulate a v0.2.70 save that already has a hero, but no character profile.
+    const legacySave=await page.evaluate(()=>{
+      const save=JSON.parse(localStorage.getItem('ugame.save.v1'));
+      save.player.characterDraft=null;save.player.characterPools=null;
+      localStorage.setItem('ugame.save.v1',JSON.stringify(save));
+      return save;
+    });
+    await page.reload({waitUntil:'domcontentloaded',timeout:30000});
+    await page.waitForFunction(()=>!document.querySelector('#hero-entrance')?.hidden,
+      null,{timeout:75000});
+    await activate('#hero-continue');
+    const migrated=await page.evaluate(()=>{
+      const save=JSON.parse(localStorage.getItem('ugame.save.v1'));
+      const keys=Object.keys(localStorage).filter(k=>k.startsWith('ugame.save.v1.hero-backup.'));
+      return {save,originals:keys.map(k=>JSON.parse(localStorage.getItem(k)))};
+    });
+    assert.equal(migrated.save.player.characterDraft.cityId,'inspire');
+    assert.equal(migrated.save.player.characterProgress.zrl,legacySave.player.characterProgress.zrl);
+    assert.equal(migrated.save.player.characterProgress.zrp,legacySave.player.characterProgress.zrp);
+    assert.equal(migrated.save.world.zoneId,legacySave.world.zoneId);
+    assert.ok(migrated.originals.some(x=>x.player.characterDraft===null&&
+      x.player.heroIdentity?.name==='Антоний QA'),
+      'Migration must preserve full previous v0.2.70 save');
+    await page.waitForFunction(()=>document.querySelector('#preflight-start')?.hidden===false,
+      null,{timeout:75000});
+    await activate('#preflight-start');
+    await page.waitForFunction(()=>window.__ugameBoot?.phase==='playing',null,{timeout:15000});
+    await page.waitForFunction(()=>document.querySelector('#character-orb-hp')?.dataset.ready==='true',
+      null,{timeout:10000});
     assert.equal(errors.length, 0, profile.name + ' browser errors:\n' + errors.join('\n'));
     console.log('[PASS] ' + profile.name + ': Pre-flight, Phaser, 225-zone map, analyzer and save/F5 restore');
   } catch (error) {
