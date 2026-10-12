@@ -117,15 +117,15 @@ jobs:
         run: |
           test "$(git rev-parse HEAD:assets/textures/biomes/ground_1024.jpg)" = "3104ad3bc4e1b226f3126411d23bd126444594ce"
           test "$(git rev-parse HEAD:assets/textures/biomes/city_ground_1024.jpg)" = "04e2ca4b0f4b8d2f2cc352e5c8adb078c9cb2b23"
-          test "$(git rev-parse HEAD:data/world.json)" = "$(git rev-parse v0.2.73:data/world.json)"
-          test "$(git rev-parse HEAD:src/world-map-camera.js)" = "$(git rev-parse v0.2.73:src/world-map-camera.js)"
+          test "$(git rev-parse HEAD:data/world.json)" = "$(git rev-parse v0.2.72:data/world.json)"
+          test "$(git rev-parse HEAD:src/world-map-camera.js)" = "$(git rev-parse v0.2.72:src/world-map-camera.js)"
       - name: Confirm previous immutable release rollback
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.2.73
-          git fetch origin tag v0.2.73
-          test "$(git rev-parse v0.2.73^{commit})" = "70101b88b8d29bfa0e8a6001168891b328f105a8"
+          gh release view v0.2.72
+          git fetch origin tag v0.2.72
+          test "$(git rev-parse v0.2.72^{commit})" = "70101b88b8d29bfa0e8a6001168891b328f105a8"
       - name: Publish QA prerelease after both test platforms pass
         env:
           GH_TOKEN: ${{ github.token }}
