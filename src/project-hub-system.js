@@ -447,41 +447,57 @@ export class ProjectHubSystem {
 
 
   renderSpriteGallery(view){
-    this.setSubViewHeader('Примерочная персонажей','uGame / Игра / Внешность');
+    this.setSubViewHeader('Примерочная персонажей','uGame / Игра / Ракурс и размер');
     const current=this.characterSprites?.get?.()||'original';
     const escape=escapeHtml;
-    const cards=CHARACTER_VISUALS.map(v=>{
+    const cards=(items)=>items.map(v=>{
       const selected=v.id===current;
+      const angle=v.id.startsWith('three-quarter')?'three-quarter':
+        v.id.startsWith('high-topdown')?'high-topdown':null;
+      const size=v.id.endsWith('-small')?'small':
+        v.id.endsWith('-medium')?'medium':
+        v.id.endsWith('-large')?'large':null;
+      const scale=size==='small'?'0.78':size==='large'?'1.35':'1.05';
       const preview=v.type==='pixel'
         ?'<span class="sprite-gallery-motion" style="background-image:url('+
-          makeGalleryPreview(v.id)+');"></span>'
+          makeGalleryPreview(v.id)+');transform:scale('+scale+');"></span>'
         :'<span class="sprite-gallery-original" aria-label="Оригинальный процедурный человек">'+
           '<i class="sprite-gallery-original-head"></i>'+
           '<i class="sprite-gallery-original-body"></i>'+
           '<i class="sprite-gallery-original-feet"></i></span>';
       return '<button type="button" class="sprite-gallery-card" data-sprite-select="'+
-        escape(v.id)+'" aria-pressed="'+selected+'">'+
+        escape(v.id)+'" data-angle="'+escape(angle||'legacy')+
+        '" data-size="'+escape(size||'legacy')+'" aria-pressed="'+selected+'">'+
         '<span class="sprite-gallery-actor">'+preview+'</span>'+
         '<strong>'+escape(v.label)+'</strong><small>'+escape(v.note)+'</small>'+
         '<em>'+(selected?'На карте сейчас':'Посмотреть на карте')+'</em></button>';
-    });
+    }).join('');
+    const review=CHARACTER_VISUALS.filter(v=>v.id==='original'||v.group==='perspective');
+    const legacy=CHARACTER_VISUALS.filter(v=>v.id!=='original'&&v.group!=='perspective');
     this.contentElement.innerHTML=[
       '<section class="sprite-gallery-panel" id="sprite-gallery-panel">',
-      '<h2>Примерочная персонажей <span class="character-draft-chip">DEV · ВРЕМЕННО</span></h2>',
-      '<p>Шесть вариантов: наш оригинальный человечек и пять собственных пиксельных пробных моделей.',
-      ' На карточках воспроизводится движение ног; в игре проверьте реальную ходьбу во всех направлениях.</p>',
-      '<p>Нажмите модель → «Вернуться в игру» → пройдитесь WASD/стрелками или экранными кнопками.',
-      ' Вернитесь сюда, чтобы сменить. Выбор <strong>не меняет сохранение</strong>,',
-      ' после F5 снова оригинальный человек.</p>',
+      '<h2>Ракурс и размер <span class="character-draft-chip">DEV · СРАВНЕНИЕ</span></h2>',
+      '<p>Один нейтральный персонаж без костюмов: <strong>3/4</strong> и <strong>высокий Top-Down</strong>.',
+      ' Каждый ракурс в трёх размерах: 78%, 105%, 135%.',
+      ' Параметры персонажа, камера и скорость не меняются.</p>',
+      '<p>Выбери вариант, закрой Project Hub и походи в четырёх направлениях.',
+      ' Вернись для сравнения. После F5 восстановится наш оригинальный человечек.</p>',
       '<p id="sprite-gallery-status" role="status">На карте: <strong>'+
         escape(CHARACTER_VISUALS.find(v=>v.id===current)?.label||'Оригинальный uGame')+'</strong></p>',
-      '<div class="sprite-gallery-grid">',
-      ...cards,
+      '<div id="sprite-gallery-perspectives" class="sprite-gallery-grid">',
+      cards(review),
       '</div>',
-      '<p class="character-draft-note">Это оригинальные графические эскизы uGame, ',
-      '<strong>не загруженные сторонние паки</strong>. Без оружия, статов и изменения игровой скорости.</p>',
+      '<details id="sprite-gallery-legacy"'+(view.showArchive?' open':'')+'>',
+      '<summary>Прежние пять костюмных эскизов (v0.2.75) — сохранить для сравнения</summary>',
+      '<div class="sprite-gallery-grid">',cards(legacy),'</div>',
+      '</details>',
+      '<p class="character-draft-note">Оригинальный Phaser-человечек сохранён.',
+      ' Ракурсы — процедурные тестовые эскизы, не сторонние ассеты.',
+      ' Оружие, сейвы и баланс не менялись.</p>',
       '</section>'
     ].join('');
+    this.contentElement.querySelector('#sprite-gallery-legacy')?.addEventListener('toggle',
+      event=>{view.showArchive=event.target.open;});
     for(const button of this.contentElement.querySelectorAll('[data-sprite-select]')){
       button.addEventListener('click',()=>{
         const id=button.dataset.spriteSelect;

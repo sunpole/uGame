@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.75",
+  "version": "0.2.76",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -94,7 +94,8 @@
     "./src/action-meter.js",
     "./data/character-xp-curve.json",
     "./src/character-progression.js",
-    "./src/character-sprite-gallery.js"
+    "./src/character-sprite-gallery.js",
+    "./src/character-perspective-studies.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -175,6 +176,7 @@
     "./src/xp-meter.js",
     "./src/action-meter.js",
     "./src/character-progression.js",
-    "./src/character-sprite-gallery.js"
+    "./src/character-sprite-gallery.js",
+    "./src/character-perspective-studies.js"
   ]
 }

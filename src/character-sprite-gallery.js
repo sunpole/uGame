@@ -1,3 +1,5 @@
+// v0.2.76: retained original + v0.2.75 costumes; added perspective/size studies.
+import {perspectiveDescriptor,visualScale,perspectiveSheetKey,drawPerspectiveWalkingSheet} from './character-perspective-studies.js';
 // v0.2.75: original, locally drawn 4-way walking costume studies.
 // All pixels are created by uGame code; this is NOT a third-party asset import.
 export const FRAME_WIDTH=32;
@@ -7,6 +9,12 @@ export const DIRECTIONS=Object.freeze(['down','left','right','up']);
 export const ORIGINAL_VISUAL_ID='original';
 export const CHARACTER_VISUALS=Object.freeze([
   Object.freeze({id:'original',label:'Оригинальный uGame',note:'Наш самый первый Phaser-человечек. Без изменений.',type:'original'}),
+  Object.freeze({id:'three-quarter-small',label:'3/4 · Маленький',note:'Сверху под углом · 78% масштаба.',type:'pixel',group:'perspective'}),
+  Object.freeze({id:'three-quarter-medium',label:'3/4 · Средний',note:'Сверху под углом · 105% масштаба.',type:'pixel',group:'perspective'}),
+  Object.freeze({id:'three-quarter-large',label:'3/4 · Крупный',note:'Сверху под углом · 135% масштаба.',type:'pixel',group:'perspective'}),
+  Object.freeze({id:'high-topdown-small',label:'Сверху · Маленький',note:'Высокий Top-Down · 78% масштаба.',type:'pixel',group:'perspective'}),
+  Object.freeze({id:'high-topdown-medium',label:'Сверху · Средний',note:'Высокий Top-Down · 105% масштаба.',type:'pixel',group:'perspective'}),
+  Object.freeze({id:'high-topdown-large',label:'Сверху · Крупный',note:'Высокий Top-Down · 135% масштаба.',type:'pixel',group:'perspective'}),
   Object.freeze({id:'blue-striped',label:'Синий в полоску',note:'Яркая учебная форма, читаемая издалека.',type:'pixel'}),
   Object.freeze({id:'stone-guard',label:'Каменный страж',note:'Широкие плечи и плотная светлая одежда.',type:'pixel'}),
   Object.freeze({id:'forest-traveler',label:'Лесной путник',note:'Зелёный капюшон и короткий плащ.',type:'pixel'}),
@@ -26,11 +34,14 @@ export function directionFromVector(direction){
   const x=Number(direction?.x)||0,y=Number(direction?.y)||0;
   return Math.abs(x)>Math.abs(y)?(x<0?'left':'right'):(y<0?'up':'down');
 }
-export function sheetTextureKey(id){return 'ugame-walk-'+id;}
+export function sheetTextureKey(id){return perspectiveSheetKey(id)||'ugame-walk-'+id;}
+export {perspectiveDescriptor,visualScale};
 
 // Simple original pixel-art trials: 4 directions × 4 genuinely different walk poses.
 // No changes to gameplay movement, hero identity, save data, or stat calculations.
 export function drawWalkingSheet(ctx,id){
+  const angle=perspectiveDescriptor(id)?.angle;
+  if(angle)return drawPerspectiveWalkingSheet(ctx,angle);
   const p=PALETTES[id];
   if(!p)throw Error('Unknown walking sprite: '+id);
   const dot=(color,x,y,w,h)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),w,h);};

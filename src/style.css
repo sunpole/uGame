@@ -3287,3 +3287,13 @@ html.ugame-text-selection-enabled .chrome-logo-block {
 @media(prefers-reduced-motion:reduce){
  .sprite-gallery-motion,.sprite-gallery-original-feet{animation:none}
 }
+
+/* v0.2.76: prioritize neutral camera-perspective and visible-scale comparison. */
+#sprite-gallery-perspectives{grid-template-columns:repeat(3,minmax(0,1fr))}
+#sprite-gallery-legacy{margin:16px 0 10px;padding:10px;
+ border:1px solid #36526b;border-radius:9px;background:#102231}
+#sprite-gallery-legacy summary{cursor:pointer;color:#d1e6f4;font-weight:600;font-size:12px;padding:7px}
+#sprite-gallery-legacy .sprite-gallery-grid{margin-top:10px}
+#sprite-gallery-perspectives .sprite-gallery-actor{height:116px}
+#sprite-gallery-perspectives .sprite-gallery-card{min-height:208px}
+@media(max-width:680px){#sprite-gallery-perspectives{grid-template-columns:repeat(2,minmax(0,1fr))}}
