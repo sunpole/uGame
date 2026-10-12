@@ -1,0 +1,42 @@
+name: uGame Free 2D Character Lab QA
+
+on:
+  pull_request:
+    paths:
+      - 'labs/free-2d-eight-way.html'
+      - 'tests/character-2d-lab-browser-smoke.mjs'
+      - '.github/workflows/character-2d-lab-qa.yml'
+      - 'docs/work-reports/2026-10-12-free-2d-eight-way-lab.md'
+  push:
+    branches: [main]
+    paths:
+      - 'labs/free-2d-eight-way.html'
+      - 'tests/character-2d-lab-browser-smoke.mjs'
+      - '.github/workflows/character-2d-lab-qa.yml'
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm no game release/version bump
+        run: |
+          node -e "const fs=require('fs');if(JSON.parse(fs.readFileSync('version.json')).version!=='0.2.76')process.exit(1);if(!fs.existsSync('labs/free-2d-eight-way.html'))process.exit(1)"
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install chromium --with-deps
+      - name: Real Chromium desktop/mobile canvas, sourced frames and recolor
+        run: node tests/character-2d-lab-browser-smoke.mjs
+      - name: Preserve browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ugame-2d-cc0-browser-preview
+          path: artifacts/character-2d/
+          if-no-files-found: ignore
