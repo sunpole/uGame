@@ -45,9 +45,9 @@ button:hover{background:#39668a}button.primary{display:block;width:100%;backgrou
 <p class="note">Источник графики: бесплатный unarmed-рыцарь Hormelz, CC0, архивированные кадры из <a href="https://github.com/kodareef5/lowerlobby/tree/44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight" target="_blank" rel="noopener noreferrer">Lower Lobby</a>. Ни сам uGame, ни его сохранения не изменены. Для загрузки нужен интернет.</p>
 </main>
 <script type="module">
-const URL='https://cdn.jsdelivr.net/gh/kodareef5/lowerlobby@44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight/';
+const SOURCE='https://cdn.jsdelivr.net/gh/kodareef5/lowerlobby@44fcd8f8004e61c4d66da7b3c61db534c586e166/app/public/assets/sprites/knight/';
 const order=[2,3,4,1,5,0,7,6],names=['NW','N','NE','W','E','SW','S','SE'];
-const model=window.__realAtlas={status:'loading',source:URL,dir:7,frame:0,frameCount:0,directions:8,
+const model=window.__realAtlas={status:'loading',source:SOURCE,dir:7,frame:0,frameCount:0,directions:8,
  decoded:0,drawCount:0,sheetSize:[2816,2048],downloadReady:false,error:null};
 const $=selector=>document.querySelector(selector);
 const grid=$('#atlas-grid'),gc=grid.getContext('2d'),actor=$('#actor'),ac=actor.getContext('2d');
@@ -69,7 +69,7 @@ function decode(code){
 }
 const rgbaOf=s=>[0,2,4,6].map(i=>parseInt(s.replace('#','').slice(i,i+2),16));
 async function json(name){
- const response=await fetch(URL+name+'.json');if(!response.ok)throw Error(name+': HTTP '+response.status);
+ const response=await fetch(SOURCE+name+'.json');if(!response.ok)throw Error(name+': HTTP '+response.status);
  return response.json();
 }
 function setStatus(message,ok){
