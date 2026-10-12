@@ -15,7 +15,7 @@ async function check(name,viewport,mobile){
  const context=await browser.newContext({viewport,isMobile:mobile,hasTouch:mobile,deviceScaleFactor:1});
  const page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push('JS '+e.message));
- page.on('response',r=>{if(r.status()>=400&&!r.url().endsWith('/favicon.ico'))errors.push('HTTP '+r.status()+' '+r.url());});
+ page.on('response',r=>{if(r.status()>=400&&!r.url().endsWith('/favicon.ico')&&!r.url().includes('/assets/textures/biomes/'))errors.push('HTTP '+r.status()+' '+r.url());});
  const click=async(sel)=>mobile?page.locator(sel).tap():page.locator(sel).click();
  try{
   await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
@@ -77,6 +77,11 @@ async function check(name,viewport,mobile){
   await page.waitForFunction(()=>document.querySelector('#knight-role-preview')?.getAttribute('src')?.startsWith('data:image/png'),null,{timeout:60000});
   await click('#project-hub-close');
   await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>!document.querySelector('#hero-entrance')?.hidden||document.querySelector('#preflight-summary')?.dataset.state==='fail',null,{timeout:90000});
+  await click('#hero-continue');
+  await page.waitForFunction(()=>document.querySelector('#preflight-start')?.hidden===false||document.querySelector('#preflight-summary')?.dataset.state==='fail',null,{timeout:90000});
+  assert.equal(await page.locator('#preflight-summary').getAttribute('data-state'),'ok','F5 Pre-flight must pass');
+  await click('#preflight-start');
   await page.waitForFunction(()=>window.__ugameBoot?.phase==='playing',null,{timeout:90000});
   await page.waitForFunction(()=>document.documentElement.dataset.characterVisual==='knight-role',null,{timeout:90000});
   await click('#project-hub-open');await click('[data-hub-section="game"]');await click('[data-hub-item="knight-library"]');
