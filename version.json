@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.70",
-  "stage": "hero-creator-awaiting-portraits-and-browser-qa",
-  "updated": "2026-10-11",
-  "summary": "Post-Preflight first-entry hero screen: name, four cosmetic roles, instant male/female portraits, safe Continue/New and local backup; no authentication yet."
+  "version": "0.2.71",
+  "stage": "hero-profile-candidate-initialization",
+  "updated": "2026-10-12",
+  "summary": "Hero onboarding now initializes characterDraft from approved capital ten-point layouts using existing candidate rules; repairs v0.2.70 saves with backup, improves desktop form height."
 }
