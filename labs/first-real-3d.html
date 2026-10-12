@@ -117,10 +117,10 @@ try{
     visual.add(model);
     const allBones=[];model.traverse(n=>{if(n.isBone)allBones.push(n);});
     for(const [tokens,sign] of [
-      [['leftupperleg','leftthigh','leftupleg'],1],
-      [['rightupperleg','rightthigh','rightupleg'],-1],
-      [['leftupperarm','leftarm'],-.65],
-      [['rightupperarm','rightarm'],.65]
+      [['thigh_l','leftupperleg','leftthigh','leftupleg'],1],
+      [['thigh_r','rightupperleg','rightthigh','rightupleg'],-1],
+      [['upperarm_l','leftupperarm','leftarm'],-.65],
+      [['upperarm_r','rightupperarm','rightarm'],.65]
     ]){
       const node=allBones.find(n=>tokens.some(t=>n.name.toLowerCase().includes(t)));
       if(node)bones.push({node,rest:node.quaternion.clone(),sign});
