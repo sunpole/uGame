@@ -134,8 +134,10 @@ test('capital starting profile chooses only accepted ten-point distributions',()
      assert.equal(rules.cities[cap].start[idx].reduce((sum,n)=>sum+n,0),10);
    }
  }
- assert.equal(secureHeroStartIndex('inspire',()=>0xffffffff),0,
-   'Rejection sampling must reject 2^32-1 when limit is lower');
+ let attempts=0;
+ assert.equal(secureHeroStartIndex('inspire',()=>attempts++===0?0xffffffff:0),0,
+   'Rejection sampling rejects out-of-range words and tries again');
+ assert.equal(attempts,2);
  assert.throws(()=>secureHeroStartIndex('inspire',()=>-1),/случайное/);
 });
 test('v0.2.70 existing hero gets one draft and safe backup, never rerolls on next F5',()=>{
