@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.71",
+  "version": "0.2.72",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -89,7 +89,9 @@
     "./src/dev-code-aliases.js",
     "./src/hero-identity.js",
     "./src/hero-creation.js",
-    "./src/hero-start-profile.js"
+    "./src/hero-start-profile.js",
+    "./src/xp-meter.js",
+    "./src/action-meter.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -166,6 +168,8 @@
     "./src/dev-code-aliases.js",
     "./src/hero-identity.js",
     "./src/hero-creation.js",
-    "./src/hero-start-profile.js"
+    "./src/hero-start-profile.js",
+    "./src/xp-meter.js",
+    "./src/action-meter.js"
   ]
 }
