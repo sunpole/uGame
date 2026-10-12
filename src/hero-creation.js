@@ -137,9 +137,12 @@ export function openHeroEntrance({root=document,storage}={}) {
         }
         finish('continue');
       }catch(error){
-        // Never discard the old v0.2.70 save if quota/crypto prevents migration.
+        // Quota/crypto may fail; never trap an existing player in the entry gate.
         setText(gate,'#hero-help','Не удалось создать профиль: '+
-          (error?.message||error)+'. Старое сохранение не изменено.');
+          (error?.message||error)+'. Старое сохранение не изменено. '+
+          'Можно продолжить игру без новых характеристик.');
+        continueButton.textContent='Продолжить без профиля';
+        continueButton.onclick=()=>finish('continue'); // Explicit second click, no migration.
       }
     };
     gate.querySelector('#hero-new').onclick=showCreate;
