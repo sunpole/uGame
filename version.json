@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.72",
-  "stage": "compact-combat-hud",
+  "version": "0.2.73",
+  "stage": "approved-xp-curve",
   "updated": "2026-10-12",
-  "summary": "Two composite resource orbs flanking skills; real action timer and centered Stamina; bottom XP display with approved-only level threshold."
+  "summary": "Full 1–65 XP thresholds approved and shown in HUD; combat grants and auto level-up still deferred."
 }
