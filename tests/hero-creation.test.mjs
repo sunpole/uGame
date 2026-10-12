@@ -179,3 +179,24 @@ test('old identities without capital use image origin; no hero identity is never
  assert.equal(preserved.changed,false,'Existing saved draft must never be replaced');
  assert.deepEqual(preserved.state.player.characterDraft,custom.player.characterDraft);
 });
+
+test('migration storage error exposes Continue without replacing old save',async()=>{
+ const state=new GameState();state.setHeroIdentity(selectedIdentity);
+ const original=JSON.stringify(state.snapshot());
+ const storage={length:1,key:()=>HERO_SAVE_KEY,
+   getItem:key=>key===HERO_SAVE_KEY?original:null,
+   setItem:()=>{throw Error('Storage full');}};
+ const elements={};
+ function elem(key){return elements[key] ||= {
+   hidden:false,value:'',checked:false,textContent:'',
+   focus(){},setAttribute(){}
+ };}
+ const gate={hidden:true,querySelector:elem,querySelectorAll:()=>[]};
+ const pending=openHeroEntrance({root:{querySelector:()=>gate},storage});
+ elem('#hero-continue').onclick();
+ assert.match(elem('#hero-continue').textContent,/Продолжить без профиля/);
+ assert.match(elem('#hero-help').textContent,/Storage full/);
+ assert.equal(storage.getItem(HERO_SAVE_KEY),original);
+ elem('#hero-continue').onclick();
+ assert.equal(await pending,'continue');
+});
