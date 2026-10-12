@@ -453,11 +453,12 @@ export class ProjectHubSystem {
       const fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:6}).format(n);
       this.contentElement.innerHTML=[
         '<section class="character-draft-panel" id="character-draft-panel">',
-        '<h2>Характеристики персонажа <span class="character-draft-chip">ПРОТОТИП · НЕ ВЛИЯЕТ НА ИГРУ</span></h2>',
+        '<h2>Характеристики персонажа <span class="character-draft-chip">ПРОТОТИП · КОЭФФИЦИЕНТЫ НЕ УТВЕРЖДЕНЫ</span></h2>',
         '<p class="character-draft-note">Расчёт по тем же формулам, что Character Balance Lab. ',
         'Коэффициенты — обсуждаемые, не утверждённый баланс. ',
-        'Выбор здесь сохраняет <b>только черновик</b>, не меняет класс, родной город, ',
-        'Stamina, скорость, бой, Шаги, инвентарь и реальные ресурсы.</p>',
+        'При создании героя профиль уже выбран автоматически по столице. Здесь можно DEV-проверить другие ',
+        'наборы: это изменяет расчёт ХП/ПП/РП/ЖП, но не класс, родную столицу, ',
+        'Stamina, скорость движения, Шаги или инвентарь.</p>',
         '<div class="character-draft-controls">',
         '<label>Модель столицы<select id="character-draft-city">',
         ...Object.entries(rules.cities).map(([id,record])=>

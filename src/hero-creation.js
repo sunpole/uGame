@@ -1,4 +1,5 @@
 import { GameState } from './game-state.js';
+import { initializeHeroProfile } from './hero-start-profile.js';
 import { normalizeHeroIdentity, heroPortraitPath, HERO_CAPITAL_BY_ARCHETYPE } from './hero-identity.js';
 
 export const HERO_SAVE_KEY = 'ugame.save.v1';
@@ -15,7 +16,8 @@ export function makeNewHeroState(identity) {
   if(!checked)throw Error('Имя: от 2 до 24 символов; выберите образ и пол');
   const game=new GameState();
   game.setHeroIdentity(checked);
-  return game.snapshot(); // no stat/city/profile changes; SaveSystem v1 schema retained
+  // Reuse the EXISTING character candidate engine rather than inventing live coefficients.
+  return initializeHeroProfile(game.snapshot()).state;
 }
 export function storedHero(storage) {
   let raw;
@@ -126,7 +128,23 @@ export function openHeroEntrance({root=document,storage}={}) {
   const showChoose=()=>{panel.hidden=true;chooser.hidden=false;status.textContent='';};
   return new Promise(resolve=>{
     const finish=(mode)=>{gate.hidden=true;resolve(mode);};
-    continueButton.onclick=()=>finish('continue');
+    continueButton.onclick=()=>{
+      try{
+        if(saved.kind==='existing'&&saved.identity){
+          const old=JSON.parse(originalRaw);
+          const seeded=initializeHeroProfile(old);
+          if(seeded.changed)archiveAndReplace(storage,originalRaw,seeded.state);
+        }
+        finish('continue');
+      }catch(error){
+        // Quota/crypto may fail; never trap an existing player in the entry gate.
+        setText(gate,'#hero-help','Не удалось создать профиль: '+
+          (error?.message||error)+'. Старое сохранение не изменено. '+
+          'Можно продолжить игру без новых характеристик.');
+        continueButton.textContent='Продолжить без профиля';
+        continueButton.onclick=()=>finish('continue'); // Explicit second click, no migration.
+      }
+    };
     gate.querySelector('#hero-new').onclick=showCreate;
     gate.querySelector('#hero-back').onclick=showChoose;
     for(const button of gate.querySelectorAll('[data-hero-archetype]'))
