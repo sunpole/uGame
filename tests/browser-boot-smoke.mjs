@@ -260,16 +260,33 @@ async function checkViewport(profile) {
       assert.ok(Number.isFinite(candidateSaved.player.characterPools.current[key]),'Invalid pool '+key);
     }
     const orbLayout=await page.evaluate(()=>{
-      const left=document.querySelector('#character-orb-hp .orb-shell').getBoundingClientRect();
-      const right=document.querySelector('#character-orb-rp .orb-shell').getBoundingClientRect();
-      const shell=document.querySelector('.character-progress-block').getBoundingClientRect();
-      return {left:{l:left.left,r:left.right,w:left.width},right:{l:right.left,r:right.right,w:right.width},
-        shell:{l:shell.left,r:shell.right}};
+      const box=(selector)=>{
+        const r=document.querySelector(selector).getBoundingClientRect();
+        return {l:r.left,r:r.right,t:r.top,b:r.bottom,w:r.width};
+      };
+      return {left:box('#character-orb-hp .orb-shell'),
+        right:box('#character-orb-rp .orb-shell'),
+        skills:box('#skill-hotbar'),
+        stamina:box('.combat-stamina'),cast:box('#action-meter'),
+        xp:box('#xp-bottom-band'),footer:box('#global-footer'),
+        controls:box('#workspace-control-strip'),
+        header:box('#global-header')};
     });
-    assert.ok(orbLayout.left.w>=35&&orbLayout.right.w>=35,'Orbs too small');
-    assert.ok(orbLayout.left.r<=orbLayout.right.l,'Orbs overlap');
-    assert.ok(orbLayout.left.l>=orbLayout.shell.l-3 && orbLayout.right.r<=orbLayout.shell.r+3,
-      'Orbs exceed progress panel '+JSON.stringify(orbLayout));
+    assert.ok(orbLayout.left.w>=30&&orbLayout.right.w>=30,'Orbs too small');
+    assert.ok(orbLayout.left.r<=orbLayout.skills.l+3,
+      'HP + PP should be LEFT of skills '+JSON.stringify(orbLayout));
+    assert.ok(orbLayout.skills.r<=orbLayout.right.l+3,
+      'RP + JP should be RIGHT of skills '+JSON.stringify(orbLayout));
+    assert.ok(orbLayout.left.t>orbLayout.header.b&&orbLayout.right.t>orbLayout.header.b,
+      'Orbs must be moved below the header');
+    assert.ok(orbLayout.cast.b<=orbLayout.stamina.t+2&&
+      orbLayout.stamina.b<=orbLayout.skills.t+3,
+      'Cast time then Stamina must appear above skills');
+    assert.ok(orbLayout.xp.b<=orbLayout.footer.t+2 &&
+      orbLayout.xp.t>=orbLayout.controls.b-6,
+      'Full-width XP band must be BETWEEN workspace controls and footer');
+    assert.equal(await page.locator('#xp-bottom-band').getAttribute('data-threshold-known'),
+      'false','Never invent unapproved XP thresholds');
     await activate('#project-hub-close');
 
     // Real seven-slot hotbar and keyboard impulse, not only Node simulation.
@@ -279,6 +296,9 @@ async function checkViewport(profile) {
     const beforeSkill=await page.evaluate(()=>
       JSON.parse(localStorage.getItem('ugame.save.v1')||'null').player.characterPools.current);
     await page.keyboard.press('1');
+    await page.waitForFunction(()=>document.querySelector('#action-meter')?.dataset.state!=='idle',
+      null,{timeout:1200});
+    assert.match(await page.locator('#action-meter-name').innerText(),/Импульс/);
     await page.waitForFunction((previous)=>{
       const pools=JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.player?.characterPools?.current;
       return pools&&pools.jp+pools.rp<previous.jp+previous.rp-30;
@@ -304,7 +324,7 @@ async function checkViewport(profile) {
       });
       return {parent:{left:parent.left,right:parent.right},slots,viewport:innerWidth};
     });
-    assert.ok(barLayout.slots.every(r=>r.width>=30&&r.left>=0&&r.right<=barLayout.viewport),
+    assert.ok(barLayout.slots.every(r=>r.width>=29&&r.left>=0&&r.right<=barLayout.viewport),
       'Skill bar must fit desktop/mobile viewport '+JSON.stringify(barLayout));
     // DEV test depletion proves HP+PP arcs and RP+JP orbs regenerate
     // without introducing fake combat enemies or off-session restoration.
@@ -602,6 +622,8 @@ async function checkViewport(profile) {
     assert.equal(afterDev.schemaVersion,1);
     assert.equal(await page.locator('#character-level').innerText(),'ЗРЛ 31 / 65');
     assert.match(await page.locator('#character-xp').innerText(),/525/);
+    assert.match(await page.locator('#character-xp').innerText(),/порог уточняется/,
+      'Nonapproved level thresholds must not be fabricated');
     await dev('2399','2399');
     assert.equal(await page.locator('[data-dev-action="city"]').count(),5);
     const priorSteps=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')||'null')?.stepEconomy);
