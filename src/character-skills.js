@@ -60,8 +60,8 @@ export function applyPulseHits(targets,origin,radius,alreadyHit=new Set()) {
 
 export class CharacterSkillSystem {
   constructor({getGameState,getRules,save,renderVitals,animate,getTargets=()=>[],
-    canCast=()=>true,refillStamina=()=>{},root=document}={}){
-    Object.assign(this,{getGameState,getRules,save,renderVitals,animate,getTargets,canCast,refillStamina,root});
+    canCast=()=>true,refillStamina=()=>{},onCast=()=>{},root=document}={}){
+    Object.assign(this,{getGameState,getRules,save,renderVitals,animate,getTargets,canCast,refillStamina,onCast,root});
     // Session-only QA switches: never mutate the canonical save or character balance.
     this.anomalies={noCooldown:false,immortal:false,freeSkills:false};
     this.boundAnomalyClick=(event)=>{
@@ -165,6 +165,7 @@ export class CharacterSkillSystem {
     if(!paid.ok){this.feedback(paid.reason);return {ok:false,reason:'resources'};}
     if(!this.anomalies.freeSkills)gs.setCharacterPools({...vitals.pools,current:paid.next});
     this.lastCastAt=now;
+    this.onCast({label:'Импульс',durationMs:RADIAL_IMPULSE.durationMs});
     if(paid.spentRp>0)this.fullRpSince=null;
     this.save?.();this.renderVitals?.();
     this.feedback('Импульс · '+(this.anomalies.freeSkills?'DEV без затрат':
