@@ -1,24 +1,7 @@
 name: uGame v0.2.59 Character Lab readable units QA and release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/character-balance/display-units.js'
-      - 'src/character-balance/pins.js'
-      - 'character-lab/**'
-      - 'tests/character-lab-display-units.test.mjs'
-      - 'tests/character-lab-browser-smoke.mjs'
-      - 'tests/character-lab-admin-browser-smoke.mjs'
-      - 'index.html'
-      - 'version.json'
-      - 'package.json'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0259.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.59.md'
-      - '.github/workflows/publish-v0259.yml'
   workflow_dispatch:
 
 permissions:

@@ -4,6 +4,7 @@
 //   node tests/browser-boot-smoke.mjs
 // Unlike node --test unit checks, this tests the exact HTML -> Pre-flight -> Phaser -> World path.
 import assert from 'node:assert/strict';
+import {devAliasSuggestions} from '../src/dev-code-aliases.js';
 import { mkdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -629,7 +630,7 @@ async function checkViewport(profile) {
     };
     // Bilingual DEV controls: live XP %, ZRL, signed OTV, free 5-city travel.
     // Actual RU/EN command entry (not just bilingual labels); numeric API remains.
-    assert.equal(await page.locator('#dev-code-suggestions option').count(),142);
+    assert.equal(await page.locator('#dev-code-suggestions option').count(),devAliasSuggestions().length);
     const inputBox=await page.locator('#dev-code-input').boundingBox();
     assert.ok(inputBox.width>=85&&inputBox.x+inputBox.width<=profile.viewport.width+4,
       'DEV bilingual input must remain visible on '+profile.name);

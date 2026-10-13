@@ -1,24 +1,7 @@
 name: uGame v0.2.62 Crisp World Map Layout Zoom QA and Release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/project-hub-system.js'
-      - 'src/style.css'
-      - 'src/world-map-camera.js'
-      - 'tests/world-navigation-ui.test.mjs'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'docs/releases/v0.2.62.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0262.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.62.md'
-      - '.github/workflows/publish-v0262.yml'
   workflow_dispatch:
 
 permissions:

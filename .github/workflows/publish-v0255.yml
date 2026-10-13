@@ -1,24 +1,7 @@
 name: uGame v0.2.55 Character Balance Lab QA release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/character-balance/**'
-      - 'data/character-balance-candidate.json'
-      - 'character-lab/**'
-      - 'data/project-hub.json'
-      - 'tests/character-balance.test.mjs'
-      - 'tests/character-lab-browser-smoke.mjs'
-      - 'index.html'
-      - 'version.json'
-      - 'package.json'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0255.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.55.md'
-      - '.github/workflows/publish-v0255.yml'
   workflow_dispatch:
 
 permissions:

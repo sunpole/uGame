@@ -1,26 +1,7 @@
 name: uGame v0.2.61 Original South Texture Names QA and Release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'Update-uGame.ps1'
-      - 'src/ground-texture-system.js'
-      - 'data/biome-textures.json'
-      - 'tests/south-texture-names.test.mjs'
-      - 'assets/textures/biomes/**'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'tests/Test-Texture-Publish.ps1'
-      - 'docs/releases/v0.2.61.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0261.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.61.md'
-      - '.github/workflows/publish-v0261.yml'
   workflow_dispatch:
 
 permissions:

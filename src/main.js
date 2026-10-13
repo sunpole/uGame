@@ -8,6 +8,7 @@ import { InteractableSystem } from './interactable-system.js';
 import { PlayerController } from './player-controller.js';
 import { CharacterView } from './character-view.js';
 import { KnightRoleLibrary } from './knight-role-library.js';
+import { MobSystem } from './mob-system.js';
 import { AudioSystem } from './audio-system.js';
 import { ZoneRulesSystem } from './zone-rules-system.js';
 import { ResourceSystem } from './resource-system.js';
@@ -94,9 +95,11 @@ let resourceProfessionSystem = null;
 let resourceProfessionView = null;
 let masterActivitySystem = null;
 let spawnZoneDebugSystem = null;
+let mobSystem = null;
 const knightRoles=new KnightRoleLibrary({onChange:()=>{
   activeZoneScene?.characterView?.refreshKnightRole?.();
   activeZoneScene?.interactableSystem?.refreshKnightViews?.();
+  mobSystem?.refreshVisual?.();
 }});
 
 
@@ -156,7 +159,8 @@ function executeDevCode(code) {
     worldSpawnStateSystem,
     saveSystem,
     devCharacterTools,
-    characterSkillSystem
+    characterSkillSystem,
+    mobSystem
   ];
 
   for (const system of systems) {
@@ -546,6 +550,18 @@ class ZoneScene extends Phaser.Scene {
       eventSystem: this.eventSystem
     });
     this.spawnZoneDebugSystem = spawnZoneDebugSystem;
+    mobSystem = new MobSystem({
+      scene:this,zoneSystem:this.zoneSystem,eventSystem:this.eventSystem,knightRoles,
+      getPlayerHp:()=>characterSkillSystem?.state()?.vitals?.pools?.current?.hp ?? 0,
+      onPlayerDamage:(damage)=>characterSkillSystem?.damagePlayer(damage),
+      onXp:(xp)=>{
+        this.gameState.awardCharacterXp(xp);
+        this.persistGameState();
+        characterVitalsHUD?.render();
+      },
+      onStatus:(message)=>this.setStatus(message)
+    });
+    this.mobSystem = mobSystem;
 
     eventSpotSystem = new EventSpotSystem({
       worldGraph: this.worldGraph,
@@ -628,7 +644,8 @@ class ZoneScene extends Phaser.Scene {
         masterActivitySystem.load(),
         this.worldGraph.load(),
         this.rewardGenerator.load(),
-        this.itemCatalog.load()
+        this.itemCatalog.load(),
+        this.mobSystem.load()
       ]);
 
       await containerSystem.load({
@@ -1151,6 +1168,7 @@ class ZoneScene extends Phaser.Scene {
     resourceExpeditionSystem?.update(now);
     resourceExpeditionView?.tick(now);
     masterEncounterSystem?.update(now, delta);
+    this.mobSystem?.tick(delta);
     this.interactableSystem.update({ interactPressed: state.interactPressed });
     visionSystem.update(false);
   }
@@ -1248,7 +1266,7 @@ export async function bootGame({ availableTextureFiles } = {}) {
     save: () => activeZoneScene?.persistGameState(),
     renderVitals: () => characterVitalsHUD?.render(),
     canCast: () => Boolean(playerController?.enabled && activeZoneScene?.worldReady),
-    getTargets: () => activeZoneScene?.combatTargets || [],
+    getTargets: () => activeZoneScene?.mobSystem?.targets() || [],
     animate: config => activeZoneScene?.animateRadialImpulse(config),
     refillStamina: () => playerController?.refillStamina(),
     onCast: skill => combatActionMeter.start(skill)

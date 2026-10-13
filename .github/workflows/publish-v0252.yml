@@ -1,21 +1,7 @@
 name: uGame v0.2.52 five outer rings QA and release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'data/world.json'
-      - 'src/world-graph.js'
-      - 'src/project-hub-system.js'
-      - 'tests/world-five-rings.test.mjs'
-      - 'tests/master-rarity-header.test.mjs'
-      - 'tests/city-crafting.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0252.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.52.md'
-      - '.github/workflows/publish-v0252.yml'
   workflow_dispatch:
 
 permissions:

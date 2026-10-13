@@ -1,20 +1,7 @@
 name: uGame v0.2.54 browser-verified QA release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/preflight-system.js'
-      - 'src/main.js'
-      - 'src/ground-texture-system.js'
-      - 'index.html'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0254.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.54.md'
-      - '.github/workflows/publish-v0254.yml'
   workflow_dispatch:
 
 permissions:

@@ -130,6 +130,15 @@
 | `8404` | Установить T4 | Force T4 |
 | `8499` | Текущий Tier, дистанция, лимиты и время | Current Tier, city distance, cap and lifetime |
 
+## Первый боевой моб · DEV (v0.2.78)
+
+| Код / Code | Русский | English |
+|---|---|---|
+| `8590` | Перейти к Лесному вору, поставить героя в 45 px от моба | Travel to Forest Thief, place hero 45 px away |
+| `8599` | ХП, режим, состояние, расстояние до героя | HP, mode, alive/dead, hero distance |
+
+Моб пассивен до попадания. Для проверки боя нажать «Импульс» (слот 1) после `8590`. `8599` только показывает состояние.
+
 ## Ресурсы навыков / Skill resource QA
 
 | Код / Code | Русский | English |
@@ -141,9 +150,9 @@
 | `8673` | Навыки без расхода ресурсов (переключатель) | Free skills: no resource costs (toggle) |
 | `8674` | Полностью восстановить ХП, ПП, РП, ЖП и Stamina | Fully refill HP, PP, RP, JP and Stamina |
 
-**RU:** Коды `8671`–`8673` включают/выключают временные DEV-аномалии при повторном вводе. Активные бафы появляются в блоке персонажа, `×` снимает каждый отдельно. Режимы действуют **только до F5/закрытия страницы**, не записываются в сейв и не меняют обычный баланс. `8674` — **одноразовое** восполнение, без переключателя или постоянного бафа. `8662` сохраняет старый смысл (4 запаса без Stamina). В мире пока **нет игрового урона по персонажу**: бессмертие реализовано как общий DEV-защитный расчёт ХП и страховка от 0 в runtime, но боевую интеграцию придётся проверить, когда появятся враги.
+**RU:** Коды `8671`–`8673` включают/выключают временные DEV-аномалии при повторном вводе. Активные бафы появляются в блоке персонажа, `×` снимает каждый отдельно. Режимы действуют **только до F5/закрытия страницы**, не записываются в сейв и не меняют обычный баланс. `8674` — **одноразовое** восполнение, без переключателя или постоянного бафа. `8662` сохраняет старый смысл (4 запаса без Stamina). С v0.2.78 Лесной вор уже наносит тестовый урон по ХП; бессмертие — DEV-защита, но полноценные правила смерти и брони ещё не утверждены.
 
-**EN:** `8671`–`8673` are session-only toggles; repeat the code or click × on its character buff to disable. They reset after F5 and do not persist to saves. `8674` is an instant one-time refill of HP/PP/RP/JP plus Stamina. Original `8662` retains its four-pool-only effect. No real player-damage PvE pipeline exists yet; immortality is a tested central HP-damage guard plus runtime safety floor, not combat-tested.
+**EN:** `8671`–`8673` are session-only toggles; repeat the code or click × on its character buff to disable. They reset after F5 and do not persist to saves. `8674` is an instant one-time refill of HP/PP/RP/JP plus Stamina. Original `8662` retains its four-pool-only effect. v0.2.78 introduces an experimental PvE mob with HP damage; full combat death and armor rules remain future work.
 
 ## Сервис / Service
 

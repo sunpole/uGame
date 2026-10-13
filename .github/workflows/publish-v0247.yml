@@ -1,17 +1,7 @@
 name: uGame v0.2.47 authority QA release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'server/expedition-authority*.mjs'
-      - 'tests/expedition-authority.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0247.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.47.md'
-      - '.github/workflows/publish-v0247.yml'
   workflow_dispatch:
 
 permissions:

@@ -1,24 +1,7 @@
 name: uGame v0.2.50 sequential Master timers QA
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/world-spawn-state-system.js'
-      - 'src/master-process-system.js'
-      - 'src/master-encounter-system.js'
-      - 'src/interactable-system.js'
-      - 'src/resource-expedition-view.js'
-      - 'src/style.css'
-      - 'src/main.js'
-      - 'tests/master-timer-sequence.test.mjs'
-      - 'tests/resource-expedition.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0250.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.50.md'
-      - '.github/workflows/publish-v0250.yml'
   workflow_dispatch:
 
 permissions:

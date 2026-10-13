@@ -307,6 +307,16 @@ export const DEV_CODE_LABELS = Object.freeze([
     "Current Tier, city distance, cap and lifetime"
   ],
   [
+    "8590",
+    "Перейти к Лесному вору, поставить героя в 45 px от моба",
+    "Travel to Forest Thief, place hero 45 px away"
+  ],
+  [
+    "8599",
+    "ХП, режим, состояние, расстояние до героя",
+    "HP, mode, alive/dead, hero distance"
+  ],
+  [
     "8661",
     "Проверочный расход ХП, ПП, РП, ЖП",
     "Test depletion of HP, PP, RP, JP"

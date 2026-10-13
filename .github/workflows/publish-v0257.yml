@@ -1,22 +1,7 @@
 name: uGame v0.2.57 Character Admin Lab QA release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/character-balance/**'
-      - 'data/character-stat-registry.json'
-      - 'character-lab/**'
-      - 'tests/character-lab-admin*'
-      - 'index.html'
-      - 'version.json'
-      - 'package.json'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0257.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.57.md'
-      - '.github/workflows/publish-v0257.yml'
   workflow_dispatch:
 
 permissions:

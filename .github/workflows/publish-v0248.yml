@@ -1,20 +1,7 @@
 name: uGame v0.2.48 inventory bulk and safety QA
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/inventory-*.js'
-      - 'src/container-system.js'
-      - 'src/item-catalog.js'
-      - 'src/style.css'
-      - 'tests/inventory-organizer.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0248.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.48.md'
-      - '.github/workflows/publish-v0248.yml'
   workflow_dispatch:
 
 permissions:

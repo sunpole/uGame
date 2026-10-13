@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.77",
+  "version": "0.2.78",
   "requiredFiles": [
     "./src/style.css",
     "./version.json",
@@ -101,7 +101,10 @@
     "./data/knight-source/manifest.json",
     "./data/knight-source/palette.json",
     "./data/knight-source/Idle.json",
-    "./data/knight-source/Walk.json"
+    "./data/knight-source/Walk.json",
+    "./data/mobs.json",
+    "./src/mob-combat.js",
+    "./src/mob-system.js"
   ],
   "moduleEntry": "./src/main.js",
   "requiredAssets": [
@@ -185,6 +188,8 @@
     "./src/character-sprite-gallery.js",
     "./src/character-perspective-studies.js",
     "./src/knight-atlas-core.js",
-    "./src/knight-role-library.js"
+    "./src/knight-role-library.js",
+    "./src/mob-combat.js",
+    "./src/mob-system.js"
   ]
 }
