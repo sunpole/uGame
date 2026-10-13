@@ -1,37 +1,7 @@
 name: uGame v0.2.67 Bilingual DEV Character + Free City Teleport QA and Release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/project-hub-system.js'
-      - 'src/style.css'
-      - 'src/main.js'
-      - 'src/game-state.js'
-      - 'src/character-draft.js'
-      - 'src/character-runtime.js'
-      - 'src/character-skills.js'
-      - 'src/dev-character-tools.js'
-      - 'src/dev-console.js'
-      - 'src/project-hub-system.js'
-      - 'docs/DEV-CODES.md'
-      - 'tests/dev-character-tools.test.mjs'
-      - 'tests/character-skills.test.mjs'
-      - 'tests/character-runtime-orbs.test.mjs'
-      - 'data/project-hub.json'
-      - 'tests/character-draft-runtime.test.mjs'
-      - 'docs/project-journal/records/UGD-0038-anton-character-stats-draft.md'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'docs/releases/v0.2.67.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0267.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.67.md'
-      - '.github/workflows/publish-v0267.yml'
   workflow_dispatch:
 
 permissions:
