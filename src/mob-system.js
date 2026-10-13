@@ -165,13 +165,24 @@ export class MobSystem {
       const m=this.definitions.find(x=>x.id==='forest-thief');
       if(!m)return {handled:true,state:'warn',message:'Лесной вор не найден'};
       this.zoneSystem.travel({zoneId:m.spawn.zoneId,entryId:'center'});
-      return {handled:true,state:'ok',message:'8590 · Лесной вор · '+m.spawn.zoneId+' · центр'};
+      // DEV-only positioning: a reliable safe range to test passive -> Impulse,
+      // without depending on browser keyboard focus or Phaser private globals.
+      const mob=this.entities.find(e=>e.def.id===m.id);
+      if(mob){
+        const x=mob.state.x-45,y=mob.state.y;
+        if(this.zoneSystem.isInsidePlayable(x,y,25) &&
+           !this.zoneSystem.collidesWithWall(x,y,20)){
+          this.zoneSystem.player.setPosition(x,y);
+        }
+      }
+      return {handled:true,state:'ok',message:'8590 · Лесной вор · '+m.spawn.zoneId+' · рядом с мобом'};
     }
     if(code==='8599'){
       const mob=this.entities.find(e=>e.def.id==='forest-thief');
       return {handled:true,state:'ok',message:mob
         ?'Лесной вор · '+Math.ceil(mob.state.hp)+'/'+mob.def.hp+' ХП · '+mob.state.mode+
-          ' · '+(mob.state.alive?'жив':'побеждён')
+          ' · '+(mob.state.alive?'жив':'побеждён')+
+          ' · дистанция '+Math.round(distance(mob.state,this.zoneSystem.player))+' px'
         :'Лесной вор вне текущей локации'};
     }
     return {handled:false};
