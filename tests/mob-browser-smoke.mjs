@@ -69,17 +69,11 @@ async function run(name,viewport,mobile){
   await page.waitForFunction(()=>window.__ugameBoot?.phase==='playing',null,{timeout:90000});
   assert.match(await dev('8590'),/Лесной вор/);
   assert.match(await dev('8599'),/330\/330 ХП · idle/);
-  // Place the QA hero in real Phaser attack range. General walking/navigation is
-  // independently covered by browser-boot-smoke; no gameplay cheat is shipped.
-  const proximity=await page.evaluate(()=>{
-   const scene=window.Phaser?.GAMES?.[0]?.scene?.getScene('zone');
-   const enemy=scene?.mobSystem?.entities?.find(e=>e.def.id==='forest-thief');
-   if(!enemy)return null;
-   scene.player.setPosition(enemy.state.x-32,enemy.state.y);
-   return {hero:{x:scene.player.x,y:scene.player.y},
-     mob:{x:enemy.state.x,y:enemy.state.y},distance:32};
-  });
-  assert.ok(proximity&&proximity.distance<70,'Phaser mob/hero must be reachable: '+JSON.stringify(proximity));
+  // DEV 8590 positions the QA hero at a verified 45 px attack distance.
+  // Movement itself is verified independently in browser-boot-smoke.
+  const near=await dev('8599');
+  const distancePx=Number(near.match(/дистанция (\d+) px/)?.[1]);
+  assert.ok(Number.isFinite(distancePx)&&distancePx<=65,'DEV 8590 must place hero in attack range: '+near);
   await wait(750);
   assert.match(await dev('8599'),/330\/330 ХП · idle/,'Passive mob must never aggro at point-blank proximity');
   // DEV QA only; do not change real skill cost or hero invulnerability rules.
@@ -93,7 +87,7 @@ async function run(name,viewport,mobile){
   assert.match(actionStatus||'',/Импульс/,'Impulse did not cast: '+actionStatus);
   const afterHit=await dev('8599');
   assert.match(afterHit,/Лесной вор · (?:[12]\d\d|3[012]\d)\/330 ХП · chase/,'Impulse must damage and aggro the mob: '+afterHit+
-    ', skill='+actionStatus+', positions='+JSON.stringify(proximity));
+    ', skill='+actionStatus+', near='+near);
   // Enemy approaches when aggroed; 12 more casts beat passive HP regen.
   for(let i=0;i<13;i++){await click('[data-skill-slot="1"]');await wait(375);}
   const afterKill=await dev('8599');
