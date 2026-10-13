@@ -31,12 +31,19 @@ async function run(name,viewport,mobile){
  async function click(selector){if(mobile)await page.locator(selector).tap();else await page.locator(selector).click();}
  async function dev(code){
   await page.locator('#dev-code-input').fill(String(code));
-  // Phaser consumes the Enter key for world interaction. Use the actual DEV submit button.
+  // Clear the previous result so the wait proves that THIS submission finished.
+  await page.locator('#dev-code-status').evaluate(el => { el.textContent=''; delete el.dataset.state; });
+  // Phaser consumes Enter for world interaction; use the real DEV OK button.
   await click('#dev-console button[type="submit"]');
-  // Status is visually hidden at compact widths; innerText() returns '' for display:none.
+  // DEV 8599 intentionally returns "Лесной вор · ...", not "8599 · ...".
+  // Hidden status (mobile CSS) requires textContent, not innerText.
   try {
-   await page.waitForFunction(expected => (document.querySelector('#dev-code-status')?.textContent || '')
-     .startsWith(expected + ' ·'), String(code), {timeout:5000});
+   await page.waitForFunction(() => {
+     const el=document.querySelector('#dev-code-status');
+     return Boolean(el?.textContent?.trim() && el?.dataset.state);
+   }, null, {timeout:5000});
+   const status=await page.locator('#dev-code-status').getAttribute('data-state');
+   assert.equal(status,'ok','DEV '+code+' returned non-ok status');
   } catch (error) {
    const details = await page.evaluate(() => ({
      text:document.querySelector('#dev-code-status')?.textContent,
