@@ -120,6 +120,7 @@ export class MobSystem {
       if(!e.state.alive)continue;
       const old={x:e.state.x,y:e.state.y};
       const hp=Number(this.getPlayerHp())||0;
+      const wasAlerted=e.state.alerted;
       tickMob(e.state,e.def,{x:player.x,y:player.y,hp},dt,{
         canMove:(x,y)=>this.zoneSystem.isInsidePlayable(x,y,25) &&
           !this.zoneSystem.collidesWithWall(x,y,20),
@@ -128,6 +129,7 @@ export class MobSystem {
           if(crit)this.onStatus(e.def.name+' · критическая атака ×'+e.def.critMultiplier);
         }
       });
+      if(!wasAlerted&&e.state.alerted)this.alertSocial(e);
       const dx=e.state.x-old.x,dy=e.state.y-old.y;
       if(Math.hypot(dx,dy)>0.05){
         e.face=knightFacing({x:dx,y:dy});

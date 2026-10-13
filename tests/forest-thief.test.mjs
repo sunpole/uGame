@@ -51,7 +51,7 @@ test('Monster HPS 5 only restores up to max',()=>{
  const state=createMobState(def);
  damageMob(state,def,50);
  const n=state.hp;
- tickMob(state,def,{x:state.x+800,y:state.y,hp:100},.1);
+ tickMob(state,def,{x:state.x+200,y:state.y,hp:100},.1);
  assert.equal(state.hp,n+.5);
 });
 test('80 attack speed means one swing per 1.25 s; 4% critical ×2',()=>{
