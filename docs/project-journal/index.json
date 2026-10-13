@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-12",
+  "updated": "2026-10-13",
   "records": [
     {
       "id": "UGD-0001",
@@ -1207,6 +1207,32 @@
       "related": [
         "UGD-0038",
         "UGD-0035"
+      ],
+      "supersedes": [],
+      "superseded_by": []
+    },
+    {
+      "id": "UGD-0040",
+      "title": "Лесной вор: первый пассивный PvE-моб и правила агрессии",
+      "date": "2026-10-13",
+      "type": "mechanic",
+      "status": "accepted",
+      "flags": [
+        "needs-test",
+        "needs-calculation"
+      ],
+      "tags": [
+        "combat",
+        "npc",
+        "gameplay",
+        "progression",
+        "world",
+        "character-build"
+      ],
+      "path": "records/UGD-0040-first-forest-thief-mob.md",
+      "related": [
+        "UGD-0038",
+        "UGD-0039"
       ],
       "supersedes": [],
       "superseded_by": []

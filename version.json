@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.77",
-  "stage": "knight-role-visual-library",
-  "updated": "2026-10-12",
-  "summary": "8-way real CC0 knight walk/idle on actual map; twelve local role images, adjustable size/shadow, PNG import on device, original preserved."
+  "version": "0.2.78",
+  "stage": "first-pve-forest-thief",
+  "updated": "2026-10-13",
+  "summary": "First authored non-aggressive level-3 Forest Thief (HP 330, chase 450) using 12th knight role and existing radial Impulse; experimental HP-based XP; previous save schema retained."
 }

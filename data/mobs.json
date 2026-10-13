@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "status": "first-pve-prototype-candidate",
+  "notes": "Первый моб. Числа от владельца; радиусы в world px, скорости бега в px/с, атаки 80 = 0.8 атак/с (временная интерпретация), critChance=4%, critMultiplier=2. XP = maxHP/10 — временная модель; не распространять автоматически на других мобов.",
+  "mobs": [
+    {
+      "id": "forest-thief",
+      "name": "Лесной вор",
+      "level": 3,
+      "aggressive": false,
+      "social": false,
+      "socialGroup": null,
+      "socialRadius": 0,
+      "spawn": {
+        "zoneId": "loc-00009",
+        "x": 1060,
+        "y": 960
+      },
+      "hp": 330,
+      "hps": 5,
+      "rp": null,
+      "rps": null,
+      "speed": 60,
+      "attackSpeed": 80,
+      "critChance": 4,
+      "critMultiplier": 2,
+      "attack": 12,
+      "attackRadius": 10,
+      "aggroRadius": 0,
+      "chaseRadius": 450,
+      "defense": 12,
+      "evasion": 0,
+      "abilities": [],
+      "artRole": "mob-human",
+      "suggestedLocalPng": "uGame_real_knight_WALK_8x11_green.png"
+    }
+  ]
+}
