@@ -1,38 +1,7 @@
 name: uGame v0.2.69 DEV Anomalies QA and Release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/project-hub-system.js'
-      - 'src/style.css'
-      - 'src/main.js'
-      - 'src/character-skills.js'
-      - 'tests/character-skills.test.mjs'
-      - 'src/dev-code-aliases.js'
-      - 'docs/DEV-CODES.md'
-      - 'src/game-state.js'
-      - 'src/character-draft.js'
-      - 'src/character-runtime.js'
-      - 'src/dev-character-tools.js'
-      - 'src/dev-console.js'
-      - 'tests/dev-code-aliases.test.mjs'
-      - 'tests/dev-character-tools.test.mjs'
-      - 'tests/character-runtime-orbs.test.mjs'
-      - 'data/project-hub.json'
-      - 'tests/character-draft-runtime.test.mjs'
-      - 'docs/project-journal/records/UGD-0038-anton-character-stats-draft.md'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'docs/releases/v0.2.69.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0269.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.69.md'
-      - '.github/workflows/publish-v0269.yml'
   workflow_dispatch:
 
 permissions:
