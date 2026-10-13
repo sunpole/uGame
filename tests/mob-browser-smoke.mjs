@@ -31,11 +31,21 @@ async function run(name,viewport,mobile){
  async function click(selector){if(mobile)await page.locator(selector).tap();else await page.locator(selector).click();}
  async function dev(code){
   await page.locator('#dev-code-input').fill(String(code));
-  await page.locator('#dev-code-input').press('Enter');
+  // Phaser consumes the Enter key for world interaction. Use the actual DEV submit button.
+  await click('#dev-console button[type="submit"]');
   // Status is visually hidden at compact widths; innerText() returns '' for display:none.
-  // Read the DOM textContent, and verify the actual numeric command was handled.
-  await page.waitForFunction(expected => (document.querySelector('#dev-code-status')?.textContent || '')
-    .startsWith(expected + ' ·'), String(code), {timeout:5000});
+  try {
+   await page.waitForFunction(expected => (document.querySelector('#dev-code-status')?.textContent || '')
+     .startsWith(expected + ' ·'), String(code), {timeout:5000});
+  } catch (error) {
+   const details = await page.evaluate(() => ({
+     text:document.querySelector('#dev-code-status')?.textContent,
+     input:document.querySelector('#dev-code-input')?.value,
+     state:document.querySelector('#dev-code-status')?.dataset.state,
+     form:document.querySelector('#dev-console')?.outerHTML.slice(0,600)
+   }));
+   throw Error('DEV '+code+' submit failed: '+JSON.stringify(details)+'; '+error);
+  }
   return (await page.locator('#dev-code-status').textContent()) || '';
  }
  try{
