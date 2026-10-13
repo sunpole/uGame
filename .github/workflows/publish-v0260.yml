@@ -1,21 +1,7 @@
 name: uGame v0.2.60 Safe Texture Upload QA and Release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'Update-uGame.ps1'
-      - 'tests/Test-Texture-Publish.ps1'
-      - 'docs/releases/v0.2.60.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0260.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.60.md'
-      - '.github/workflows/publish-v0260.yml'
   workflow_dispatch:
 
 permissions:

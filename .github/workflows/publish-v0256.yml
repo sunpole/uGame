@@ -1,24 +1,7 @@
 name: uGame v0.2.56 source audit and regression release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'data/character-balance-candidate.json'
-      - 'data/character-source-audit-register.json'
-      - 'tests/character-source-triple-audit.test.mjs'
-      - 'tests/character-balance.test.mjs'
-      - 'docs/project-journal/**'
-      - 'docs/work-reports/2026-10-10-character-three-pass-audit.md'
-      - 'version.json'
-      - 'package.json'
-      - 'index.html'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0256.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.56.md'
-      - '.github/workflows/publish-v0256.yml'
   workflow_dispatch:
 
 permissions:

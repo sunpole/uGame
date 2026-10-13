@@ -1,23 +1,7 @@
 name: uGame v0.2.58 world map viewport QA and release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/project-hub-system.js'
-      - 'src/world-map-camera.js'
-      - 'src/style.css'
-      - 'tests/world-navigation-ui.test.mjs'
-      - 'tests/browser-boot-smoke.mjs'
-      - 'index.html'
-      - 'version.json'
-      - 'package.json'
-      - 'data/preflight-manifest.json'
-      - '.github/workflows/publish-v0258.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.58.md'
-      - '.github/workflows/publish-v0258.yml'
   workflow_dispatch:
 
 permissions:
