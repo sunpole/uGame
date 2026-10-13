@@ -1,11 +1,7 @@
 name: uGame v0.2.45 all Master activities QA release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.45.md'
-      - '.github/workflows/publish-v0245.yml'
   workflow_dispatch:
 
 permissions:

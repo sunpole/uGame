@@ -1,19 +1,7 @@
 name: uGame v0.2.46 inventory QA and release
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/inventory-*.js'
-      - 'src/container-system.js'
-      - 'data/containers.json'
-      - 'tests/inventory-organizer.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0246.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.46.md'
-      - '.github/workflows/publish-v0246.yml'
   workflow_dispatch:
 
 permissions:
