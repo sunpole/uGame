@@ -32,7 +32,11 @@ async function run(name,viewport,mobile){
  async function dev(code){
   await page.locator('#dev-code-input').fill(String(code));
   await page.locator('#dev-code-input').press('Enter');
-  return await page.locator('#dev-code-status').innerText();
+  // Status is visually hidden at compact widths; innerText() returns '' for display:none.
+  // Read the DOM textContent, and verify the actual numeric command was handled.
+  await page.waitForFunction(expected => (document.querySelector('#dev-code-status')?.textContent || '')
+    .startsWith(expected + ' ·'), String(code), {timeout:5000});
+  return (await page.locator('#dev-code-status').textContent()) || '';
  }
  try{
   await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
