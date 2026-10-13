@@ -69,18 +69,33 @@ async function run(name,viewport,mobile){
   await page.waitForFunction(()=>window.__ugameBoot?.phase==='playing',null,{timeout:90000});
   assert.match(await dev('8590'),/Лесной вор/);
   assert.match(await dev('8599'),/330\/330 ХП · idle/);
+  // Place the QA hero in real Phaser attack range. General walking/navigation is
+  // independently covered by browser-boot-smoke; no gameplay cheat is shipped.
+  const proximity=await page.evaluate(()=>{
+   const scene=window.Phaser?.GAMES?.[0]?.scene?.getScene('zone');
+   const enemy=scene?.mobSystem?.entities?.find(e=>e.def.id==='forest-thief');
+   if(!enemy)return null;
+   scene.player.setPosition(enemy.state.x-32,enemy.state.y);
+   return {hero:{x:scene.player.x,y:scene.player.y},
+     mob:{x:enemy.state.x,y:enemy.state.y},distance:32};
+  });
+  assert.ok(proximity&&proximity.distance<70,'Phaser mob/hero must be reachable: '+JSON.stringify(proximity));
   await wait(750);
-  assert.match(await dev('8599'),/330\/330 ХП · idle/,'Passive mob must never aggro at rest');
+  assert.match(await dev('8599'),/330\/330 ХП · idle/,'Passive mob must never aggro at point-blank proximity');
   // DEV QA only; do not change real skill cost or hero invulnerability rules.
   assert.match(await dev('8673'),/ВКЛ/);
   assert.match(await dev('8672'),/ВКЛ/);
-  await page.keyboard.down('ArrowRight');await wait(310);await page.keyboard.up('ArrowRight');
-  await page.keyboard.press('1');
+  // Real hotbar click is reliable in desktop and touch Chromium, unlike keyboard focus
+  // after completing the DEV form.
+  await click('[data-skill-slot="1"]');
   await wait(600);
+  const actionStatus=await page.locator('#skill-hotbar-status').textContent();
+  assert.match(actionStatus||'',/Импульс/,'Impulse did not cast: '+actionStatus);
   const afterHit=await dev('8599');
-  assert.match(afterHit,/Лесной вор · (?:[12]\d\d|3[012]\d)\/330 ХП · chase/,'Impulse must damage and aggro the mob: '+afterHit);
-  // Enemy approaches when aggroed; 12 further casts leave plenty of margin despite +5 HPS.
-  for(let i=0;i<13;i++){await page.keyboard.press('1');await wait(375);}
+  assert.match(afterHit,/Лесной вор · (?:[12]\d\d|3[012]\d)\/330 ХП · chase/,'Impulse must damage and aggro the mob: '+afterHit+
+    ', skill='+actionStatus+', positions='+JSON.stringify(proximity));
+  // Enemy approaches when aggroed; 12 more casts beat passive HP regen.
+  for(let i=0;i<13;i++){await click('[data-skill-slot="1"]');await wait(375);}
   const afterKill=await dev('8599');
   assert.match(afterKill,/0\/330 ХП · dead/,'Mob should be defeated: '+afterKill);
   const save=await page.evaluate(()=>JSON.parse(localStorage.getItem('ugame.save.v1')));
