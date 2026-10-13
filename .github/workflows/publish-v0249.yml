@@ -1,18 +1,7 @@
 name: uGame v0.2.49 World Map and Analyzer QA
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/project-hub-system.js'
-      - 'src/style.css'
-      - 'tests/world-navigation-ui.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0249.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.49.md'
-      - '.github/workflows/publish-v0249.yml'
   workflow_dispatch:
 
 permissions:

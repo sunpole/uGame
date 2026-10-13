@@ -1,19 +1,7 @@
 name: uGame v0.2.53 Pre-flight startup hotfix
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/preflight-system.js'
-      - 'tests/world-five-rings.test.mjs'
-      - 'data/world.json'
-      - 'package.json'
-      - 'index.html'
-      - '.github/workflows/publish-v0253.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.53.md'
-      - '.github/workflows/publish-v0253.yml'
   workflow_dispatch:
 
 permissions:

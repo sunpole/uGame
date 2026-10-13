@@ -1,20 +1,7 @@
 name: uGame v0.2.51 responsive chrome and Master rarity audit
 
+# Historical release workflow, retained for manual audit only.
 on:
-  pull_request:
-    paths:
-      - 'src/style.css'
-      - 'src/main.js'
-      - 'src/project-hub-system.js'
-      - 'src/master-rarity-audit.js'
-      - 'tests/master-rarity-header.test.mjs'
-      - 'package.json'
-      - '.github/workflows/publish-v0251.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/releases/v0.2.51.md'
-      - '.github/workflows/publish-v0251.yml'
   workflow_dispatch:
 
 permissions:
