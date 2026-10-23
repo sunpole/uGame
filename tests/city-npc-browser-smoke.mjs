@@ -12,6 +12,50 @@ const server=spawn(process.execPath,['tools/dev-server.mjs'],{cwd:root,env:{...p
 let log='';server.stdout.on('data',x=>log+=x);server.stderr.on('data',x=>log+=x);
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 let browser;
+async function heroGrounding(page){
+ return page.evaluate(async()=>{
+  const s=window.__qaGame.scene.getScenes(true)[0],view=s.characterView,library=view.knightRoles;
+  const {KNIGHT_ATLAS_ROWS}=await import('./src/knight-atlas-core.js');
+  const directions=[['SW',-1,1],['W',-1,0],['NW',-1,-1],['N',0,-1],['NE',1,-1],['E',1,0],['SE',1,1],['S',0,1]];
+  const rows=[],position={x:s.player.x,y:s.player.y};
+  async function check(role,source){
+   const bottomByFrame=new Map();let maxGap=0,count=0;
+   for(const scale of [.3,.84,1.25,3.5]){
+    library.setSettings(role,{scale});await view.setKnight(role);
+    for(const [dir,x,y] of directions)for(let index=0;index<12;index++){
+     view.knightElapsed=index*105;
+     view.update({moving:index<11,direction:{x,y}},0);
+     const image=view.knightImage,frame=image.frame;
+     if(frame.name!==dir+'-'+(index<11?index:'idle'))throw Error('Wrong animation frame '+frame.name);
+     if(!bottomByFrame.has(frame.name)){
+      const raw=image.texture.getSourceImage().getContext('2d').getImageData(frame.cutX,frame.cutY,frame.cutWidth,frame.cutHeight).data;
+      let bottom=-1;for(let k=3;k<raw.length;k+=4)if(raw[k]>=8)bottom=Math.max(bottom,Math.floor(k/4/frame.cutWidth));
+      if(bottom<0)throw Error('Empty hero frame '+frame.name);
+      bottomByFrame.set(frame.name,bottom+1);
+     }
+     // Independent oracle: actual opaque pixels in world space versus the real shadow.
+     const footY=image.getBounds().top+bottomByFrame.get(frame.name)*image.scaleY;
+     const gap=Math.abs(footY-view.knightShadow.y);maxGap=Math.max(maxGap,gap);count++;
+     if(gap>1)throw Error('Hero floats: '+JSON.stringify({role,source,scale,frame:frame.name,footY,shadowY:view.knightShadow.y,gap}));
+     if(s.player.x!==position.x||s.player.y!==position.y)throw Error('Visual alignment moved the gameplay body');
+    }
+   }
+   rows.push({role,source,frames:count,maxGap});
+  }
+  for(const role of ['hero-plate','hero-leather','hero-cloth','hero-hybrid'])await check(role,'builtin');
+  // A valid local PNG with different transparent padding and changing foot heights.
+  const atlas=await library.compile('hero-plate'),png=document.createElement('canvas');png.width=2816;png.height=2048;
+  const ctx=png.getContext('2d');
+  for(let row=0;row<8;row++)for(let frame=0;frame<11;frame++)
+   ctx.drawImage(atlas,frame*128,KNIGHT_ATLAS_ROWS[row]*128,128,128,frame*256+64,row*256+4+(frame%3)*6,128,128);
+  const blob=await new Promise(resolve=>png.toBlob(resolve,'image/png'));
+  await library.importPng('hero-plate',new File([blob],'grounding-qa.png',{type:'image/png'}));
+  await check('hero-plate','imported-png');
+  await library.clearPng('hero-plate');library.setSettings('hero-plate',{scale:.84});await view.setKnight('hero-plate');
+  view.update({moving:false,direction:{x:0,y:1}},0);
+  return rows;
+ });
+}
 async function run(name,viewport,mobile){
  const context=await browser.newContext({viewport,isMobile:mobile,hasTouch:mobile});
  const page=await context.newPage(),errors=[],results=[];
@@ -66,6 +110,7 @@ async function run(name,viewport,mobile){
    new MutationObserver(()=>{if(pressedAt!==null&&!document.documentElement.dataset.characterVisualFrame?.endsWith('idle')){window.__qaInputLatency.push(performance.now()-pressedAt);pressedAt=null;}})
     .observe(document.documentElement,{attributes:true,attributeFilter:['data-character-visual-frame']});
   });
+  const grounding=await heroGrounding(page);
   for(const [keys,dir] of [[['ArrowRight'],'E'],[['ArrowRight','ArrowUp'],'NE'],[['ArrowUp'],'N'],[['ArrowLeft','ArrowUp'],'NW'],[['ArrowLeft'],'W'],[['ArrowLeft','ArrowDown'],'SW'],[['ArrowDown'],'S'],[['ArrowRight','ArrowDown'],'SE']]){
    for(const key of keys)await page.keyboard.down(key);
    await page.waitForFunction(d=>document.documentElement.dataset.characterVisualFrame?.startsWith(d+'-')&&!document.documentElement.dataset.characterVisualFrame?.endsWith('idle'),dir,{timeout:5000});
@@ -75,7 +120,7 @@ async function run(name,viewport,mobile){
   assert.ok(perf.inputLatencyMs.length>=8,'Every turn must update a real animation frame');
   assert.equal(perf.save,1);assert.deepEqual(errors,[]);
   await page.screenshot({path:out+name+'-movement.png'});
-  await writeFile(out+name+'.json',JSON.stringify({results,perf,errors},null,2));
+  await writeFile(out+name+'.json',JSON.stringify({results,grounding,perf,errors},null,2));
   console.log('[PASS]',name,'15 opaque city NPCs, three services, eight movement directions, synchronous save, Pre-flight');
  }catch(e){await page.screenshot({path:out+name+'-failure.png'}).catch(()=>{});console.log('[FAIL]',name,String(e),errors);throw e;}
  finally{await context.close();}

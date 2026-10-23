@@ -109,8 +109,11 @@ export class KnightRoleLibrary{
    const texture=scene.textures.exists(key)?scene.textures.get(key):scene.textures.addCanvas(key,canvas);
    for(let dir=0;dir<8;dir++){
     const prefix=KNIGHT_DIRS[dir]+'-';
-    for(let i=0;i<11;i++)if(!texture.has(prefix+i))texture.add(prefix+i,0,i*128,dir*128,128,128);
-    if(!texture.has(prefix+'idle'))texture.add(prefix+'idle',0,11*128,dir*128,128,128);
+    for(let i=0;i<12;i++){
+     const name=prefix+(i===11?'idle':i);
+     const frame=texture.has(name)?texture.get(name):texture.add(name,0,i*128,dir*128,128,128);
+     frame.ugameGroundY=canvas.ugameGroundRows[dir][i];
+    }
    }
    texture.ugameOpaqueTop=canvas.ugameOpaqueTop;
    this.textures.set(role,key);return key;
@@ -123,12 +126,12 @@ export class KnightRoleLibrary{
   const provided=upload?await fileCanvas(upload.blob):null;
   const s=this.source;if(!provided&&!s)throw Error('Нет базовых кадров');
   const scratch=makeCanvas(256,256),ctx=scratch.getContext('2d',{willReadFrequently:true});
-  const raw=[];
+  const raw=[],groundRows=[];
   const palette=provided?null:knightSourcePalette(s.palette,knightRoleInfo(role).tone);
   const ordered=provided?KNIGHT_ATLAS_ROWS:[0,1,2,3,4,5,6,7];
   const union={minX:255,minY:255,maxX:0,maxY:0,any:false};
   for(let dir=0;dir<8;dir++){
-   const each=[];
+   const each=[],feet=[];
    for(let index=0;index<12;index++){
     if(provided){
      const row=KNIGHT_ATLAS_ROWS.indexOf(dir);
@@ -139,14 +142,16 @@ export class KnightRoleLibrary{
      ctx.putImageData(decodeKnightRun(encoded,palette,ctx),0,0);
     }
     const img=ctx.getImageData(0,0,256,256);each.push(img);
-    const a=img.data;
+    const a=img.data;let bottom=-1;
     for(let y=0;y<256;y++)for(let x=0;x<256;x++){
      if(a[(y*256+x)*4+3]<8)continue;
+     bottom=Math.max(bottom,y);
      union.any=true;union.minX=Math.min(union.minX,x);union.maxX=Math.max(union.maxX,x);
      union.minY=Math.min(union.minY,y);union.maxY=Math.max(union.maxY,y);
     }
+    feet.push(bottom);
    }
-   raw.push(each);
+   raw.push(each);groundRows.push(feet);
   }
   if(!union.any)throw Error('В атласе нет непрозрачных пикселей');
   if(union.maxX-union.minX>=124||union.maxY-union.minY>=124)
@@ -161,6 +166,8 @@ export class KnightRoleLibrary{
   // Shared across directions/frames; keeps labels above the actual model,
   // rather than above the transparent padding in each 128px atlas cell.
   atlas.ugameOpaqueTop=Math.max(0,union.minY-cropY);
+  // Pixel edge at the feet, in each cropped frame; computed once, never per tick.
+  atlas.ugameGroundRows=groundRows.map(row=>row.map(y=>(y<0?union.maxY:y)-cropY+1));
   return atlas;
  }
  async preview(role){

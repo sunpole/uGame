@@ -99,4 +99,9 @@ async function check(name,viewport,mobile){
   throw e;
  }finally{await context.close();}
 }
-try{await waitServer();browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader']});await check('desktop',{width:1365,height:768},false);await check('mobile',{width:390,height:844},true);}finally{await browser?.close().catch(()=>{});server.kill('SIGTERM');}
+try{
+ await waitServer();
+ const headful=process.env.UGAME_QA_HEADFUL==='1';
+ browser=await chromium.launch({headless:!headful,args:headful?[]:['--use-gl=angle','--use-angle=swiftshader']});
+ await check('desktop',{width:1365,height:768},false);await check('mobile',{width:390,height:844},true);
+}finally{await browser?.close().catch(()=>{});server.kill('SIGTERM');}
