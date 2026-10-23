@@ -89,7 +89,8 @@ jobs:
         run: ./tests/Test-Texture-Publish.ps1
 
   chromium-and-node:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 supports Ubuntu 24.04, not the moving latest image.
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
@@ -140,7 +141,7 @@ jobs:
   release:
     if: github.ref == 'refs/heads/main'
     needs: [windows-updater, chromium-and-node]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:

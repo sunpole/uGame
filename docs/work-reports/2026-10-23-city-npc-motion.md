@@ -98,3 +98,9 @@ win32`; фоновая задача не создана. Затем провер
 force-fetch в .79. `git diff --check` — PASS. Общий hardware smoke .79
 desktop/mobile — PASS, exit 0. Локальные новые сценарии завершены;
 GitHub Actions/публикация фиксируются отдельно по фактическому PR/Release.
+
+## GitHub CI: первый результат и исправление окружения
+
+PR #94, исходный commit 045f676. [Run 39908024684](https://github.com/sunpole/uGame/actions/runs/39908024684): Node/version PASS, обе Windows PowerShell 5.1 updater/texture регрессии PASS. Linux остановился до браузера: ubuntu-latest дал Ubuntu 26.04, а закреплённый Playwright 1.56.1 не поддерживает ubuntu26.04-x64. Второй boot workflow остановился на той же установке. Это FAIL окружения, не пройденный runtime и не разрешение выпуска.
+
+В двух затронутых Chromium workflows закреплён ubuntu-24.04, без обновления/ослабления тестов. Совместимость проверена по [официальному hostPlatform.ts версии 1.56.1](https://github.com/microsoft/playwright/blob/v1.56.1/packages/playwright-core/src/server/utils/hostPlatform.ts). Новый commit должен заново пройти CI; исходная ошибка сохранена по ссылке.
