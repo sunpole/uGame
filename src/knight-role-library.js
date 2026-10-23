@@ -112,6 +112,7 @@ export class KnightRoleLibrary{
     for(let i=0;i<11;i++)if(!texture.has(prefix+i))texture.add(prefix+i,0,i*128,dir*128,128,128);
     if(!texture.has(prefix+'idle'))texture.add(prefix+'idle',0,11*128,dir*128,128,128);
    }
+   texture.ugameOpaqueTop=canvas.ugameOpaqueTop;
    this.textures.set(role,key);return key;
   })();
   this.pending.set(role,pending);
@@ -157,6 +158,9 @@ export class KnightRoleLibrary{
    ctx.putImageData(raw[dir][frame],0,0);
    out.drawImage(scratch,cropX,cropY,128,128,frame*128,dir*128,128,128);
   }
+  // Shared across directions/frames; keeps labels above the actual model,
+  // rather than above the transparent padding in each 128px atlas cell.
+  atlas.ugameOpaqueTop=Math.max(0,union.minY-cropY);
   return atlas;
  }
  async preview(role){

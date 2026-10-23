@@ -79,7 +79,11 @@ export class PlayerController {
           if (mode === 'pulse') this.virtualDashUntil = performance.now() + 900;
           else this.virtual.dash = true;
         }
-        if (control === 'action' && this.enabled) this.virtualActionQueued = true;
+        // ActionRouter owns click for both world actions and modal choices.
+        // Queuing pointerdown as well can open and confirm a teleporter in one tap.
+        if (control === 'action' && this.enabled && button.dataset.actionRouterBound !== 'true') {
+          this.virtualActionQueued = true;
+        }
       });
       button.addEventListener('pointerup', release);
       button.addEventListener('pointercancel', release);

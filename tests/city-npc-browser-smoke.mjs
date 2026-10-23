@@ -38,19 +38,23 @@ async function run(name,viewport,mobile){
    const models=await page.evaluate(()=>window.__qaGame.scene.getScenes(true)[0].interactableSystem.items.filter(i=>i.type.startsWith('city-')).map(i=>{
     const image=i._knightObjects[1],f=image.frame,c=image.texture.getSourceImage(),ctx=c.getContext('2d');
     const raw=ctx.getImageData(f.cutX,f.cutY,f.cutWidth,f.cutHeight).data;
-    let opaque=0;for(let k=3;k<raw.length;k+=4)if(raw[k]>=250)opaque++;
+    let opaque=0,minY=f.cutHeight;for(let k=3;k<raw.length;k+=4)if(raw[k]>=250){opaque++;minY=Math.min(minY,Math.floor(k/4/f.cutWidth));}
     return {id:i.id,type:i.type,key:image.texture.key,opaque,oldVisible:i.display.visible,
-     labelBottom:i._label.getBounds().bottom,spriteTop:image.getBounds().top};
+     labelBottom:i._label.getBounds().bottom,opaqueTop:image.getBounds().top+minY*image.scaleY};
    }));
    assert.equal(models.length,3,zoneId);
-   for(const model of models){assert.ok(model.opaque>1000,'Opaque model: '+model.id);assert.equal(model.oldVisible,false);assert.ok(model.labelBottom<=model.spriteTop-4,'Name must not overlap: '+model.id);}
+   for(const model of models){assert.ok(model.opaque>1000,'Opaque model: '+model.id);assert.equal(model.oldVisible,false);assert.ok(model.labelBottom<=model.opaqueTop-4,'Name must not overlap: '+model.id);}
    results.push({zoneId,models});await page.screenshot({path:out+name+'-'+zoneId+'.png'});
   }
   // Existing city services still work with the new, non-combat visual bodies.
+  const serviceZone=await page.evaluate(()=>window.__qaGame.scene.getScenes(true)[0].zoneSystem.currentId);
   for(const [type,selector] of [['city-banker','#inventory-panel'],['city-teleporter','#interaction-panel'],['city-guide','#dialogue-panel']]){
    await page.evaluate(type=>{const s=window.__qaGame.scene.getScenes(true)[0],i=s.interactableSystem.items.find(i=>i.type===type);s.player.setPosition(i.x,i.y+30);},type);
    await page.waitForTimeout(150);await click('[data-control="action"]:visible');
-   await page.locator(selector).waitFor({state:'visible'});await page.keyboard.press('Escape');
+   await page.locator(selector).waitFor({state:'visible'});
+   await page.waitForTimeout(150);
+   assert.equal(await page.evaluate(()=>window.__qaGame.scene.getScenes(true)[0].zoneSystem.currentId),serviceZone,'One tap must not confirm a destination');
+   await page.keyboard.press('Escape');
    await page.locator(selector).waitFor({state:'hidden'});
   }
   await page.evaluate(async()=>{const s=window.__qaGame.scene.getScenes(true)[0];s.zoneSystem.build('loc-00013');s.player.setPosition(960,850);s.zoneRulesSystem.visionSystem.setZoneOverride({mode:'full'});await s.characterView.setKnight('hero-plate',{persist:false});
@@ -81,5 +85,5 @@ try{
  const headful=process.env.UGAME_QA_HEADFUL==='1';
  browser=await chromium.launch({headless:!headful,args:headful?[]:['--use-gl=angle','--use-angle=swiftshader']});
  await run(headful?'desktop-hardware':'desktop',{width:1365,height:900},false);
- if(!headful)await run('mobile',{width:390,height:844},true);
+ await run(headful?'mobile-hardware':'mobile',{width:390,height:844},true);
 }finally{await browser?.close();server.kill('SIGTERM');}

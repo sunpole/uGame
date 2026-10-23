@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {knightNpcRole,isKnightRole,knightSourcePalette} from '../src/knight-atlas-core.js';
 import {WorldSpawnStateSystem} from '../src/world-spawn-state-system.js';
 import {EventSpotSystem} from '../src/event-spot-system.js';
+import {PlayerController} from '../src/player-controller.js';
+import {ActionRouter} from '../src/action-router.js';
 
 test('Source RGBA colors keep full opacity, with or without a leading hash',()=>{
  const colors=knightSourcePalette({palette:['00000000','94b5c0ff','#94b5c0ff'],
@@ -14,6 +16,38 @@ test('Every city service and guard, including Crossroads, has a real model role'
  for(const zone of ['loc-00001','loc-00005','loc-00013','loc-00021','loc-00025'])
   for(const type of ['city-banker','city-teleporter','city-guide'])
    assert.ok(isKnightRole(knightNpcRole({type,id:zone+'-'+type})),zone+' '+type);
+});
+
+test('One pointer action opens a city service without also confirming its first choice',()=>{
+ const previousWindow=globalThis.window;
+ globalThis.window={addEventListener(){},removeEventListener(){}};
+ const handlers=new Map(),button={dataset:{control:'action'},
+  addEventListener(type,fn){handlers.set(type,[...(handlers.get(type)||[]),fn]);},
+  removeEventListener(){},setPointerCapture(){}};
+ const root={querySelectorAll:()=>[button]};
+ const controller={enabled:true,virtual:{},virtualActionQueued:false};
+ let open=false,opened=0,confirmed=0;
+ const frame=()=>{if(controller.virtualActionQueued){controller.virtualActionQueued=false;open=true;opened++;}};
+ let router;
+ try{
+  PlayerController.prototype.bindVirtualControls.call(controller,root);
+  router=new ActionRouter({getInteraction:()=>({isOpen:()=>open,primaryAction(){confirmed++;}}),
+   onWorldPrimary:()=>{controller.virtualActionQueued=true;}});
+  router.bindPointerControls(root);
+  const fire=type=>{for(const fn of handlers.get(type)||[])fn({preventDefault(){},pointerId:1});};
+  // A real touch can span a render frame before the browser emits click.
+  fire('pointerdown');frame();fire('pointerup');fire('click');frame();
+  assert.equal(opened,1);assert.equal(confirmed,0,'Opening must not choose a destination');
+  router.primary();assert.equal(confirmed,1,'A separate confirmation still works');
+ }finally{router?.destroy();if(previousWindow===undefined)delete globalThis.window;else globalThis.window=previousWindow;}
+});
+
+test('Pointer action remains available when no ActionRouter is bound',()=>{
+ let down;
+ const button={dataset:{control:'action'},addEventListener(type,fn){if(type==='pointerdown')down=fn;}};
+ const controller={enabled:true,virtual:{},virtualActionQueued:false};
+ PlayerController.prototype.bindVirtualControls.call(controller,{querySelectorAll:()=>[button]});
+ down({preventDefault(){}});assert.equal(controller.virtualActionQueued,true);
 });
 
 test('Compact master occupancy preserves exact slot ownership without cloning module payloads',()=>{

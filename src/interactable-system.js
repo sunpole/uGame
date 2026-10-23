@@ -365,8 +365,9 @@ export class InteractableSystem {
       0x000000,cfg.shadow).setDepth(5);
     const sprite=scene.add.image(item.x,item.y+19,key,'S-idle')
       .setDepth(6).setOrigin(0.5,0.94).setScale(cfg.scale);
-    // Keep both name lines above the entire sprite, including custom PNG scales.
-    item._label?.setY?.(sprite.y-128*0.94*cfg.scale-24);
+    // Ignore transparent atlas padding when positioning the two name lines.
+    const opaqueTop=scene.textures.get(key).ugameOpaqueTop??0;
+    item._label?.setY?.(sprite.y+(opaqueTop-128*0.94)*cfg.scale-24);
     item.display?.setVisible?.(false);
     item._knightObjects=[shadow,sprite];
     item._displayObjects?.push(shadow,sprite);
