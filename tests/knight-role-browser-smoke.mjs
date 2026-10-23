@@ -32,7 +32,7 @@ async function check(name,viewport,mobile){
   await click('#project-hub-open');await click('[data-hub-section="game"]');
   await click('[data-hub-item="knight-library"]');
   await page.locator('#knight-role-library').waitFor({timeout:10000});
-  assert.equal(await page.locator('[data-knight-role]').count(),12);
+  assert.equal(await page.locator('[data-knight-role]').count(),13);
   await page.waitForFunction(()=>document.querySelector('#knight-role-preview')?.getAttribute('src')?.startsWith('data:image/png'),null,{timeout:60000});
   assert.equal(await page.locator('#knight-role-preview').evaluate(img=>img.naturalWidth),128);
   const scale=page.locator('#knight-role-scale');
@@ -92,7 +92,7 @@ async function check(name,viewport,mobile){
   assert.equal(await page.locator('html').getAttribute('data-character-visual'),'original');
   assert.deepEqual(errors,[]);
   await page.screenshot({path:dir+name+'.png',fullPage:true});
-  console.log('[PASS] '+name+' Pre-flight, real 8-way Phaser player, 12 roles, scale/shadow, PNG import and persistent F5');
+  console.log('[PASS] '+name+' Pre-flight, real 8-way Phaser player, 13 roles, scale/shadow, PNG import and persistent F5');
  }catch(e){
   await page.screenshot({path:dir+name+'-failure.png',fullPage:true}).catch(()=>{});
   console.error('[FAIL]',name,JSON.stringify({error:String(e),errors,html:await page.locator('body').innerText().catch(()=>''),boot:await page.evaluate(()=>window.__ugameBoot).catch(()=>null)},null,2).slice(0,7000));

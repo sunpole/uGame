@@ -1,4 +1,4 @@
-// v0.2.77: 12 visual-only slots. Zone assignment is cosmetic, never game balance.
+// Visual roles: twelve existing IDs plus the neutral city guard. No game balance.
 export const KNIGHT_FRAME_SIZE=256;
 export const KNIGHT_DISPLAY_FRAME=128;
 export const KNIGHT_WALK_FRAMES=11;
@@ -11,14 +11,15 @@ export const KNIGHT_ROLES=Object.freeze([
  {id:'hero-leather',name:'Герой 2 · кожаный',group:'hero',tone:'#917451',scale:0.84},
  {id:'hero-cloth',name:'Герой 3 · тканевый',group:'hero',tone:'#ac9ab1',scale:0.84},
  {id:'hero-hybrid',name:'Герой 4 · смешанный',group:'hero',tone:'#8ba5ad',scale:0.84},
- {id:'banker',name:'Банкир · общий',group:'npc',tone:'#b69c53',scale:1.9},
- {id:'teleporter-a',name:'Телепортер · вариант 1',group:'npc',tone:'#7a6fb9',scale:2.05},
- {id:'teleporter-b',name:'Телепортер · вариант 2',group:'npc',tone:'#ac8cc9',scale:2.05},
- {id:'ruler-1',name:'Страж/правитель · столица 1',group:'npc',tone:'#d3d5e3',scale:2.25},
- {id:'ruler-2',name:'Страж/правитель · столица 2',group:'npc',tone:'#477957',scale:2.25},
- {id:'ruler-3',name:'Страж/правитель · столица 3',group:'npc',tone:'#c39b5f',scale:2.25},
- {id:'ruler-4',name:'Страж/правитель · столица 4',group:'npc',tone:'#b98a81',scale:2.25},
- {id:'mob-human',name:'Человек-противник · образец',group:'mob',tone:'#985a61',scale:0.95}
+ {id:'banker',name:'Банкир · общий',group:'npc',tone:'#b69c53',scale:1},
+ {id:'teleporter-a',name:'Телепортер · вариант 1',group:'npc',tone:'#7a6fb9',scale:1.05},
+ {id:'teleporter-b',name:'Телепортер · вариант 2',group:'npc',tone:'#ac8cc9',scale:1.05},
+ {id:'ruler-1',name:'Страж/правитель · столица 1',group:'npc',tone:'#d3d5e3',scale:1.1},
+ {id:'ruler-2',name:'Страж/правитель · столица 2',group:'npc',tone:'#477957',scale:1.1},
+ {id:'ruler-3',name:'Страж/правитель · столица 3',group:'npc',tone:'#c39b5f',scale:1.1},
+ {id:'ruler-4',name:'Страж/правитель · столица 4',group:'npc',tone:'#b98a81',scale:1.1},
+ {id:'mob-human',name:'Человек-противник · образец',group:'mob',tone:'#985a61',scale:0.95},
+ {id:'guard-crossroads',name:'Страж · Каменный Перекрёсток',group:'npc',tone:'#8b949e',scale:1.1}
 ].map(Object.freeze));
 const ROLE_IDS=new Set(KNIGHT_ROLES.map(r=>r.id));
 export function isKnightRole(id){return ROLE_IDS.has(id);}
@@ -26,7 +27,7 @@ export function knightRoleInfo(id){return KNIGHT_ROLES.find(r=>r.id===id)||null;
 export function knightHeroRole(identity){
  return {plate:'hero-plate',leather:'hero-leather',cloth:'hero-cloth',hybrid:'hero-hybrid'}[identity?.archetype]||'hero-plate';
 }
-const RULERS=Object.freeze({'loc-00001':'ruler-1','loc-00005':'ruler-2','loc-00021':'ruler-3','loc-00025':'ruler-4'});
+const RULERS=Object.freeze({'loc-00001':'ruler-1','loc-00005':'ruler-2','loc-00013':'guard-crossroads','loc-00021':'ruler-3','loc-00025':'ruler-4'});
 export function knightNpcRole(item){
  if(item?.type==='city-banker')return 'banker';
  if(item?.type==='city-teleporter')
@@ -74,6 +75,9 @@ export function decodeKnightRun(encoded,palette,ctx){
  return image;
 }
 export function knightSourcePalette(definition,tone){
- const colors=definition.palette.map(c=>[0,2,4,6].map(i=>parseInt(c.slice(i+1,i+3),16)));
+ const colors=definition.palette.map(c=>{
+  const hex=c.replace(/^#/,'');
+  return [0,2,4,6].map(i=>parseInt(hex.slice(i,i+2),16));
+ });
  return colors.map((color,index)=>knightPaletteTone(color,tone,definition.bands?.runtime?.[index]==='cloth'));
 }

@@ -334,6 +334,7 @@ export class InteractableSystem {
 
     item._glow = glow;
     item._label = label;
+    item._baseLabelY = label?.y;
     item._displayObjects = displayObjects;
     this.objects.push(...displayObjects);
     if(this.knightRoles?.ready&&knightNpcRole(item))void this.decorateKnightItem(item);
@@ -358,12 +359,14 @@ export class InteractableSystem {
       item._displayObjects=item._displayObjects?.filter(x=>x!==old)||[];
     }
     item._knightObjects=[];
-    if(!key){item.display?.setVisible?.(true);return;}
+    if(!key){item.display?.setVisible?.(true);item._label?.setY?.(item._baseLabelY);return;}
     const scene=this.scene;
     const shadow=scene.add.ellipse(item.x,item.y+18,38*cfg.scale,12*cfg.scale,
       0x000000,cfg.shadow).setDepth(5);
     const sprite=scene.add.image(item.x,item.y+19,key,'S-idle')
       .setDepth(6).setOrigin(0.5,0.94).setScale(cfg.scale);
+    // Keep both name lines above the entire sprite, including custom PNG scales.
+    item._label?.setY?.(sprite.y-128*0.94*cfg.scale-24);
     item.display?.setVisible?.(false);
     item._knightObjects=[shadow,sprite];
     item._displayObjects?.push(shadow,sprite);

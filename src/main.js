@@ -745,7 +745,9 @@ class ZoneScene extends Phaser.Scene {
   }
 
   persistGameState() {
-    this.saveSystem.save(this.gameState.snapshot());
+    // SaveSystem serializes synchronously without mutating its input. Cloning
+    // the entire world immediately before JSON serialization stalls movement.
+    this.saveSystem.save(this.gameState.state);
   }
 
   bindGameEvents() {

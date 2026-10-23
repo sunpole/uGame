@@ -300,6 +300,19 @@ export class WorldSpawnStateSystem {
     return true;
   }
 
+  // Slot queries run for every zone on the game thread. Copy only slot ownership,
+  // not full encounters with module payloads; callers cannot mutate saved state.
+  getMasterOccupancy(zoneId) {
+    let count = 0;
+    const spotIds = new Set();
+    for (const spawn of this.state.activeMasterSpawns || []) {
+      if (spawn.zoneId !== zoneId) continue;
+      count++;
+      spotIds.add(spawn.spotId);
+    }
+    return { count, spotIds };
+  }
+
   getActiveMasters({ resourceDirectionId = null, tier = null, zoneId = null } = {}) {
     return (this.state.activeMasterSpawns || [])
       .filter((spawn) => !resourceDirectionId || spawn.resourceDirectionId === resourceDirectionId)

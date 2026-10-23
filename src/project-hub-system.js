@@ -455,7 +455,7 @@ export class ProjectHubSystem {
 
 
   async renderKnightLibrary(view){
-    this.setSubViewHeader('Атласы рыцаря · 12 ролей','uGame / Игра / Библиотека персонажей');
+    this.setSubViewHeader('Атласы рыцаря · 13 ролей','uGame / Игра / Библиотека персонажей');
     const library=this.knightRoles,role=view.selectedRole||'hero-plate',cfg=library?.setting(role);
     if(!library||!cfg){this.contentElement.textContent='Библиотека пока недоступна';return;}
     const status=(text)=>{const node=this.contentElement.querySelector('#knight-role-status');if(node)node.textContent=text;};

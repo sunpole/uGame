@@ -1,7 +1,7 @@
 {
   "project": "uGame",
-  "version": "0.2.78",
-  "stage": "first-pve-forest-thief",
-  "updated": "2026-10-13",
-  "summary": "First authored non-aggressive level-3 Forest Thief (HP 330, chase 450) using 12th knight role and existing radial Impulse; experimental HP-based XP; previous save schema retained."
+  "version": "0.2.79",
+  "stage": "city-npc-motion-qa",
+  "updated": "2026-10-23",
+  "summary": "Visible city NPC models, neutral city guard, compact world-event reads and movement persistence without redundant world clones; save v1 preserved."
 }

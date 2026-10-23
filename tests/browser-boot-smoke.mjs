@@ -843,8 +843,8 @@ server.stderr.on('data', (data) => { serverOutput += String(data).slice(-3000); 
 try {
   await waitForServer(server);
   browser = await chromium.launch({
-    headless: true,
-    args: ['--disable-dev-shm-usage', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader']
+    headless: process.env.UGAME_QA_HEADFUL !== '1',
+    args: process.env.UGAME_QA_HEADFUL === '1' ? [] : ['--disable-dev-shm-usage', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader']
   });
   await checkViewport({ name: 'desktop', viewport: { width: 1365, height: 768 }, mobile: false });
   await checkViewport({ name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true });
