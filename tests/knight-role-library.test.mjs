@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {KNIGHT_ROLES,KNIGHT_DIRS,KNIGHT_ATLAS_ROWS,knightNpcRole,knightHeroRole,knightFacing,
  validateKnightUpload,safeKnightSetting,knightPaletteTone,KNIGHT_UPLOAD_WIDTH,KNIGHT_UPLOAD_HEIGHT} from '../src/knight-atlas-core.js';
-test('Exactly twelve visual slots, all uniquely identifiable; no mob AI implemented',()=>{
- assert.equal(KNIGHT_ROLES.length,12);
- assert.equal(new Set(KNIGHT_ROLES.map(r=>r.id)).size,12);
- assert.deepEqual(KNIGHT_ROLES.reduce((o,r)=>(o[r.group]=(o[r.group]||0)+1,o),{}),{hero:4,npc:7,mob:1});
+test('Thirteen visual slots preserve the twelve existing IDs and add the neutral city guard',()=>{
+ assert.equal(KNIGHT_ROLES.length,13);
+ assert.equal(new Set(KNIGHT_ROLES.map(r=>r.id)).size,13);
+ assert.deepEqual(KNIGHT_ROLES.reduce((o,r)=>(o[r.group]=(o[r.group]||0)+1,o),{}),{hero:4,npc:8,mob:1});
  assert.ok(KNIGHT_ROLES.every(r=>r.scale>0));
 });
-test('Four capital guides map by known zone; neutral Crossroads stays untouched',()=>{
+test('Capital and neutral guides map by known zone',()=>{
  const cases={'loc-00001':'ruler-1','loc-00005':'ruler-2','loc-00021':'ruler-3','loc-00025':'ruler-4'};
  for(const [zone,expected] of Object.entries(cases))assert.equal(knightNpcRole({id:zone+'-guide',type:'city-guide'}),expected);
- assert.equal(knightNpcRole({id:'loc-00013-guide',type:'city-guide'}),null);
+ assert.equal(knightNpcRole({id:'loc-00013-guide',type:'city-guide'}),'guard-crossroads');
  assert.equal(knightNpcRole({id:'loc-00001-banker',type:'city-banker'}),'banker');
  assert.equal(knightNpcRole({id:'loc-00005-teleporter',type:'city-teleporter'}),'teleporter-b');
  assert.equal(knightNpcRole({id:'loc-00025-teleporter',type:'city-teleporter'}),'teleporter-b');

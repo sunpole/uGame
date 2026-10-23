@@ -134,11 +134,30 @@ export class EventSpotSystem {
   }
 
   isExternalTierZone(zone) {
-    return Boolean(zone?.id && zone.isSafeCity !== true && this.worldSpawnStateSystem?.getLocationTier?.(zone.id));
+    return Boolean(zone?.id && zone.isSafeCity !== true && this.locationTier(zone.id));
+  }
+
+  locationTier(zoneId) {
+    if (!this.tickLocationTiers) return this.worldSpawnStateSystem?.getLocationTier?.(zoneId);
+    if (!this.tickLocationTiers.has(zoneId))
+      this.tickLocationTiers.set(zoneId, this.worldSpawnStateSystem?.getLocationTier?.(zoneId));
+    return this.tickLocationTiers.get(zoneId);
+  }
+
+  spawnCapacity(zoneId) {
+    const tier = this.locationTier(zoneId);
+    return Number(tier?.spawnCapacity ?? this.worldSpawnStateSystem?.getSpawnCapacity?.(zoneId)) || 0;
   }
 
   masterSpotIds(zoneId) {
+    if (this.worldSpawnStateSystem?.getMasterOccupancy)
+      return this.worldSpawnStateSystem.getMasterOccupancy(zoneId).spotIds;
     return new Set((this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId }) || []).map((spawn) => spawn.spotId));
+  }
+
+  masterCount(zoneId) {
+    return this.worldSpawnStateSystem?.getMasterOccupancy?.(zoneId)?.count
+      ?? this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId })?.length ?? 0;
   }
 
   rememberSpot(zoneState, spotId) {
@@ -159,10 +178,10 @@ export class EventSpotSystem {
     const spots = Array.isArray(zone?.eventSpots) ? zone.eventSpots : [];
     if (this.isExternalTierZone(zone)) {
       const capacity = Math.min(
-        Math.max(0, Number(this.worldSpawnStateSystem?.getSpawnCapacity?.(zone.id)) || 0),
+        Math.max(0, this.spawnCapacity(zone.id)),
         spots.length
       );
-      const masters = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id })?.length || 0;
+      const masters = this.masterCount(zone.id);
       return Math.max(0, capacity - masters);
     }
     return Math.min(this.rewardGenerator.activeSlots(zoneState?.qualityLevel), spots.length);
@@ -185,7 +204,7 @@ export class EventSpotSystem {
     }
 
     if (this.isExternalTierZone(zone)) {
-      const locationState = this.worldSpawnStateSystem.getLocationTier(zone.id);
+      const locationState = this.locationTier(zone.id);
       const existing = this.state.zones?.[zone.id] || {};
       const stateChanged = existing.locationTierStateId !== locationState.stateId;
       const zoneState = {
@@ -546,31 +565,36 @@ export class EventSpotSystem {
   update(now = Date.now()) {
     if (!this.initialized || now < this.nextTickAt) return;
     this.nextTickAt = now + 1000;
+    // Reuse immutable tier snapshots only within this synchronous tick. The next
+    // tick must see new tiers/expiry; no long-lived cache of gameplay state.
+    this.tickLocationTiers = new Map();
+    try {
+      let changedAny = false;
+      for (const zone of this.worldGraph?.zones?.values?.() || []) {
+        if (zone?.isSafeCity === true) {
+          this.ensureZone(zone, now);
+          continue;
+        }
+        if (this.isExternalTierZone(zone)) {
+          const beforeId = this.state.zones?.[zone.id]?.locationTierStateId || null;
+          const zoneState = this.ensureZone(zone, now);
+          if (beforeId !== zoneState?.locationTierStateId) changedAny = true;
+          continue;
+        }
 
-    let changedAny = false;
-    for (const zone of this.worldGraph?.zones?.values?.() || []) {
-      if (zone?.isSafeCity === true) {
-        this.ensureZone(zone, now);
-        continue;
+        const zoneState = this.state.zones?.[zone.id];
+        if (!zoneState || Number(zoneState.qualityExpiresAt) <= now) {
+          this.rerollQuality(zone, now, false);
+          changedAny = true;
+          continue;
+        }
+        if (this.refreshEvents(zone, zoneState, now)) changedAny = true;
       }
-      if (this.isExternalTierZone(zone)) {
-        const beforeId = this.state.zones?.[zone.id]?.locationTierStateId || null;
-        const zoneState = this.ensureZone(zone, now);
-        if (beforeId !== zoneState?.locationTierStateId) changedAny = true;
-        continue;
-      }
-
-      const zoneState = this.state.zones?.[zone.id];
-      if (!zoneState || Number(zoneState.qualityExpiresAt) <= now) {
-        this.rerollQuality(zone, now, false);
-        changedAny = true;
-        continue;
-      }
-      if (this.refreshEvents(zone, zoneState, now)) changedAny = true;
+      if (changedAny) this.publish();
+      this.updateZoneStatus(now);
+    } finally {
+      this.tickLocationTiers = null;
     }
-
-    if (changedAny) this.publish();
-    this.updateZoneStatus(now);
   }
 
   updateZoneStatus(now = Date.now()) {
@@ -586,10 +610,10 @@ export class EventSpotSystem {
       return;
     }
     if (this.isExternalTierZone(zone)) {
-      const masterActive = this.worldSpawnStateSystem?.getActiveMasters?.({ zoneId: zone.id })?.length || 0;
+      const masterActive = this.masterCount(zone.id);
       const active = genericActive + masterActive;
-      const totalCapacity = Math.max(0, Number(this.worldSpawnStateSystem?.getSpawnCapacity?.(zone.id)) || 0);
-      const location = this.worldSpawnStateSystem.getLocationTier(zone.id);
+      const totalCapacity = Math.max(0, this.spawnCapacity(zone.id));
+      const location = this.locationTier(zone.id);
       const bonus = Math.round((Number(location?.locationBonus) || 0) * 100);
       this.onZoneStatus?.(
         `${zone.name} · LT ${location?.tier || '?'} · spawn ${active}/${totalCapacity} (${masterActive} master) · бонус +${bonus}% · Tier-state ${formatCountdown(Number(location?.expiresAt) - now)}`

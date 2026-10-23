@@ -126,15 +126,23 @@ export class CharacterView {
     this.knightRole=role;
     this.container.setVisible(false);
     const settings=this.knightRoles.setting(role);
-    this.knightShadow=this.scene.add.ellipse(this.player.x,this.player.y+14,
+    this.knightShadow=this.scene.add.ellipse(this.player.x,this.player.y+16,
       38*settings.scale,11*settings.scale,0x000000,settings.shadow).setDepth(9);
-    this.knightImage=this.scene.add.image(this.player.x,this.player.y+19,key,'S-idle')
-      .setOrigin(0.5,0.94).setDepth(10).setScale(settings.scale);
+    this.knightImage=this.scene.add.image(this.player.x,this.player.y+16,key,'S-idle')
+      .setDepth(10).setScale(settings.scale);
+    this.setKnightFrame('S-idle');
     this.knightElapsed=0;this.knightFrame='S-idle';
     document.documentElement.dataset.characterVisual='knight-role';
     document.documentElement.dataset.characterVisualScale=String(settings.scale);
     document.documentElement.dataset.characterVisualPerspective='eight-way';
     return true;
+  }
+  setKnightFrame(frame){
+    this.knightImage.setFrame(frame);
+    // Anchor opaque feet to the shadow, not transparent padding in the atlas cell.
+    const ground=this.knightImage.frame.ugameGroundY??128*0.94;
+    this.knightImage.setOrigin(0.5,ground/128);
+    this.knightFrame=frame;
   }
   refreshKnightRole(){
     const selected=this.knightRoles?.selectedRole;
@@ -156,9 +164,9 @@ export class CharacterView {
       const dir=knightFacing(state.direction);
       this.knightElapsed=state.moving?this.knightElapsed+delta:0;
       const frame=state.moving?dir+'-'+(Math.floor(this.knightElapsed/105)%11):dir+'-idle';
-      this.knightImage.setPosition(this.player.x,this.player.y+19);
+      this.knightImage.setPosition(this.player.x,this.player.y+16);
       this.knightShadow.setPosition(this.player.x,this.player.y+16);
-      if(this.knightFrame!==frame){this.knightImage.setFrame(frame);this.knightFrame=frame;}
+      if(this.knightFrame!==frame)this.setKnightFrame(frame);
       document.documentElement.dataset.characterVisualFrame=frame;
       return;
     }
